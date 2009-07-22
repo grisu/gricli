@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<JobDefinition xmlns="http://schemas.ggf.org/jsdl/2005/11/jsdl">
+	<JobDescription grisu_modules="Common">
+
+		<JobIdentification>
+			<JobName>XXX_JOBNAME_XXX</JobName>
+		</JobIdentification>
+
+		<Application>
+			<ApplicationName>XXX_APPLICATION_NAME_XXX</ApplicationName>
+			<ApplicationVersion></ApplicationVersion>
+			<POSIXApplication
+				xmlns="http://schemas.ggf.org/jsdl/2005/11/jsdl-posix">
+
+				<Executable>XXX_EXECUTABLE_XXX</Executable>
+				XXX_ARGUMENT_ELEMENTS_XXX
+				<WorkingDirectory filesystemName="userExecutionHostFs">XXX_WORKINGDIRECTORY_XXX</WorkingDirectory>
+				<Output>XXX_STDOUT_XXX</Output>
+				<Error>XXX_STDERR_XXX</Error>
+				<Module>XXX_MODULE_XXX</Module>
+				<Email>XXX_EMAIL_ADDRESS_XXX</Email>
+
+			</POSIXApplication>
+			<TotalCPUTime>XXX_TOTALCPUTIME_XXX</TotalCPUTime><!-- use this value and divide with no. of cpus to get actual walltime -->
+			<TotalCPUCount>XXX_TOTALCPUCOUNT_XXX</TotalCPUCount>
+		</Application>
+		<Resources>
+			<CandidateHosts>
+				<HostName>XXX_SUBMISSIONLOCATION_XXX</HostName>
+			</CandidateHosts>
+			<FileSystem name="userExecutionHostFs">
+				<MountSource>XXX_USEREXECUTIONHOSTFS</MountSource>
+				<FileSystemType>normal</FileSystemType>
+			</FileSystem>
+		</Resources>
+
+	</JobDescription>
+</JobDefinition>
