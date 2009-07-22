@@ -33,7 +33,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.vpac.grisu</groupId>
-			<artifactId>grisu-client</artifactId>
+			<artifactId>grisu-client-lib-old</artifactId>
 			<version>0.3-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
