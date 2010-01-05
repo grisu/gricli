@@ -497,6 +497,7 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 		Option baseInputFilePath = createOptionWithArg(CommandlineProperties.INPUTFILEPATH_OPTION,"the input files, separated with a coma");
 		Option walltime = createOptionWithArg(CommandlineProperties.WALLTIME_OPTION, "the walltime in seconds (required for modes all|submit)");
 		Option cpus = createOptionWithArg(CommandlineProperties.CPUS_OPTION,"the number of cpus to run the job with (required for modes all|submit)");
+		Option memory = createOptionWithArg(CommandlineProperties.MEMORY_OPTION,"r","the number of cpus to run the job with (required for modes all|submit)");
 		Option stdout = createOptionWithArg(CommandlineProperties.STDOUT_OPTION,"the name of the stdout file (optional)");
 		Option stderr = createOptionWithArg(CommandlineProperties.STDERR_OPTION,"the name of the stderr file (optional)");
 		Option module = createOptionWithArg(CommandlineProperties.MODULE_OPTION,"the module to load on the cluster (optional)");
@@ -531,6 +532,7 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 		options.addOption(baseInputFilePath);
 		options.addOption(walltime);
 		options.addOption(cpus);
+		options.addOption(memory);
 		options.addOption(stdout);
 		options.addOption(stderr);
 		options.addOption(module);

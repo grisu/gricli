@@ -23,6 +23,7 @@ public class CommandlineProperties extends AbstractJobProperties implements JobP
 	public final static String DEFAULT_APP_NAME = "generic";
 	public final static String DEFAULT_STDOUT = "stdout.txt";
 	public final static String DEFAULT_STDERR = "stderr.txt";
+	public final static int DEFAULT_MEMORY_SIZE = 2048;
 	
 	public final static String JOBNAME = "jobName";
 	public final static String VO_OPTION = "vo";
@@ -30,6 +31,7 @@ public class CommandlineProperties extends AbstractJobProperties implements JobP
 	public final static String COMMAND_OPTION = "command";
 	public final static String WALLTIME_OPTION = "walltime";
 	public final static String CPUS_OPTION = "cpus";
+	public final static String MEMORY_OPTION = "ram";
 	public final static String INPUTFILEPATH_OPTION = "inputFilePath";
 	public final static String EMAIL_OPTION = "email";
 	public final static String STDOUT_OPTION = "stdout";
@@ -179,7 +181,7 @@ public class CommandlineProperties extends AbstractJobProperties implements JobP
 			}
 
 			if (line.hasOption(GENERATE_UNIQUE_JOBNAME_OPTION)) {
-				jobname = generateJobName(jobname, serviceInterface.getAllJobnames());
+				jobname = generateJobName(jobname, serviceInterface.getAllJobnames(null).asArray());
 			}
 		}
 		
@@ -197,6 +199,21 @@ public class CommandlineProperties extends AbstractJobProperties implements JobP
 			return "";
 		else 
 			return module;
+	}
+
+	public int getMemory() {
+		try {
+			String memoryString = getConfigOption(MEMORY_OPTION);
+			int memory = DEFAULT_MEMORY_SIZE;
+			if (line.hasOption(MEMORY_OPTION)) {
+				memoryString = line.getOptionValue(MEMORY_OPTION);
+				memory = Integer.parseInt(memoryString);
+			}
+			return memory;
+		}
+		catch (NumberFormatException e){
+			throw new InvalidOptionException(MEMORY_OPTION, line.getOptionValue(MEMORY_OPTION));
+		}
 	}
 
 	public int getNoCPUs() {

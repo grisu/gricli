@@ -12,7 +12,7 @@ import java.util.HashMap;
  */
 public class GrisuClientFileConfiguration {
 
-	public final static String CONFIG_FILE_PATH = Environment.GRISU_DIRECTORY+ File.separator + "gricli.config";
+	public final static String CONFIG_FILE_PATH = Environment.getGrisuDirectory()+ File.separator + "gricli.config";
 	private static HashMap<String,GrisuClientFileConfiguration> instances = new HashMap<String,GrisuClientFileConfiguration>();
 
 	private HierarchicalINIConfiguration configuration  = null;

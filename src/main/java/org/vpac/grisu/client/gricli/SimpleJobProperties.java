@@ -13,6 +13,7 @@ public class SimpleJobProperties extends AbstractJobProperties implements JobPro
 	private String jobName = null;
 	private String module = null;
 	private int noCPUs = -1;
+	private int memory = 0;
 	private String stdout = null;
 	private String stderr = null;
 	private String submissionLocation = null;
@@ -53,6 +54,10 @@ public class SimpleJobProperties extends AbstractJobProperties implements JobPro
 
 	public int getNoCPUs() {
 		return noCPUs;
+	}
+
+	public int getMemory(){
+		return memory;
 	}
 
 	public String getStderr() {

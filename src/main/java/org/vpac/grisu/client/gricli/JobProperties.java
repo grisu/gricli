@@ -62,6 +62,8 @@ public interface JobProperties {
 
 	public int getNoCPUs();
 
+	public int getMemory();
+
 	public String getSubmissionLocation();
 
 	/**

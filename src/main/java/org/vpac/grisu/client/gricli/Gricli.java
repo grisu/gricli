@@ -19,16 +19,16 @@ import org.apache.log4j.Logger;
 import org.globus.gsi.GlobusCredentialException;
 import org.vpac.grisu.client.control.EnvironmentManager;
 import org.vpac.grisu.client.control.exceptions.JobSubmissionException;
+import org.vpac.grisu.control.exceptions.NoValidCredentialException;
 import org.vpac.grisu.client.control.files.FileTransfer;
 import org.vpac.grisu.client.control.files.FileTransferEvent;
 import org.vpac.grisu.client.control.files.FileTransferException;
 import org.vpac.grisu.client.control.files.FileTransferListener;
-import org.vpac.grisu.client.control.login.LoginException;
-import org.vpac.grisu.client.control.login.LoginHelpers;
+import org.vpac.grisu.frontend.control.login.LoginManager;
+import org.vpac.grisu.frontend.control.login.LoginException;
 import org.vpac.grisu.client.model.files.GrisuFileObject;
 import org.vpac.grisu.control.JobConstants;
 import org.vpac.grisu.control.ServiceInterface;
-import org.vpac.grisu.control.exceptions.JobCreationException;
 import org.vpac.grisu.control.exceptions.JobPropertiesException;
 import org.vpac.grisu.control.exceptions.NoSuchJobException;
 import org.vpac.grisu.control.exceptions.ServiceInterfaceException;
@@ -36,7 +36,7 @@ import org.vpac.grisu.frontend.control.login.LoginParams;
 import org.vpac.grisu.utils.SeveralStringHelpers;
 import org.vpac.security.light.plainProxy.LocalProxy;
 
-import au.org.arcs.mds.Constants;
+import au.org.arcs.jcommons.constants.Constants;
 
 
 public class Gricli implements FileTransferListener {
@@ -56,6 +56,7 @@ public class Gricli implements FileTransferListener {
 	public static final String TOTALCPUCOUNT_PLACEHOLDER = "XXX_TOTALCPUCOUNT_XXX";
 	public static final String SUBMISSIONLOCATION_PLACEHOLDER = "XXX_SUBMISSIONLOCATION_XXX";
 	public static final String USEREXECUTIONHOSTFS_PLACEHOLDER = "XXX_USEREXECUTIONHOSTFS";
+	public static final String MEMORY_PLACEHOLDER = "XXX_MEMORY_XXX";
 
 	public static final String DEFAULT_MYPROXY_SERVER = "myproxy.arcs.org.au";
 	public static final String DEFAULT_MYPROXY_PORT = "443";
@@ -76,9 +77,9 @@ public class Gricli implements FileTransferListener {
 	 * @param args the arguments
 	 * @params password the password the password
 	 * @throws ServiceInterfaceException if the client can't create a valid serviceInterface
-	 * @throws LoginException if there is a problem with the login (e.g. wrong username/password)
+	 * @throws NoValidCredentialException if there is a problem with the login (e.g. wrong username/password)
 	 */
-	public Gricli(String[] args) throws LoginException, ServiceInterfaceException, IOException {
+	public Gricli(String[] args) throws  ServiceInterfaceException, IOException,LoginException {
 
 		clientProperties = new GrisuClientCommandlineProperties(args);
 
@@ -155,17 +156,18 @@ public class Gricli implements FileTransferListener {
 		return em;
 	}
 
-	private void login(String username, char[] password) throws LoginException,
-			ServiceInterfaceException {
+	private void login(String username, char[] password) throws
+		ServiceInterfaceException,LoginException {
 
 		if (verbose) {
 			System.out.println("Login to grisu backend: "
 					+ clientProperties.getServiceInterfaceUrl() + "...");
 		}
+
 		LoginParams loginParams = new LoginParams(clientProperties
-				.getServiceInterfaceUrl(), username, password,
-				DEFAULT_MYPROXY_SERVER, DEFAULT_MYPROXY_PORT);
-		serviceInterface = LoginHelpers.login(loginParams);
+							  .getServiceInterfaceUrl(), username, password,
+							  DEFAULT_MYPROXY_SERVER, DEFAULT_MYPROXY_PORT);
+		serviceInterface = LoginManager.login(null, null, null, null, loginParams, false);
 
 		if (verbose) {
 			System.out.println("Login successful.");
@@ -173,19 +175,20 @@ public class Gricli implements FileTransferListener {
 
 	}
 
-	private void login() throws LoginException,ServiceInterfaceException{
+	private void login() throws ServiceInterfaceException,LoginException{
 		try {
 			if (verbose) {
 				System.out.println("Login to grisu backend: "
 						   + clientProperties.getServiceInterfaceUrl() + "...");
 			}
-			LoginParams loginParams = new LoginParams(clientProperties.getServiceInterfaceUrl(), null, null, 
-								  DEFAULT_MYPROXY_SERVER, DEFAULT_MYPROXY_PORT);
-			serviceInterface = LoginHelpers.login(loginParams,LocalProxy.loadGSSCredential());
+			/*LoginParams loginParams = new LoginParams(clientProperties.getServiceInterfaceUrl(), null, null, 
+			  DEFAULT_MYPROXY_SERVER, DEFAULT_MYPROXY_PORT);*/
+			/*serviceInterface = LoginHelpers.login(loginParams,LocalProxy.loadGSSCredential());*/
+			serviceInterface = LoginManager.login(clientProperties.getServiceInterfaceUrl());
 			if (verbose) {
 				System.out.println("Login successful.");
 			}
-		} catch (GlobusCredentialException e) {
+		} catch (LoginException e) {
 			throw new LoginException(e.getMessage());
 		}
 	}
@@ -380,12 +383,12 @@ public class Gricli implements FileTransferListener {
 
 	}
 
-	private void executeSubmission() throws JobCreationException,
+	private void executeSubmission() throws
 			NoSuchJobException,
 			JobSubmissionException, JobStagingException {
 
 		InputStream in = Gricli.class
-				.getResourceAsStream("/templates/generic.xml");
+				.getResourceAsStream("/templates/generic_memory.xml");
 		String jsdlTemplateString = SeveralStringHelpers.fromInputStream(in);
 
 //		// this is a workaround because of a hsqldb bug which will cause the whole process to fail
@@ -412,7 +415,7 @@ public class Gricli implements FileTransferListener {
 									+ jobProperties.getJobname() + " existed.");
 				}
 			} catch (Exception e) {
-				throw new JobCreationException(
+				throw new RuntimeException(
 						"Can't kill & clean existing job with jobname \""
 								+ jobProperties.getJobname() + "\"");
 			}
@@ -443,10 +446,12 @@ public class Gricli implements FileTransferListener {
 				.getEmailAddress());
 		int noCpus = jobProperties.getNoCPUs();
 		int cpuTime = jobProperties.getWalltimeInSeconds() * noCpus;
+		int memory = jobProperties.getMemory();
 		jsdl = jsdl.replaceAll(TOTALCPUTIME_PLACEHOLDER, new Integer(cpuTime)
 				.toString());
 		jsdl = jsdl.replaceAll(TOTALCPUCOUNT_PLACEHOLDER, new Integer(noCpus)
 				.toString());
+		jsdl = jsdl.replaceAll(MEMORY_PLACEHOLDER, new Integer(memory).toString());
 		jsdl = jsdl.replaceAll(SUBMISSIONLOCATION_PLACEHOLDER, jobProperties
 				.getSubmissionLocation());
 		// this will be calculated on the backend now
@@ -460,10 +465,10 @@ public class Gricli implements FileTransferListener {
 
 		String jobname;
 		try {
-			jobname = serviceInterface.createJobUsingJsdl(jsdl,
-					jobProperties.getVO(), ServiceInterface.FORCE_NAME_METHOD);
+			jobname = serviceInterface.createJob(jsdl,
+							     jobProperties.getVO(),null);
 		} catch (JobPropertiesException e1) {
-			throw new JobCreationException(
+			throw new RuntimeException(
 					"Can't create job on backend: "+e1.getLocalizedMessage());
 
 		}
@@ -528,7 +533,6 @@ public class Gricli implements FileTransferListener {
 	 * @param targetDirectory
 	 *            the target directory
 	 * @return all the urls of the staged files, seperated with a comma
-	 * @throws JobCreationException
 	 */
 	public String stageInputFiles(String[] uris, String targetDirectory)
 			throws JobStagingException {
@@ -558,7 +562,7 @@ public class Gricli implements FileTransferListener {
 							+ targetDirectory);
 				}
 				String targetFile = serviceInterface.upload(new DataHandler(dataSource),
-						targetDirectory + "/" + fileName, true);
+						targetDirectory + "/" + fileName);
 				inputFiles.append(targetFile + ",");
 			} catch (Exception e) {
 				throw new JobStagingException("Couldn't stage in file: " + uri
@@ -578,7 +582,7 @@ public class Gricli implements FileTransferListener {
 		}
 
 		Map<String, String> jobDetails = serviceInterface
-				.getAllJobProperties(jobProperties.getJobname()).getPropertiesAsMap();
+				.getAllJobProperties(jobProperties.getJobname()).propertiesAsMap();
 
 		String jobDirectory = jobDetails
 				.get(Constants.JOBDIRECTORY_KEY);
@@ -622,8 +626,8 @@ public class Gricli implements FileTransferListener {
 
 		try {
 			client = new Gricli(args);
-		} catch (LoginException e) {
-			System.err.println("Can't login to grisu backend: "
+		} catch (LoginException e){
+			System.err.println("Error with serviceInterface: "
 					+ e.getLocalizedMessage());
 			System.exit(1);
 		} catch (ServiceInterfaceException e) {

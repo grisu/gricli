@@ -49,6 +49,10 @@ public class TestJobProperties extends AbstractJobProperties implements
 		return 1;
 	}
 
+	public int getMemory(){
+		return 1024;
+	}
+
 	public String getStderr() {
 		return "stderr.txt";
 	}

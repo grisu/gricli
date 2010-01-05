@@ -5,7 +5,7 @@ import org.vpac.grisu.control.ServiceInterface;
 import org.vpac.grisu.control.exceptions.NoSuchJobException;
 import org.vpac.grisu.model.MountPoint;
 
-import au.org.arcs.mds.Constants;
+import au.org.arcs.jcommons.constants.Constants;
 
 public abstract class AbstractJobProperties implements JobProperties {
 	
