@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang.StringUtils;
-import org.vpac.grisu.client.control.utils.CommandlineHelpers;
+import org.vpac.grisu.utils.CommandlineHelpers;
 import org.vpac.grisu.control.ServiceInterface;
 import org.vpac.grisu.model.MountPoint;
 
@@ -41,6 +41,9 @@ public class CommandlineProperties extends AbstractJobProperties implements JobP
 	
 	public final static String APPLICATION_OPTION = "application";
 	public final static String GENERATE_UNIQUE_JOBNAME_OPTION = "unique";
+
+        public final static String SHIB_USERNAME_OPTION="shibUsername";
+        public final static String SHIB_IDP_OPTION="shibIdp";
 
 	private GrisuClientFileConfiguration configuration = null;
 
@@ -88,11 +91,7 @@ public class CommandlineProperties extends AbstractJobProperties implements JobP
 		}
 		
 		ArrayList<String> args;
-		try {
-			args = CommandlineHelpers.extractArgumentsFromCommandline(commandline);
-		} catch (ParseException e) {
-			throw new InvalidOptionException(COMMAND_OPTION, commandline);
-		}
+                args = CommandlineHelpers.extractArgumentsFromCommandline(commandline);
 		
 		return args.toArray(new String[]{});
 	}
@@ -120,11 +119,8 @@ public class CommandlineProperties extends AbstractJobProperties implements JobP
 		}
 		
 		String executable = null;
-		try {
-			executable = CommandlineHelpers.extractExecutable(commandline);
-		} catch (ParseException e) {
-			throw new InvalidOptionException(COMMAND_OPTION, commandline);
-		}
+		
+		executable = CommandlineHelpers.extractExecutable(commandline);
 		
 		return executable;
 	}

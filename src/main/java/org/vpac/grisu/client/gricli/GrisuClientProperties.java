@@ -26,4 +26,8 @@ public interface GrisuClientProperties {
 
 	public abstract String getMyProxyUsername();
 
+       public  abstract String getShibIdp(); 
+
+       public  abstract String getShibUsername(); 
+
 }

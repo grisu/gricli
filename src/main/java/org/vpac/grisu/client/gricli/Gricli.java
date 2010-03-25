@@ -18,15 +18,16 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.globus.gsi.GlobusCredentialException;
 import org.vpac.grisu.client.control.EnvironmentManager;
-import org.vpac.grisu.client.control.exceptions.JobSubmissionException;
+//import org.vpac.grisu.client.control.exceptions.JobSubmissionException;
 import org.vpac.grisu.control.exceptions.NoValidCredentialException;
-import org.vpac.grisu.client.control.files.FileTransfer;
-import org.vpac.grisu.client.control.files.FileTransferEvent;
-import org.vpac.grisu.client.control.files.FileTransferException;
-import org.vpac.grisu.client.control.files.FileTransferListener;
+//import org.vpac.grisu.client.control.files.FileTransfer;
+//import org.vpac.grisu.client.control.files.FileTransferEvent;
+//import org.vpac.grisu.client.control.files.FileTransferException;
+//import org.vpac.grisu.client.control.files.FileTransferListener;
 import org.vpac.grisu.frontend.control.login.LoginManager;
 import org.vpac.grisu.frontend.control.login.LoginException;
-import org.vpac.grisu.client.model.files.GrisuFileObject;
+//import org.vpac.grisu.client.model.files.GrisuFileObject;
+//import org.vpac.grisu.model.dto.DtoJob;
 import org.vpac.grisu.control.JobConstants;
 import org.vpac.grisu.control.ServiceInterface;
 import org.vpac.grisu.control.exceptions.JobPropertiesException;
@@ -36,628 +37,598 @@ import org.vpac.grisu.frontend.control.login.LoginParams;
 import org.vpac.grisu.utils.SeveralStringHelpers;
 import org.vpac.security.light.plainProxy.LocalProxy;
 
+import org.vpac.grisu.model.dto.*;
+
 import au.org.arcs.jcommons.constants.Constants;
 
+public class Gricli {
 
-public class Gricli implements FileTransferListener {
+    public static final int DEFAULT_SLEEP_TIME_IN_SECONDS = 600;
+    public static final String JOBNAME_PLACEHOLDER = "XXX_JOBNAME_XXX";
+    public static final String APPLICATION_NAME_PLACEHOLDER = "XXX_APPLICATION_NAME_XXX";
+    public static final String EXECUTABLE_NAME_PLACEHOLDER = "XXX_EXECUTABLE_XXX";
+    public static final String ARGUMENTS_PLACEHOLDER = "XXX_ARGUMENT_ELEMENTS_XXX";
+    public static final String WORKINGDIRECTORY_PLACEHOLDER = "XXX_WORKINGDIRECTORY_XXX";
+    public static final String STDOUT_PLACEHOLDER = "XXX_STDOUT_XXX";
+    public static final String STDERR_PLACEHOLDER = "XXX_STDERR_XXX";
+    public static final String MODULE_PLACEHOLDER = "XXX_MODULE_XXX";
+    public static final String EMAIL_PLACEHOLDER = "XXX_EMAIL_ADDRESS_XXX";
+    public static final String TOTALCPUTIME_PLACEHOLDER = "XXX_TOTALCPUTIME_XXX";
+    public static final String TOTALCPUCOUNT_PLACEHOLDER = "XXX_TOTALCPUCOUNT_XXX";
+    public static final String SUBMISSIONLOCATION_PLACEHOLDER = "XXX_SUBMISSIONLOCATION_XXX";
+    public static final String USEREXECUTIONHOSTFS_PLACEHOLDER = "XXX_USEREXECUTIONHOSTFS";
+    public static final String MEMORY_PLACEHOLDER = "XXX_MEMORY_XXX";
+    public static final String DEFAULT_MYPROXY_SERVER = "myproxy.arcs.org.au";
+    public static final String DEFAULT_MYPROXY_PORT = "443";
+    private GrisuClientProperties clientProperties = null;
+    private JobProperties jobProperties = null;
+    private ServiceInterface serviceInterface = null;
+    private EnvironmentManager em = null;
+    private boolean verbose = false;
+    private boolean forced_all_mode = false;
 
-	public static final int DEFAULT_SLEEP_TIME_IN_SECONDS = 600;
+    /**
+     * Use this constructor if you want to create a GrisuClient instance from scratch with everything needed
+     * using the commandline arguments that are specified in {@link GrisuClientCommandlineProperties} and {@link CommandlineProperties}.
+     * @param args the arguments
+     * @params password the password the password
+     * @throws ServiceInterfaceException if the client can't create a valid serviceInterface
+     * @throws NoValidCredentialException if there is a problem with the login (e.g. wrong username/password)
+     */
+    public Gricli(String[] args) throws ServiceInterfaceException, IOException, LoginException {
 
-	public static final String JOBNAME_PLACEHOLDER = "XXX_JOBNAME_XXX";
-	public static final String APPLICATION_NAME_PLACEHOLDER = "XXX_APPLICATION_NAME_XXX";
-	public static final String EXECUTABLE_NAME_PLACEHOLDER = "XXX_EXECUTABLE_XXX";
-	public static final String ARGUMENTS_PLACEHOLDER = "XXX_ARGUMENT_ELEMENTS_XXX";
-	public static final String WORKINGDIRECTORY_PLACEHOLDER = "XXX_WORKINGDIRECTORY_XXX";
-	public static final String STDOUT_PLACEHOLDER = "XXX_STDOUT_XXX";
-	public static final String STDERR_PLACEHOLDER = "XXX_STDERR_XXX";
-	public static final String MODULE_PLACEHOLDER = "XXX_MODULE_XXX";
-	public static final String EMAIL_PLACEHOLDER = "XXX_EMAIL_ADDRESS_XXX";
-	public static final String TOTALCPUTIME_PLACEHOLDER = "XXX_TOTALCPUTIME_XXX";
-	public static final String TOTALCPUCOUNT_PLACEHOLDER = "XXX_TOTALCPUCOUNT_XXX";
-	public static final String SUBMISSIONLOCATION_PLACEHOLDER = "XXX_SUBMISSIONLOCATION_XXX";
-	public static final String USEREXECUTIONHOSTFS_PLACEHOLDER = "XXX_USEREXECUTIONHOSTFS";
-	public static final String MEMORY_PLACEHOLDER = "XXX_MEMORY_XXX";
+        clientProperties = new GrisuClientCommandlineProperties(args);
 
-	public static final String DEFAULT_MYPROXY_SERVER = "myproxy.arcs.org.au";
-	public static final String DEFAULT_MYPROXY_PORT = "443";
+        verbose = clientProperties.verbose();
+        enableDebug(clientProperties.debug());
 
-	private GrisuClientProperties clientProperties = null;
-	private JobProperties jobProperties = null;
+        if (clientProperties.useLocalProxy()) {
+            login();
+        } else if ("login".equals(clientProperties.getMode())) {
+            loginWithShibboleth(clientProperties.getShibUsername(), clientProperties.getShibIdp());
+        } else {
+            ConsoleReader consoleReader = new ConsoleReader();
+            char[] password = consoleReader.readLine(
+                    "Please enter your myproxy password: ",
+                    new Character('*')).toCharArray();
+            login(clientProperties.getMyProxyUsername(), password);
+        }
 
-	private ServiceInterface serviceInterface = null;
-	private EnvironmentManager em = null;
+        jobProperties = new CommandlineProperties(serviceInterface,
+                ((GrisuClientCommandlineProperties) clientProperties).getCommandLine());
+    }
 
-	private boolean verbose = false;
-	private boolean forced_all_mode = false;
-	
-	
-	/**
-	 * Use this constructor if you want to create a GrisuClient instance from scratch with everything needed
-	 * using the commandline arguments that are specified in {@link GrisuClientCommandlineProperties} and {@link CommandlineProperties}.
-	 * @param args the arguments
-	 * @params password the password the password
-	 * @throws ServiceInterfaceException if the client can't create a valid serviceInterface
-	 * @throws NoValidCredentialException if there is a problem with the login (e.g. wrong username/password)
-	 */
-	public Gricli(String[] args) throws  ServiceInterfaceException, IOException,LoginException {
+    /**
+     * Use this constructur if you want to reuse a serviceInterface/session.
+     * @param serviceInterface the serviceinterface
+     * @param args the commandlineArguments
+     */
+    public Gricli(ServiceInterface serviceInterface, String[] args) {
 
-		clientProperties = new GrisuClientCommandlineProperties(args);
-
-		verbose = clientProperties.verbose();
-		enableDebug(clientProperties.debug());
-
-		if (clientProperties.useLocalProxy()) {
-			login();
-		}
-		else {
-			ConsoleReader consoleReader = new ConsoleReader();
-			char[] password = consoleReader.readLine(
-								 "Please enter your myproxy password: ",
-								 new Character('*')).toCharArray();
-			login(clientProperties.getMyProxyUsername(), password);			
-		}
-
-		jobProperties = new CommandlineProperties(serviceInterface,
-				((GrisuClientCommandlineProperties)clientProperties).getCommandLine());
-	}
-	
-	/**
-	 * Use this constructur if you want to reuse a serviceInterface/session.
-	 * @param serviceInterface the serviceinterface
-	 * @param args the commandlineArguments
-	 */
-	public Gricli(ServiceInterface serviceInterface, String[] args) {
-		
-		this.serviceInterface = serviceInterface;
-		
-		clientProperties = new GrisuClientCommandlineProperties(args);
-
-		verbose = clientProperties.verbose();
-		enableDebug(clientProperties.debug());
-		
-		jobProperties = new CommandlineProperties(serviceInterface, ((GrisuClientCommandlineProperties)clientProperties).getCommandLine());
-		
-		
-	}
-	
-	/**
-	 * Use this constructor if you want to control the client/job properties of this GrisuClient yourself. Useful if you want to write a multi-job control tool for example.
-	 * @param serviceInterface the serviceInterface
-	 * @param clientProperties the clientProperties
-	 * @param jobProperties the jobProperties
-	 */
-	public Gricli(ServiceInterface serviceInterface, GrisuClientProperties clientProperties, JobProperties jobProperties) {
-		
-		this.serviceInterface = serviceInterface;
-		this.clientProperties = clientProperties;
-		this.jobProperties = jobProperties;
-		
-		verbose = clientProperties.verbose();
-		enableDebug(clientProperties.debug());
-
-		
-	}
+        this.serviceInterface = serviceInterface;
 
 
-	private void enableDebug(boolean debug) {
-		
-		if ( debug ) {
-			Level lvl = Level.toLevel("debug");
-			Logger.getRootLogger().setLevel(lvl);
-		} 
-		
-	}
-	
-	private EnvironmentManager getEnvironmentManager() {
+        clientProperties = new GrisuClientCommandlineProperties(args);
 
-		if (em == null) {
-			em = new EnvironmentManager(serviceInterface);
-		}
-		return em;
-	}
+        verbose = clientProperties.verbose();
+        enableDebug(clientProperties.debug());
 
-	private void login(String username, char[] password) throws
-		ServiceInterfaceException,LoginException {
+        jobProperties = new CommandlineProperties(serviceInterface, ((GrisuClientCommandlineProperties) clientProperties).getCommandLine());
 
-		if (verbose) {
-			System.out.println("Login to grisu backend: "
-					+ clientProperties.getServiceInterfaceUrl() + "...");
-		}
 
-		LoginParams loginParams = new LoginParams(clientProperties
-							  .getServiceInterfaceUrl(), username, password,
-							  DEFAULT_MYPROXY_SERVER, DEFAULT_MYPROXY_PORT);
-		serviceInterface = LoginManager.login(null, null, null, null, loginParams, false);
+    }
 
-		if (verbose) {
-			System.out.println("Login successful.");
-		}
+    /**
+     * Use this constructor if you want to control the client/job properties of this GrisuClient yourself. Useful if you want to write a multi-job control tool for example.
+     * @param serviceInterface the serviceInterface
+     * @param clientProperties the clientProperties
+     * @param jobProperties the jobProperties
+     */
+    public Gricli(ServiceInterface serviceInterface, GrisuClientProperties clientProperties, JobProperties jobProperties) {
 
-	}
+        this.serviceInterface = serviceInterface;
+        this.clientProperties = clientProperties;
+        this.jobProperties = jobProperties;
 
-	private void login() throws ServiceInterfaceException,LoginException{
-		try {
-			if (verbose) {
-				System.out.println("Login to grisu backend: "
-						   + clientProperties.getServiceInterfaceUrl() + "...");
-			}
-			/*LoginParams loginParams = new LoginParams(clientProperties.getServiceInterfaceUrl(), null, null, 
-			  DEFAULT_MYPROXY_SERVER, DEFAULT_MYPROXY_PORT);*/
-			/*serviceInterface = LoginHelpers.login(loginParams,LocalProxy.loadGSSCredential());*/
-			serviceInterface = LoginManager.login(clientProperties.getServiceInterfaceUrl());
-			if (verbose) {
-				System.out.println("Login successful.");
-			}
-		} catch (LoginException e) {
-			throw new LoginException(e.getMessage());
-		}
-	}
+        verbose = clientProperties.verbose();
+        enableDebug(clientProperties.debug());
 
-	public void start() throws ExecutionException {
 
-		if (serviceInterface == null) {
-			System.err
-					.println("Could not find valid serviceInterface. Are you logged in?");
-			System.exit(1);
-		}
+    }
 
-		String mode = clientProperties.getMode();
-		if (GrisuClientCommandlineProperties.SUBMIT_MODE_PARAMETER.equals(mode)) {
-			try {
-				executeSubmission();
-			} catch (Exception e) {
-				throw new ExecutionException("Couldn't submit job: "
-						+ e.getLocalizedMessage(), e);
-			}
-		} else if (GrisuClientCommandlineProperties.STATUS_MODE_PARAMETER
-				.equals(mode)) {
+    private void enableDebug(boolean debug) {
 
-			int status = checkStatus();
-			System.out.println("Status for job " + jobProperties.getJobname()
-					+ ": " + JobConstants.translateStatus(status));
+        if (debug) {
+            Level lvl = Level.toLevel("debug");
+            Logger.getRootLogger().setLevel(lvl);
+        }
 
-		} else if (GrisuClientCommandlineProperties.FORCE_CLEAN_MODE
-				.equals(mode)) {
+    }
 
-			killAndCleanJob();
+    private EnvironmentManager getEnvironmentManager() {
 
-		} else if (GrisuClientCommandlineProperties.JOIN_MODE_PARAMETER
-				.equals(mode)) {
+        if (em == null) {
+            em = new EnvironmentManager(serviceInterface);
+        }
+        return em;
+    }
 
-			joinJob();
+    private void login(String username, char[] password) throws
+            ServiceInterfaceException, LoginException {
 
-		} else if (GrisuClientCommandlineProperties.ALL_MODE_PARAMETER.equals(mode)) {
-			
-			executeWholeJobsubmissionCycle();
-			
-		} else if (GrisuClientCommandlineProperties.FORCE_ALL_MODE_PARAMETER.equals(mode)) {
-			
-			forced_all_mode = true;
-			executeWholeJobsubmissionCycle();
-			
-		}
+        if (verbose) {
+            System.out.println("Login to grisu backend: " + clientProperties.getServiceInterfaceUrl() + "...");
+        }
 
-	}
+        LoginParams loginParams = new LoginParams(clientProperties.getServiceInterfaceUrl(), username, password,
+                DEFAULT_MYPROXY_SERVER, DEFAULT_MYPROXY_PORT);
+        serviceInterface = LoginManager.login(null, null, null, null, loginParams, false);
 
-	private int checkStatus() throws ExecutionException {
+        if (verbose) {
+            System.out.println("Login successful.");
+        }
 
-		try {
-			int status = getStatus();
-			String stringStatus = JobConstants.translateStatus(status);
+    }
 
-			if (verbose) {
-				System.out.println("Status for job "
-						+ jobProperties.getJobname() + ": " + stringStatus);
-			}
+    private void login() throws ServiceInterfaceException, LoginException {
+        try {
+            if (verbose) {
+                System.out.println("Login to grisu backend: " + clientProperties.getServiceInterfaceUrl() + "...");
+            }
+            serviceInterface = LoginManager.login(clientProperties.getServiceInterfaceUrl());
+            if (verbose) {
+                System.out.println("Login successful.");
+            }
+        } catch (LoginException e) {
+            throw new LoginException(e.getMessage());
+        }
+    }
 
-			if (clientProperties.stageOutResults() || forced_all_mode) {
+    public void start() throws ExecutionException {
 
-				if (status == JobConstants.DONE || (status >= JobConstants.FINISHED_EITHER_WAY && forced_all_mode)) {
+        if (serviceInterface == null) {
+            System.err.println("Could not find valid serviceInterface. Are you logged in?");
+            System.exit(1);
+        }
 
-					if (verbose) {
-						String stageoutdir = clientProperties.getStageoutDirectory();
-						if (StringUtils.isEmpty(stageoutdir)) {
-							try {
-								stageoutdir = new File(".").getCanonicalPath();
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-						System.out
-								.println("Trying to stageout job directory to "
-										+ stageoutdir + "...");
-					}
-					try {
-						stageoutFiles();
-						if ( verbose ) {
-							System.out.println("Stageout finished successfully.");
-						}
-					} catch (FileTransferException e) {
-						throw new ExecutionException(
-								"Couldn't stage out jobdirectory: "
-										+ e.getLocalizedMessage(), e);
-					}
-					try{
-						if ( clientProperties.cleanAfterStageOut() || forced_all_mode ) {
-							if ( verbose ) {
-								System.out.println("Deleting job & job directory...");
-							}
-							killAndCleanJob();
-							if ( verbose ) {
-								System.out.println("Job & job directory deleted.");
-							}
-						}
-					} catch (Exception e) {
-						throw new ExecutionException(
-								"Couldn't clean job & jobdirectory: "
-										+ e.getLocalizedMessage(), e);
-					}
+        DtoDataLocations ACClocations =  serviceInterface.getDataLocationsForVO("/ACC");
+        DtoDataLocations ARCSlocations =  serviceInterface.getDataLocationsForVO("/ARCS/NGAdmin");
+        DtoSubmissionLocations sublocs  =  serviceInterface.getAllSubmissionLocationsForFqan("/ARCS/NGAdmin");
 
-				} else if (status >= JobConstants.FINISHED_EITHER_WAY) {
+        for (DtoDataLocation loc: ACClocations.getDataLocations()){
+            System.out.println("ACC LOCATIONS ----- " + loc.getRooturl());
+        }
 
-					if (verbose) {
-						System.out
-								.println("Didn't stageout files since either job failed or didn't finish with exit code 0.");
-					}
+        for (DtoDataLocation loc: ARCSlocations.getDataLocations()){
+            System.out.println("ARCS LOCATIONS ----- " + loc.getRooturl());
+        }
 
-				}
-			}
+        for (DtoSubmissionLocationInfo loc: sublocs.getAllSubmissionLocations()){
+            System.out.println("NGADMIN Submission Location ------ "+loc.getSubmissionLocation());
+        }
 
-			return status;
+        DtoStringList locations =  serviceInterface.getStagingFileSystemForSubmissionLocation("small:ng2.canterbury.ac.nz");
+        for (String loc:locations.getStringList()){
+            System.out.println("Canterbury Small LOCATIONS ----- " + loc);
+        }
 
-		} catch (NoSuchJobException e) {
-			throw new ExecutionException("Couldn't find job with jobname \""
-					+ jobProperties.getJobname() + "\".", e);
-		}
-	}
+        String mode = clientProperties.getMode();
+        if (GrisuClientCommandlineProperties.SUBMIT_MODE_PARAMETER.equals(mode)) {
+            try {
+                executeSubmission();
+            } catch (Exception e) {
+                throw new ExecutionException("Couldn't submit job: " + e.getLocalizedMessage(), e);
+            }
+        } else if (GrisuClientCommandlineProperties.STATUS_MODE_PARAMETER.equals(mode)) {
 
-	private void executeWholeJobsubmissionCycle() throws ExecutionException {
+            int status = checkStatus();
+            System.out.println("Status for job " + jobProperties.getJobname() + ": " + JobConstants.translateStatus(status));
 
-		try {
-			executeSubmission();
-		} catch (Exception e) {
-			throw new ExecutionException("Couldn't submit job: "
-					+ e.getLocalizedMessage(), e);
-		}
+        } else if (GrisuClientCommandlineProperties.FORCE_CLEAN_MODE_PARAMETER.equals(mode)) {
 
-		joinJob();
+            killAndCleanJob();
 
-	}
+        } else if (GrisuClientCommandlineProperties.JOIN_MODE_PARAMETER.equals(mode)) {
 
-	private void joinJob() throws ExecutionException {
+            joinJob();
 
-		int status = -1;
-		int sleepTime = clientProperties.getRecheckInterval();
-		if (sleepTime <= 0) {
-			sleepTime = DEFAULT_SLEEP_TIME_IN_SECONDS;
-		}
-		do {
+        } else if (GrisuClientCommandlineProperties.ALL_MODE_PARAMETER.equals(mode)) {
 
-			status = checkStatus();
+            executeWholeJobsubmissionCycle();
 
-			if (status < JobConstants.FINISHED_EITHER_WAY) {
-				try {
-					Thread.sleep(sleepTime * 1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+        } else if (GrisuClientCommandlineProperties.FORCE_ALL_MODE_PARAMETER.equals(mode)) {
 
-		} while (status < JobConstants.FINISHED_EITHER_WAY);
+            forced_all_mode = true;
+            executeWholeJobsubmissionCycle();
 
-	}
+        } else if (GrisuClientCommandlineProperties.LOGIN_MODE_PARAMETER.equals(mode)) {
+            // do nothing - login already takes care of things
+        }
 
-	private int getStatus() {
+    }
 
-		int status = serviceInterface.getJobStatus(jobProperties.getJobname());
+    private void loginWithShibboleth(String username, String idp) {
+        try {
+            ConsoleReader consoleReader = new ConsoleReader();
+            System.out.println(clientProperties.getServiceInterfaceUrl());
+            char[] password = consoleReader.readLine("Please enter shibboleth password: ", new Character('*')).toCharArray();
+            System.out.println(username);
+            LoginManager.shiblogin(username, password,
+                    idp,
+                    clientProperties.getServiceInterfaceUrl(),
+                    true);
+        } catch (IOException ie) {
+            throw new RuntimeException(ie);
+        } catch (LoginException le) {
+            throw new RuntimeException(le);
+        }
+    }
 
-		return status;
-	}
+    private int checkStatus() throws ExecutionException {
 
-	private void killAndCleanJob() throws ExecutionException {
+        int status = getStatus();
+        String stringStatus = JobConstants.translateStatus(status);
 
-		try {
-			if (verbose) {
-				System.out
-						.println("Trying to kill possibly existing job with jobname \""
-								+ jobProperties.getJobname() + "\"");
-			}
-			serviceInterface.kill(jobProperties.getJobname(), true);
-			if (verbose) {
-				System.out.println("Killed and cleaned existing job \""
-						+ jobProperties.getJobname() + "\"");
-			}
-		} catch (NoSuchJobException e) {
-			// that's ok
-			if (verbose) {
-				System.out.println("No job killed because no job with jobname "
-						+ jobProperties.getJobname() + " existed.");
-			}
-		} catch (Exception e) {
-			throw new ExecutionException(
-					"Can't kill & clean existing job with jobname \""
-							+ jobProperties.getJobname() + "\"");
-		}
+        if (verbose) {
+            System.out.println("Status for job " + jobProperties.getJobname() + ": " + stringStatus);
+        }
 
-	}
+        if (clientProperties.stageOutResults() || forced_all_mode) {
 
-	private void executeSubmission() throws
-			NoSuchJobException,
-			JobSubmissionException, JobStagingException {
+            if (status == JobConstants.DONE || (status >= JobConstants.FINISHED_EITHER_WAY && forced_all_mode)) {
 
-		InputStream in = Gricli.class
-				.getResourceAsStream("/templates/generic_memory.xml");
-		String jsdlTemplateString = SeveralStringHelpers.fromInputStream(in);
+                if (verbose) {
+                    String stageoutdir = clientProperties.getStageoutDirectory();
+                    if (StringUtils.isEmpty(stageoutdir)) {
+                        try {
+                            stageoutdir = new File(".").getCanonicalPath();
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                    System.out.println("Trying to stageout job directory to " + stageoutdir + "...");
+                }
+
+                try {
+                    if (clientProperties.cleanAfterStageOut() || forced_all_mode) {
+                        if (verbose) {
+                            System.out.println("Deleting job & job directory...");
+                        }
+                        killAndCleanJob();
+                        if (verbose) {
+                            System.out.println("Job & job directory deleted.");
+                        }
+                    }
+                } catch (Exception e) {
+                    throw new ExecutionException(
+                            "Couldn't clean job & jobdirectory: " + e.getLocalizedMessage(), e);
+                }
+
+            } else if (status >= JobConstants.FINISHED_EITHER_WAY) {
+
+                if (verbose) {
+                    System.out.println("Didn't stageout files since either job failed or didn't finish with exit code 0.");
+                }
+
+            }
+
+
+        }
+        return status;
+    }
+
+    private void executeWholeJobsubmissionCycle() throws ExecutionException {
+
+        try {
+            executeSubmission();
+        } catch (Exception e) {
+            throw new ExecutionException("Couldn't submit job: " + e.getLocalizedMessage(), e);
+        }
+
+        joinJob();
+
+    }
+
+    private void joinJob() throws ExecutionException {
+
+        int status = -1;
+        int sleepTime = clientProperties.getRecheckInterval();
+        if (sleepTime <= 0) {
+            sleepTime = DEFAULT_SLEEP_TIME_IN_SECONDS;
+        }
+        do {
+
+            status = checkStatus();
+
+            if (status < JobConstants.FINISHED_EITHER_WAY) {
+                try {
+                    Thread.sleep(sleepTime * 1000);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+
+        } while (status < JobConstants.FINISHED_EITHER_WAY);
+
+    }
+
+    private int getStatus() {
+
+        int status = serviceInterface.getJobStatus(jobProperties.getJobname());
+
+        return status;
+    }
+
+    private void killAndCleanJob() throws ExecutionException {
+
+        try {
+            if (verbose) {
+                System.out.println("Trying to kill possibly existing job with jobname \"" + jobProperties.getJobname() + "\"");
+            }
+            serviceInterface.kill(jobProperties.getJobname(), true);
+            if (verbose) {
+                System.out.println("Killed and cleaned existing job \"" + jobProperties.getJobname() + "\"");
+            }
+        } catch (NoSuchJobException e) {
+            // that's ok
+            if (verbose) {
+                System.out.println("No job killed because no job with jobname " + jobProperties.getJobname() + " existed.");
+            }
+        } catch (Exception e) {
+            throw new ExecutionException(
+                    "Can't kill & clean existing job with jobname \"" + jobProperties.getJobname() + "\"");
+        }
+
+    }
+
+    private void executeSubmission() throws
+            NoSuchJobException,
+            JobStagingException {
+
+        InputStream in = Gricli.class.getResourceAsStream("/templates/generic_memory.xml");
+        String jsdlTemplateString = SeveralStringHelpers.fromInputStream(in);
 
 //		// this is a workaround because of a hsqldb bug which will cause the whole process to fail
 //		// for some reason if a job is submitted directly
 //		int status = serviceInterface.getJobStatus("nonexistentJobca");
-		
-		if (clientProperties.killPossiblyExistingJob()) {
-			try {
-				if (verbose) {
-					System.out
-							.println("Trying to kill possibly existing job with jobname \""
-									+ jobProperties.getJobname() + "\"");
-				}
-				serviceInterface.kill(jobProperties.getJobname(), true);
-				if (verbose) {
-					System.out.println("Killed and cleaned existing job \""
-							+ jobProperties.getJobname() + "\"");
-				}
-			} catch (NoSuchJobException e) {
-				// that's ok
-				if (verbose) {
-					System.out
-							.println("No job killed because no job with jobname "
-									+ jobProperties.getJobname() + " existed.");
-				}
-			} catch (Exception e) {
-				throw new RuntimeException(
-						"Can't kill & clean existing job with jobname \""
-								+ jobProperties.getJobname() + "\"");
-			}
-		}
 
-		if (verbose) {
-			System.out.println("Preparing job description...");
-		}
+        if (clientProperties.killPossiblyExistingJob()) {
+            try {
+                if (verbose) {
+                    System.out.println("Trying to kill possibly existing job with jobname \"" + jobProperties.getJobname() + "\"");
+                }
+                serviceInterface.kill(jobProperties.getJobname(), true);
+                if (verbose) {
+                    System.out.println("Killed and cleaned existing job \"" + jobProperties.getJobname() + "\"");
+                }
+            } catch (NoSuchJobException e) {
+                // that's ok
+                if (verbose) {
+                    System.out.println("No job killed because no job with jobname " + jobProperties.getJobname() + " existed.");
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(
+                        "Can't kill & clean existing job with jobname \"" + jobProperties.getJobname() + "\"");
+            }
+        }
 
-		String jsdl = jsdlTemplateString.replaceAll(JOBNAME_PLACEHOLDER,
-				jobProperties.getJobname());
-		jsdl = jsdl.replaceAll(APPLICATION_NAME_PLACEHOLDER, jobProperties
-				.getApplicationName());
-		jsdl = jsdl.replaceAll(EXECUTABLE_NAME_PLACEHOLDER, jobProperties
-				.getExecutablesName());
-		String[] args = jobProperties.getArguments();
-		StringBuffer argElements = new StringBuffer();
-		for (String arg : args) {
-			argElements.append("<Argument>" + arg + "</Argument>\n");
-		}
-		jsdl = jsdl.replaceAll(ARGUMENTS_PLACEHOLDER, argElements.toString());
-		//this will be calculated on the backend now.
-		jsdl = jsdl.replaceAll(WORKINGDIRECTORY_PLACEHOLDER, "");
-		jsdl = jsdl.replaceAll(STDOUT_PLACEHOLDER, jobProperties.getStdout());
-		jsdl = jsdl.replaceAll(STDERR_PLACEHOLDER, jobProperties.getStderr());
-		jsdl = jsdl.replaceAll(MODULE_PLACEHOLDER, jobProperties.getModule());
-		jsdl = jsdl.replaceAll(EMAIL_PLACEHOLDER, jobProperties
-				.getEmailAddress());
-		int noCpus = jobProperties.getNoCPUs();
-		int cpuTime = jobProperties.getWalltimeInSeconds() * noCpus;
-		int memory = jobProperties.getMemory();
-		jsdl = jsdl.replaceAll(TOTALCPUTIME_PLACEHOLDER, new Integer(cpuTime)
-				.toString());
-		jsdl = jsdl.replaceAll(TOTALCPUCOUNT_PLACEHOLDER, new Integer(noCpus)
-				.toString());
-		jsdl = jsdl.replaceAll(MEMORY_PLACEHOLDER, new Integer(memory).toString());
-		jsdl = jsdl.replaceAll(SUBMISSIONLOCATION_PLACEHOLDER, jobProperties
-				.getSubmissionLocation());
-		// this will be calculated on the backend now
-		jsdl = jsdl.replaceAll(USEREXECUTIONHOSTFS_PLACEHOLDER, "");
+        if (verbose) {
+            System.out.println("Preparing job description...");
+        }
 
-		if (verbose) {
-			System.out.println("Job description prepared:");
-			System.out.println(jsdl);
-			System.out.println("\nCreating job on grisu backend...");
-		}
+        String jsdl = jsdlTemplateString.replaceAll(JOBNAME_PLACEHOLDER,
+                jobProperties.getJobname());
+        jsdl = jsdl.replaceAll(APPLICATION_NAME_PLACEHOLDER, jobProperties.getApplicationName());
+        jsdl = jsdl.replaceAll(EXECUTABLE_NAME_PLACEHOLDER, jobProperties.getExecutablesName());
+        String[] args = jobProperties.getArguments();
+        StringBuffer argElements = new StringBuffer();
+        for (String arg : args) {
+            argElements.append("<Argument>" + arg + "</Argument>\n");
+        }
+        jsdl = jsdl.replaceAll(ARGUMENTS_PLACEHOLDER, argElements.toString());
+        //this will be calculated on the backend now.
+        jsdl = jsdl.replaceAll(WORKINGDIRECTORY_PLACEHOLDER, "");
+        jsdl = jsdl.replaceAll(STDOUT_PLACEHOLDER, jobProperties.getStdout());
+        jsdl = jsdl.replaceAll(STDERR_PLACEHOLDER, jobProperties.getStderr());
+        jsdl = jsdl.replaceAll(MODULE_PLACEHOLDER, jobProperties.getModule());
+        jsdl = jsdl.replaceAll(EMAIL_PLACEHOLDER, jobProperties.getEmailAddress());
+        int noCpus = jobProperties.getNoCPUs();
+        int cpuTime = jobProperties.getWalltimeInSeconds() * noCpus;
+        int memory = jobProperties.getMemory();
+        jsdl = jsdl.replaceAll(TOTALCPUTIME_PLACEHOLDER, new Integer(cpuTime).toString());
+        jsdl = jsdl.replaceAll(TOTALCPUCOUNT_PLACEHOLDER, new Integer(noCpus).toString());
+        jsdl = jsdl.replaceAll(MEMORY_PLACEHOLDER, new Integer(memory).toString());
+        jsdl = jsdl.replaceAll(SUBMISSIONLOCATION_PLACEHOLDER, jobProperties.getSubmissionLocation());
+        // this will be calculated on the backend now
+        jsdl = jsdl.replaceAll(USEREXECUTIONHOSTFS_PLACEHOLDER, "");
 
-		String jobname;
-		try {
-			jobname = serviceInterface.createJob(jsdl,
-							     jobProperties.getVO(),null);
-		} catch (JobPropertiesException e1) {
-			throw new RuntimeException(
-					"Can't create job on backend: "+e1.getLocalizedMessage());
+        if (verbose) {
+            System.out.println("Job description prepared:");
+            System.out.println(jsdl);
+            System.out.println("\nCreating job on grisu backend...");
+        }
 
-		}
-		if (verbose) {
-			System.out.println("Job created.");
-			System.out.println("Setting job description...");
-		}
+        String jobname;
+        try {
+            jobname = serviceInterface.createJob(jsdl,
+                    jobProperties.getVO(), null);
+        } catch (JobPropertiesException e1) {
+            throw new RuntimeException(
+                    "Can't create job on backend: " + e1.getLocalizedMessage());
 
-		if (verbose) {
-			System.out.println("Job description set.");
-		}
+        }
+        if (verbose) {
+            System.out.println("Job created.");
+            System.out.println("Setting job description...");
+        }
 
-		String inputFiles = null;
-		String[] inputFilesStrings = jobProperties.getInputFiles();
-		if (inputFilesStrings.length > 0) {
-			if (verbose) {
-				System.out.println("Uploading input files:");
-			}
-			inputFiles = stageInputFiles(inputFilesStrings, jobProperties
-					.getAbsoluteJobDir());
+        if (verbose) {
+            System.out.println("Job description set.");
+        }
 
-			if (verbose) {
-				System.out.println("Upload successful.");
-			} else {
-				if (verbose) {
-					System.out.println("No files to stagein.");
-				}
-			}
-		}
-		if (verbose) {
-			System.out.println("Submitting job...");
-		}
-		try {
-			serviceInterface.submitJob(jobname);
-		} catch (Exception e) {
-			throw new JobSubmissionException("Job submission failed: "
-					+ e.getLocalizedMessage(), e);
-		}
-		if (verbose) {
-			System.out.println("Job submitted.");
-			System.out
-					.println("Adding job properties for this job on the grisu backend...");
-		}
+        String inputFiles = null;
+        String[] inputFilesStrings = jobProperties.getInputFiles();
+        if (inputFilesStrings.length > 0) {
+            if (verbose) {
+                System.out.println("Uploading input files:");
+            }
+            inputFiles = stageInputFiles(inputFilesStrings, jobProperties.getAbsoluteJobDir());
 
-		// TODO not sure what to do here, this is because the jobproperties
-		// value in the db is a varchar(2000)
-		if (!StringUtils.isEmpty(inputFiles) && inputFiles.length() <= 253) {
-			serviceInterface.addJobProperty(jobname, Constants.INPUT_FILE_URLS_KEY
-					, inputFiles);
-		}
+            if (verbose) {
+                System.out.println("Upload successful.");
+            } else {
+                if (verbose) {
+                    System.out.println("No files to stagein.");
+                }
+            }
+        }
+        if (verbose) {
+            System.out.println("Submitting job...");
+        }
+        try {
+            serviceInterface.submitJob(jobname);
+        } catch (Exception e) {
+            throw new RuntimeException("Job submission failed: " + e.getLocalizedMessage(), e);
+        }
+        if (verbose) {
+            System.out.println("Job submitted.");
+            System.out.println("Adding job properties for this job on the grisu backend...");
+        }
 
-		if (verbose) {
-			System.out.println("Job submission finished successfully.");
-		}
-	}
+        // TODO not sure what to do here, this is because the jobproperties
+        // value in the db is a varchar(2000)
+        if (!StringUtils.isEmpty(inputFiles) && inputFiles.length() <= 253) {
+            serviceInterface.addJobProperty(jobname, Constants.INPUT_FILE_URLS_KEY, inputFiles);
+        }
 
-	/**
-	 * Uploads local files via the grisu backend to a target directory.
-	 * 
-	 * @param uris
-	 *            the uris of the local files to upload
-	 * @param targetDirectory
-	 *            the target directory
-	 * @return all the urls of the staged files, seperated with a comma
-	 */
-	public String stageInputFiles(String[] uris, String targetDirectory)
-			throws JobStagingException {
+        if (verbose) {
+            System.out.println("Job submission finished successfully.");
+        }
+    }
 
-		StringBuffer inputFiles = new StringBuffer();
-		for (String uri : uris) {
+    /**
+     * Uploads local files via the grisu backend to a target directory.
+     *
+     * @param uris
+     *            the uris of the local files to upload
+     * @param targetDirectory
+     *            the target directory
+     * @return all the urls of the staged files, seperated with a comma
+     */
+    public String stageInputFiles(String[] uris, String targetDirectory)
+            throws JobStagingException {
 
-			DataSource dataSource = null;
-			String fileName = null;
-			try {
-				File file = new File(new URI(uri));
-				
-				if ( ! file.exists() ) {
-					throw new JobStagingException("Local file "+uri+" does not exist.");
-				}
-				
-				dataSource = new FileDataSource(file);
-				fileName = file.getName();
-			} catch (URISyntaxException e) {
-				throw new JobStagingException("Couldn't stage in file: " + uri
-						+ ": Wrong uri format.", e);
-			}
+        StringBuffer inputFiles = new StringBuffer();
+        for (String uri : uris) {
 
-			try {
-				if (verbose) {
-					System.out.println("Uploading file " + fileName + " to "
-							+ targetDirectory);
-				}
-				String targetFile = serviceInterface.upload(new DataHandler(dataSource),
-						targetDirectory + "/" + fileName);
-				inputFiles.append(targetFile + ",");
-			} catch (Exception e) {
-				throw new JobStagingException("Couldn't stage in file: " + uri
-						+ ": " + e.getLocalizedMessage(), e);
-			}
-		}
+            DataSource dataSource = null;
+            String fileName = null;
+            try {
+                File file = new File(new URI(uri));
 
-		return inputFiles.toString();
-	}
+                if (!file.exists()) {
+                    throw new JobStagingException("Local file " + uri + " does not exist.");
+                }
 
-	public void stageoutFiles() throws NoSuchJobException,
-			FileTransferException {
+                dataSource = new FileDataSource(file);
+                fileName = file.getName();
+            } catch (URISyntaxException e) {
+                throw new JobStagingException("Couldn't stage in file: " + uri + ": Wrong uri format.", e);
+            }
 
-		if (verbose) {
-			System.out
-					.println("Getting job details to find out url of jobdirectory...");
-		}
+            try {
+                if (verbose) {
+                    System.out.println("Uploading file " + fileName + " to " + targetDirectory);
+                }
+                String targetFile = serviceInterface.upload(new DataHandler(dataSource),
+                        targetDirectory + "/" + fileName);
+                inputFiles.append(targetFile + ",");
+            } catch (Exception e) {
+                throw new JobStagingException("Couldn't stage in file: " + uri + ": " + e.getLocalizedMessage(), e);
+            }
+        }
 
-		Map<String, String> jobDetails = serviceInterface
-				.getAllJobProperties(jobProperties.getJobname()).propertiesAsMap();
+        return inputFiles.toString();
+    }
 
-		String jobDirectory = jobDetails
-				.get(Constants.JOBDIRECTORY_KEY);
+    public void stageoutFiles() {
+        /**	if (verbose) {
+        System.out
+        .println("Getting job details to find out url of jobdirectory...");
+        }
 
-		GrisuFileObject source = null;
-		try {
-			source = getEnvironmentManager().getFileManager().getFileObject(
-					jobDirectory);
-		} catch (URISyntaxException e) {
-			throw new FileTransferException("Could not transfer jobdirectory "
-					+ jobDirectory + ": " + e.getLocalizedMessage());
-		}
+        DtoJob jobDetails = serviceInterface.getJob(jobProperties.getJobname());
 
-		File stageOutDir = null;
-		String stageoutDirPath = clientProperties.getStageoutDirectory();
+        String jobDirectory = jobDetails
+        .readJobProperty(Constants.JOBDIRECTORY_KEY);
 
-		if (StringUtils.isEmpty(stageoutDirPath)) {
-			stageOutDir = new File(".");
-		} else {
-			stageOutDir = new File(stageoutDirPath);
-		}
+        GrisuFileObject source = null;
+        try {
+        source = getEnvironmentManager().getFileManager().getFileObject(
+        jobDirectory);
+        } catch (URISyntaxException e) {
+        throw new FileTransferException("Could not transfer jobdirectory "
+        + jobDirectory + ": " + e.getLocalizedMessage());
+        }
 
-		GrisuFileObject target = null;
-		target = getEnvironmentManager().getFileManager().getFileObject(
-				stageOutDir.toURI());
+        File stageOutDir = null;
+        String stageoutDirPath = clientProperties.getStageoutDirectory();
 
-		FileTransfer transfer = new FileTransfer(
-				new GrisuFileObject[] { source }, target,
-				FileTransfer.DONT_OVERWRITE);
-		transfer.addListener(this);
-		transfer.startTransfer(true);
+        if (StringUtils.isEmpty(stageoutDirPath)) {
+        stageOutDir = new File(".");
+        } else {
+        stageOutDir = new File(stageoutDirPath);
+        }
 
-	}
+        GrisuFileObject target = null;
+        target = getEnvironmentManager().getFileManager().getFileObject(
+        stageOutDir.toURI());
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
+        FileTransfer transfer = new FileTransfer(
+        new GrisuFileObject[] { source }, target,
+        FileTransfer.DONT_OVERWRITE);
+        //transfer.addListener(this);
+        transfer.startTransfer(true);
+         **/
+    }
 
-		Gricli client = null;
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
 
-		try {
-			client = new Gricli(args);
-		} catch (LoginException e){
-			System.err.println("Error with serviceInterface: "
-					+ e.getLocalizedMessage());
-			System.exit(1);
-		} catch (ServiceInterfaceException e) {
-			System.err.println("Error with serviceInterface: "
-					+ e.getLocalizedMessage());
-			System.exit(1);
-		}
-		catch (IOException e) {
-			System.err.println("Could not read password input: "
-					   + e.getLocalizedMessage());
-			System.exit(1);
-		}
+        Gricli client = null;
+
+        try {
+            client = new Gricli(args);
+        } catch (LoginException e) {
+            System.err.println("Error with serviceInterface: " + e.getLocalizedMessage());
+            System.exit(1);
+        } catch (ServiceInterfaceException e) {
+            System.err.println("Error with serviceInterface: " + e.getLocalizedMessage());
+            System.exit(1);
+        } catch (IOException e) {
+            System.err.println("Could not read password input: " + e.getLocalizedMessage());
+            System.exit(1);
+        }
 
 
-		try {
-			client.start();
-		} catch (ExecutionException e) {
-			System.err.println("Can't execute command: "
-					+ e.getLocalizedMessage());
-			System.exit(1);
-		}
+        try {
+            client.start();
+        } catch (ExecutionException e) {
+            System.err.println("Can't execute command: " + e.getLocalizedMessage());
+            System.exit(1);
+        }
 
-	}
+    }
 
-	public void fileTransferEventOccured(FileTransferEvent e) {
+    /* public void fileTransferEventOccured(FileTransferEvent e) {
 
-		if (verbose) {
-			System.out.println(e.getTransfer().getLatestTransferMessage());
-		}
+    if (verbose) {
+    System.out.println(e.getTransfer().getLatestTransferMessage());
+    }
 
-	}
-
+    } */
 }

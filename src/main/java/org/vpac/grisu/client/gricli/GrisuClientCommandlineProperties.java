@@ -21,18 +21,16 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 	static final Logger myLogger = Logger
 			.getLogger(Gricli.class.getName());
 
-//	private final static String PARAMETER = "PARAMETER";
 
 	// common options
 	public final static String CONFIG_FILE_PATH_OPTION = "config";
 	public final static String SERVICE_INTERFACE_URL_OPTION = "serviceInterfaceUrl";
-//	public final static String READ_PASSWORD_FROM_STDIN = "readPasswordFromStdin";
 	public final static String MODE_OPTION = "mode";
 	public final static String FORCE_ALL_MODE_PARAMETER = "force-all";
 	public final static String ALL_MODE_PARAMETER = "all";
 	public final static String SUBMIT_MODE_PARAMETER = "submit";
 	public final static String STATUS_MODE_PARAMETER = "check";
-	// public final static String STAGEOUT_MODE_PARAMETER = "stageout";
+	public final static String LOGIN_MODE_PARAMETER = "login";
 	public final static String JOIN_MODE_PARAMETER = "join";
 		
 	public final static String VERBOSE_OPTION = "verbose";
@@ -46,7 +44,7 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 	public final static String TIME_TO_WAIT_BEFORE_RECHECK_STATUS = "statusRecheckInterval";
 	public final static String STAGEOUT_OPTION = "stageout";
 	public final static String CLEAN_OPTION = "clean";
-	public final static String FORCE_CLEAN_MODE = "force-clean";
+	public final static String FORCE_CLEAN_MODE_PARAMETER = "force-clean";
 
 
 	// submit options
@@ -60,6 +58,7 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 	private Set<String> failedParameters = null;
 
 	private CommandLine line = null;
+
 	private HelpFormatter formatter = new HelpFormatter();
 	private Options options = null;
 
@@ -80,46 +79,35 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 		this.options = getOptions();
 		parseCLIargs(args);
 	}
+
+
 	
-	/* (non-Javadoc)
-	 * @see org.vpac.grisu.client.view.grisuclient.GrisuClientProperties#getStageoutDirectory()
-	 */
 	public String getStageoutDirectory() {
 		return line.getOptionValue(STAGEOUTDIRECTORY_OPTION);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.vpac.grisu.client.view.grisuclient.GrisuClientProperties#getServiceInterfaceUrl()
-	 */
 	public String getServiceInterfaceUrl() {
-		return serviceInterfaceUrl;
+            	serviceInterfaceUrl = line.getOptionValue(SERVICE_INTERFACE_URL_OPTION);
+                if (serviceInterfaceUrl == null){
+                    serviceInterfaceUrl = getConfigOption(SERVICE_INTERFACE_URL_OPTION);
+                }
+                return serviceInterfaceUrl;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.vpac.grisu.client.view.grisuclient.GrisuClientProperties#getMode()
-	 */
 	public String getMode() {
 		return mode;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.vpac.grisu.client.view.grisuclient.GrisuClientProperties#stageOutResults()
-	 */
 	public boolean stageOutResults() {
 		boolean stageout = line.hasOption(STAGEOUT_OPTION);
 		return  (stageout || "true".equals(getConfigOption(STAGEOUT_OPTION)));
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.vpac.grisu.client.view.grisuclient.GrisuClientProperties#cleanAfterStageOut()
-	 */
+
 	public boolean cleanAfterStageOut() {
 		return clean;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.vpac.grisu.client.view.grisuclient.GrisuClientProperties#verbose()
-	 */
 	public boolean verbose() {
 		boolean verbose = line.hasOption(VERBOSE_OPTION);
 		return  (verbose || "true".equals(getConfigOption(VERBOSE_OPTION)));
@@ -134,21 +122,16 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 		boolean useLocalProxy = line.hasOption(USE_LOCAL_PROXY_OPTION);
 		return  (useLocalProxy || "true".equals(getConfigOption(USE_LOCAL_PROXY_OPTION)));
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.vpac.grisu.client.view.grisuclient.GrisuClientProperties#killPossiblyExistingJob()
-	 */
+
 	public boolean killPossiblyExistingJob() {
 		boolean kill = line.hasOption(KILL_POSSIBLY_EXISTING_JOB);
 		return  (kill || "true".equals(getConfigOption(KILL_POSSIBLY_EXISTING_JOB)));
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.vpac.grisu.client.view.grisuclient.GrisuClientProperties#getRecheckInterval()
-	 */
 	public int getRecheckInterval() {
 		return recheckInterval;
 	}
+
 	
 	private void parseCLIargs(String[] args) {
 		
@@ -189,13 +172,8 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 		}
 
 		if (!line.hasOption(MODE_OPTION)) {
-			// System.err
-			// .println("Please specify the mode you want to use: all|submit|status|stageout|clean|join. \"all\" is the default mode.");
-			// formatter.printHelp("grisu-batch", this.options);
-			// System.exit(1);
 			mode = ALL_MODE_PARAMETER;
 		} else {
-			// for the different modes
 			mode = line.getOptionValue(MODE_OPTION);
 		}
 
@@ -209,14 +187,17 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 
 		} else if (JOIN_MODE_PARAMETER.equals(mode)) {
 
-			checkJoinModeParameters();
-
+		       checkJoinModeParameters();
+		} else if (LOGIN_MODE_PARAMETER.equals(mode)) {
+		    checkLoginModeParameters();
+		    return;
 
 		} else if (ALL_MODE_PARAMETER.equals(mode) || FORCE_ALL_MODE_PARAMETER.equals(mode)) {
 
 			checkAllModeParameters();
 
-
+		} else if (FORCE_CLEAN_MODE_PARAMETER.equals(mode)) {
+				// all we need is job name
 		} else {
 
 			System.err.println("Mode " + mode + " not supported.");
@@ -288,6 +269,17 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 
 	}
 
+        private void checkLoginModeParameters(){
+	    if (!line.hasOption(CommandlineProperties.SHIB_USERNAME_OPTION)) {
+		System.err.println("please specify shibboleth username");
+		System.exit(1);
+	    }
+	    if (!line.hasOption(CommandlineProperties.SHIB_IDP_OPTION)) {
+		System.err.println("please specify identity provider");
+		System.exit(1);
+	    }
+	} 
+
 	private void checkSubmitModeParameters() {
 
 		/*if (!line
@@ -310,17 +302,6 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 			System.exit(1);
 		}
 
-		/*if (!line.hasOption(CommandlineProperties.WALLTIME_OPTION)) {
-			System.err.println("Please specify the walltime.");
-			formatter.printHelp("grisu-client", this.options);
-			System.exit(1);
-		}*/
-
-		/* if (!line.hasOption(CommandlineProperties.CPUS_OPTION)) {
-			System.err.println("Please specify the number of cpus.");
-			formatter.printHelp("grisu-client", this.options);
-			System.exit(1);
-		} */
 
 		if (!line.hasOption(CommandlineProperties.INPUTFILEPATH_OPTION)) {
 			myLogger.debug("No input files to stage for this job.");
@@ -340,24 +321,8 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 			
 		}
 
-		/*try {
-			Integer.parseInt(line.getOptionValue(CommandlineProperties.WALLTIME_OPTION));
-		} catch (NumberFormatException e) {
-			System.err.println("Please use an integer for the walltime");
-			formatter.printHelp("grisu-client", this.options);
-			System.exit(1);
-			}*/
-
-		/*try {
-			Integer.parseInt(line
-					.getOptionValue(CommandlineProperties.CPUS_OPTION));
-		} catch (NumberFormatException e) {
-			System.err.println("Please use an integer for the no. of cpus");
-			formatter.printHelp("grisu-client", this.options);
-			System.exit(1);
-			}*/
-		
 	}
+
 
 	private void checkStatusModeParameters() {
 
@@ -369,14 +334,6 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 
 		if (line.hasOption(STAGEOUT_OPTION)) {
 
-//			if (!line.hasOption(OUTPUTFILENAMES_OPTION)) {
-//				myLogger
-//						.debug("No files to stageout specified. Using \"stdout.txt\"");
-//				outputFileNames = new String[] { "stdout.txt" };
-//			} else {
-//				outputFileNames = line.getOptionValue(OUTPUTFILENAMES_OPTION)
-//						.split(",");
-//			}
 			String stageOutDirectoryStr = getConfigOption(STAGEOUTDIRECTORY_OPTION);
 
 			if (!line.hasOption(STAGEOUTDIRECTORY_OPTION) && (stageOutDirectoryStr == null)) {
@@ -424,20 +381,20 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 		checkSubmitModeParameters();
 		checkStatusModeParameters();
 		checkStageoutModeParameters();
-//		checkCleanModeParameters();
-
 	}
 
-	/* (non-Javadoc)
-	 * @see org.vpac.grisu.client.view.grisuclient.GrisuClientProperties#getCommandLine()
-	 */
 	public CommandLine getCommandLine() {
 		return line;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.vpac.grisu.client.view.grisuclient.GrisuClientProperties#getMyProxyUsername()
-	 */
+        public String getShibIdp(){
+	    return line.getOptionValue(CommandlineProperties.SHIB_IDP_OPTION);
+        } 
+    
+        public String getShibUsername(){
+	    return line.getOptionValue(CommandlineProperties.SHIB_USERNAME_OPTION);
+        } 
+
 	public String getMyProxyUsername() {
 		
 		String username = getConfigOption(MYPROXY_USERNAME_OPTION);
@@ -482,7 +439,7 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 		Option serviceInterfaceUrl = createOptionWithArg(SERVICE_INTERFACE_URL_OPTION,"i",
 					     "the serviceinterface to connect to (optional, default: https://grisu.vpac.org/grisu-ws/services/grisu)");
 		Option mode = createOptionWithArg(MODE_OPTION,"m",
-			      "the mode you want to use: all|submit|check|join|force-clean (optional, default: all)");
+			      "the mode you want to use: all|submit|check|join|force-clean|login (optional, default: all)");
 		Option baseName = createOptionWithArg(CommandlineProperties.JOBNAME,"n",
                                   "the name for the job (required)");
 		Option myproxy_username = createOptionWithArg(MYPROXY_USERNAME_OPTION, "myproxy username (required unless local proxy is used)");
@@ -514,6 +471,8 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 		Option generateUniqueJobName = createOption(CommandlineProperties.GENERATE_UNIQUE_JOBNAME_OPTION,
 						     "with this option, grisu client ensures that the name for the job will always be unique.\n"+
 						     "the "+CommandlineProperties.JOBNAME+ " is still required and will be used as a prefix to this job");
+		Option shibUsername = createOptionWithArg(CommandlineProperties.SHIB_USERNAME_OPTION, "u","shibboleth username");
+		Option shibIdp  = createOptionWithArg(CommandlineProperties.SHIB_IDP_OPTION, "shibboleth identity provider");
 
 		options = new Options();
 		options.addOption(config);
@@ -527,7 +486,6 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 		options.addOption(submissionLocation);
 		options.addOption(vo);
 		options.addOption(baseName);
-//		options.addOption(readPasswordFromStdin);
 		options.addOption(command);
 		options.addOption(baseInputFilePath);
 		options.addOption(walltime);
@@ -540,9 +498,10 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 		options.addOption(recheckIntervall);
 		options.addOption(stageout);
 		options.addOption(clean);
-//		options.addOption(stageOutFileNames);
 		options.addOption(stageOutDirectory);
 		options.addOption(generateUniqueJobName);
+		options.addOption(shibUsername);
+		options.addOption(shibIdp);
 
 		return options;
 

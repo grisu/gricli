@@ -46,4 +46,13 @@ public class TestClientPropertiesSubmit implements GrisuClientProperties {
 		return false;
 	}
 
+       public String getShibUsername(){
+	   return null;
+       }
+
+       public String getShibIdp(){
+	   return null;
+       }
+
+
 }
