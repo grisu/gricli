@@ -15,7 +15,6 @@ import jline.ConsoleReader;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.vpac.grisu.client.control.EnvironmentManager;
 import org.vpac.grisu.control.JobConstants;
 import org.vpac.grisu.control.ServiceInterface;
 import org.vpac.grisu.control.exceptions.JobPropertiesException;
@@ -83,7 +82,6 @@ public class Gricli {
 	private GrisuClientProperties clientProperties = null;
 	private JobProperties jobProperties = null;
 	private ServiceInterface serviceInterface = null;
-	private EnvironmentManager em = null;
 	private boolean verbose = false;
 
 	private boolean forced_all_mode = false;
@@ -356,13 +354,13 @@ public class Gricli {
 
 	}
 
-	private EnvironmentManager getEnvironmentManager() {
+/**	private EnvironmentManager getEnvironmentManager() {
 
 		if (em == null) {
 			em = new EnvironmentManager(serviceInterface);
 		}
 		return em;
-	}
+	} **/
 
 	private int getStatus() {
 
@@ -556,27 +554,6 @@ public class Gricli {
 		if (serviceInterface == null) {
 			System.err.println("Could not find valid serviceInterface. Are you logged in?");
 			System.exit(1);
-		}
-
-		DtoDataLocations ACClocations =  serviceInterface.getDataLocationsForVO("/ACC");
-		DtoDataLocations ARCSlocations =  serviceInterface.getDataLocationsForVO("/ARCS/NGAdmin");
-		DtoSubmissionLocations sublocs  =  serviceInterface.getAllSubmissionLocationsForFqan("/ARCS/NGAdmin");
-
-		for (DtoDataLocation loc: ACClocations.getDataLocations()){
-			System.out.println("ACC LOCATIONS ----- " + loc.getRooturl());
-		}
-
-		for (DtoDataLocation loc: ARCSlocations.getDataLocations()){
-			System.out.println("ARCS LOCATIONS ----- " + loc.getRooturl());
-		}
-
-		for (DtoSubmissionLocationInfo loc: sublocs.getAllSubmissionLocations()){
-			System.out.println("NGADMIN Submission Location ------ "+loc.getSubmissionLocation());
-		}
-
-		DtoStringList locations =  serviceInterface.getStagingFileSystemForSubmissionLocation("small:ng2.canterbury.ac.nz");
-		for (String loc:locations.getStringList()){
-			System.out.println("Canterbury Small LOCATIONS ----- " + loc);
 		}
 
 		String mode = clientProperties.getMode();
