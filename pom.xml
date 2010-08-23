@@ -62,43 +62,10 @@
 		<dependency>
 			<groupId>au.org.arcs.auth</groupId>
 			<artifactId>arcs-gsi</artifactId>
-			<version>1.2-SNAPSHOT</version>
+			<version>1.2</version>
 			<scope>compile</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>com.jgoodies</groupId>
-			<artifactId>forms</artifactId>
-			<version>1.2.1</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.swinglabs</groupId>
-			<artifactId>swingx</artifactId>
-			<version>1.6</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.jidesoft</groupId>
-			<artifactId>jide-oss</artifactId>
-			<version>2.7.3</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>furbelow</groupId>
-			<artifactId>furbelow</artifactId>
-			<version>1.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.kenai</groupId>
-			<artifactId>validationAPI</artifactId>
-			<version>0.4</version>
-			<scope>compile</scope>
-		</dependency>
 
 
 <!--		<dependency>
