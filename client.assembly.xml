@@ -1,5 +1,5 @@
 <assembly>
-	<id>gricli</id>
+	<id>binary</id>
 	<formats>
 		<format>jar</format>
 	</formats>
