@@ -1,25 +1,25 @@
 package org.vpac.grisu.client.gricli;
 
-import org.vpac.grisu.control.ServiceInterface;
+public class SimpleJobProperties extends AbstractJobProperties implements
+		JobProperties {
 
-public class SimpleJobProperties extends AbstractJobProperties implements JobProperties {
-	
-	private String absoluteJobDir = null;
-	private String applicationName = null;
-	private String[] arguments = null;
-	private String emailAddress = null;
-	private String executable = null;
-	private String[] inputFiles = null;
-	private String jobName = null;
-	private String module = null;
-	private int noCPUs = -1;
-	private int memory = 0;
-	private String stdout = null;
-	private String stderr = null;
-	private String submissionLocation = null;
-	private String vo = null;
-	private int walltime = -1;
+	private final String absoluteJobDir = null;
+	private final String applicationName = null;
+	private final String[] arguments = null;
+	private final String emailAddress = null;
+	private final String executable = null;
+	private final String[] inputFiles = null;
+	private final String jobName = null;
+	private final String module = null;
+	private final int noCPUs = -1;
+	private final int memory = 0;
+	private final String stdout = null;
+	private final String stderr = null;
+	private final String submissionLocation = null;
+	private final String vo = null;
+	private final int walltime = -1;
 
+	@Override
 	public String getAbsoluteJobDir() {
 		return absoluteJobDir;
 	}
@@ -48,16 +48,16 @@ public class SimpleJobProperties extends AbstractJobProperties implements JobPro
 		return jobName;
 	}
 
+	public int getMemory() {
+		return memory;
+	}
+
 	public String getModule() {
 		return module;
 	}
 
 	public int getNoCPUs() {
 		return noCPUs;
-	}
-
-	public int getMemory(){
-		return memory;
 	}
 
 	public String getStderr() {
@@ -72,6 +72,7 @@ public class SimpleJobProperties extends AbstractJobProperties implements JobPro
 		return submissionLocation;
 	}
 
+	@Override
 	public String getUserExecutionHostFs() {
 		// TODO Auto-generated method stub
 		return null;
@@ -87,6 +88,7 @@ public class SimpleJobProperties extends AbstractJobProperties implements JobPro
 		return 0;
 	}
 
+	@Override
 	public String getWorkingDirectory() {
 		// TODO Auto-generated method stub
 		return null;

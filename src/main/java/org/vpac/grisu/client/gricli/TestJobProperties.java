@@ -6,11 +6,12 @@ import org.vpac.grisu.control.ServiceInterface;
 
 public class TestJobProperties extends AbstractJobProperties implements
 		JobProperties {
-	
+
 	private String subLoc = null;
 	private String vo = null;
-	
-	public TestJobProperties(ServiceInterface serviceInterface, String subLoc, String vo) {
+
+	public TestJobProperties(ServiceInterface serviceInterface, String subLoc,
+			String vo) {
 		this.serviceInterface = serviceInterface;
 		this.subLoc = subLoc;
 		this.vo = vo;
@@ -21,7 +22,7 @@ public class TestJobProperties extends AbstractJobProperties implements
 	}
 
 	public String[] getArguments() {
-		return new String[]{"test1.xxx"};
+		return new String[] { "test1.xxx" };
 	}
 
 	public String getEmailAddress() {
@@ -33,12 +34,18 @@ public class TestJobProperties extends AbstractJobProperties implements
 	}
 
 	public String[] getInputFiles() {
-		return new String[]{new File("/home/markus/tmp/test1.xxx").toURI().toString()};
+		return new String[] { new File("/home/markus/tmp/test1.xxx").toURI()
+				.toString() };
 	}
 
 	public String getJobname() {
-		
-		return ("AUTO_TEST_JOB_"+subLoc).replaceAll("\\s|;|'|\"|,|\\$|\\?|#", "_");
+
+		return ("AUTO_TEST_JOB_" + subLoc).replaceAll("\\s|;|'|\"|,|\\$|\\?|#",
+				"_");
+	}
+
+	public int getMemory() {
+		return 1024;
 	}
 
 	public String getModule() {
@@ -47,10 +54,6 @@ public class TestJobProperties extends AbstractJobProperties implements
 
 	public int getNoCPUs() {
 		return 1;
-	}
-
-	public int getMemory(){
-		return 1024;
 	}
 
 	public String getStderr() {

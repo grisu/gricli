@@ -6,6 +6,10 @@ public class TestClientPropertiesSubmit implements GrisuClientProperties {
 		return true;
 	}
 
+	public boolean debug() {
+		return false;
+	}
+
 	public String getMode() {
 		return "submit";
 	}
@@ -22,6 +26,14 @@ public class TestClientPropertiesSubmit implements GrisuClientProperties {
 		return "https://ngportaldev.vpac.org/grisu-ws/services/grisu";
 	}
 
+	public String getShibIdp() {
+		return null;
+	}
+
+	public String getShibUsername() {
+		return null;
+	}
+
 	public String getStageoutDirectory() {
 		return null;
 	}
@@ -34,25 +46,12 @@ public class TestClientPropertiesSubmit implements GrisuClientProperties {
 		return false;
 	}
 
-	public boolean verbose() {
-		return false;
-	}
-
-	public boolean debug() {
-		return false;
-	}
-
 	public boolean useLocalProxy() {
 		return false;
 	}
 
-       public String getShibUsername(){
-	   return null;
-       }
-
-       public String getShibIdp(){
-	   return null;
-       }
-
+	public boolean verbose() {
+		return false;
+	}
 
 }
