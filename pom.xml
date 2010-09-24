@@ -97,7 +97,7 @@
 	<archive>
 	  <index>true</index>
 	  <manifest>
-	    <mainClass>org.vpac.grisu.client.gricli.Gricli</mainClass>
+	    <mainClass>org.bestgrid.grisu.client.gricli.Gricli</mainClass>
 	  </manifest>
 	  <manifestEntries>
 	    <Class-Path>bcprov.jar bcprov-jdk15-143.jar local-backend.jar grisu-client-dependencies.jar
