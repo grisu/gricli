@@ -1,7 +1,7 @@
 package org.bestgrid.grisu.client.gricli.command;
 
 import org.bestgrid.grisu.client.gricli.GricliEnvironment;
-import org.bestgrid.grisu.client.gricli.GricliException;
+import org.bestgrid.grisu.client.gricli.GricliRuntimeException;
 
 public class SetGlobalCommand implements GricliCommand{
     private final String global;
@@ -12,7 +12,7 @@ public class SetGlobalCommand implements GricliCommand{
         this.value = value;
     }
 
-    public GricliEnvironment execute(GricliEnvironment env) throws GricliException {
+    public GricliEnvironment execute(GricliEnvironment env) throws GricliRuntimeException {
         env.put(global, value);
         return env;
     }

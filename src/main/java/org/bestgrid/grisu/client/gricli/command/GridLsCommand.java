@@ -1,7 +1,7 @@
 package org.bestgrid.grisu.client.gricli.command;
 
 import org.bestgrid.grisu.client.gricli.GricliEnvironment;
-import org.bestgrid.grisu.client.gricli.GricliException;
+import org.bestgrid.grisu.client.gricli.GricliRuntimeException;
 import org.vpac.grisu.control.ServiceInterface;
 import org.vpac.grisu.control.exceptions.RemoteFileSystemException;
 import org.vpac.grisu.model.dto.DtoFile;
@@ -9,7 +9,7 @@ import org.vpac.grisu.model.dto.DtoFolder;
 
 public class GridLsCommand implements GricliCommand{
 
-    public GricliEnvironment execute(GricliEnvironment env) throws GricliException {
+    public GricliEnvironment execute(GricliEnvironment env) throws GricliRuntimeException {
         ServiceInterface si = env.getServiceInterface();
         try {
             String url = "gsiftp://" + env.get("host") + env.get("gdir");
@@ -23,7 +23,7 @@ public class GridLsCommand implements GricliCommand{
             }
 
         } catch (RemoteFileSystemException ex) {
-            throw new GricliException(ex);
+            throw new GricliRuntimeException(ex);
         }
         return env;
     }

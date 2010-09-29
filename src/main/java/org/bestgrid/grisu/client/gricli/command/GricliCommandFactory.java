@@ -2,6 +2,7 @@ package org.bestgrid.grisu.client.gricli.command;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import org.bestgrid.grisu.client.gricli.GricliEnvironment;
 import org.bestgrid.grisu.client.gricli.InvalidCommandException;
 import org.bestgrid.grisu.client.gricli.SyntaxException;
 import org.bestgrid.grisu.client.gricli.UnknownCommandException;
@@ -10,6 +11,8 @@ import jline.ArgumentCompletor;
 import jline.SimpleCompletor;
 import jline.Completor;
 import jline.NullCompletor;
+import org.apache.commons.lang.StringUtils;
+import org.bestgrid.grisu.client.gricli.GricliRuntimeException;
 
 public class GricliCommandFactory {
 
@@ -19,7 +22,6 @@ public class GricliCommandFactory {
      * simple auto-completion based on keywords
     */
     public Completor createCompletor() {
-        boolean hasChainedCreators = true;
         HashMap<String, CommandCreator> tempMap = creatorMap;
         ArrayList<ChainedCreator> creators = new ArrayList<ChainedCreator>();
         ArrayList<ChainedCreator> creators2 = new ArrayList<ChainedCreator>();
@@ -34,14 +36,8 @@ public class GricliCommandFactory {
             }
 
         }
+
         completors.add(new SimpleCompletor(keywords.toArray(new String[]{})));
-
-        for (String k : keywords) {
-            System.out.println(k);
-        }
-        System.out.println("----------------");
-
-
 
         creators2 = (ArrayList<ChainedCreator>) creators.clone();
         while (creators2.size() > 0) {
@@ -56,12 +52,8 @@ public class GricliCommandFactory {
                         creators.add((ChainedCreator) cr);
                     }
                 }
-                for (String k : keywords) {
-                    System.out.println(k);
-                }
-                System.out.println("----------------");
-                completors.add(new SimpleCompletor(keywords.toArray(new String[]{})));
             }
+            completors.add(new SimpleCompletor(keywords.toArray(new String[]{})));
             creators2 = (ArrayList<ChainedCreator>) creators.clone();
         }
 
@@ -70,21 +62,26 @@ public class GricliCommandFactory {
     }
 
     public GricliCommandFactory(){
-        creatorMap.put("login", new LoginCreator());
+        creatorMap.put("login", new FixedArgsCreator(1,LocalLoginCommand.class));
+        creatorMap.put("ilogin", fhelp(1, InteractiveLoginCommand.class,"Intractive login"));
+
         ChainedCreator printCreator = new ChainedCreator("print");
-        printCreator.add("jobs", new PrintJobsCreator());
-        printCreator.add("job", new PrintJobCreator());
-        printCreator.add("queues", new PrintQueuesCreator());
-        printCreator.add("hosts", new PrintHostsCreator());
-        printCreator.add("globals", new PrintGlobalsCreator());
+        printCreator.add("jobs", new AliasCreator(this, new String[] {"print","job","*","status"}));
+        printCreator.add("job", new HelpCreator(new PrintJobCreator(),
+                "Usage: print job <jobname>\n Prints <jobname> details"));
+        printCreator.add("queues", new FixedArgsCreator(1,PrintQueuesCommand.class));
+        printCreator.add("hosts", new FixedArgsCreator(0, PrintHostsCommand.class));
+        printCreator.add("globals", new FixedArgsCreator(0,PrintGlobalsCommand.class));
+        printCreator.add("apps", fhelp(0, PrintAppsCommand.class,"prints all available applications on the grid"));
         creatorMap.put("print", printCreator);
 
         ChainedCreator setCreator = new ChainedCreator("set");
-        setCreator.add("global", new SetGlobalCreator());
+        setCreator.add("global", new FixedArgsCreator(2, SetGlobalCommand.class));
         creatorMap.put("set", setCreator);
 
         ChainedCreator submitCreator = new ChainedCreator("submit");
-        submitCreator.add("cmd", new SubmitCmdCreator());
+        submitCreator.add("cmd", new FixedArgsCreator(1, SubmitCmdCommand.class));
+        submitCreator.add("sweep", new FixedArgsCreator(1, SubmitSweepCommand.class));
         creatorMap.put("submit", submitCreator);
 
         ChainedCreator killCreator = new ChainedCreator("kill");
@@ -95,8 +92,31 @@ public class GricliCommandFactory {
         destroyCreator.add("job", new KillJobCreator(true));
         creatorMap.put("destroy", destroyCreator);
 
-        creatorMap.put("gls", new GridLsCreator());
+        ChainedCreator addCreator = new ChainedCreator("add");
+        addCreator.add("global", new FixedArgsCreator(2,AddGlobalCommand.class));
+        creatorMap.put("add", addCreator);
 
+        ChainedCreator clearCreator = new ChainedCreator("clear");
+        clearCreator.add("global", new FixedArgsCreator(1,ClearListCommand.class));
+        creatorMap.put("clear", clearCreator);
+
+        ChainedCreator downloadCreator = new ChainedCreator("download");
+        downloadCreator.add("job", new FixedArgsCreator(1, DownloadJobCommand.class));
+        creatorMap.put("download", downloadCreator);
+
+        creatorMap.put("gls", fhelp(0,GridLsCommand.class,"gls\n list files in current grid directory"));
+        creatorMap.put("attach", fhelp(1, AttachCommand.class,
+                "attach\n usage: attach <filelist>\n"+
+                "Attaches files to current job. <filelist> supports unix-style regular expressions"));
+        creatorMap.put("get", fhelp(1,GetCommand.class,
+                "get\n usage: get <filename>\n downloads file file from grid space"));
+        creatorMap.put("help", new HelpCommandCreator());
+        creatorMap.put("cd", new AliasCreator(this,new String[] {"set","global","dir"}));
+
+    }
+
+    private CommandCreator fhelp(int n, Class<? extends GricliCommand> command, String helpMessage){
+        return new HelpCreator(new FixedArgsCreator(n, command), helpMessage);
     }
 
     public GricliCommand create(String[] args) throws SyntaxException{
@@ -120,25 +140,10 @@ public class GricliCommandFactory {
     private abstract class CommandCreator {
         public CommandCreator() {};
         public abstract GricliCommand create(String[] args) throws SyntaxException;
-    }
 
-    /*
-     * login <serviceInterfaceUrl>
-     */
-
-    private class LoginCreator extends CommandCreator {
-
-        @Override
-        public GricliCommand create(String[] args) throws InvalidCommandException{
-            if (args.length == 0){
-                return new LocalLoginCommand(null);
-            }
-            else{
-                return new LocalLoginCommand(args[0]);
-            }
-
+        public String help(){
+            return "";
         }
-
     }
 
     /*
@@ -164,6 +169,20 @@ public class GricliCommandFactory {
         }
 
         @Override
+        public String help(){
+            String help  = "";
+            for (String keyword: creatorMap.keySet()){
+                help += this.commandName + " " + keyword + ":\n";
+                String subhelp = creatorMap.get(keyword).help();
+                String[] lines = subhelp.split("\n");
+                for (String line: lines){
+                    help += "    " + line + "\n";
+                }
+            }
+            return help;
+        }
+
+        @Override
         public GricliCommand create(String[] args) throws SyntaxException {
             if (args.length < 1){
                 throw new InvalidCommandException( this.commandName + " command incomplete ");
@@ -177,115 +196,6 @@ public class GricliCommandFactory {
             System.arraycopy(args,1,subargs,0,subargs.length);
             return sub.create(subargs);
 
-        }
-
-    }
-
-    /**
-     * print jobs
-     */
-    private class PrintJobsCreator extends CommandCreator{
-
-        @Override
-        public GricliCommand create(String[] args) throws SyntaxException {
-            return new PrintJobsCommand();
-        }
-        
-    }
-
-    /**
-     * print hosts
-     */
-
-    private class PrintHostsCreator extends CommandCreator {
-
-        @Override
-        public GricliCommand create(String[] args) throws SyntaxException {
-            return new PrintHostsCommand();
-        }
-
-    }
-
-    /**
-     * print queues <queue>
-     */
-    private class PrintQueuesCreator extends CommandCreator {
-
-        @Override
-        public GricliCommand create(String[] args) throws SyntaxException {
-            String fqan = (args.length > 0 ) ? args[0] : null;
-            return new PrintQueuesCommand(fqan);
-        }
-
-    }
-
-    /**
-     * print job <jobname>
-     */
-    private class PrintJobCreator extends CommandCreator {
-
-        @Override
-        public GricliCommand create(String[] args) throws SyntaxException {
-            if (args.length == 0){
-                throw new InvalidCommandException("job name not specified");
-            }
-            return new PrintJobCommand(args[0]);
-        }
-
-    }
-
-    /*
-     * set global <var> <value>
-     */
-
-    private class SetGlobalCreator extends CommandCreator{
-
-        @Override
-        public GricliCommand create(String[] args) throws SyntaxException {
-            if (args.length != 2){
-                throw new InvalidCommandException("usage: set global <global> <value>");
-            } else {
-                return new SetGlobalCommand(args[0],args[1]);
-            }
-        }
-
-    }
-    /*
-     * submit cmd <cmd>
-     */
-    private class SubmitCmdCreator extends CommandCreator {
-
-        @Override
-        public GricliCommand create(String[] args) throws SyntaxException {
-            if (args.length != 1){
-                throw new InvalidCommandException("usage: submit cmd <cmd>");
-            }
-            return new SubmitCmdCommand(args[0]);
-        }
-
-    }
-
-    /*
-     * print globals
-     */
-    private class PrintGlobalsCreator extends CommandCreator {
-
-        @Override
-        public GricliCommand create(String[] args) throws SyntaxException {
-            return new PrintGlobalsCommand();
-        }
-
-    }
-
-    /*
-     * gls
-     */
-
-    private class GridLsCreator extends CommandCreator {
-
-        @Override
-        public GricliCommand create(String[] args) throws SyntaxException {
-            return new GridLsCommand();
         }
 
     }
@@ -310,5 +220,129 @@ public class GricliCommandFactory {
         }
     }
 
+    private class FixedArgsCreator extends CommandCreator {
+        private final int number;
+        private final Class<? extends GricliCommand> command;
+
+        public FixedArgsCreator(int number, Class<? extends GricliCommand> command){
+            this.number = number;
+            this.command = command;
+        }
+
+        @Override
+        public GricliCommand create(String[] args) throws SyntaxException {
+            if (args.length != number){
+                throw new InvalidCommandException("command needs " + number + " arguments");
+            }
+            try {
+                return (GricliCommand) command.getConstructors()[0].newInstance(args);
+            } catch (Exception ex) {
+                throw new InvalidCommandException(command.getCanonicalName() + " command cannot be created");
+            }
+        }
+
+    }
+
+    /**
+     * help decorator
+     */
+    private class HelpCreator extends CommandCreator {
+        private final CommandCreator c;
+        private final String helpMessage;
+        public HelpCreator(CommandCreator c, String helpMessage){
+            this.c = c;
+            this.helpMessage = helpMessage;
+        }
+
+        @Override
+        public GricliCommand create(String[] args) throws SyntaxException {
+            return c.create(args);
+        }
+
+        @Override
+        public String help(){
+            return helpMessage;
+        }
+
+    }
+
+    private class HelpCommandCreator extends CommandCreator {
+
+        @Override
+        public GricliCommand create(String[] args) throws SyntaxException {
+            return new HelpCommand(args);
+        }
+
+    }
+
+    private class HelpCommand implements GricliCommand {
+        private final String[] args;
+
+        public HelpCommand(String[] args){
+            this.args = args;
+        }
+
+        public GricliEnvironment execute(GricliEnvironment env) throws GricliRuntimeException {
+
+            if (args.length == 0){
+                for (CommandCreator c: creatorMap.values()){
+                    System.out.println(c.help());
+                }
+            } else {
+                CommandCreator c2 = creatorMap.get(args[0]);
+                for (int i=0; i < args.length; i++){
+                    if (c2 == null){
+                        System.out.println("command " + StringUtils.join(args," ") + " does not exist");
+                        return env;
+                    } else if (i == args.length - 1 || c2.getClass() != ChainedCreator.class){
+                        System.out.println(c2.help());
+                    } else {
+                        ChainedCreator cc = (ChainedCreator)c2;
+                        c2 = cc.creatorMap.get(args[i+1]);
+                    }
+
+                }
+            }
+
+            return env;
+        }
+
+    }
+
+    private class PrintJobCreator extends CommandCreator {
+
+        @Override
+        public GricliCommand create(String[] args) throws SyntaxException {
+            if (args.length  == 1 ){
+                return new PrintJobCommand(args[0],null);
+            } else if (args.length == 2 ){
+                return new PrintJobCommand(args[0], args[1]);
+            } else {
+                throw new InvalidCommandException("invalid number of arguments");
+            }
+
+        }
+
+    }
+
+    private class AliasCreator extends CommandCreator {
+        private final String[] alias;
+        private final GricliCommandFactory f;
+
+        public AliasCreator(GricliCommandFactory f,String[] alias){
+            this.alias = alias;
+            this.f = f;
+        }
+
+        @Override
+        public GricliCommand create(String[] args) throws SyntaxException {
+            String[] resultArgs = new String[alias.length + args.length];
+            System.arraycopy(alias, 0, resultArgs, 0, alias.length);
+            System.arraycopy(args, 0, resultArgs, alias.length, args.length);
+
+            return f.create(resultArgs);
+        }
+
+    }
 
 }

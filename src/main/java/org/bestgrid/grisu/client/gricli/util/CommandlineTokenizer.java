@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class CommandlineTokenizer {
 
@@ -25,6 +23,8 @@ public class CommandlineTokenizer {
         st.wordChars('@','@');
         st.wordChars('_','_');
         st.wordChars('.','.');
+        st.wordChars('*','*');
+        st.wordChars('?','?');
         st.whitespaceChars(' ', ' ');
 
         ArrayList<String> argumentList = new ArrayList<String>();

@@ -1,7 +1,7 @@
 package org.bestgrid.grisu.client.gricli.command;
 
 import org.bestgrid.grisu.client.gricli.GricliEnvironment;
-import org.bestgrid.grisu.client.gricli.GricliException;
+import org.bestgrid.grisu.client.gricli.GricliRuntimeException;
 import org.vpac.grisu.control.ServiceInterface;
 import org.vpac.grisu.frontend.control.login.LoginException;
 import org.vpac.grisu.frontend.control.login.LoginManager;
@@ -13,7 +13,7 @@ public class LocalLoginCommand implements GricliCommand{
         this.siUrl = siUrl;
     }
 
-    public GricliEnvironment execute(GricliEnvironment env) throws GricliException{
+    public GricliEnvironment execute(GricliEnvironment env) throws GricliRuntimeException{
         try {
             if (siUrl == null){
                 siUrl = env.getServiceInterfaceUrl();
@@ -22,7 +22,7 @@ public class LocalLoginCommand implements GricliCommand{
             env.setServiceInterface(serviceInterface);
             return env;
         } catch (LoginException ex) {
-            throw new GricliException(ex);
+            throw new GricliRuntimeException(ex);
         }
     }
 
