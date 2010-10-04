@@ -10,22 +10,25 @@ import org.vpac.grisu.model.dto.DtoVersionInfo;
 
 public class PrintAppsCommand implements GricliCommand {
 
-	@Override
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		ServiceInterface si = env.getServiceInterface();
-		for (String app: si.getAllAvailableApplications(null).asArray()){
-			DtoApplicationInfo info = si.getSubmissionLocationsPerVersionOfApplication(app);
+		for (String app : si.getAllAvailableApplications(null).asArray()) {
+			DtoApplicationInfo info = si
+					.getSubmissionLocationsPerVersionOfApplication(app);
 			String appName = info.getName();
 			List<DtoVersionInfo> versions = info.getAllVersions();
-			
-			for (DtoVersionInfo version: versions){
+
+			for (DtoVersionInfo version : versions) {
 				String versionTag = version.getName();
-				String[] queues  = 
-					si.getSubmissionLocationsForApplicationAndVersion(appName, versionTag).asSubmissionLocationStrings();
-				
-				for (String queue: queues){
-					System.out.println(appName + " " + versionTag + " " + queue);
+				String[] queues = si
+						.getSubmissionLocationsForApplicationAndVersion(
+								appName, versionTag)
+						.asSubmissionLocationStrings();
+
+				for (String queue : queues) {
+					System.out
+							.println(appName + " " + versionTag + " " + queue);
 				}
 			}
 		}
