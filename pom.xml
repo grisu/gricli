@@ -58,12 +58,6 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>au.org.arcs.auth</groupId>
-			<artifactId>arcs-gsi</artifactId>
-			<version>1.2</version>
-			<scope>compile</scope>
-		</dependency>
 
 	</dependencies>
 
