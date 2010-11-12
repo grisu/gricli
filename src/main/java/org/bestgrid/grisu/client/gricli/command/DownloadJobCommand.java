@@ -30,7 +30,7 @@ public class DownloadJobCommand implements GricliCommand {
 			throws RemoteFileSystemException, IOException {
 		Set<DtoFileObject> files = df.getChildren();
 		for (DtoFileObject file : files) {
-			DataHandler dh = si.download(file.getMainUrl());
+			DataHandler dh = si.download(file.getUrl());
 			InputStream in = dh.getInputStream();
 			FileOutputStream fout = new FileOutputStream(FilenameUtils.concat(
 					dst.getCanonicalPath(), file.getName()));
