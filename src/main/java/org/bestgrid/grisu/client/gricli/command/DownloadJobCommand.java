@@ -16,7 +16,7 @@ import org.bestgrid.grisu.client.gricli.util.ServiceInterfaceUtils;
 import org.vpac.grisu.control.ServiceInterface;
 import org.vpac.grisu.control.exceptions.NoSuchJobException;
 import org.vpac.grisu.control.exceptions.RemoteFileSystemException;
-import org.vpac.grisu.model.dto.DtoFileObject;
+import org.vpac.grisu.model.dto.GridFile;
 import org.vpac.grisu.model.dto.DtoJob;
 
 public class DownloadJobCommand implements GricliCommand {
@@ -26,10 +26,10 @@ public class DownloadJobCommand implements GricliCommand {
 		this.jobFilter = jobFilter;
 	}
 
-	private void download(ServiceInterface si, DtoFileObject df, File dst)
+	private void download(ServiceInterface si, GridFile df, File dst)
 			throws RemoteFileSystemException, IOException {
-		Set<DtoFileObject> files = df.getChildren();
-		for (DtoFileObject file : files) {
+		Set<GridFile> files = df.getChildren();
+		for (GridFile file : files) {
 			DataHandler dh = si.download(file.getUrl());
 			InputStream in = dh.getInputStream();
 			FileOutputStream fout = new FileOutputStream(FilenameUtils.concat(
@@ -43,8 +43,8 @@ public class DownloadJobCommand implements GricliCommand {
 			in.close();
 		}
 
-		Set<DtoFileObject> folders = df.getChildren();
-		for (DtoFileObject folder : folders) {
+		Set<GridFile> folders = df.getChildren();
+		for (GridFile folder : folders) {
 			File dst2 = new File(FilenameUtils.concat(dst.getCanonicalPath(),
 					folder.getName()));
 			dst2.mkdir();

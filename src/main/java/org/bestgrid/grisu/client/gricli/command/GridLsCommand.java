@@ -4,7 +4,7 @@ import org.bestgrid.grisu.client.gricli.GricliEnvironment;
 import org.bestgrid.grisu.client.gricli.GricliRuntimeException;
 import org.vpac.grisu.control.ServiceInterface;
 import org.vpac.grisu.control.exceptions.RemoteFileSystemException;
-import org.vpac.grisu.model.dto.DtoFileObject;
+import org.vpac.grisu.model.dto.GridFile;
 
 public class GridLsCommand implements GricliCommand {
 
@@ -13,8 +13,8 @@ public class GridLsCommand implements GricliCommand {
 		ServiceInterface si = env.getServiceInterface();
 		try {
 			String url = "gsiftp://" + env.get("host") + env.get("gdir");
-			DtoFileObject folder = si.ls(url, 1);
-			for (DtoFileObject file : folder.getChildren()) {
+			GridFile folder = si.ls(url, 1);
+			for (GridFile file : folder.getChildren()) {
 				if (file.isFolder()) {
 					System.out.println(file.getName());
 				} else {
