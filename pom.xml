@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<artifactId>grisu-clients</artifactId>
 		<groupId>org.vpac.grisu</groupId>
@@ -21,7 +22,7 @@
 	</repositories>
 
 	<description>Grisu commandline client</description>
-	
+
 	<dependencies>
 		<!-- the main grisu dependency. -->
 		<dependency>
@@ -62,50 +63,85 @@
 	</dependencies>
 
 	<build>
-	  <plugins>
-	    <plugin>
-	      <groupId>org.apache.maven.plugins</groupId>
-	      <artifactId>maven-compiler-plugin</artifactId>
-	      <configuration>
-		<source>1.5</source>
-		<target>1.5</target>
-	      </configuration>
-	    </plugin>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
 
-<!--	    you can disable the assembly plugin if you want, your builds will be
-	    faster I find it quite handy to have maven build an executable jar,
-	    though
-	    -->
-<plugin>
-  <artifactId>maven-assembly-plugin</artifactId>
-  <executions>
-    <execution>
-      <phase>package</phase>
-      <configuration>
+			<!-- you can disable the assembly plugin if you want, your builds will 
+				be faster I find it quite handy to have maven build an executable jar, though -->
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<configuration>
 
-	<descriptors>
-	  <descriptor>client.assembly.xml</descriptor>
-	</descriptors>
-	<finalName>gricli</finalName>
-	<archive>
-	  <index>true</index>
-	  <manifest>
-	    <mainClass>org.bestgrid.grisu.client.gricli.Gricli</mainClass>
-	  </manifest>
-	  <manifestEntries>
-	    <Class-Path>bcprov.jar bcprov-jdk15-143.jar local-backend.jar grisu-client-dependencies.jar
+							<descriptors>
+								<descriptor>client.assembly.xml</descriptor>
+							</descriptors>
+							<finalName>gricli</finalName>
+							<archive>
+								<index>true</index>
+								<manifest>
+									<mainClass>org.bestgrid.grisu.client.gricli.Gricli</mainClass>
+								</manifest>
+								<manifestEntries>
+									<Class-Path>bcprov.jar bcprov-jdk15-143.jar local-backend.jar
+										grisu-client-dependencies.jar
 	    </Class-Path>
-	  </manifestEntries>
-	</archive>
+								</manifestEntries>
+							</archive>
 
-      </configuration>
-      <goals>
-	<goal>attached</goal>
-      </goals>
-    </execution>
-  </executions>
-</plugin>
+						</configuration>
+						<goals>
+							<goal>attached</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
-	</plugins>
-</build>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>sign</id>
+			<activation>
+				<property>
+					<name>BUILD_NUMBER</name>
+				</property>
+			</activation>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jarsigner-plugin</artifactId>
+						<version>1.2</version>
+						<executions>
+							<execution>
+								<id>sign</id>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<alias>grisu</alias>
+							<storepass>FxAKs3p6</storepass>
+							<keypass>FxAKs3p6</keypass>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+
+		</profile>
+	</profiles>
+
 </project>
