@@ -109,7 +109,7 @@
 		</plugins>
 	</build>
 
-	<profiles>
+<!--	<profiles>
 		<profile>
 			<id>sign</id>
 			<activation>
@@ -143,5 +143,6 @@
 
 		</profile>
 	</profiles>
+-->
 
 </project>
