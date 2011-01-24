@@ -1,4 +1,4 @@
- package org.vpac.grisu.client.gricli;
+package org.vpac.grisu.client.gricli;
 
 public class ExecutionException extends Exception {
 

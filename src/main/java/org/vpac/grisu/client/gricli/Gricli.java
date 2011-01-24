@@ -309,13 +309,12 @@ public class Gricli {
 		final int noCpus = jobProperties.getNoCPUs();
 		final int cpuTime = jobProperties.getWalltimeInSeconds() * noCpus;
 		long memory = jobProperties.getMemory();
-                memory *= 1024 * 1024; // memory specified in MB
+		memory *= 1024 * 1024; // memory specified in MB
 		jsdl = jsdl.replaceAll(TOTALCPUTIME_PLACEHOLDER,
 				new Integer(cpuTime).toString());
 		jsdl = jsdl.replaceAll(TOTALCPUCOUNT_PLACEHOLDER,
 				new Integer(noCpus).toString());
-		jsdl = jsdl.replaceAll(MEMORY_PLACEHOLDER,
-				new Long(memory).toString());
+		jsdl = jsdl.replaceAll(MEMORY_PLACEHOLDER, new Long(memory).toString());
 		jsdl = jsdl.replaceAll(SUBMISSIONLOCATION_PLACEHOLDER,
 				jobProperties.getSubmissionLocation());
 		// this will be calculated on the backend now

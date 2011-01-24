@@ -7,20 +7,21 @@ import org.vpac.grisu.frontend.control.login.LoginException;
 import org.vpac.grisu.frontend.control.login.LoginManager;
 
 public class InteractiveLoginCommand implements GricliCommand {
-    private final String backend;
+	private final String backend;
 
-    public InteractiveLoginCommand(String backend){
-        this.backend = backend;
-    }
+	public InteractiveLoginCommand(String backend) {
+		this.backend = backend;
+	}
 
-    public GricliEnvironment execute(GricliEnvironment env) throws GricliRuntimeException {
-        try {
-            ServiceInterface si = LoginManager.loginCommandline(backend);
-            env.setServiceInterface(si);
-            return env;
-        } catch (LoginException ex) {
-           throw new GricliRuntimeException(ex);
-        }
-    }
+	public GricliEnvironment execute(GricliEnvironment env)
+			throws GricliRuntimeException {
+		try {
+			ServiceInterface si = LoginManager.loginCommandline(backend);
+			env.setServiceInterface(si);
+			return env;
+		} catch (LoginException ex) {
+			throw new GricliRuntimeException(ex);
+		}
+	}
 
 }

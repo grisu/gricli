@@ -7,22 +7,24 @@ import org.vpac.grisu.control.ServiceInterface;
 import org.vpac.grisu.control.exceptions.RemoteFileSystemException;
 
 public class GetCommand implements GricliCommand {
-    private final String file;
+	private final String file;
 
-    public GetCommand(String file){
-        this.file = file;
-    }
+	public GetCommand(String file) {
+		this.file = file;
+	}
 
-    public GricliEnvironment execute(GricliEnvironment env) throws GricliRuntimeException {
-        String url = "gsiftp://" + env.get("host")  + env.get("gdir") + "/" + file;
-        ServiceInterface si = env.getServiceInterface();
-        try {
-            DataHandler result = si.download(url);
+	public GricliEnvironment execute(GricliEnvironment env)
+			throws GricliRuntimeException {
+		String url = "gsiftp://" + env.get("host") + env.get("gdir") + "/"
+				+ file;
+		ServiceInterface si = env.getServiceInterface();
+		try {
+			DataHandler result = si.download(url);
 
-        } catch (RemoteFileSystemException ex) {
-            throw new GricliRuntimeException(ex);
-        }
-        return env;
-    }
+		} catch (RemoteFileSystemException ex) {
+			throw new GricliRuntimeException(ex);
+		}
+		return env;
+	}
 
 }
