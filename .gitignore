@@ -1,0 +1,10 @@
+.classpath
+.project
+target
+.settings
+*.log
+grisu-client-gwt/war/WEB-INF/classes/
+grisu-client-gwt/war/WEB-INF/lib/
+*~
+.pydevproject
+*rebel.xml
