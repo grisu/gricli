@@ -1,11 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<artifactId>grisu-clients</artifactId>
-		<groupId>org.vpac.grisu</groupId>
-		<version>0.3-beta4-SNAPSHOT</version>
-	</parent>
 	<modelVersion>4.0.0</modelVersion>
+	<groupId>grisu.frontend</groupId>
 	<artifactId>gricli</artifactId>
 	<name>gricli</name>
 
@@ -21,12 +17,18 @@
 		</repository>
 	</repositories>
 
+	<version>0.3-beta5-SNAPSHOT</version>
 	<description>Grisu commandline client</description>
+
+	<properties>
+		<grisu.dependency.version>0.3-beta5-SNAPSHOT</grisu.dependency.version>
+	</properties>
+
 
 	<dependencies>
 		<!-- the main grisu dependency. -->
 		<dependency>
-			<groupId>org.vpac.grisu</groupId>
+			<groupId>grisu.frontend</groupId>
 			<artifactId>grisu-client</artifactId>
 			<version>${grisu.dependency.version}</version>
 			<type>jar</type>
@@ -52,7 +54,7 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.vpac.grisu</groupId>
+			<groupId>grisu.backend</groupId>
 			<artifactId>grisu-core</artifactId>
 			<version>${grisu.dependency.version}</version>
 			<type>jar</type>
@@ -109,40 +111,12 @@
 		</plugins>
 	</build>
 
-<!--	<profiles>
-		<profile>
-			<id>sign</id>
-			<activation>
-				<property>
-					<name>BUILD_NUMBER</name>
-				</property>
-			</activation>
-
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jarsigner-plugin</artifactId>
-						<version>1.2</version>
-						<executions>
-							<execution>
-								<id>sign</id>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<alias>grisu</alias>
-							<storepass>FxAKs3p6</storepass>
-							<keypass>FxAKs3p6</keypass>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-
-		</profile>
-	</profiles>
--->
+	<!-- <profiles> <profile> <id>sign</id> <activation> <property> <name>BUILD_NUMBER</name> 
+		</property> </activation> <build> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
+		<artifactId>maven-jarsigner-plugin</artifactId> <version>1.2</version> <executions> 
+		<execution> <id>sign</id> <goals> <goal>sign</goal> </goals> </execution> 
+		</executions> <configuration> <alias>grisu</alias> <storepass>FxAKs3p6</storepass> 
+		<keypass>FxAKs3p6</keypass> </configuration> </plugin> </plugins> </build> 
+		</profile> </profiles> -->
 
 </project>
