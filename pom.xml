@@ -91,7 +91,7 @@
 							<archive>
 								<index>true</index>
 								<manifest>
-									<mainClass>org.bestgrid.grisu.client.gricli.Gricli</mainClass>
+									<mainClass>grisu.gricli.Gricli</mainClass>
 								</manifest>
 								<manifestEntries>
 									<Class-Path>bcprov.jar bcprov-jdk15-143.jar local-backend.jar
