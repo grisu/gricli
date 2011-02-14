@@ -7,21 +7,56 @@
 
 	<repositories>
 		<repository>
-			<id>ARCS</id>
-			<url>http://code.arcs.org.au/nexus/content/groups/public</url>
+			<id>bestgrid.public.release</id>
+			<url>http://dev.ceres.auckland.ac.nz/nexus/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>daily</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
 		</repository>
 		<repository>
-			<id>ARCS Snapshots</id>
-			<url>http://code.arcs.org.au/nexus/content/groups/public-snapshots
+			<id>bestgrid.public.snapshot</id>
+			<url>http://dev.ceres.auckland.ac.nz/nexus/content/groups/public-snapshots/
 			</url>
+			<releases>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</snapshots>
 		</repository>
 	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<name>BeSTGRID Releases Repository</name>
+			<id>bestgrid.release</id>
+			<url>http://dev.ceres.auckland.ac.nz/nexus/content/repositories/releases
+			</url>
+		</repository>
+		<snapshotRepository>
+			<id>bestgrid.snapshot</id>
+			<name>BeSTGRID Snapshots Repository</name>
+			<url>http://dev.ceres.auckland.ac.nz/nexus/content/repositories/snapshots
+			</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 	<version>0.3-beta5-SNAPSHOT</version>
 	<description>Grisu commandline client</description>
 
 	<properties>
-		<grisu.dependency.version>0.3-beta5-SNAPSHOT</grisu.dependency.version>
+		<grisu.dependency.version>0.3.2</grisu.dependency.version>
 	</properties>
 
 
@@ -58,12 +93,28 @@
 			<artifactId>grisu-core</artifactId>
 			<version>${grisu.dependency.version}</version>
 			<type>jar</type>
-			<scope>compile</scope>
+			<scope>provided</scope>
 		</dependency>
 
 
 	</dependencies>
 
+	<issueManagement>
+		<system>Github</system>
+		<url>https://github.com/grisu/gricli/issues</url>
+	</issueManagement>
+	<ciManagement>
+		<system>Hudson</system>
+		<url>http://dev.ceres.auckland.ac.nz/hudson/job/Gricli-SNAPSHOT</url>
+	</ciManagement>
+	<scm>
+		<connection>scm:git:git://github.com/grisu/gricli.git</connection>
+		<developerConnection>scm:git:git@github.com:grisu/gricli.git</developerConnection>
+		<url>https://github.com/grisu/gricli</url>
+	</scm>
+	<organization>
+		<name>Grisu open source project</name>
+	</organization>
 	<build>
 		<plugins>
 			<plugin>
@@ -111,12 +162,37 @@
 		</plugins>
 	</build>
 
-	<!-- <profiles> <profile> <id>sign</id> <activation> <property> <name>BUILD_NUMBER</name> 
-		</property> </activation> <build> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
-		<artifactId>maven-jarsigner-plugin</artifactId> <version>1.2</version> <executions> 
-		<execution> <id>sign</id> <goals> <goal>sign</goal> </goals> </execution> 
-		</executions> <configuration> <alias>grisu</alias> <storepass>FxAKs3p6</storepass> 
-		<keypass>FxAKs3p6</keypass> </configuration> </plugin> </plugins> </build> 
-		</profile> </profiles> -->
+	<profiles>
+		<profile>
+			<id>sign</id>
+			<activation>
+				<property>
+					<name>BUILD_NUMBER</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jarsigner-plugin</artifactId>
+						<version>1.2</version>
+						<executions>
+							<execution>
+								<id>sign</id>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<alias>grisu</alias>
+							<storepass>FxAKs3p6</storepass>
+							<keypass>FxAKs3p6</keypass>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>
