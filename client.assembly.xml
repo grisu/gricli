@@ -12,8 +12,8 @@
 			<useProjectArtifact>true</useProjectArtifact>
 			<outputDirectory>/</outputDirectory>
 			<includes>
-				<include>org.vpac.grisu:gricli</include>
-				<include>org.vpac.grisu:grisu-core</include>
+				<include>grisu.frontend:gricli</include>
+<!--				<include>grisu.backend:grisu-core</include>-->
 			</includes>
 			<excludes>
 				<exclude>junit:junit</exclude>
