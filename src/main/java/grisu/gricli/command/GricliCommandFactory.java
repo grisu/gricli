@@ -32,6 +32,7 @@ public class GricliCommandFactory {
 		commands.add(NopCommand.class);
 		commands.add(PrintGlobalsCommand.class);
 		commands.add(PrintQueuesCommand.class);
+		commands.add(PrintAppsCommand.class);
 		commands.add(PrintHostsCommand.class);
 		commands.add(PrintJobCommand.class);
 		commands.add(SubmitCmdCommand.class);
@@ -67,19 +68,17 @@ public class GricliCommandFactory {
 					simpleCompletors.add(new SimpleCompletor(new String[] {token}));
 				}
 				
-				// specialized argument annotations
+				// specialised argument annotations
 				if (cons.isAnnotationPresent(AutoComplete.class)){
-					System.out.println("auto complete annotation present!");
 					Class<? extends Completor>[] argumentCompletors = cons.getAnnotation(AutoComplete.class).completors();				
 					for (Class<? extends Completor> argumentCompletor: argumentCompletors){
 						try {
 							simpleCompletors.add(argumentCompletor.newInstance());
-							System.out.println("argument completor added!");
 						} catch (InstantiationException e) {
-							// TODO Auto-generated catch block
+							// cannot happen 
 							e.printStackTrace();
 						} catch (IllegalAccessException e) {
-							// TODO Auto-generated catch block
+							// cannot happen
 							e.printStackTrace();
 						}
 					}
@@ -105,7 +104,7 @@ public class GricliCommandFactory {
 			Constructor<? extends GricliCommand> cons = commandMap.get(StringUtils.join(commandWords," "));
 			if (cons != null){
 				try { // any exception at this stage will be implementation bug
-					return cons.newInstance(arguments);
+					return cons.newInstance((Object[])arguments);
 				} catch (Exception e) {				
 					e.printStackTrace();
 				} 				

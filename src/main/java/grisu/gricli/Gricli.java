@@ -25,6 +25,7 @@ public class Gricli {
 	private GricliEnvironment env;
 	private GricliCommand command;
 
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws IOException {
 
 		// stop javaxws logging
@@ -54,6 +55,9 @@ public class Gricli {
 
 			}
 			String line = reader.readLine(prompt);
+			if (line==null){
+				break;
+			}
 			runCommand(line, f, env);
 		}
 	}

@@ -5,6 +5,7 @@ import grisu.control.exceptions.NoSuchJobException;
 import grisu.control.exceptions.RemoteFileSystemException;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
+import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.util.ServiceInterfaceUtils;
 import grisu.model.dto.DtoJob;
 import grisu.model.dto.GridFile;
@@ -24,6 +25,7 @@ public class DownloadJobCommand implements GricliCommand {
 	private final String jobFilter;
 
 	@SyntaxDescription(command="download job")
+	@AutoComplete(completors={JobnameCompletor.class})
 	public DownloadJobCommand(String jobFilter) {
 		this.jobFilter = jobFilter;
 	}
