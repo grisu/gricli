@@ -13,7 +13,12 @@ import org.apache.commons.lang.StringUtils;
 
 public class AttachCommand implements GricliCommand {
 	private String glob;
+	
+	static {
+		GricliCommandFactory.commands.add(AttachCommand.class);
+	}
 
+	@SyntaxDescription(command={"attach"})
 	public AttachCommand(String glob) {
 		this.glob = glob;
 	}

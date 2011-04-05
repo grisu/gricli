@@ -13,6 +13,7 @@ public class KillJobCommand implements GricliCommand {
 	private final String jobFilter;
 	private final boolean clean;
 
+	@SyntaxDescription(command={"kill","job"})
 	public KillJobCommand(String jobFilter, boolean clean) {
 		this.jobFilter = jobFilter;
 		this.clean = clean;

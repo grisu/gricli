@@ -8,7 +8,13 @@ import grisu.model.dto.GridFile;
 
 
 public class GridLsCommand implements GricliCommand {
-
+	
+	
+	@SyntaxDescription(command={"gls"})
+	public GridLsCommand(){
+		super();
+	}
+	
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		ServiceInterface si = env.getServiceInterface();

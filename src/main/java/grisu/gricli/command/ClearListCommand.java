@@ -6,6 +6,7 @@ import grisu.gricli.GricliRuntimeException;
 public class ClearListCommand implements GricliCommand {
 	private final String list;
 
+	@SyntaxDescription(command={"clear"})
 	public ClearListCommand(String list) {
 		this.list = list;
 	}

@@ -14,6 +14,7 @@ public class GetCommand implements GricliCommand {
 		this.file = file;
 	}
 
+	@SyntaxDescription(command={"get"})
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		String url = "gsiftp://" + env.get("host") + env.get("gdir") + "/"

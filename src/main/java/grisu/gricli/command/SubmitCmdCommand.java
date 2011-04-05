@@ -6,15 +6,18 @@ import grisu.control.exceptions.JobSubmissionException;
 import grisu.frontend.model.job.JobObject;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
+import grisu.gricli.completors.CompletionCache;
 import grisu.jcommons.constants.Constants;
 
 import java.io.File;
 import java.util.List;
 
+
 public class SubmitCmdCommand implements GricliCommand {
 
 	private final String cmd;
 
+	@SyntaxDescription(command={"submit","cmd"})
 	public SubmitCmdCommand(String cmd) {
 		this.cmd = cmd;
 	}
@@ -66,7 +69,8 @@ public class SubmitCmdCommand implements GricliCommand {
 			throw new GricliRuntimeException("jobmission was interrupted: "
 					+ ex.getMessage());
 		}
-		System.out.println(" job name is " + jobname);
+		System.out.println(" job name is " + jobname);	
+		CompletionCache.jobnames.add(jobname);
 
 		return env;
 	}

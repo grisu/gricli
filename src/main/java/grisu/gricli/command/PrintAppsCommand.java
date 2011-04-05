@@ -10,6 +10,11 @@ import java.util.List;
 
 
 public class PrintAppsCommand implements GricliCommand {
+	
+	@SyntaxDescription(command={"print","apps"})
+	public PrintAppsCommand() {
+		super();
+	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
