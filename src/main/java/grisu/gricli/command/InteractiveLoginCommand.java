@@ -25,6 +25,7 @@ public class InteractiveLoginCommand implements GricliCommand {
 			ServiceInterface si = LoginManager.loginCommandline(backend);
 			env.setServiceInterface(si);
 			CompletionCache.jobnames = si.getAllJobnames(null).asSortedSet();
+			CompletionCache.fqans = si.getFqans().asSortedSet();
 			return env;
 		} catch (LoginException ex) {
 			throw new GricliRuntimeException(ex);

@@ -36,6 +36,7 @@ public class GricliCommandFactory {
 		commands.add(PrintHostsCommand.class);
 		commands.add(PrintJobCommand.class);
 		commands.add(SubmitCmdCommand.class);
+		commands.add(QuitCommand.class);
 		
 	}
 	

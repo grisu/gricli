@@ -28,6 +28,7 @@ public class LocalLoginCommand implements GricliCommand {
 			ServiceInterface serviceInterface = LoginManager.login(siUrl);
 			env.setServiceInterface(serviceInterface);
 			CompletionCache.jobnames = serviceInterface.getAllJobnames(null).asSortedSet();
+			CompletionCache.fqans = serviceInterface.getFqans().asSortedSet();
 			return env;
 		} catch (LoginException ex) {
 			throw new GricliRuntimeException(ex);

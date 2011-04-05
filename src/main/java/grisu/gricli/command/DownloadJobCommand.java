@@ -30,6 +30,7 @@ public class DownloadJobCommand implements GricliCommand {
 		this.jobFilter = jobFilter;
 	}
 
+	@SuppressWarnings("restriction")
 	private void download(ServiceInterface si, GridFile df, File dst)
 			throws RemoteFileSystemException, IOException {
 		Set<GridFile> files = df.getChildren();

@@ -8,6 +8,9 @@ import java.io.FileFilter;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import jline.FileNameCompletor;
+
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang.StringUtils;
 
@@ -19,6 +22,7 @@ public class AttachCommand implements GricliCommand {
 	}
 
 	@SyntaxDescription(command={"attach"})
+	@AutoComplete(completors={FileNameCompletor.class})
 	public AttachCommand(String glob) {
 		this.glob = glob;
 	}
