@@ -55,7 +55,10 @@ public class Gricli {
 			if (line==null){
 				break;
 			}
-			runCommand(line, f, env);
+			String[] commandsOnOneLine = line.split(";");
+			for (String c: commandsOnOneLine){
+				runCommand(c, f, env);
+			}
 		}
 	}
 

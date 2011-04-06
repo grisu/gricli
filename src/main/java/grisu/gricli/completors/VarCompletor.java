@@ -21,6 +21,7 @@ public class VarCompletor implements Completor {
 		sc = new SimpleCompletor(names.toArray(new String[] {}));
 	}
 
+	@SuppressWarnings("unchecked")
 	public int complete(String s, int i, List l) {
 		return sc.complete(s,i,l);
 	}
