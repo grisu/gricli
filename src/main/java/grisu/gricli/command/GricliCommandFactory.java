@@ -29,6 +29,7 @@ public class GricliCommandFactory {
 		commands.add(FilemanagerCommand.class);
 		commands.add(SetGlobalCommand.class);
 		commands.add(LocalLoginCommand.class);
+		commands.add(InteractiveLoginCommand.class);
 		commands.add(NopCommand.class);
 		commands.add(PrintGlobalsCommand.class);
 		commands.add(PrintQueuesCommand.class);
@@ -37,6 +38,7 @@ public class GricliCommandFactory {
 		commands.add(PrintJobCommand.class);
 		commands.add(SubmitCmdCommand.class);
 		commands.add(QuitCommand.class);
+		commands.add(HelpCommand.class);
 		
 	}
 	

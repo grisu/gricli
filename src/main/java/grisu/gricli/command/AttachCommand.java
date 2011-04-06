@@ -21,7 +21,10 @@ public class AttachCommand implements GricliCommand {
 		GricliCommandFactory.commands.add(AttachCommand.class);
 	}
 
-	@SyntaxDescription(command={"attach"})
+	@SyntaxDescription(command={"attach"}, 
+			help="Sets attached file list. Equivalent to 'add global files [file]' " +
+					"but with support of glob regular expressions\n" +
+					"example: attach *.txt ")
 	@AutoComplete(completors={FileNameCompletor.class})
 	public AttachCommand(String glob) {
 		this.glob = glob;

@@ -6,4 +6,6 @@ import java.lang.annotation.Retention;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SyntaxDescription {
 	String[] command();
+	String[] arguments() default {};
+	String help() default "";
 }
