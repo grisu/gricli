@@ -1,6 +1,5 @@
 package grisu.gricli;
 
-import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.GricliCommandFactory;
 import grisu.gricli.util.CommandlineTokenizer;
 
@@ -12,8 +11,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class SocketGricli {
-	private GricliEnvironment env;
-	private GricliCommand command;
 
 	public static void main(String[] args) throws IOException {
 

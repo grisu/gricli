@@ -1,6 +1,7 @@
 package grisu.gricli;
 
 public class GricliSetValueException extends GricliRuntimeException {
+	private static final long serialVersionUID = 1L;
 	private final String var;
 	private final String value;
 	private final String reason;

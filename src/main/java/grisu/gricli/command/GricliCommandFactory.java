@@ -53,6 +53,7 @@ public class GricliCommandFactory {
 		return this.tabCompletor;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public GricliCommandFactory(){
 		
 		commandMap = new HashMap<String, Constructor<? extends GricliCommand>>();
@@ -60,7 +61,8 @@ public class GricliCommandFactory {
 		List<Completor> commandCompletors = new ArrayList<Completor>();
 				
 		for (Class<? extends GricliCommand> c: commands){
-			Constructor<? extends GricliCommand>[] conss = (Constructor<? extends GricliCommand>[])c.getDeclaredConstructors();
+			Constructor<? extends GricliCommand>[] conss = 
+				(Constructor<? extends GricliCommand>[])c.getDeclaredConstructors();
 			for (Constructor<? extends GricliCommand> cons: conss){
 				SyntaxDescription sd = cons.getAnnotation(SyntaxDescription.class);
 				

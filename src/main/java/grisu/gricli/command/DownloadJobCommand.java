@@ -21,6 +21,7 @@ import javax.activation.DataHandler;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
+@SuppressWarnings("restriction")
 public class DownloadJobCommand implements GricliCommand {
 	private final String jobFilter;
 
@@ -30,7 +31,6 @@ public class DownloadJobCommand implements GricliCommand {
 		this.jobFilter = jobFilter;
 	}
 
-	@SuppressWarnings("restriction")
 	private void download(ServiceInterface si, GridFile df, File dst)
 			throws RemoteFileSystemException, IOException {
 		Set<GridFile> files = df.getChildren();

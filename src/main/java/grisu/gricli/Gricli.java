@@ -22,9 +22,6 @@ public class Gricli {
 	static final String CONFIG_FILE_PATH = FilenameUtils.concat(Environment
 			.getGrisuClientDirectory().getPath(), "gricli.profile");
 
-	private GricliEnvironment env;
-	private GricliCommand command;
-
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws IOException {
 
