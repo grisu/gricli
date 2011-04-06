@@ -6,6 +6,7 @@ import grisu.control.exceptions.NoSuchJobException;
 import grisu.control.exceptions.RemoteFileSystemException;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
+import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.util.ServiceInterfaceUtils;
 
 
@@ -13,6 +14,8 @@ public class KillJobCommand implements GricliCommand {
 	private final String jobFilter;
 	private final boolean clean;
 
+	@SyntaxDescription(command={"kill","job"})
+	@AutoComplete(completors={JobnameCompletor.class})
 	public KillJobCommand(String jobFilter, boolean clean) {
 		this.jobFilter = jobFilter;
 		this.clean = clean;

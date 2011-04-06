@@ -3,12 +3,15 @@ package grisu.gricli.command;
 import grisu.control.ServiceInterface;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
+import grisu.gricli.completors.FqanCompletor;
 import grisu.model.dto.DtoSubmissionLocations;
 
 
 public class PrintQueuesCommand implements GricliCommand {
 	private final String fqan;
 
+	@SyntaxDescription(command={"print","queues"})
+	@AutoComplete(completors={FqanCompletor.class})
 	public PrintQueuesCommand(String fqan) {
 		this.fqan = fqan;
 	}

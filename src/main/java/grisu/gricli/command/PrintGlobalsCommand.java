@@ -6,6 +6,11 @@ import grisu.gricli.GricliRuntimeException;
 import java.util.Set;
 
 public class PrintGlobalsCommand implements GricliCommand {
+	
+	@SyntaxDescription(command={"print","globals"})
+	public PrintGlobalsCommand(){
+		super();
+	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {

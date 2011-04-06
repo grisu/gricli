@@ -8,12 +8,24 @@ import java.io.FileFilter;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import jline.FileNameCompletor;
+
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang.StringUtils;
 
 public class AttachCommand implements GricliCommand {
 	private String glob;
+	
+	static {
+		GricliCommandFactory.commands.add(AttachCommand.class);
+	}
 
+	@SyntaxDescription(command={"attach"}, 
+			help="Sets attached file list. Equivalent to 'add global files [file]' " +
+					"but with support of glob regular expressions\n" +
+					"example: attach *.txt ")
+	@AutoComplete(completors={FileNameCompletor.class})
 	public AttachCommand(String glob) {
 		this.glob = glob;
 	}

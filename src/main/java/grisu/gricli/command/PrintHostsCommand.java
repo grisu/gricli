@@ -7,6 +7,11 @@ import grisu.gricli.GricliRuntimeException;
 import java.util.Map;
 
 public class PrintHostsCommand implements GricliCommand {
+	
+	@SyntaxDescription(command={"print","hosts"})
+	public PrintHostsCommand(){
+		super();
+	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {

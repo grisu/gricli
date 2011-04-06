@@ -6,6 +6,8 @@ import grisu.control.exceptions.NoSuchJobException;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.util.ServiceInterfaceUtils;
+import grisu.gricli.completors.JobPropertiesCompletor;
+import grisu.gricli.completors.JobnameCompletor;
 import grisu.model.dto.DtoJob;
 
 import java.util.Map;
@@ -14,9 +16,22 @@ public class PrintJobCommand implements GricliCommand {
 	private final String jobname;
 	private final String attribute;
 
+	@SyntaxDescription(command={"print","job"})
+	@AutoComplete(completors={JobnameCompletor.class,JobPropertiesCompletor.class})
 	public PrintJobCommand(String jobname, String attribute) {
 		this.jobname = jobname;
 		this.attribute = attribute;
+	}
+	
+	@SyntaxDescription(command={"print","job"})
+	@AutoComplete(completors={JobnameCompletor.class})
+	public PrintJobCommand(String jobname){
+		this(jobname,null);
+	}
+	
+	@SyntaxDescription(command={"print","jobs"})
+	public PrintJobCommand(){
+		this("*","status");
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
