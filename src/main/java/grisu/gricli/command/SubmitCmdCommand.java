@@ -28,7 +28,14 @@ public class SubmitCmdCommand implements GricliCommand {
 		ServiceInterface si = env.getServiceInterface();
 		final JobObject job = new JobObject(si);
 		job.setJobname(env.get("jobname"));
-		job.setApplication(Constants.GENERIC_APPLICATION_NAME);
+		String app = env.get("application");
+		if (app == null){
+			job.setApplication(Constants.GENERIC_APPLICATION_NAME);
+		} 
+		else {
+			job.setApplication(app);
+		}
+		
 		job.setCommandline(cmd);
 		job.setCpus(Integer.parseInt(env.get("cpus")));
 		job.setEmail_address(env.get("email"));

@@ -25,6 +25,8 @@ public class GricliEnvironment {
 			FQAN.setValue("/ARCS");
 			GRID_DIR.setValue("/");
 			LOCAL_DIR.setValue(System.getProperty("user.dir"));
+			APPLICATION.setValue(null);
+			DEBUG.setValue("false");
 			PROMPT.setValue("gricli> ");
 		} catch (GricliSetValueException ex) {
 			// never happens

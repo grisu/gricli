@@ -15,26 +15,30 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang.StringUtils;
 
 public class AttachCommand implements GricliCommand {
-	private String glob;
+	private String[] globs;
 	
 	static {
 		GricliCommandFactory.commands.add(AttachCommand.class);
 	}
 
-	@SyntaxDescription(command={"attach"}, 
-			help="Sets attached file list. Equivalent to 'add global files [file]' " +
-					"but with support of glob regular expressions\n" +
-					"example: attach *.txt ")
+	@SyntaxDescription(command={"attach"},
+			arguments={"files"},
+			help="Sets attached file list.Supports multiple arguments and glob regular expressions\n" +
+					"example: attach *.txt submit.sh")
 	@AutoComplete(completors={FileNameCompletor.class})
-	public AttachCommand(String glob) {
-		this.glob = glob;
+	public AttachCommand(String... globs) {
+		this.globs = globs;
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
-		String[] files = getAllFiles();
-		for (String file : files) {
-			env.add("files", file);
+		
+		env.clear("files");
+		for (String glob: globs){
+			String[] files = getAllFiles(glob);
+			for (String file : files) {
+				env.add("files", file);
+			}
 		}
 		return env;
 	}
@@ -59,12 +63,12 @@ public class AttachCommand implements GricliCommand {
 		return;
 	}
 
-	private String[] getAllFiles() {
+	private String[] getAllFiles(String glob) {
 		LinkedList<String> all = new LinkedList<String>();
 		File dir = null;
 		List<String> dirComponents = (List<String>) Arrays.asList(StringUtils
 				.split(glob, "/"));
-		if (glob.startsWith("/")) {
+		if (globs[0].startsWith("/")) {
 			// absolute path
 			dir = new File("/");
 		} else {

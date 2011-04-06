@@ -64,27 +64,36 @@ public class Gricli {
 
 	private static void runCommand(String c, GricliCommandFactory f,
 			GricliEnvironment env) {
+		Exception error = null;
 		try {
 			String[] arguments = CommandlineTokenizer.tokenize(c);
 			GricliCommand command = f.create(arguments);
 			command.execute(env);
+			
 		} catch (InvalidCommandException ex) {
 			System.out.println(ex.getMessage());
 		} catch (UnknownCommandException ex) {
+			error = ex;
 			System.err
 					.println("command " + ex.getMessage() + " does not exist");
 		} catch (SyntaxException ex) {
+			error = ex;
 			System.err.println("syntax error");
-			ex.printStackTrace();
 		} catch (LoginRequiredException ex) {
+			error = ex;
 			System.err.println("this command requires you to login first");
 		} catch (GricliSetValueException ex) {
+			error = ex;
 			System.err.println("variable " + ex.getVar() + " cannot be set to "
 					+ ex.getValue());
 			System.err.println("reason: " + ex.getReason());
 		} catch (GricliRuntimeException ex) {
+			error = ex;
 			System.err.println(ex.getMessage());
-			ex.printStackTrace();
+		} finally {
+			if ("true".equals(env.get("debug")) && (error != null)){
+				error.printStackTrace();
+			}
 		}
 	}
 

@@ -21,8 +21,18 @@ public enum GricliVar {
 			}
 
 		}
+	}, APPLICATION("application") {
+		@Override
+		public void setValue(String value) throws GricliSetValueException {
+			if ("null".equals(value)) {
+				super.setValue(null);
+			} else {
+				super.setValue(value);
+			}
+
+		}
 	},
-	WALLTIME("walltime"), JOBNAME("jobname"), CPUS("cpus"), JOBTYPE("jobtype") {
+	WALLTIME("walltime"),DEBUG("debug") ,JOBNAME("jobname"), CPUS("cpus"), JOBTYPE("jobtype") {
 		@Override
 		public void setValue(String value) throws GricliSetValueException {
 			if (!"mpi".equals(value) && !"single".equals(value)
