@@ -13,9 +13,19 @@ import org.apache.commons.lang.StringUtils;
 import java.util.List;
 import java.util.logging.Level;
 
+import jline.ArgumentCompletor;
+import jline.Completor;
 import jline.ConsoleReader;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+
+class SemicolonDelimiter extends ArgumentCompletor.AbstractArgumentDelimiter {
+
+	public boolean isDelimiterChar(String s, int i) {
+		return (s!=null && s.length() > i && (s.charAt(i) == ';'));
+	}
+	
+}
 
 public class Gricli {
 
@@ -32,7 +42,10 @@ public class Gricli {
 		GricliEnvironment env = new GricliEnvironment();
 		ConsoleReader reader = new ConsoleReader();
 		GricliCommandFactory f = new GricliCommandFactory();
-		reader.addCompletor(f.createCompletor());
+		
+		ArgumentCompletor completor = new ArgumentCompletor(f.createCompletor(), new SemicolonDelimiter());
+		completor.setStrict(false);
+		reader.addCompletor(completor);
 		List<String> commands = null;
 		try {
 			commands = FileUtils.readLines(new File(CONFIG_FILE_PATH));
