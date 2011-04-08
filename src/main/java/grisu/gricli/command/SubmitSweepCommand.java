@@ -42,7 +42,7 @@ public class SubmitSweepCommand implements GricliCommand {
 		}
 		System.out.println("submitting " + tempTemplate);
 
-		return new SubmitCmdCommand(tempTemplate).execute(env);
+		return new SubmitCommand(tempTemplate).execute(env);
 	}
 
 }

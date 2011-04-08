@@ -4,18 +4,17 @@ import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 
 /**
- * 
- * add value to global list
+ * add value to  list
  */
-public class AddGlobalCommand implements GricliCommand {
+public class AddCommand implements GricliCommand {
 		
 	private final String value;
 	private final String list;
 
-	@SyntaxDescription(command={"add","global"},
+	@SyntaxDescription(command={"add"},
 			arguments={"list","value"},
 			help="adds value to list\n example: add global files test.txt")
-	public AddGlobalCommand(String list, String value) {
+	public AddCommand(String list, String value) {
 		this.list = list;
 		this.value = value;
 	}

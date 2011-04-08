@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import jline.FileNameCompletor;
+import grisu.gricli.completors.GridFilesystemCompletor;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang.StringUtils;
@@ -25,7 +25,7 @@ public class AttachCommand implements GricliCommand {
 			arguments={"files"},
 			help="Sets attached file list.Supports multiple arguments and glob regular expressions\n" +
 					"example: attach *.txt submit.sh")
-	@AutoComplete(completors={FileNameCompletor.class})
+	@AutoComplete(completors={GridFilesystemCompletor.class})
 	public AttachCommand(String... globs) {
 		this.globs = globs;
 	}
@@ -35,9 +35,14 @@ public class AttachCommand implements GricliCommand {
 		
 		env.clear("files");
 		for (String glob: globs){
-			String[] files = getAllFiles(glob);
-			for (String file : files) {
-				env.add("files", file);
+			if (glob != null && (glob.startsWith("grid://") || glob.startsWith("gsiftp://"))){
+				env.add("files",glob);
+			}
+			else {
+				String[] files = getAllFiles(glob);
+				for (String file : files) {
+					env.add("files", file);
+				}
 			}
 		}
 		return env;

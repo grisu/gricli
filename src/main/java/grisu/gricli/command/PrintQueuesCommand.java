@@ -15,6 +15,11 @@ public class PrintQueuesCommand implements GricliCommand {
 	public PrintQueuesCommand(String fqan) {
 		this.fqan = fqan;
 	}
+	
+	@SyntaxDescription(command={"print","queues"})
+	public PrintQueuesCommand(){
+		this(null);
+	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
@@ -23,7 +28,6 @@ public class PrintQueuesCommand implements GricliCommand {
 				.getAllSubmissionLocations() : si
 				.getAllSubmissionLocationsForFqan(fqan);
 
-		System.out.println("available queues: ====");
 		for (String queue : queues.asSubmissionLocationStrings()) {
 			System.out.println(queue);
 		}

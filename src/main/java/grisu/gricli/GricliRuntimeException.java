@@ -5,7 +5,11 @@ package grisu.gricli;
  */
 public class GricliRuntimeException extends GricliException {
 	private static final long serialVersionUID = 1L;
-
+	
+	public GricliRuntimeException(String msg,Exception ex){
+		super(msg,ex);
+	}
+	
 	public GricliRuntimeException(String msg) {
 		super(msg);
 	}

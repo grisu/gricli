@@ -27,6 +27,7 @@ public class CommandlineTokenizer {
 		st.wordChars('.', '.');
 		st.wordChars('*', '*');
 		st.wordChars('?', '?');
+		st.wordChars('&','&');
 		st.whitespaceChars(' ', ' ');
 
 		ArrayList<String> argumentList = new ArrayList<String>();

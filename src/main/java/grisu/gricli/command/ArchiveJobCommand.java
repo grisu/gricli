@@ -28,8 +28,8 @@ public class ArchiveJobCommand implements GricliCommand {
 			for (String j : ServiceInterfaceUtils.filterJobNames(si, jobFilter)) {
 				System.out.println("archiving job " + j);
 				jobname = j;
-				//si.archiveJob(j, "grid://Groups/nz/NeSI");
-				si.archiveJob(j, "gsiftp://gram5.ceres.auckland.ac.nz/home/yhal003");
+				si.archiveJob(j, null);
+				//si.archiveJob(j, "gsiftp://gram5.ceres.auckland.ac.nz/home/yhal003");
 			}
 		} catch (RemoteFileSystemException ex) {
 			throw new GricliRuntimeException(ex);

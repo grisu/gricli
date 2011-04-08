@@ -61,7 +61,7 @@ public enum GricliVar {
 		}
 
 	},
-	FQAN("fqan"), HOST("host"), GRID_DIR("gdir"), LOCAL_DIR("dir") {
+	FQAN("vo"), HOST("host"), GRID_DIR("gdir"), LOCAL_DIR("dir") {
 		// check if directory exists and valid pathname
 		@Override
 		public void setValue(String value) throws GricliSetValueException {

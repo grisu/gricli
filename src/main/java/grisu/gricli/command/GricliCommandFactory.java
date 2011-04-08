@@ -25,12 +25,12 @@ public class GricliCommandFactory {
 	private Completor tabCompletor;
 	
 	static {
-		commands.add(AddGlobalCommand.class);
+		commands.add(AddCommand.class);
 		commands.add(AttachCommand.class);
 		commands.add(ClearListCommand.class);
 		commands.add(DownloadJobCommand.class);
 		commands.add(FilemanagerCommand.class);
-		commands.add(SetGlobalCommand.class);
+		commands.add(SetCommand.class);
 		commands.add(LocalLoginCommand.class);
 		commands.add(InteractiveLoginCommand.class);
 		commands.add(NopCommand.class);
@@ -43,7 +43,7 @@ public class GricliCommandFactory {
 		commands.add(CleanJobCommand.class);
 		commands.add(PrintJobCommand.class);
 		commands.add(ArchiveJobCommand.class);
-		commands.add(SubmitCmdCommand.class);
+		commands.add(SubmitCommand.class);
 		
 		commands.add(QuitCommand.class);
 		commands.add(HelpCommand.class);

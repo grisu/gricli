@@ -8,23 +8,30 @@ import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.CompletionCache;
 import grisu.jcommons.constants.Constants;
+import grisu.model.dto.GridFile;
 
 import java.io.File;
 import java.util.List;
 
 
-public class SubmitCmdCommand implements GricliCommand {
+public class SubmitCommand implements GricliCommand {
 
 	private final String cmd;
+	private final boolean isAsync;
 
-	@SyntaxDescription(command={"submit","cmd"})
-	public SubmitCmdCommand(String cmd) {
-		this.cmd = cmd;
+	@SyntaxDescription(command={"submit"})
+	public SubmitCommand(String cmd) {
+		this(cmd,null);
 	}
-
-	public GricliEnvironment execute(GricliEnvironment env)
-			throws GricliRuntimeException {
-
+	
+	@SyntaxDescription(command={"submit"})
+	public SubmitCommand(String cmd, String mod){
+		this.cmd = cmd;
+		this.isAsync = "&".equals(mod);
+		
+	}
+	
+	protected JobObject createJob(GricliEnvironment env) throws GricliRuntimeException{
 		ServiceInterface si = env.getServiceInterface();
 		final JobObject job = new JobObject(si);
 		job.setJobname(env.get("jobname"));
@@ -39,7 +46,7 @@ public class SubmitCmdCommand implements GricliCommand {
 		job.setCommandline(cmd);
 		job.setCpus(Integer.parseInt(env.get("cpus")));
 		job.setEmail_address(env.get("email"));
-		job.setWalltime(Integer.parseInt(env.get("walltime")) * 60
+		job.setWalltimeInSeconds(Integer.parseInt(env.get("walltime")) * 60
 				* job.getCpus());
 		job.setMemory(Long.parseLong(env.get("memory")));
 		job.setSubmissionLocation(env.get("queue"));
@@ -49,35 +56,48 @@ public class SubmitCmdCommand implements GricliCommand {
 
 		// attach input files
 		List<String> files = env.getList("files");
-		String cdir = env.get("dir");
+		//String cdir = env.get("dir");
 		for (String file : files) {
-			if (file.startsWith("/")) {
-				job.addInputFileUrl(file);
-			} else {
-				// relative path
-				job.addInputFileUrl(cdir + File.pathSeparator + file);
-			}
+			job.addInputFileUrl(new GridFile(file).getUrl());
 		}
 
-		String jobname = null;
 		try {
-			jobname = job
-					.createJob(env.get("fqan"), Constants.TIMESTAMP_METHOD);
+			job.createJob(env.get("vo"), Constants.TIMESTAMP_METHOD);
+			return job;
 		} catch (JobPropertiesException ex) {
 			throw new GricliRuntimeException("job property is not valid"
-					+ ex.getMessage());
+					+ ex.getMessage(),ex);
 		}
-		try {
+	}
+	
+	private void submit(JobObject job) throws GricliRuntimeException{
+		try{
 			job.submitJob();
-		} catch (JobSubmissionException ex) {
+		} catch (JobSubmissionException e) {
 			throw new GricliRuntimeException("fail to submit job: "
-					+ ex.getMessage());
-		} catch (InterruptedException ex) {
+					+ e.getMessage(),e);
+		} catch (InterruptedException e) {
 			throw new GricliRuntimeException("jobmission was interrupted: "
-					+ ex.getMessage());
+					+ e.getMessage(),e);
 		}
+	}
+
+	public GricliEnvironment execute(GricliEnvironment env)
+	throws GricliRuntimeException {
+		final JobObject job = createJob(env);
+		String jobname = job.getJobname();
 		System.out.println(" job name is " + jobname);	
 		CompletionCache.jobnames.add(jobname);
+
+		if (this.isAsync){
+			new Thread() {
+				public void run() {
+					try {submit(job);} 
+					catch (GricliRuntimeException ex) {/* do nothing */} }}.start();
+		} 
+		else {
+			submit(job);
+		}
 
 		return env;
 	}
