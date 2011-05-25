@@ -23,6 +23,7 @@ public class GricliEnvironment {
 
 	public GricliEnvironment() {
 		try {
+			VERSION.setValue(Constants.NO_VERSION_INDICATOR_STRING);
 			WALLTIME.setValue("10");
 			JOBNAME.setValue("gricli");
 			CPUS.setValue("1");
@@ -105,23 +106,24 @@ public class GricliEnvironment {
 		
 		ServiceInterface si = getServiceInterface();
 		final JobObject job = new JobObject(si);
-		job.setJobname(get("jobname"));
-		String app = get("application");
+		job.setJobname(JOBNAME.getValue());
+		String app = APPLICATION.getValue();
 		if (app == null){
 			job.setApplication(Constants.GENERIC_APPLICATION_NAME);
 		} 
 		else {
 			job.setApplication(app);
+			job.setApplicationVersion(VERSION.getValue());
 		}
 		
-		job.setCpus(Integer.parseInt(get("cpus")));
-		job.setEmail_address(get("email"));
-		job.setWalltimeInSeconds(Integer.parseInt(get("walltime")) * 60
+		job.setCpus(Integer.parseInt(CPUS.getValue()));
+		job.setEmail_address(EMAIL.getValue());
+		job.setWalltimeInSeconds(Integer.parseInt(WALLTIME.getValue()) * 60
 				* job.getCpus());
-		job.setMemory(Long.parseLong(get("memory")) * 1024 * 1024);
-		job.setSubmissionLocation(get("queue"));
+		job.setMemory(Long.parseLong(MEMORY.getValue()) * 1024 * 1024);
+		job.setSubmissionLocation(get(QUEUE.getValue()));
 
-		boolean isMpi = "mpi".equals(get("jobtype"));
+		boolean isMpi = "mpi".equals(JOBTYPE.getValue());
 		job.setForce_mpi(isMpi);
 
 		// attach input files

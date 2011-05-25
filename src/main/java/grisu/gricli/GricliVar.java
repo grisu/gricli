@@ -32,7 +32,7 @@ public enum GricliVar {
 
 		}
 	},
-	WALLTIME("walltime"),DEBUG("debug") ,JOBNAME("jobname"), CPUS("cpus"), JOBTYPE("jobtype") {
+	WALLTIME("walltime"),VERSION("version"),DEBUG("debug") ,JOBNAME("jobname"), CPUS("cpus"), JOBTYPE("jobtype") {
 		@Override
 		public void setValue(String value) throws GricliSetValueException {
 			if (!"mpi".equals(value) && !"single".equals(value)
