@@ -32,35 +32,8 @@ public class SubmitCommand implements GricliCommand {
 	}
 	
 	protected JobObject createJob(GricliEnvironment env) throws GricliRuntimeException{
-		ServiceInterface si = env.getServiceInterface();
-		final JobObject job = new JobObject(si);
-		job.setJobname(env.get("jobname"));
-		String app = env.get("application");
-		if (app == null){
-			job.setApplication(Constants.GENERIC_APPLICATION_NAME);
-		} 
-		else {
-			job.setApplication(app);
-		}
-		
+		JobObject job = env.getJob();
 		job.setCommandline(cmd);
-		job.setCpus(Integer.parseInt(env.get("cpus")));
-		job.setEmail_address(env.get("email"));
-		job.setWalltimeInSeconds(Integer.parseInt(env.get("walltime")) * 60
-				* job.getCpus());
-		job.setMemory(Long.parseLong(env.get("memory")));
-		job.setSubmissionLocation(env.get("queue"));
-
-		boolean isMpi = "mpi".equals(env.get("jobtype"));
-		job.setForce_mpi(isMpi);
-
-		// attach input files
-		List<String> files = env.getList("files");
-		//String cdir = env.get("dir");
-		for (String file : files) {
-			job.addInputFileUrl(new GridFile(file).getUrl());
-		}
-
 		try {
 			job.createJob(env.get("vo"), Constants.TIMESTAMP_METHOD);
 			return job;

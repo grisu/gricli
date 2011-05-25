@@ -1,10 +1,15 @@
 package grisu.gricli;
 
 import grisu.control.ServiceInterface;
+import grisu.frontend.model.job.BatchJobObject;
+import grisu.frontend.model.job.JobObject;
+import grisu.jcommons.constants.Constants;
+import grisu.model.dto.GridFile;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static grisu.gricli.GricliVar.*;
@@ -14,6 +19,7 @@ public class GricliEnvironment {
 	private ServiceInterface si;
 	private String siUrl;
 	private HashMap<String, List<String>> globalLists = new HashMap<String, List<String>>();
+	
 
 	public GricliEnvironment() {
 		try {
@@ -83,7 +89,48 @@ public class GricliEnvironment {
 	}
 
 	public void clear(String list) throws GricliRuntimeException {
-		GricliVar.get(list).clear();
+		try {
+			GricliVar.get(list).clear();
+		} 
+		catch (NullPointerException ex){
+			throw new GricliRuntimeException("list " + ((list!=null)?list:"null") + " does not exist");
+		}
+	}
+	
+	public void printError(String message){
+		System.out.println(message);
+	}
+	
+	public JobObject getJob() throws LoginRequiredException{
+		
+		ServiceInterface si = getServiceInterface();
+		final JobObject job = new JobObject(si);
+		job.setJobname(get("jobname"));
+		String app = get("application");
+		if (app == null){
+			job.setApplication(Constants.GENERIC_APPLICATION_NAME);
+		} 
+		else {
+			job.setApplication(app);
+		}
+		
+		job.setCpus(Integer.parseInt(get("cpus")));
+		job.setEmail_address(get("email"));
+		job.setWalltimeInSeconds(Integer.parseInt(get("walltime")) * 60
+				* job.getCpus());
+		job.setMemory(Long.parseLong(get("memory")) * 1024 * 1024);
+		job.setSubmissionLocation(get("queue"));
+
+		boolean isMpi = "mpi".equals(get("jobtype"));
+		job.setForce_mpi(isMpi);
+
+		// attach input files
+		List<String> files = getList("files");;
+		for (String file : files) {
+			job.addInputFileUrl(new GridFile(file).getUrl());
+		}
+
+		return job;
 	}
 
 }

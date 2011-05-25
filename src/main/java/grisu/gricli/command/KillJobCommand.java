@@ -26,23 +26,21 @@ public class KillJobCommand implements GricliCommand {
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-			throws GricliRuntimeException {
+	throws GricliRuntimeException {
 		ServiceInterface si = env.getServiceInterface();
-		String jobname = null;
-		try {
-			for (String j : ServiceInterfaceUtils.filterJobNames(si, jobFilter)) {
-				System.out.println("killing job " + j);
-				jobname = j;
+		for (String j : ServiceInterfaceUtils.filterJobNames(si, jobFilter)) {
+			System.out.println("killing job " + j);
+			try {
 				si.kill(j, clean);
+			} catch (RemoteFileSystemException ex) {
+				env.printError("job "+ j + ":" + ex.getMessage());
+			} catch (NoSuchJobException ex) {
+				env.printError("job " + j + " does not exist");
+			} catch (BatchJobException ex) {
+				env.printError("job "+ j + ": "+ ex.getMessage());
 			}
-		} catch (RemoteFileSystemException ex) {
-			throw new GricliRuntimeException(ex);
-		} catch (NoSuchJobException ex) {
-			throw new GricliRuntimeException("job " + jobname
-					+ " does not exist");
-		} catch (BatchJobException ex) {
-			throw new GricliRuntimeException(ex);
 		}
+
 		return env;
 	}
 

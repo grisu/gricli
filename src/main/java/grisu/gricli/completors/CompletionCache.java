@@ -7,5 +7,8 @@ public class CompletionCache {
 	
 	public static SortedSet<String> jobnames = new TreeSet<String>();
 	public static SortedSet<String> fqans = new TreeSet<String>();
+	public static String[] queues = new String[] {};
+	public static String[] sites = new String[] {};
+
 	
 }

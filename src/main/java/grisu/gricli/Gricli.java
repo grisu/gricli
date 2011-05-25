@@ -16,8 +16,11 @@ import java.util.logging.Level;
 
 import jline.ArgumentCompletor;
 import jline.ConsoleReader;
+import jline.History;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -33,6 +36,9 @@ public class Gricli {
 	static final String CONFIG_FILE_PATH = FilenameUtils.concat(Environment
 			.getGrisuClientDirectory().getPath(), "gricli.profile");
 	
+	static final String HISTORY_FILE_PATH = FilenameUtils.concat(Environment.getGrisuClientDirectory().getPath() , 
+			"gricli.hist");
+	
 	static private GricliEnvironment env = new GricliEnvironment();
 	static private GricliCommandFactory f = new GricliCommandFactory();
 
@@ -41,7 +47,7 @@ public class Gricli {
 
 		// stop javaxws logging
 		java.util.logging.LogManager.getLogManager().reset();
-		java.util.logging.Logger.getLogger("root").setLevel(Level.OFF);
+		java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);
 		
 		CommandLineParser parser = new PosixParser();
 		Options options = new Options();
@@ -59,14 +65,19 @@ public class Gricli {
 			e.printStackTrace();
 		}
 			
-		parseConfig();
+		parseConfig(new File(CONFIG_FILE_PATH));
 		executionLoop();
 	}
 	
 	private static void executionLoop() throws IOException{
+		
+		if (System.console() == null){
+			parseConfig(null);
+			return;
+		}
+		
+		ConsoleReader reader = getReader(); 		
 		while (true) {
-			
-			ConsoleReader reader = getReader();
 						
 			String prompt = getPrompt();
 			String line = reader.readLine(prompt);
@@ -90,10 +101,15 @@ public class Gricli {
 		return prompt;
 	}
 	
-	private static void parseConfig() throws IOException{
+	@SuppressWarnings("unchecked")
+	private static void parseConfig(File file) throws IOException{
 		List<String> commands = null;
 		try {
-			commands = FileUtils.readLines(new File(CONFIG_FILE_PATH));
+			if (file != null){
+				commands = FileUtils.readLines(file);
+			} else {
+				commands = IOUtils.readLines(System.in);
+			}
 		} catch (FileNotFoundException fx) {
 			commands = new LinkedList<String>();
 		}
@@ -140,6 +156,7 @@ public class Gricli {
 	
 	private static ConsoleReader getReader() throws IOException {
 		ConsoleReader reader = new ConsoleReader();
+		reader.setHistory(new History(new File(HISTORY_FILE_PATH)));
 		
 		ArgumentCompletor completor = new ArgumentCompletor(f.createCompletor(), new SemicolonDelimiter());
 		completor.setStrict(false);

@@ -8,36 +8,31 @@ import grisu.model.dto.DtoVersionInfo;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 
 public class PrintAppsCommand implements GricliCommand {
 	
-	@SyntaxDescription(command={"print","apps"})
-	public PrintAppsCommand() {
-		super();
+	private String app;
+
+	@SyntaxDescription(command={"print","application"})
+	// @AutoComplete(completors={SiteCompletor.class})
+	public PrintAppsCommand(String app){
+		this.app = app;
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		ServiceInterface si = env.getServiceInterface();
-		for (String app : si.getAllAvailableApplications(null).asArray()) {
-			DtoApplicationInfo info = si
-					.getSubmissionLocationsPerVersionOfApplication(app);
-			String appName = info.getName();
-			List<DtoVersionInfo> versions = info.getAllVersions();
-
-			for (DtoVersionInfo version : versions) {
+		DtoApplicationInfo info = si.getSubmissionLocationsPerVersionOfApplication(app);
+		
+		List<DtoVersionInfo> versions = info.getAllVersions();
+			for (DtoVersionInfo version: versions){
 				String versionTag = version.getName();
-				String[] queues = si
-						.getSubmissionLocationsForApplicationAndVersion(
-								appName, versionTag)
-						.asSubmissionLocationStrings();
-
-				for (String queue : queues) {
-					System.out
-							.println(appName + " " + versionTag + " " + queue);
-				}
+				System.out.println(app + " : " + versionTag + "\n submission locations:\n " 
+						+ StringUtils.join(version.getAllSubmissionLocations().asSubmissionLocationStrings(),","));
 			}
-		}
+		
 		return env;
 	}
 

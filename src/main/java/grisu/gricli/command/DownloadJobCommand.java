@@ -94,8 +94,14 @@ public class DownloadJobCommand implements GricliCommand {
 				System.getProperty("user.home"));
 		for (String jobname : ServiceInterfaceUtils.filterJobNames(si,
 				jobFilter)) {
+			
+			try {
 			downloadJob(si, jobname,
 					FilenameUtils.concat(normalDirName, jobname));
+			} 
+			catch (GricliRuntimeException ex){
+				env.printError(ex.getMessage());
+			}
 		}
 		return env;
 

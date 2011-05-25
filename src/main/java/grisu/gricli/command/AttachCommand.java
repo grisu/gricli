@@ -1,5 +1,8 @@
 package grisu.gricli.command;
 
+import grisu.control.exceptions.BatchJobException;
+import grisu.control.exceptions.NoSuchJobException;
+import grisu.frontend.model.job.BatchJobObject;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 
@@ -16,9 +19,18 @@ import org.apache.commons.lang.StringUtils;
 
 public class AttachCommand implements GricliCommand {
 	private String[] globs;
+	private String batchname;
 	
 	static {
 		GricliCommandFactory.commands.add(AttachCommand.class);
+	}
+	
+	
+	@SyntaxDescription(command={"batch","attach"}, 
+	arguments={"batchjob","files"}, help="attach files to batch job")
+	public AttachCommand(String batchname, String... globs){
+		this.batchname = batchname;
+		this.globs = globs;
 	}
 
 	@SyntaxDescription(command={"attach"},
@@ -27,7 +39,7 @@ public class AttachCommand implements GricliCommand {
 					"example: attach *.txt submit.sh")
 	@AutoComplete(completors={GridFilesystemCompletor.class})
 	public AttachCommand(String... globs) {
-		this.globs = globs;
+		this(null,globs);
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
@@ -36,16 +48,35 @@ public class AttachCommand implements GricliCommand {
 		env.clear("files");
 		for (String glob: globs){
 			if (glob != null && (glob.startsWith("grid://") || glob.startsWith("gsiftp://"))){
-				env.add("files",glob);
+				addFile(glob,env);
 			}
 			else {
 				String[] files = getAllFiles(glob);
 				for (String file : files) {
-					env.add("files", file);
+					addFile(file,env);
 				}
 			}
 		}
 		return env;
+	}
+	
+	private void addFile(String file,GricliEnvironment env) throws GricliRuntimeException{
+		if (this.batchname == null){
+			env.add("files",file);
+		} else {
+			
+			BatchJobObject obj;
+			try {
+				obj = new BatchJobObject(env.getServiceInterface(),this.batchname,false);
+			} catch (BatchJobException e) {
+				throw new GricliRuntimeException(e);
+			} catch (NoSuchJobException e) {
+				throw new GricliRuntimeException("batch job container " + this.batchname + 
+				" does not exist. Use 'create batch [containername]' command");
+			}
+			
+			obj.addInputFile(file);
+		}
 	}
 
 	private void getSubdirs(String path, LinkedList<String> globs,

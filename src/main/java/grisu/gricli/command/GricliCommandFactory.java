@@ -50,7 +50,13 @@ public class GricliCommandFactory {
 		
 		// filesystem commands
 		commands.add(GridLsCommand.class);
+		commands.add(ClearCacheCommand.class);
 		
+		//batch commands
+		commands.add(CreateBatchCommand.class);
+		commands.add(AddBatchCommand.class);
+		commands.add(SubmitBatchCommand.class);
+				
 	}
 	
 	public Completor createCompletor(){
