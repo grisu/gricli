@@ -7,7 +7,7 @@
 	<repositories>
 		<repository>
 			<id>bestgrid.public.release</id>
-			<url>http://dev.ceres.auckland.ac.nz/nexus/content/groups/public/</url>
+			<url>http://code.ceres.auckland.ac.nz/nexus/content/groups/public/</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>daily</updatePolicy>
@@ -21,7 +21,7 @@
 		</repository>
 		<repository>
 			<id>bestgrid.public.snapshot</id>
-			<url>http://dev.ceres.auckland.ac.nz/nexus/content/groups/public-snapshots/
+			<url>http://code.ceres.auckland.ac.nz/nexus/content/groups/public-snapshots/
 			</url>
 			<releases>
 				<enabled>false</enabled>
@@ -40,13 +40,13 @@
 		<repository>
 			<name>BeSTGRID Releases Repository</name>
 			<id>bestgrid.release</id>
-			<url>http://dev.ceres.auckland.ac.nz/nexus/content/repositories/releases
+			<url>http://code.ceres.auckland.ac.nz/nexus/content/repositories/releases
 			</url>
 		</repository>
 		<snapshotRepository>
 			<id>bestgrid.snapshot</id>
 			<name>BeSTGRID Snapshots Repository</name>
-			<url>http://dev.ceres.auckland.ac.nz/nexus/content/repositories/snapshots
+			<url>http://code.ceres.auckland.ac.nz/nexus/content/repositories/snapshots
 			</url>
 		</snapshotRepository>
 	</distributionManagement>
@@ -104,7 +104,7 @@
 	</issueManagement>
 	<ciManagement>
 		<system>Hudson</system>
-		<url>http://dev.ceres.auckland.ac.nz/hudson/job/Gricli-SNAPSHOT</url>
+		<url>http://code.ceres.auckland.ac.nz/hudson/job/Gricli-SNAPSHOT</url>
 	</ciManagement>
 	<scm>
 		<connection>scm:git:git://github.com/grisu/gricli.git</connection>
