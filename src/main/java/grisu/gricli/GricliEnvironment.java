@@ -121,7 +121,7 @@ public class GricliEnvironment {
 		job.setWalltimeInSeconds(Integer.parseInt(WALLTIME.getValue()) * 60
 				* job.getCpus());
 		job.setMemory(Long.parseLong(MEMORY.getValue()) * 1024 * 1024);
-		job.setSubmissionLocation(get(QUEUE.getValue()));
+		job.setSubmissionLocation(QUEUE.getValue());
 
 		boolean isMpi = "mpi".equals(JOBTYPE.getValue());
 		job.setForce_mpi(isMpi);

@@ -88,6 +88,8 @@ public class DownloadJobCommand implements GricliCommand {
 
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
+		
+		boolean hasError = false;
 
 		ServiceInterface si = env.getServiceInterface();
 		String normalDirName = StringUtils.replace(env.get("dir"), "~",
@@ -100,8 +102,12 @@ public class DownloadJobCommand implements GricliCommand {
 					FilenameUtils.concat(normalDirName, jobname));
 			} 
 			catch (GricliRuntimeException ex){
+				hasError = true;
 				env.printError(ex.getMessage());
 			}
+		}
+		if (hasError){
+			throw new GricliRuntimeException("download command was unsuccessful");
 		}
 		return env;
 

@@ -161,6 +161,10 @@ public enum GricliVar {
 	public static GricliVar get(String var) {
 		return lookup.get(var);
 	}
+	
+	public static Set<String> allNames() {
+		return lookup.keySet();
+	}
 
 	public static Set<String> allValues() {
 		return lookup.keySet();

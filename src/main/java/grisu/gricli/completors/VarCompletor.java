@@ -14,11 +14,7 @@ public class VarCompletor implements Completor {
 	SimpleCompletor sc;
 	
 	public VarCompletor(){
-		Set<String> names  = new HashSet<String>();
-		for (GricliVar var: GricliVar.values()){
-			names.add(var.name().toLowerCase());
-		}
-		sc = new SimpleCompletor(names.toArray(new String[] {}));
+		sc = new SimpleCompletor(GricliVar.allNames().toArray(new String[] {}));
 	}
 
 	@SuppressWarnings("unchecked")
