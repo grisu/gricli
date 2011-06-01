@@ -29,7 +29,7 @@ public class PrintQueuesCommand implements GricliCommand {
 				.getAllSubmissionLocationsForFqan(fqan);
 
 		for (String queue : queues.asSubmissionLocationStrings()) {
-			System.out.println(queue);
+			env.printMessage(queue);
 		}
 		return env;
 	}

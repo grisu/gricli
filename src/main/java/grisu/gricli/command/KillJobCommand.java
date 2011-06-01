@@ -29,7 +29,7 @@ public class KillJobCommand implements GricliCommand {
 	throws GricliRuntimeException {
 		ServiceInterface si = env.getServiceInterface();
 		for (String j : ServiceInterfaceUtils.filterJobNames(si, jobFilter)) {
-			System.out.println("killing job " + j);
+			env.printMessage("killing job " + j);
 			try {
 				si.kill(j, clean);
 			} catch (RemoteFileSystemException ex) {

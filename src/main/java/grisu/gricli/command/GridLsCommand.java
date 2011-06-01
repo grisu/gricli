@@ -37,7 +37,7 @@ public class GridLsCommand implements GricliCommand {
 				if (file.isVirtual()){
 					result = new ANSIBuffer().red(result).toString();
 				}
-				System.out.println(result);
+				env.printMessage(result);
 			}
 
 		} catch (RemoteFileSystemException ex) {

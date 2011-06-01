@@ -74,10 +74,10 @@ public class DownloadJobCommand implements GricliCommand {
 
 	}
 
-	private void downloadJob(ServiceInterface si, String jobname, String dst)
+	private void downloadJob(GricliEnvironment env, ServiceInterface si, String jobname, String dst)
 			throws GricliRuntimeException {
 		try {
-			System.out.println("downloading job " + jobname);
+			env.printMessage("downloading job " + jobname);
 			DtoJob job = si.getJob(jobname);
 			downloadDir(job.jobProperty("jobDirectory"), dst, si);
 		} catch (NoSuchJobException ex) {
@@ -98,7 +98,7 @@ public class DownloadJobCommand implements GricliCommand {
 				jobFilter)) {
 			
 			try {
-			downloadJob(si, jobname,
+			downloadJob(env,si, jobname,
 					FilenameUtils.concat(normalDirName, jobname));
 			} 
 			catch (GricliRuntimeException ex){

@@ -29,7 +29,7 @@ public class PrintAppsCommand implements GricliCommand {
 		List<DtoVersionInfo> versions = info.getAllVersions();
 			for (DtoVersionInfo version: versions){
 				String versionTag = version.getName();
-				System.out.println(app + " : " + versionTag + "\n submission locations:\n " 
+				env.printMessage(app + " : " + versionTag + "\n submission locations:\n " 
 						+ StringUtils.join(version.getAllSubmissionLocations().asSubmissionLocationStrings(),","));
 			}
 		

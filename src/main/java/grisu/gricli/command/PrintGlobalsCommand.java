@@ -18,7 +18,7 @@ public class PrintGlobalsCommand implements GricliCommand {
 		for (String global : globals) {
 			String value = env.get(global);
 			value = (value == null) ? "" : value;
-			System.out.println(global + " = " + value);
+			env.printMessage(global + " = " + value);
 		}
 		return env;
 	}

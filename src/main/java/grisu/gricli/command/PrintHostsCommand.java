@@ -18,10 +18,10 @@ public class PrintHostsCommand implements GricliCommand {
 		ServiceInterface si = env.getServiceInterface();
 		Map<String, String> hostMap = si.getAllHosts().asMap();
 
-		System.out.println("available hosts: =====");
+		env.printMessage("available hosts: =====");
 
 		for (String key : hostMap.keySet()) {
-			System.out.println(key + " : " + hostMap.get(key));
+			env.printMessage(key + " : " + hostMap.get(key));
 		}
 		return env;
 	}

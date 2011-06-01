@@ -1,27 +1,36 @@
 package grisu.gricli.command;
 
+import grisu.control.ServiceInterface;
+import grisu.control.exceptions.NoSuchJobException;
+import grisu.frontend.model.job.JobObject;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobnameCompletor;
+import grisu.model.dto.DtoJob;
 
 public class WaitJobCommand implements GricliCommand {
 
-	private String jobFilter;
-
-
+	private String jobname;
 
 	@SyntaxDescription(command="wait job")
 	@AutoComplete(completors={JobnameCompletor.class})
-	public WaitJobCommand(String jobFilter) {
-		this.jobFilter = jobFilter;
+	public WaitJobCommand(String jobname) {
+		this.jobname = jobname;
 	}
 
 	
 	
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
+		ServiceInterface si = env.getServiceInterface();
+		try {
+			JobObject job = new JobObject(si,si.getJob(this.jobname));
+			job.waitForJobToFinish(5);
+		} catch (NoSuchJobException e) {
+			env.printError("job " + jobname + " not found");
+		}
+		
+		return env;
 	}
 
 }

@@ -33,7 +33,7 @@ public class HelpCommand implements GricliCommand {
 
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
-		System.out.println(helpMessage);
+		env.printMessage(helpMessage);
 		return env;
 	}
 

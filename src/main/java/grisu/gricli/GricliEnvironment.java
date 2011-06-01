@@ -19,6 +19,7 @@ public class GricliEnvironment {
 	private ServiceInterface si;
 	private String siUrl;
 	private HashMap<String, List<String>> globalLists = new HashMap<String, List<String>>();
+	private boolean quiet = false;
 	
 
 	public GricliEnvironment() {
@@ -40,6 +41,10 @@ public class GricliEnvironment {
 		}
 
 		globalLists.put("files", new LinkedList<String>());
+	}
+	
+	public void quiet(boolean q){
+		this.quiet = quiet;
 	}
 
 	public String get(String global) {
@@ -99,7 +104,13 @@ public class GricliEnvironment {
 	}
 	
 	public void printError(String message){
-		System.out.println(message);
+		System.err.println(message);
+	}
+	
+	public void printMessage(String message){
+		if (!quiet){
+			System.out.println(message);
+		}
 	}
 	
 	public JobObject getJob() throws LoginRequiredException{

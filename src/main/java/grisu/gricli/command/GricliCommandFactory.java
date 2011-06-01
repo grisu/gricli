@@ -45,6 +45,7 @@ public class GricliCommandFactory {
 		commands.add(ArchiveJobCommand.class);
 		commands.add(SubmitCommand.class);
 		commands.add(DownloadAndCleanCommand.class);
+		commands.add(WaitJobCommand.class);
 		
 		commands.add(QuitCommand.class);
 		commands.add(LogoutCommand.class);

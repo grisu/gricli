@@ -9,6 +9,7 @@ import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.util.ServiceInterfaceUtils;
+import grisu.jcommons.constants.Constants;
 
 
 public class ArchiveJobCommand implements GricliCommand {
@@ -23,13 +24,13 @@ public class ArchiveJobCommand implements GricliCommand {
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		ServiceInterface si = env.getServiceInterface();
+		si.setUserProperty(Constants.DEFAULT_JOB_ARCHIVE_LOCATION, null);
 		String jobname = null;
 		try {
 			for (String j : ServiceInterfaceUtils.filterJobNames(si, jobFilter)) {
-				System.out.println("archiving job " + j);
+				env.printMessage("archiving job " + j);
 				jobname = j;
 				si.archiveJob(j, null);
-				//si.archiveJob(j, "gsiftp://gram5.ceres.auckland.ac.nz/home/yhal003");
 			}
 		} catch (RemoteFileSystemException ex) {
 			throw new GricliRuntimeException(ex);
