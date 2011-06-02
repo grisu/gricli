@@ -2,6 +2,7 @@ package grisu.gricli.util;
 
 import grisu.control.ServiceInterface;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.io.FilenameUtils;
@@ -14,7 +15,8 @@ public class ServiceInterfaceUtils {
 			if (FilenameUtils.wildcardMatch(jobname, filter)) {
 				result.add(jobname);
 			}
-		}
+		}	
+		Collections.sort(result);
 		return result;
 	}
 }
