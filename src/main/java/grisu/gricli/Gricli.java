@@ -7,8 +7,10 @@ import grisu.gricli.util.CommandlineTokenizer;
 import grisu.settings.Environment;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import org.apache.commons.lang.StringUtils;
 import java.util.List;
@@ -41,7 +43,7 @@ public class Gricli {
 	
 	static String scriptName = null;
 	
-	static private GricliEnvironment env = new GricliEnvironment();
+	static private GricliEnvironment env;
 	static private GricliCommandFactory f = new GricliCommandFactory();
 	
 	static private GricliExitStatus exitStatus = SUCCESS;
@@ -52,6 +54,8 @@ public class Gricli {
 		// stop javaxws logging
 		java.util.logging.LogManager.getLogManager().reset();
 		java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);
+		
+		env = new GricliEnvironment(f);
 		
 		CommandLineParser parser = new PosixParser();
 		Options options = new Options();
@@ -74,7 +78,7 @@ public class Gricli {
 			e.printStackTrace();
 		}
 			
-		parseConfig(new File(CONFIG_FILE_PATH));
+		run(new FileInputStream(CONFIG_FILE_PATH));
 		executionLoop();
 		System.exit(exitStatus.getStatus());
 	}
@@ -82,12 +86,12 @@ public class Gricli {
 	private static void executionLoop() throws IOException{
 		
 		if (System.console() == null){
-			parseConfig(null);
+			run(System.in);
 			return;
 		}
 		
 		if (scriptName != null){
-			parseConfig(new File(scriptName));
+			run(new FileInputStream(scriptName));
 			return;
 		}
 		
@@ -101,7 +105,7 @@ public class Gricli {
 			}
 			String[] commandsOnOneLine = line.split(";");
 			for (String c: commandsOnOneLine){
-				runCommand(c, f, env);
+				runCommand(CommandlineTokenizer.tokenize(c), f, env);
 			}
 		}
 	}
@@ -117,29 +121,20 @@ public class Gricli {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static void parseConfig(File file) throws IOException{
-		List<String> commands = null;
-		try {
-			if (file != null){
-				commands = FileUtils.readLines(file);
-			} else {
-				commands = IOUtils.readLines(System.in);
-			}
-		} catch (FileNotFoundException fx) {
-			commands = new LinkedList<String>();
-		}
-
-		for (String c : commands) {
-			runCommand(c, f, env);
+	private static void run(InputStream in) throws IOException{
+		
+		CommandlineTokenizer t = new CommandlineTokenizer(in);
+		String[] tokens;
+		while ((tokens = t.nextCommand()).length != 0){
+			runCommand(tokens,f,env);
 		}
 	}
 
-	private static void runCommand(String c, GricliCommandFactory f,
+	private static void runCommand(String[] c, GricliCommandFactory f,
 			GricliEnvironment env) {
 		Exception error = null;
 		try {
-			String[] arguments = CommandlineTokenizer.tokenize(c);
-			GricliCommand command = f.create(arguments);
+			GricliCommand command = f.create(c);
 			command.execute(env);
 			exitStatus = SUCCESS;
 			

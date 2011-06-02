@@ -1,15 +1,14 @@
 package grisu.gricli;
 
 import grisu.control.ServiceInterface;
-import grisu.frontend.model.job.BatchJobObject;
 import grisu.frontend.model.job.JobObject;
+import grisu.gricli.command.GricliCommandFactory;
 import grisu.jcommons.constants.Constants;
 import grisu.model.dto.GridFile;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static grisu.gricli.GricliVar.*;
@@ -20,9 +19,10 @@ public class GricliEnvironment {
 	private String siUrl;
 	private HashMap<String, List<String>> globalLists = new HashMap<String, List<String>>();
 	private boolean quiet = false;
+	private GricliCommandFactory f;
 	
 
-	public GricliEnvironment() {
+	public GricliEnvironment(GricliCommandFactory f) {
 		try {
 			VERSION.setValue(Constants.NO_VERSION_INDICATOR_STRING);
 			WALLTIME.setValue("10");
@@ -40,11 +40,16 @@ public class GricliEnvironment {
 			// never happens
 		}
 
+		this.f = f;
 		globalLists.put("files", new LinkedList<String>());
 	}
 	
+	public GricliCommandFactory getCommandFactory(){
+		return f;
+	}
+	
 	public void quiet(boolean q){
-		this.quiet = quiet;
+		this.quiet = q;
 	}
 
 	public String get(String global) {

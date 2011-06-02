@@ -14,9 +14,9 @@ public class SocketGricli {
 
 	public static void main(String[] args) throws IOException {
 
-		GricliEnvironment env = new GricliEnvironment();
-
 		GricliCommandFactory f = new GricliCommandFactory();
+		
+		GricliEnvironment env = new GricliEnvironment(f);
 
 		ServerSocket myService;
 		myService = new ServerSocket(Integer.parseInt(args[0]));
