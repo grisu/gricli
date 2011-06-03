@@ -40,7 +40,7 @@ public class SubmitSweepCommand implements GricliCommand {
 			env = new AttachCommand(null,new String[] {filename}).execute(env);
 			tempTemplate = tempTemplate.replace(found, "");
 		}
-		System.out.println("submitting " + tempTemplate);
+		env.printMessage("submitting " + tempTemplate);
 
 		return new SubmitCommand(tempTemplate).execute(env);
 	}

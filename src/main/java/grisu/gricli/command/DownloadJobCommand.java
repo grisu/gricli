@@ -25,7 +25,7 @@ import org.apache.commons.lang.StringUtils;
 public class DownloadJobCommand implements GricliCommand {
 	private final String jobFilter;
 
-	@SyntaxDescription(command="download job")
+	@SyntaxDescription(command={"download","job"}, arguments={"jobname"})
 	@AutoComplete(completors={JobnameCompletor.class})
 	public DownloadJobCommand(String jobFilter) {
 		this.jobFilter = jobFilter;
@@ -74,10 +74,10 @@ public class DownloadJobCommand implements GricliCommand {
 
 	}
 
-	private void downloadJob(ServiceInterface si, String jobname, String dst)
+	private void downloadJob(GricliEnvironment env, ServiceInterface si, String jobname, String dst)
 			throws GricliRuntimeException {
 		try {
-			System.out.println("downloading job " + jobname);
+			env.printMessage("downloading job " + jobname);
 			DtoJob job = si.getJob(jobname);
 			downloadDir(job.jobProperty("jobDirectory"), dst, si);
 		} catch (NoSuchJobException ex) {
@@ -88,6 +88,8 @@ public class DownloadJobCommand implements GricliCommand {
 
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
+		
+		boolean hasError = false;
 
 		ServiceInterface si = env.getServiceInterface();
 		String normalDirName = StringUtils.replace(env.get("dir"), "~",
@@ -96,12 +98,16 @@ public class DownloadJobCommand implements GricliCommand {
 				jobFilter)) {
 			
 			try {
-			downloadJob(si, jobname,
+			downloadJob(env,si, jobname,
 					FilenameUtils.concat(normalDirName, jobname));
 			} 
 			catch (GricliRuntimeException ex){
+				hasError = true;
 				env.printError(ex.getMessage());
 			}
+		}
+		if (hasError){
+			throw new GricliRuntimeException("download command was unsuccessful");
 		}
 		return env;
 

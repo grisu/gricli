@@ -13,7 +13,7 @@ import grisu.gricli.completors.CompletionCache;
 public class InteractiveLoginCommand implements GricliCommand {
 	private final String backend;
 
-	@SyntaxDescription(command={"ilogin"})
+	@SyntaxDescription(command={"ilogin"},arguments={"backend"})
 	@AutoComplete(completors={BackendCompletor.class})
 	public InteractiveLoginCommand(String backend) {
 		this.backend = backend;

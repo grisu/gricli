@@ -1,6 +1,5 @@
 package grisu.gricli.command;
 
-import grisu.control.ServiceInterface;
 import grisu.control.exceptions.JobPropertiesException;
 import grisu.control.exceptions.JobSubmissionException;
 import grisu.frontend.model.job.JobObject;
@@ -8,10 +7,6 @@ import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.CompletionCache;
 import grisu.jcommons.constants.Constants;
-import grisu.model.dto.GridFile;
-
-import java.io.File;
-import java.util.List;
 
 
 public class SubmitCommand implements GricliCommand {
@@ -19,12 +14,12 @@ public class SubmitCommand implements GricliCommand {
 	private final String cmd;
 	private final boolean isAsync;
 
-	@SyntaxDescription(command={"submit"})
+	@SyntaxDescription(command={"submit"}, arguments={"commandline"})
 	public SubmitCommand(String cmd) {
 		this(cmd,null);
 	}
 	
-	@SyntaxDescription(command={"submit"})
+	@SyntaxDescription(command={"submit"},arguments={"commandline","&"})
 	public SubmitCommand(String cmd, String mod){
 		this.cmd = cmd;
 		this.isAsync = "&".equals(mod);
@@ -35,11 +30,17 @@ public class SubmitCommand implements GricliCommand {
 		JobObject job = env.getJob();
 		job.setCommandline(cmd);
 		try {
-			job.createJob(env.get("vo"), Constants.TIMESTAMP_METHOD);
+			job.createJob(grisu.gricli.GricliVar.FQAN.getValue(), Constants.UNIQUE_NUMBER_METHOD);
 			return job;
 		} catch (JobPropertiesException ex) {
-			throw new GricliRuntimeException("job property is not valid"
-					+ ex.getMessage(),ex);
+			
+			try {
+				job.createJob(grisu.gricli.GricliVar.FQAN.getValue(), Constants.TIMESTAMP_METHOD);
+				return job;
+			} catch (JobPropertiesException ex2){
+				throw new GricliRuntimeException("job property is not valid"
+						+ ex.getMessage(),ex);
+			}
 		}
 	}
 	

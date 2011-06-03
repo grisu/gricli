@@ -7,8 +7,10 @@ import grisu.gricli.util.CommandlineTokenizer;
 import grisu.settings.Environment;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import org.apache.commons.lang.StringUtils;
 import java.util.List;
@@ -24,12 +26,12 @@ import org.apache.commons.io.IOUtils;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+
+import static grisu.gricli.GricliExitStatus.*;
 
 public class Gricli {
 
@@ -39,20 +41,27 @@ public class Gricli {
 	static final String HISTORY_FILE_PATH = FilenameUtils.concat(Environment.getGrisuClientDirectory().getPath() , 
 			"gricli.hist");
 	
-	static private GricliEnvironment env = new GricliEnvironment();
+	static String scriptName = null;
+	
+	static private GricliEnvironment env;
 	static private GricliCommandFactory f = new GricliCommandFactory();
+	
+	static private GricliExitStatus exitStatus = SUCCESS;
 
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) throws IOException,GricliException {
-
+		
 		// stop javaxws logging
 		java.util.logging.LogManager.getLogManager().reset();
 		java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);
+		
+		env = new GricliEnvironment(f);
 		
 		CommandLineParser parser = new PosixParser();
 		Options options = new Options();
 		options.addOption(OptionBuilder.withLongOpt("nologin").withDescription("disables login at the start").create('n'));
 		options.addOption(OptionBuilder.withLongOpt("backend").hasArg().withArgName("backend").withDescription("change backend").create('b'));
+		options.addOption(OptionBuilder.withLongOpt("script").hasArg().withArgName("file").withDescription("execute script").create('f'));
 		try {
 			CommandLine cl = parser.parse(options, args);
 			if (!cl.hasOption('n')){
@@ -60,19 +69,29 @@ public class Gricli {
 				backend = (backend != null)?backend:"BeSTGRID";
 				new InteractiveLoginCommand(backend).execute(env);
 			}
+			
+			if (cl.hasOption('f')){
+				scriptName = cl.getOptionValue('f');
+			}
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 			
-		parseConfig(new File(CONFIG_FILE_PATH));
+		run(new FileInputStream(CONFIG_FILE_PATH));
 		executionLoop();
+		System.exit(exitStatus.getStatus());
 	}
 	
 	private static void executionLoop() throws IOException{
 		
 		if (System.console() == null){
-			parseConfig(null);
+			run(System.in);
+			return;
+		}
+		
+		if (scriptName != null){
+			run(new FileInputStream(scriptName));
 			return;
 		}
 		
@@ -86,7 +105,7 @@ public class Gricli {
 			}
 			String[] commandsOnOneLine = line.split(";");
 			for (String c: commandsOnOneLine){
-				runCommand(c, f, env);
+				runCommand(CommandlineTokenizer.tokenize(c), f, env);
 			}
 		}
 	}
@@ -102,49 +121,46 @@ public class Gricli {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static void parseConfig(File file) throws IOException{
-		List<String> commands = null;
-		try {
-			if (file != null){
-				commands = FileUtils.readLines(file);
-			} else {
-				commands = IOUtils.readLines(System.in);
-			}
-		} catch (FileNotFoundException fx) {
-			commands = new LinkedList<String>();
-		}
-
-		for (String c : commands) {
-			runCommand(c, f, env);
+	private static void run(InputStream in) throws IOException{
+		
+		CommandlineTokenizer t = new CommandlineTokenizer(in);
+		String[] tokens;
+		while ((tokens = t.nextCommand()).length != 0){
+			runCommand(tokens,f,env);
 		}
 	}
 
-	private static void runCommand(String c, GricliCommandFactory f,
+	private static void runCommand(String[] c, GricliCommandFactory f,
 			GricliEnvironment env) {
 		Exception error = null;
 		try {
-			String[] arguments = CommandlineTokenizer.tokenize(c);
-			GricliCommand command = f.create(arguments);
+			GricliCommand command = f.create(c);
 			command.execute(env);
+			exitStatus = SUCCESS;
 			
 		} catch (InvalidCommandException ex) {
-			System.out.println(ex.getMessage());
+			System.out.println(ex.getMessage());			
 		} catch (UnknownCommandException ex) {
+			exitStatus = SYNTAX;
 			error = ex;
 			System.err
 					.println("command " + ex.getMessage() + " does not exist");
 		} catch (SyntaxException ex) {
+			exitStatus = SYNTAX;
 			error = ex;
 			System.err.println("syntax error "+ ex.getMessage());
 		} catch (LoginRequiredException ex) {
+			exitStatus = LOGIN;
 			error = ex;
 			System.err.println("this command requires you to login first");
 		} catch (GricliSetValueException ex) {
+			exitStatus = RUNTIME;
 			error = ex;
 			System.err.println("variable " + ex.getVar() + " cannot be set to "
 					+ ex.getValue());
 			System.err.println("reason: " + ex.getReason());
 		} catch (GricliRuntimeException ex) {
+			exitStatus = RUNTIME;
 			error = ex;
 			System.err.println(ex.getMessage());
 		} finally {

@@ -16,14 +16,14 @@ public class PrintJobCommand implements GricliCommand {
 	private final String jobname;
 	private final String attribute;
 
-	@SyntaxDescription(command={"print","job"})
+	@SyntaxDescription(command={"print","job"},arguments={"jobname","attribute"})
 	@AutoComplete(completors={JobnameCompletor.class,JobPropertiesCompletor.class})
 	public PrintJobCommand(String jobname, String attribute) {
 		this.jobname = jobname;
 		this.attribute = attribute;
 	}
 	
-	@SyntaxDescription(command={"print","job"})
+	@SyntaxDescription(command={"print","job"},arguments={"jobname"})
 	@AutoComplete(completors={JobnameCompletor.class})
 	public PrintJobCommand(String jobname){
 		this(jobname,null);
@@ -40,9 +40,9 @@ public class PrintJobCommand implements GricliCommand {
 		for (String j : ServiceInterfaceUtils.filterJobNames(si, jobname)) {
 			try {
 				if (attribute != null) {
-					printJobAttribute(si, j, attribute);
+					printJobAttribute(env,si, j, attribute);
 				} else {
-					printJob(si, j);
+					printJob(env,si, j);
 				}
 			} catch (NoSuchJobException ex) {
 				throw new GricliRuntimeException("job " + j + " does not exist");
@@ -52,26 +52,26 @@ public class PrintJobCommand implements GricliCommand {
 		return env;
 	}
 
-	private void printJobAttribute(ServiceInterface si, String j,
+	private void printJobAttribute(GricliEnvironment env, ServiceInterface si, String j,
 			String attribute) throws NoSuchJobException {
 		DtoJob job = si.getJob(j);
 		if (!("status".equals(attribute))) {
-			System.out.println(j + " : " + job.jobProperty(attribute));
+			env.printMessage(j + " : " + job.jobProperty(attribute));
 		} else {
-			System.out.println(j + " : "
+			env.printMessage(j + " : "
 					+ JobConstants.translateStatus(si.getJobStatus(j)));
 		}
 	}
 
-	private void printJob(ServiceInterface si, String j)
+	private void printJob(GricliEnvironment env, ServiceInterface si, String j)
 			throws NoSuchJobException {
 		DtoJob job = si.getJob(j);
-		System.out.println("Printing details for job " + jobname);
-		System.out.println("status: "
+		env.printMessage("Printing details for job " + jobname);
+		env.printMessage("status: "
 				+ JobConstants.translateStatus(si.getJobStatus(jobname)));
 		Map<String, String> props = job.propertiesAsMap();
 		for (String key : props.keySet()) {
-			System.out.println(key + " : " + props.get(key));
+			env.printMessage(key + " : " + props.get(key));
 		}
 	}
 

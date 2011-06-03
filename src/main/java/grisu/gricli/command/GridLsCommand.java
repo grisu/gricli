@@ -15,7 +15,7 @@ public class GridLsCommand implements GricliCommand {
 	
 	private String path;
 
-	@SyntaxDescription(command={"gls"})
+	@SyntaxDescription(command={"gls"},arguments={"path"})
 	@AutoComplete(completors={FqanCompletor.class})
 	public GridLsCommand(String path){
 		this.path = path;
@@ -37,7 +37,7 @@ public class GridLsCommand implements GricliCommand {
 				if (file.isVirtual()){
 					result = new ANSIBuffer().red(result).toString();
 				}
-				System.out.println(result);
+				env.printMessage(result);
 			}
 
 		} catch (RemoteFileSystemException ex) {
