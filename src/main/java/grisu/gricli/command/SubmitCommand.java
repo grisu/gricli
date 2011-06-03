@@ -14,12 +14,12 @@ public class SubmitCommand implements GricliCommand {
 	private final String cmd;
 	private final boolean isAsync;
 
-	@SyntaxDescription(command={"submit"})
+	@SyntaxDescription(command={"submit"}, arguments={"commandline"})
 	public SubmitCommand(String cmd) {
 		this(cmd,null);
 	}
 	
-	@SyntaxDescription(command={"submit"})
+	@SyntaxDescription(command={"submit"},arguments={"commandline","&"})
 	public SubmitCommand(String cmd, String mod){
 		this.cmd = cmd;
 		this.isAsync = "&".equals(mod);

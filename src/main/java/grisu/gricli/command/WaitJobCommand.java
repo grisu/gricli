@@ -12,7 +12,7 @@ public class WaitJobCommand implements GricliCommand {
 
 	private String jobname;
 
-	@SyntaxDescription(command="wait job")
+	@SyntaxDescription(command={"wait","job"},arguments={"jobname"})
 	@AutoComplete(completors={JobnameCompletor.class})
 	public WaitJobCommand(String jobname) {
 		this.jobname = jobname;

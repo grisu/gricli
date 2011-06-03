@@ -10,7 +10,7 @@ import grisu.model.dto.DtoSubmissionLocations;
 public class PrintQueuesCommand implements GricliCommand {
 	private final String fqan;
 
-	@SyntaxDescription(command={"print","queues"})
+	@SyntaxDescription(command={"print","queues"}, arguments={"group"})
 	@AutoComplete(completors={FqanCompletor.class})
 	public PrintQueuesCommand(String fqan) {
 		this.fqan = fqan;

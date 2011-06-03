@@ -15,7 +15,7 @@ public class PrintAppsCommand implements GricliCommand {
 	
 	private String app;
 
-	@SyntaxDescription(command={"print","application"})
+	@SyntaxDescription(command={"print","application"},arguments={"application"})
 	// @AutoComplete(completors={SiteCompletor.class})
 	public PrintAppsCommand(String app){
 		this.app = app;

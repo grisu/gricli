@@ -13,7 +13,7 @@ import grisu.gricli.completors.CompletionCache;
 public class LocalLoginCommand implements GricliCommand {
 	private String siUrl;
 
-	@SyntaxDescription(command={"login"})
+	@SyntaxDescription(command={"login"}, arguments={"backend"})
 	@AutoComplete(completors={BackendCompletor.class})
 	public LocalLoginCommand(String siUrl) {
 		this.siUrl = siUrl;

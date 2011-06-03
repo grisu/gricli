@@ -15,7 +15,7 @@ import grisu.jcommons.constants.Constants;
 public class ArchiveJobCommand implements GricliCommand {
 	private final String jobFilter;
 
-	@SyntaxDescription(command={"archive","job"})
+	@SyntaxDescription(command={"archive","job"},arguments={"jobname"})
 	@AutoComplete(completors={JobnameCompletor.class})
 	public ArchiveJobCommand(String jobFilter) {
 		this.jobFilter = jobFilter;

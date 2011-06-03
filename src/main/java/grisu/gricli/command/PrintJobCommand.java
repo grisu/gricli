@@ -16,14 +16,14 @@ public class PrintJobCommand implements GricliCommand {
 	private final String jobname;
 	private final String attribute;
 
-	@SyntaxDescription(command={"print","job"})
+	@SyntaxDescription(command={"print","job"},arguments={"jobname","attribute"})
 	@AutoComplete(completors={JobnameCompletor.class,JobPropertiesCompletor.class})
 	public PrintJobCommand(String jobname, String attribute) {
 		this.jobname = jobname;
 		this.attribute = attribute;
 	}
 	
-	@SyntaxDescription(command={"print","job"})
+	@SyntaxDescription(command={"print","job"},arguments={"jobname"})
 	@AutoComplete(completors={JobnameCompletor.class})
 	public PrintJobCommand(String jobname){
 		this(jobname,null);

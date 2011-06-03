@@ -25,7 +25,7 @@ import org.apache.commons.lang.StringUtils;
 public class DownloadJobCommand implements GricliCommand {
 	private final String jobFilter;
 
-	@SyntaxDescription(command="download job")
+	@SyntaxDescription(command={"download","job"}, arguments={"jobname"})
 	@AutoComplete(completors={JobnameCompletor.class})
 	public DownloadJobCommand(String jobFilter) {
 		this.jobFilter = jobFilter;

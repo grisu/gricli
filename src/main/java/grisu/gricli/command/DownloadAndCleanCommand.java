@@ -9,7 +9,7 @@ public class DownloadAndCleanCommand implements GricliCommand {
 
 	private String jobFilter;
 
-	@SyntaxDescription(command={"downloadclean","job"})
+	@SyntaxDescription(command={"downloadclean","job"},arguments={"jobname"})
 	@AutoComplete(completors={JobnameCompletor.class})
 	public DownloadAndCleanCommand(String jobFilter){
 		this.jobFilter = jobFilter;

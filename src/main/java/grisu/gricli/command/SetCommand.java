@@ -9,7 +9,7 @@ public class SetCommand implements GricliCommand {
 	private final String global;
 	private final String value;
 
-	@SyntaxDescription(command={"set"}) 
+	@SyntaxDescription(command={"set"},arguments={"var","value"}) 
 	@AutoComplete(completors={VarCompletor.class})
 	public SetCommand(String global, String value) {
 		this.global = global;
