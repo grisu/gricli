@@ -3,6 +3,8 @@ package grisu.gricli.parser;
 import static org.junit.Assert.*;
 import static grisu.gricli.parser.GricliTokenizer.*;
 
+import grisu.gricli.SyntaxException;
+
 import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
@@ -84,10 +86,5 @@ public class TestParsing {
 		assertArrayEquals(tokenize("aa bb c#c"),new String[] {"aa", "bb","c#c"});
 	}
 	
-	@Test
-	@Ignore("not implemented")
-	public void testBrokenSingle(){
-		tokenize("\"");
-	}
 
 }

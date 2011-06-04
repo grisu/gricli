@@ -44,7 +44,7 @@ public class Gricli {
 	static String scriptName = null;
 	
 	static private GricliEnvironment env;
-	static private GricliCommandFactory f = new GricliCommandFactory();
+	static private GricliCommandFactory f = GricliCommandFactory.getStandardFactory();
 	
 	static private GricliExitStatus exitStatus = SUCCESS;
 

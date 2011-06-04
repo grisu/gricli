@@ -21,11 +21,6 @@ public class AttachCommand implements GricliCommand {
 	private String[] globs;
 	private String batchname;
 	
-	static {
-		GricliCommandFactory.commands.add(AttachCommand.class);
-	}
-	
-	
 	@SyntaxDescription(command={"batch","attach"}, 
 	arguments={"batchjob","files"}, help="attach files to batch job")
 	public AttachCommand(String batchname, String... globs){

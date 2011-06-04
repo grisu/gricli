@@ -16,7 +16,6 @@ public class HelpCommand implements GricliCommand {
 	
 	private String[] keywords;
 	
-	@SuppressWarnings("unchecked")
 	@SyntaxDescription(command={"help"},
 			arguments={"keywords"}, help="prints this help message")
 	public HelpCommand(String... keywords){
@@ -35,11 +34,11 @@ public class HelpCommand implements GricliCommand {
 		return helpMessage.toString();
 	}
 	
-	private ArrayList<SyntaxDescription> getAllCommands(){
+	private ArrayList<SyntaxDescription> getAllCommands(GricliEnvironment env){
 		
 		ArrayList<SyntaxDescription> result = new ArrayList<SyntaxDescription>();
 		
-		List<Class<? extends GricliCommand>> cs = GricliCommandFactory.commands;
+		List<Class<? extends GricliCommand>> cs = env.getCommandFactory().getCommands();
 		for (Class<? extends GricliCommand> c: cs){
 			Constructor<? extends GricliCommand>[] conss = (Constructor<? extends GricliCommand>[])c.getDeclaredConstructors();
 			for (Constructor<? extends GricliCommand> cons: conss){
@@ -66,7 +65,7 @@ public class HelpCommand implements GricliCommand {
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		
-		List<SyntaxDescription> commands = getAllCommands();
+		List<SyntaxDescription> commands = getAllCommands(env);
 		
 		for (int i = 0; i< keywords.length; i++){
 			commands = findCommandList(i, keywords[i],commands);
