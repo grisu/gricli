@@ -9,7 +9,7 @@ import jline.FileNameCompletor;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.SyntaxException;
-import grisu.gricli.util.CommandlineTokenizer;
+import grisu.gricli.parser.GricliTokenizer;
 
 public class RunCommand implements GricliCommand {
 	
@@ -28,7 +28,7 @@ public class RunCommand implements GricliCommand {
 		ArrayList<GricliCommand> cl = new ArrayList<GricliCommand>();
 		
 		try {
-			CommandlineTokenizer tokenizer = new CommandlineTokenizer(new FileInputStream(script));
+			GricliTokenizer tokenizer = new GricliTokenizer(new FileInputStream(script));
 			String[] tokens;
 				while ((tokens = tokenizer.nextCommand()).length > 0){
 					cl.add(f.create(tokens));

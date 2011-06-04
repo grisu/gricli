@@ -3,7 +3,7 @@ package grisu.gricli;
 import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.GricliCommandFactory;
 import grisu.gricli.command.InteractiveLoginCommand;
-import grisu.gricli.util.CommandlineTokenizer;
+import grisu.gricli.parser.GricliTokenizer;
 import grisu.settings.Environment;
 
 import java.io.File;
@@ -105,7 +105,7 @@ public class Gricli {
 			}
 			String[] commandsOnOneLine = line.split(";");
 			for (String c: commandsOnOneLine){
-				runCommand(CommandlineTokenizer.tokenize(c), f, env);
+				runCommand(GricliTokenizer.tokenize(c), f, env);
 			}
 		}
 	}
@@ -123,7 +123,7 @@ public class Gricli {
 	@SuppressWarnings("unchecked")
 	private static void run(InputStream in) throws IOException{
 		
-		CommandlineTokenizer t = new CommandlineTokenizer(in);
+		GricliTokenizer t = new GricliTokenizer(in);
 		String[] tokens;
 		while ((tokens = t.nextCommand()).length != 0){
 			runCommand(tokens,f,env);
