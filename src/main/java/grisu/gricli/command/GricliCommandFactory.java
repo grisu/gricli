@@ -19,58 +19,83 @@ import org.apache.commons.lang.StringUtils;
 
 public class GricliCommandFactory {
 	
-	public static List<Class<? extends GricliCommand>> commands = new ArrayList<Class<? extends GricliCommand>>();
+	private  List<Class<? extends GricliCommand>> commands = new ArrayList<Class<? extends GricliCommand>>();
 	private HashMap<String, Constructor<? extends GricliCommand>> commandMap;
 	private HashSet<String> commandSet;
 	private Completor tabCompletor;
 	
-	static {
-		commands.add(AddCommand.class);
-		commands.add(AttachCommand.class);
-		commands.add(ClearListCommand.class);
-		commands.add(DownloadJobCommand.class);
-		commands.add(FilemanagerCommand.class);
-		commands.add(SetCommand.class);
-		commands.add(LocalLoginCommand.class);
-		commands.add(InteractiveLoginCommand.class);
-		commands.add(NopCommand.class);
-		commands.add(PrintGlobalsCommand.class);
-		commands.add(PrintQueuesCommand.class);
-		commands.add(PrintAppsCommand.class);
-		commands.add(PrintHostsCommand.class);
+	public static GricliCommandFactory getCustomFactory(Class<? extends GricliCommand>[] commands){
+		GricliCommandFactory f = new GricliCommandFactory();
+		for (Class<? extends GricliCommand> c: commands){
+			f.add(c);
+		}
+		f.init();
+		return f;
+	}
+	
+	public static GricliCommandFactory getStandardFactory(){
+		GricliCommandFactory f = new GricliCommandFactory();
+		f.add(AddCommand.class);
+		f.add(AttachCommand.class);
+		f.add(ClearListCommand.class);
+		f.add(DownloadJobCommand.class);
+		f.add(FilemanagerCommand.class);
+		f.add(SetCommand.class);
+		f.add(LocalLoginCommand.class);
+		f.add(InteractiveLoginCommand.class);
+		f.add(NopCommand.class);
+		f.add(PrintGlobalsCommand.class);
+		f.add(PrintQueuesCommand.class);
+		f.add(PrintAppsCommand.class);
+		f.add(PrintHostsCommand.class);
 		
-		commands.add(RunCommand.class);
+		f.add(RunCommand.class);
 		
-		commands.add(KillJobCommand.class);
-		commands.add(CleanJobCommand.class);
-		commands.add(PrintJobCommand.class);
-		commands.add(ArchiveJobCommand.class);
-		commands.add(SubmitCommand.class);
-		commands.add(DownloadAndCleanCommand.class);
-		commands.add(WaitJobCommand.class);
+		f.add(KillJobCommand.class);
+		f.add(CleanJobCommand.class);
+		f.add(PrintJobCommand.class);
+		f.add(ArchiveJobCommand.class);
+		f.add(SubmitCommand.class);
+		f.add(DownloadAndCleanCommand.class);
+		f.add(WaitJobCommand.class);
 		
-		commands.add(QuitCommand.class);
-		commands.add(LogoutCommand.class);
-		commands.add(HelpCommand.class);
+		f.add(QuitCommand.class);
+		f.add(LogoutCommand.class);
+		f.add(HelpCommand.class);
 		
 		// filesystem commands
-		commands.add(GridLsCommand.class);
-		commands.add(ClearCacheCommand.class);
+		f.add(GridLsCommand.class);
+		f.add(ClearCacheCommand.class);
 		
 		//batch commands
-		commands.add(CreateBatchCommand.class);
-		commands.add(AddBatchCommand.class);
-		commands.add(SubmitBatchCommand.class);
-				
+		f.add(CreateBatchCommand.class);
+		f.add(AddBatchCommand.class);
+		f.add(SubmitBatchCommand.class);
+		
+		f.init();
+		
+		return f;
+	}
+	
+	public void add(Class<? extends GricliCommand> c){
+		commands.add(c);
+	}
+	
+	public List<Class<? extends GricliCommand>> getCommands(){
+		return new ArrayList<Class<? extends GricliCommand>>(commands);
 	}
 	
 	public Completor createCompletor(){
 		return this.tabCompletor;
 	}
 	
+
+	public GricliCommandFactory(){		
+		this.commands = new ArrayList<Class<? extends GricliCommand>>();	
+	}
+	
 	@SuppressWarnings("unchecked")
-	public GricliCommandFactory(){
-		
+	public void init(){
 		commandMap = new HashMap<String, Constructor<? extends GricliCommand>>();
 		commandSet = new HashSet<String>();
 		List<Completor> commandCompletors = new ArrayList<Completor>();
@@ -130,6 +155,7 @@ public class GricliCommandFactory {
 		
 		this.tabCompletor = new MultiCompletor(commandCompletors.toArray(new Completor[] {}));
 	}
+	
 
 	public GricliCommand create(String[] args) throws SyntaxException {
 		

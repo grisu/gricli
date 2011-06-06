@@ -1,4 +1,4 @@
-package grisu.gricli.util;
+package grisu.gricli.parser;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -8,11 +8,11 @@ import java.io.InputStreamReader;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
 
-public class CommandlineTokenizer {
+public class GricliTokenizer {
 	
 	private InputStream in;
 
-	public CommandlineTokenizer(InputStream in){
+	public GricliTokenizer(InputStream in){
 		this.in = in;
 	}
 	
@@ -34,6 +34,11 @@ public class CommandlineTokenizer {
 	}
 
 	public static String[] tokenize(String str) {
+		
+		if (str == null ){
+			return null;
+		}
+		
 		StreamTokenizer st = new StreamTokenizer(
 				new BufferedReader(new InputStreamReader(
 						new ByteArrayInputStream(str.getBytes()))));

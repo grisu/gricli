@@ -1,7 +1,7 @@
 package grisu.gricli;
 
 import grisu.gricli.command.GricliCommandFactory;
-import grisu.gricli.util.CommandlineTokenizer;
+import grisu.gricli.parser.GricliTokenizer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class SocketGricli {
 					if (command == null)
 						break;
 					try {
-						f.create(CommandlineTokenizer.tokenize(command))
+						f.create(GricliTokenizer.tokenize(command))
 								.execute(env);
 						System.out.println(command + " executed ");
 					} catch (GricliException ex) {
