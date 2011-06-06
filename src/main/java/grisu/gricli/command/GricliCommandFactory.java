@@ -24,7 +24,7 @@ public class GricliCommandFactory {
 	private HashSet<String> commandSet;
 	private Completor tabCompletor;
 	
-	public static GricliCommandFactory getCustomFactory(Class<? extends GricliCommand>[] commands){
+	public static GricliCommandFactory getCustomFactory(Class<? extends GricliCommand>... commands ){
 		GricliCommandFactory f = new GricliCommandFactory();
 		for (Class<? extends GricliCommand> c: commands){
 			f.add(c);
@@ -119,7 +119,7 @@ public class GricliCommandFactory {
 					argumentNumber = "*";
 				} 
 				else {
-					argumentNumber = "" + cons.getGenericParameterTypes().length;
+					argumentNumber = "" + cons.getParameterTypes().length;
 				}
 				commandString[sd.command().length] = argumentNumber;
 				commandMap.put(StringUtils.join(commandString," "), cons);	
