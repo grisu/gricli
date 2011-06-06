@@ -78,7 +78,11 @@ public class Gricli {
 			e.printStackTrace();
 		}
 			
-		run(new FileInputStream(CONFIG_FILE_PATH));
+		try {
+			run(new FileInputStream(CONFIG_FILE_PATH));
+		} catch (IOException ex){
+			// config does not exist
+		}
 		executionLoop();
 		System.exit(exitStatus.getStatus());
 	}
