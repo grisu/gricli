@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
-<log4j:configuration debug="true">
+<log4j:configuration debug="false">
 
 	<!-- <appender name="rollingFile" class="org.apache.log4j.RollingFileAppender"> 
 		<param name="file" value="/var/log/grisu/grisu.log" /> <param name="append" 
