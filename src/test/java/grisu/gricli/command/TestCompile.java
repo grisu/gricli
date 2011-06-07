@@ -15,7 +15,7 @@ public class TestCompile {
 	GricliCommandFactory trivial,simple,multi,language1,args2;
 	
 	@Before 
-	public void setUp(){
+	public void setUp() throws Exception{
 		trivial = GricliCommandFactory.getCustomFactory(SimpleCommand.class);
 		simple = GricliCommandFactory.getCustomFactory(Args1Command.class);
 		multi = GricliCommandFactory.getCustomFactory(MultiCommand.class);
@@ -107,5 +107,12 @@ public class TestCompile {
 	public void testArgs2error0() throws Exception{
 		args2.create(new String[] {"c1","c2"});
 	}
+	
+	// test inconsistent language
+	@Test(expected=CompileException.class)
+	public void testInconsistent() throws Exception {
+		GricliCommandFactory.getCustomFactory(InconsistentCommand.class);
+	}
+	
 	
 }

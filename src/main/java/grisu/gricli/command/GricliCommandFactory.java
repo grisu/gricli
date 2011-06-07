@@ -20,11 +20,12 @@ import org.apache.commons.lang.StringUtils;
 public class GricliCommandFactory {
 	
 	private  List<Class<? extends GricliCommand>> commands = new ArrayList<Class<? extends GricliCommand>>();
-	private HashMap<String, Constructor<? extends GricliCommand>> commandMap;
-	private HashSet<String> commandSet;
+	/** private HashMap<String, Constructor<? extends GricliCommand>> commandMap;
+	private HashSet<String> commandSet; **/
 	private Completor tabCompletor;
+	private CommandCreator creator;
 	
-	public static GricliCommandFactory getCustomFactory(Class<? extends GricliCommand>... commands ){
+	public static GricliCommandFactory getCustomFactory(Class<? extends GricliCommand>... commands ) throws CompileException{
 		GricliCommandFactory f = new GricliCommandFactory();
 		for (Class<? extends GricliCommand> c: commands){
 			f.add(c);
@@ -33,7 +34,7 @@ public class GricliCommandFactory {
 		return f;
 	}
 	
-	public static GricliCommandFactory getStandardFactory(){
+	public static GricliCommandFactory getStandardFactory() {
 		GricliCommandFactory f = new GricliCommandFactory();
 		f.add(AddCommand.class);
 		f.add(AttachCommand.class);
@@ -72,7 +73,12 @@ public class GricliCommandFactory {
 		f.add(AddBatchCommand.class);
 		f.add(SubmitBatchCommand.class);
 		
-		f.init();
+		try {
+			f.init();
+		} catch (CompileException e) {
+			// shouldn't happen
+			e.printStackTrace();
+		}
 		
 		return f;
 	}
@@ -95,41 +101,41 @@ public class GricliCommandFactory {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void init(){
-		commandMap = new HashMap<String, Constructor<? extends GricliCommand>>();
-		commandSet = new HashSet<String>();
+	public void init() throws CompileException{
+
+		this.creator = new CommandCreator();
 		List<Completor> commandCompletors = new ArrayList<Completor>();
-				
+
 		for (Class<? extends GricliCommand> c: commands){
 			Constructor<? extends GricliCommand>[] conss = 
 				(Constructor<? extends GricliCommand>[])c.getDeclaredConstructors();
 			for (Constructor<? extends GricliCommand> cons: conss){
 				SyntaxDescription sd = cons.getAnnotation(SyntaxDescription.class);
-				
+
 				if (sd == null) {
 					continue;
 				}
-				
-				commandSet.add(StringUtils.join(sd.command()," "));
-				String[] commandString = new String[sd.command().length + 1];
-				System.arraycopy(sd.command(), 0, commandString, 0, sd.command().length);
-				
-				String argumentNumber = null;
-				if (cons.isVarArgs()){
-					argumentNumber = "*";
-				} 
-				else {
-					argumentNumber = "" + cons.getParameterTypes().length;
+
+				CommandCreator temp = creator;
+				for (String keyword: sd.command()){
+					temp = temp.addKeyword(keyword);
 				}
-				commandString[sd.command().length] = argumentNumber;
-				commandMap.put(StringUtils.join(commandString," "), cons);	
-				
+				if (cons.isVarArgs()){
+					temp = temp.addVarArg("vararg");
+				} else {
+
+					for (String arg: sd.arguments()){
+						temp = temp.addArgument(arg);
+					}
+				}
+				temp.addConstructor(cons);
+
 				// create tab completor for that command
 				List<Completor> simpleCompletors = new ArrayList<Completor>();
 				for (String token: sd.command()){
 					simpleCompletors.add(new SimpleCompletor(new String[] {token}));
 				}
-				
+
 				// specialised argument annotations
 				if (cons.isAnnotationPresent(AutoComplete.class)){
 					Class<? extends Completor>[] argumentCompletors = cons.getAnnotation(AutoComplete.class).completors();				
@@ -145,54 +151,18 @@ public class GricliCommandFactory {
 						}
 					}
 				}
-				
+
 				if (!cons.isVarArgs()){
 					simpleCompletors.add(new NullCompletor());
 				}
 				commandCompletors.add(new ArgumentCompletor(simpleCompletors.toArray(new Completor[] {})));
 			}
 		}
-		
+
 		this.tabCompletor = new MultiCompletor(commandCompletors.toArray(new Completor[] {}));
 	}
 	
-
 	public GricliCommand create(String[] args) throws SyntaxException {
-		
-		for (int i = args.length; i >= 0; i--){
-			String[] commandWords = new String[i+1];
-			String[] argumentWords = new String[i];
-			System.arraycopy(args, 0, commandWords, 0, i);
-			System.arraycopy(args, 0, argumentWords, 0, i);
-			String[] arguments = new String[args.length - i];
-			System.arraycopy(args, i, arguments, 0, arguments.length);
-			
-			// check for variable number of arguments first
-			Constructor<? extends GricliCommand> cons;
-			commandWords[i] = "*";
-			cons = commandMap.get(StringUtils.join(commandWords," "));
-			
-			if (cons == null){
-				commandWords[i] = "" + (args.length - i);
-			}
-			
-			cons = commandMap.get(StringUtils.join(commandWords," "));
-			if (cons != null){
-				try { // any exception at this stage will be implementation bug
-					if (cons.isVarArgs()){
-						return cons.newInstance((Object)arguments);
-					}
-					return cons.newInstance((Object[])arguments);
-				} catch (Exception e) {				
-					e.printStackTrace();
-				} 				
-			} 
-			// command is known but number of arguments is wrong
-			else if (commandSet.contains(StringUtils.join(argumentWords," "))){
-				throw new InvalidCommandException("wrong number of arguments");
-			}
-		}
-		throw new UnknownCommandException(StringUtils.join(args," "));
-	
-	} 
+		return creator.create(args);
+	}
 }
