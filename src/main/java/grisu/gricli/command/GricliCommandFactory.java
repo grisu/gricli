@@ -100,6 +100,53 @@ public class GricliCommandFactory {
 		this.commands = new ArrayList<Class<? extends GricliCommand>>();	
 	}
 	
+	private void addCommand(Constructor<? extends GricliCommand> cons, CommandCreator creator)
+		throws CompileException{
+		SyntaxDescription sd = cons.getAnnotation(SyntaxDescription.class);
+
+		for (String keyword: sd.command()){
+			creator = creator.addKeyword(keyword);
+		}
+		if (cons.isVarArgs()){
+			creator = creator.addVarArg("vararg");
+		} else {
+
+			for (String arg: sd.arguments()){
+				creator = creator.addArgument(arg);
+			}
+		}
+		creator.addConstructor(cons);
+	}
+	
+	private ArgumentCompletor getTabCompletor(SyntaxDescription sd, AutoComplete auto, boolean isVar){
+		List<Completor> simpleCompletors = new ArrayList<Completor>();
+		for (String token: sd.command()){
+			simpleCompletors.add(new SimpleCompletor(new String[] {token}));
+		}
+
+		// specialised argument annotations
+		if (auto != null){
+			Class<? extends Completor>[] argumentCompletors = auto.completors();				
+			for (Class<? extends Completor> argumentCompletor: argumentCompletors){
+				try {
+					simpleCompletors.add(argumentCompletor.newInstance());
+				} catch (InstantiationException e) {
+					// cannot happen 
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// cannot happen
+					e.printStackTrace();
+				}
+			}
+		}
+
+		if (!isVar){
+			simpleCompletors.add(new NullCompletor());
+		}
+		
+		return new ArgumentCompletor(simpleCompletors.toArray(new Completor[] {}));
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void init() throws CompileException{
 
@@ -116,46 +163,8 @@ public class GricliCommandFactory {
 					continue;
 				}
 
-				CommandCreator temp = creator;
-				for (String keyword: sd.command()){
-					temp = temp.addKeyword(keyword);
-				}
-				if (cons.isVarArgs()){
-					temp = temp.addVarArg("vararg");
-				} else {
-
-					for (String arg: sd.arguments()){
-						temp = temp.addArgument(arg);
-					}
-				}
-				temp.addConstructor(cons);
-
-				// create tab completor for that command
-				List<Completor> simpleCompletors = new ArrayList<Completor>();
-				for (String token: sd.command()){
-					simpleCompletors.add(new SimpleCompletor(new String[] {token}));
-				}
-
-				// specialised argument annotations
-				if (cons.isAnnotationPresent(AutoComplete.class)){
-					Class<? extends Completor>[] argumentCompletors = cons.getAnnotation(AutoComplete.class).completors();				
-					for (Class<? extends Completor> argumentCompletor: argumentCompletors){
-						try {
-							simpleCompletors.add(argumentCompletor.newInstance());
-						} catch (InstantiationException e) {
-							// cannot happen 
-							e.printStackTrace();
-						} catch (IllegalAccessException e) {
-							// cannot happen
-							e.printStackTrace();
-						}
-					}
-				}
-
-				if (!cons.isVarArgs()){
-					simpleCompletors.add(new NullCompletor());
-				}
-				commandCompletors.add(new ArgumentCompletor(simpleCompletors.toArray(new Completor[] {})));
+				addCommand(cons,creator);
+				commandCompletors.add(getTabCompletor(sd,cons.getAnnotation(AutoComplete.class),cons.isVarArgs()));
 			}
 		}
 
