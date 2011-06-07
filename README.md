@@ -4,6 +4,8 @@ Latest version can be downloaded from ftp://ftp.bestgrid.org/pub/gricli-binary.j
 
 The latest development version can be downloaded from http://code.ceres.auckland.ac.nz/snapshot-downloads/gricli-dev.jar
 
+Javadoc: http://grisu.github.com/gricli/javadoc/
+
 Tutorial
 ======
 
