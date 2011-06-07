@@ -76,6 +76,10 @@ public class GricliEnvironment {
 
 	public void add(String globalList, String value)
 			throws GricliRuntimeException {
+		GricliVar list = GricliVar.get(globalList);
+		if (list == null){
+			throw new GricliRuntimeException("list " + globalList + " does not exist.");
+		}
 		GricliVar.get(globalList).add(value);
 
 	}
