@@ -26,7 +26,7 @@ public class AttachCommand implements GricliCommand {
 	public AttachCommand(String batchname, String... globs){
 		this.batchname = batchname;
 		this.globs = globs;
-	}
+	} 
 
 	@SyntaxDescription(command={"attach"},
 			arguments={"files"},
@@ -47,6 +47,9 @@ public class AttachCommand implements GricliCommand {
 			}
 			else {
 				String[] files = getAllFiles(glob);
+				if (files.length == 0){
+					throw new GricliRuntimeException("no files attached");
+				}
 				for (String file : files) {
 					addFile(file,env);
 				}
@@ -99,7 +102,7 @@ public class AttachCommand implements GricliCommand {
 		File dir = null;
 		List<String> dirComponents = (List<String>) Arrays.asList(StringUtils
 				.split(glob, "/"));
-		if (globs[0].startsWith("/")) {
+		if (globs[0].startsWith("/") && globs[0].startsWith("~")) {
 			// absolute path
 			dir = new File("/");
 		} else {

@@ -86,5 +86,12 @@ public class TestParsing {
 		assertArrayEquals(tokenize("aa bb c#c"),new String[] {"aa", "bb","c#c"});
 	}
 	
+	
+	// test special characters
+	@Test
+	public void testTokenizerTilda(){
+		assertArrayEquals(tokenize("attach ~/test"),new String[] {"attach", "~/test"});
+	}
+	
 
 }
