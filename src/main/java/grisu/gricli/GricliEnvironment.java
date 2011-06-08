@@ -6,12 +6,15 @@ import grisu.gricli.command.GricliCommandFactory;
 import grisu.jcommons.constants.Constants;
 import grisu.model.dto.GridFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import static grisu.gricli.GricliVar.*;
+import org.apache.commons.lang.StringUtils;
 
 public class GricliEnvironment {
 
@@ -21,24 +24,50 @@ public class GricliEnvironment {
 	private boolean quiet = false;
 	private GricliCommandFactory f;
 	
+	private HashMap<String,String> environment = new HashMap<String,String>();
+	private static HashMap<String,Validator> validators = new HashMap<String,Validator>();
+	
+	public static Set<String> getVariables(){
+		HashSet<String> result = new HashSet<String>();
+		result.addAll(validators.keySet());
+		
+		return result;
+	}
+	
+	static {
+		validators.put("email", new Validator());
+		validators.put("prompt", new Validator());
+		validators.put("dir", new DirValidator());
+		validators.put("group", new Validator());
+		validators.put("host", new Validator());
+		validators.put("gdir", new Validator());
+		validators.put("memory", new PositiveIntValidator());
+		validators.put("cpus", new PositiveIntValidator());
+		validators.put("walltime", new PositiveIntValidator());
+		validators.put("jobtype", new SetValidator(new String[] {"single","mpi","threaded"}));
+		validators.put("version", new Validator());
+		validators.put("debug", new SetValidator(new String[] {"true","false"}));
+		validators.put("jobname", new Validator());
+		validators.put("application", new NullValidator());
+		validators.put("queue", new NullValidator());
+	}
+	
 
 	public GricliEnvironment(GricliCommandFactory f) {
-		try {
-			VERSION.setValue(Constants.NO_VERSION_INDICATOR_STRING);
-			WALLTIME.setValue("10");
-			JOBNAME.setValue("gricli");
-			CPUS.setValue("1");
-			JOBTYPE.setValue("single");
-			MEMORY.setValue("2048");
-			FQAN.setValue("/ARCS");
-			GRID_DIR.setValue("/");
-			LOCAL_DIR.setValue(System.getProperty("user.dir"));
-			APPLICATION.setValue(null);
-			DEBUG.setValue("false");
-			PROMPT.setValue("gricli> ");
-		} catch (GricliSetValueException ex) {
-			// never happens
-		}
+		
+		environment.put("version", Constants.NO_VERSION_INDICATOR_STRING);
+		environment.put("walltime", "10");
+		environment.put("jobname", "gricli");
+		environment.put("cpus","1");
+		environment.put("jobtype","single");
+		environment.put("memory","2048");
+		environment.put("group","/nz");
+		environment.put("dir",System.getProperty("user.dir"));
+		environment.put("gdir","/");
+		environment.put("application",null);
+		environment.put("queue",null);
+		environment.put("debug","false");
+		environment.put("prompt","gricli> ");
 
 		this.f = f;
 		globalLists.put("files", new LinkedList<String>());
@@ -53,21 +82,21 @@ public class GricliEnvironment {
 	}
 
 	public String get(String global) {
-		return GricliVar.get(global).getValue();
+		return environment.get(global);
 	}
 
 	public List<String> getList(String globalList) {
-		return GricliVar.get(globalList).getList();
+		return globalLists.get(globalList);
 	}
 
 	public Set<String> getGlobalNames() {
-		return GricliVar.allValues();
+		return new HashSet<String>(environment.keySet());
 	}
 
 	public void put(String global, String value) throws GricliRuntimeException {
-		GricliVar v = GricliVar.get(global);
+		Validator v = validators.get(global);
 		if (v != null) {
-			v.setValue(value);
+			environment.put(global, v.validate(global, value));
 		} else {
 			throw new GricliRuntimeException(global
 					+ " global variable does not exist");
@@ -76,11 +105,11 @@ public class GricliEnvironment {
 
 	public void add(String globalList, String value)
 			throws GricliRuntimeException {
-		GricliVar list = GricliVar.get(globalList);
+		List<String> list = globalLists.get(globalList);
 		if (list == null){
 			throw new GricliRuntimeException("list " + globalList + " does not exist.");
 		}
-		GricliVar.get(globalList).add(value);
+		list.add(value);
 
 	}
 
@@ -105,7 +134,7 @@ public class GricliEnvironment {
 
 	public void clear(String list) throws GricliRuntimeException {
 		try {
-			GricliVar.get(list).clear();
+			globalLists.get(list).clear();
 		} 
 		catch (NullPointerException ex){
 			throw new GricliRuntimeException("list " + ((list!=null)?list:"null") + " does not exist");
@@ -126,24 +155,24 @@ public class GricliEnvironment {
 		
 		ServiceInterface si = getServiceInterface();
 		final JobObject job = new JobObject(si);
-		job.setJobname(JOBNAME.getValue());
-		String app = APPLICATION.getValue();
+		job.setJobname(get("jobname"));
+		String app = get("application");
 		if (app == null){
 			job.setApplication(Constants.GENERIC_APPLICATION_NAME);
 		} 
 		else {
 			job.setApplication(app);
-			job.setApplicationVersion(VERSION.getValue());
+			job.setApplicationVersion(get("version"));
 		}
 		
-		job.setCpus(Integer.parseInt(CPUS.getValue()));
-		job.setEmail_address(EMAIL.getValue());
-		job.setWalltimeInSeconds(Integer.parseInt(WALLTIME.getValue()) * 60
+		job.setCpus(Integer.parseInt(get("cpus")));
+		job.setEmail_address(get("email"));
+		job.setWalltimeInSeconds(Integer.parseInt(get("walltime")) * 60
 				* job.getCpus());
-		job.setMemory(Long.parseLong(MEMORY.getValue()) * 1024 * 1024);
-		job.setSubmissionLocation(QUEUE.getValue());
+		job.setMemory(Long.parseLong(get("memory")) * 1024 * 1024);
+		job.setSubmissionLocation(get("queue"));
 
-		boolean isMpi = "mpi".equals(JOBTYPE.getValue());
+		boolean isMpi = "mpi".equals(get("jobtype"));
 		job.setForce_mpi(isMpi);
 
 		// attach input files
@@ -153,6 +182,73 @@ public class GricliEnvironment {
 		}
 
 		return job;
+	}
+	
+	static class Validator {
+		public String validate(String var,String value) throws GricliSetValueException
+		{return value;}
+	}
+	
+	static class DirValidator extends Validator {
+		public String validate(String var,String value) throws GricliSetValueException{
+			try {
+				File dir = new File(value);
+				if (!dir.exists()) {
+					throw new GricliSetValueException(var,
+							dir.getCanonicalPath(), "directory does not exist");
+				}
+				String resultValue = StringUtils.replace(
+						dir.getCanonicalPath(),
+						System.getProperty("user.home"), "~");
+				return resultValue;
+			} catch (IOException ex) {
+				throw new GricliSetValueException(var, value, ex.getMessage());
+			}
+		}
+	}
+	
+	static class PositiveIntValidator extends Validator {
+		public String validate(String var,String value) throws GricliSetValueException{
+			try {
+				int ivalue = Integer.parseInt(value);
+				if (ivalue < 0) {
+					throw new GricliSetValueException(var, value,
+					"cannot be negative");
+				}
+				return value;
+
+			} catch (NumberFormatException ex) {
+				throw new GricliSetValueException(var, value,
+				"must be a number");
+			}
+		}
+	}
+	
+	static class NullValidator extends Validator {
+		public String validate(String var,String value) throws GricliSetValueException{
+			if ("null".equals(value)){
+				return null;
+			}
+			return value;
+		}
+	}
+	
+	static class SetValidator extends Validator {
+		
+		private String[] values;
+
+		public SetValidator(String[] values){
+			this.values = values;
+		}
+		
+		public String validate(String var,String value) throws GricliSetValueException{
+			for (String pvalue: values){
+				if (pvalue.equals(value)){
+					return value;
+				}
+			}
+			throw new GricliSetValueException(var, value," has to be one of " + StringUtils.join(values, " "));
+		}
 	}
 
 }

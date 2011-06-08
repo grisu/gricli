@@ -147,8 +147,7 @@ public class Gricli {
 		} catch (UnknownCommandException ex) {
 			exitStatus = SYNTAX;
 			error = ex;
-			System.err
-					.println("command " + ex.getMessage() + " does not exist");
+			System.err.println(ex.getMessage());
 		} catch (SyntaxException ex) {
 			exitStatus = SYNTAX;
 			error = ex;

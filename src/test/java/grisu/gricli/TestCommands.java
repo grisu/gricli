@@ -56,4 +56,5 @@ public class TestCommands {
 		AttachCommand attach = new AttachCommand(new String[] {filename});
 		attach.execute(env);
 	}
+	
 }

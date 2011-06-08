@@ -113,6 +113,6 @@ public class TestCompile {
 	public void testInconsistent() throws Exception {
 		GricliCommandFactory.getCustomFactory(InconsistentCommand.class);
 	}
-	
+
 	
 }

@@ -86,5 +86,4 @@ public class TestCommandCreators {
 		assertEquals(VarArgsCommand.class, c.create(new String[] {"var","file1","file2"}).getClass());
 	}
 	
-	
 }
