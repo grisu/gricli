@@ -2,6 +2,7 @@ package grisu.gricli.command;
 
 
 import static org.junit.Assert.*;
+import static grisu.gricli.command.TestLanguage.*;
 import grisu.gricli.SyntaxException;
 import grisu.gricli.UnknownCommandException;
 

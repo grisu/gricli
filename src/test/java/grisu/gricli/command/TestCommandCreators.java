@@ -1,6 +1,7 @@
 package grisu.gricli.command;
 
 import static org.junit.Assert.*;
+import static grisu.gricli.command.TestLanguage.*;
 
 import java.lang.reflect.Constructor;
 
@@ -14,6 +15,7 @@ public class TestCommandCreators {
 	CommandCreator c;
 	Constructor<? extends GricliCommand> cons1,cons2,cons3,cons4;
 	
+	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp(){
 		c = new CommandCreator();
