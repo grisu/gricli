@@ -6,8 +6,11 @@ import grisu.gricli.command.GricliCommandFactory;
 import grisu.jcommons.constants.Constants;
 import grisu.model.dto.GridFile;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -49,6 +52,7 @@ public class GricliEnvironment {
 		validators.put("debug", new SetValidator(new String[] {"true","false"}));
 		validators.put("jobname", new Validator());
 		validators.put("application", new NullValidator());
+		validators.put("outputfile", new NullValidator());
 		validators.put("queue", new NullValidator());
 	}
 	
@@ -68,6 +72,7 @@ public class GricliEnvironment {
 		environment.put("queue",null);
 		environment.put("debug","false");
 		environment.put("prompt","gricli> ");
+		environment.put("outputfile",null);
 
 		this.f = f;
 		globalLists.put("files", new LinkedList<String>());
@@ -148,6 +153,25 @@ public class GricliEnvironment {
 	public void printMessage(String message){
 		if (!quiet){
 			System.out.println(message);
+		}
+		
+		PrintStream out = null;
+
+		try {
+			String output = get("outputfile");
+			if (output != null){
+				File outputfile = new File(output); 
+				out = new PrintStream(new BufferedOutputStream(new FileOutputStream(outputfile, true)));
+				out.println(message);
+			}
+		}
+		catch (IOException ex){
+			printError(ex.getMessage());
+		}
+		finally {
+			if (out != null){
+				out.close();
+			}
 		}
 	}
 	
