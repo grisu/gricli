@@ -1,15 +1,44 @@
-package grisu.gricli.util;
+package grisu.gricli.parser;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
 
-public class CommandlineTokenizer {
+public class GricliTokenizer {
+	
+	private InputStream in;
+
+	public GricliTokenizer(InputStream in){
+		this.in = in;
+	}
+	
+	public String[] nextCommand() throws IOException{
+		
+		StringBuffer command = new StringBuffer();
+		int c;
+		while ((c = in.read()) != -1){
+			if (c != '\n' && c != ';'){
+				command.append((char)c);
+			} else {
+				return tokenize(command.toString());
+			}
+		}
+		
+		in.close();
+		
+		return tokenize(command.toString());
+	}
 
 	public static String[] tokenize(String str) {
+		
+		if (str == null ){
+			return null;
+		}
+		
 		StreamTokenizer st = new StreamTokenizer(
 				new BufferedReader(new InputStreamReader(
 						new ByteArrayInputStream(str.getBytes()))));
@@ -27,6 +56,9 @@ public class CommandlineTokenizer {
 		st.wordChars('.', '.');
 		st.wordChars('*', '*');
 		st.wordChars('?', '?');
+		st.wordChars('#','#');
+		st.wordChars('&','&');
+		st.wordChars('~','~');
 		st.whitespaceChars(' ', ' ');
 
 		ArrayList<String> argumentList = new ArrayList<String>();

@@ -10,10 +10,15 @@ import grisu.model.dto.DtoSubmissionLocations;
 public class PrintQueuesCommand implements GricliCommand {
 	private final String fqan;
 
-	@SyntaxDescription(command={"print","queues"})
+	@SyntaxDescription(command={"print","queues"}, arguments={"group"})
 	@AutoComplete(completors={FqanCompletor.class})
 	public PrintQueuesCommand(String fqan) {
 		this.fqan = fqan;
+	}
+	
+	@SyntaxDescription(command={"print","queues"})
+	public PrintQueuesCommand(){
+		this(null);
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
@@ -23,9 +28,8 @@ public class PrintQueuesCommand implements GricliCommand {
 				.getAllSubmissionLocations() : si
 				.getAllSubmissionLocationsForFqan(fqan);
 
-		System.out.println("available queues: ====");
 		for (String queue : queues.asSubmissionLocationStrings()) {
-			System.out.println(queue);
+			env.printMessage(queue);
 		}
 		return env;
 	}

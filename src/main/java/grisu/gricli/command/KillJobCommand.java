@@ -14,31 +14,33 @@ public class KillJobCommand implements GricliCommand {
 	private final String jobFilter;
 	private final boolean clean;
 
-	@SyntaxDescription(command={"kill","job"})
+	@SyntaxDescription(command={"kill","job"}, arguments={"jobname"})
 	@AutoComplete(completors={JobnameCompletor.class})
+	public KillJobCommand(String jobFilter){
+		this(jobFilter, false);
+	}
+	
 	public KillJobCommand(String jobFilter, boolean clean) {
 		this.jobFilter = jobFilter;
 		this.clean = clean;
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-			throws GricliRuntimeException {
+	throws GricliRuntimeException {
 		ServiceInterface si = env.getServiceInterface();
-		String jobname = null;
-		try {
-			for (String j : ServiceInterfaceUtils.filterJobNames(si, jobFilter)) {
-				System.out.println("killing job " + j);
-				jobname = j;
+		for (String j : ServiceInterfaceUtils.filterJobNames(si, jobFilter)) {
+			env.printMessage("killing job " + j);
+			try {
 				si.kill(j, clean);
+			} catch (RemoteFileSystemException ex) {
+				env.printError("job "+ j + ":" + ex.getMessage());
+			} catch (NoSuchJobException ex) {
+				env.printError("job " + j + " does not exist");
+			} catch (BatchJobException ex) {
+				env.printError("job "+ j + ": "+ ex.getMessage());
 			}
-		} catch (RemoteFileSystemException ex) {
-			throw new GricliRuntimeException(ex);
-		} catch (NoSuchJobException ex) {
-			throw new GricliRuntimeException("job " + jobname
-					+ " does not exist");
-		} catch (BatchJobException ex) {
-			throw new GricliRuntimeException(ex);
 		}
+
 		return env;
 	}
 

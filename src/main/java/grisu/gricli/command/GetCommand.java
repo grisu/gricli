@@ -7,6 +7,7 @@ import grisu.gricli.GricliRuntimeException;
 
 import javax.activation.DataHandler;
 
+@SuppressWarnings("restriction")
 public class GetCommand implements GricliCommand {
 	private final String file;
 

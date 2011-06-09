@@ -13,7 +13,7 @@ import grisu.gricli.completors.CompletionCache;
 public class LocalLoginCommand implements GricliCommand {
 	private String siUrl;
 
-	@SyntaxDescription(command={"login"})
+	@SyntaxDescription(command={"login"}, arguments={"backend"})
 	@AutoComplete(completors={BackendCompletor.class})
 	public LocalLoginCommand(String siUrl) {
 		this.siUrl = siUrl;
@@ -29,6 +29,8 @@ public class LocalLoginCommand implements GricliCommand {
 			env.setServiceInterface(serviceInterface);
 			CompletionCache.jobnames = serviceInterface.getAllJobnames(null).asSortedSet();
 			CompletionCache.fqans = serviceInterface.getFqans().asSortedSet();
+			CompletionCache.queues = serviceInterface.getAllSubmissionLocations().asSubmissionLocationStrings();
+			CompletionCache.sites = serviceInterface.getAllSites().asArray();
 			return env;
 		} catch (LoginException ex) {
 			throw new GricliRuntimeException(ex);

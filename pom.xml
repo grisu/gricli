@@ -7,7 +7,7 @@
 	<repositories>
 		<repository>
 			<id>bestgrid.public.release</id>
-			<url>http://dev.ceres.auckland.ac.nz/nexus/content/groups/public/</url>
+			<url>http://code.ceres.auckland.ac.nz/nexus/content/groups/public/</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>daily</updatePolicy>
@@ -21,7 +21,7 @@
 		</repository>
 		<repository>
 			<id>bestgrid.public.snapshot</id>
-			<url>http://dev.ceres.auckland.ac.nz/nexus/content/groups/public-snapshots/
+			<url>http://code.ceres.auckland.ac.nz/nexus/content/groups/public-snapshots/
 			</url>
 			<releases>
 				<enabled>false</enabled>
@@ -40,26 +40,40 @@
 		<repository>
 			<name>BeSTGRID Releases Repository</name>
 			<id>bestgrid.release</id>
-			<url>http://dev.ceres.auckland.ac.nz/nexus/content/repositories/releases
+			<url>http://code.ceres.auckland.ac.nz/nexus/content/repositories/releases
 			</url>
 		</repository>
 		<snapshotRepository>
 			<id>bestgrid.snapshot</id>
 			<name>BeSTGRID Snapshots Repository</name>
-			<url>http://dev.ceres.auckland.ac.nz/nexus/content/repositories/snapshots
+			<url>http://code.ceres.auckland.ac.nz/nexus/content/repositories/snapshots
 			</url>
 		</snapshotRepository>
 	</distributionManagement>
 
-	<version>0.3.3-SNAPSHOT</version>
+	<version>0.3.4</version>
 	<description>Grisu commandline client</description>
 
 	<properties>
-		<grisu.dependency.version>0.3.3.2-SNAPSHOT</grisu.dependency.version>
+		<grisu.dependency.version>0.3.4</grisu.dependency.version>
 	</properties>
 
 
 	<dependencies>
+	  <dependency>
+	    <groupId>junit</groupId>
+	    <artifactId>junit</artifactId>
+	    <version>4.8</version>
+	    <scope>test</scope>
+	  </dependency>
+
+	   <dependency>
+	     <groupId>org.easymock</groupId>
+	     <artifactId>easymock</artifactId>
+	     <version>3.0</version>
+	     <scope>test</scope>
+	   </dependency>
+
 		<!-- the main grisu dependency. -->
 		<dependency>
 			<groupId>grisu.frontend</groupId>
@@ -104,7 +118,7 @@
 	</issueManagement>
 	<ciManagement>
 		<system>Hudson</system>
-		<url>http://dev.ceres.auckland.ac.nz/hudson/job/Gricli-SNAPSHOT</url>
+		<url>http://code.ceres.auckland.ac.nz/hudson/job/Gricli-SNAPSHOT</url>
 	</ciManagement>
 	<scm>
 		<connection>scm:git:git://github.com/grisu/gricli.git</connection>
@@ -125,6 +139,19 @@
 				</configuration>
 			</plugin>
 
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-surefire-plugin</artifactId>
+			  <version>2.3</version>
+			  <configuration>
+			    <includes>
+			      <include>**/Test*.java</include>
+			    </includes>
+			    <forkMode>once</forkMode>
+			  </configuration>
+			</plugin>
+			
+
 			<!-- you can disable the assembly plugin if you want, your builds will 
 				be faster I find it quite handy to have maven build an executable jar, though -->
 			<plugin>
@@ -144,7 +171,7 @@
 									<mainClass>grisu.gricli.Gricli</mainClass>
 								</manifest>
 								<manifestEntries>
-									<Class-Path>bcprov.jar bcprov-jdk15-143.jar local-backend.jar
+									<Class-Path>bcprov.jar bcprov-jdk15-143.jar local-backend-dev.jar local-backend.jar
 										grisu-client-dependencies.jar
 	    </Class-Path>
 								</manifestEntries>

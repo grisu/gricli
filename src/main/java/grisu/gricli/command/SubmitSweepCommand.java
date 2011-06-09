@@ -37,12 +37,12 @@ public class SubmitSweepCommand implements GricliCommand {
 		while (invisibleInputFileM.find()) {
 			String found = invisibleInputFileM.group();
 			String filename = found.substring(4, found.length() - 1);
-			env = new AttachCommand(filename).execute(env);
+			env = new AttachCommand(null,new String[] {filename}).execute(env);
 			tempTemplate = tempTemplate.replace(found, "");
 		}
-		System.out.println("submitting " + tempTemplate);
+		env.printMessage("submitting " + tempTemplate);
 
-		return new SubmitCmdCommand(tempTemplate).execute(env);
+		return new SubmitCommand(tempTemplate).execute(env);
 	}
 
 }

@@ -26,9 +26,9 @@ public class FilemanagerCommand implements GricliCommand {
 			GridFile folder = si.ls(url, 1);
 			for (GridFile file : folder.getChildren()) {
 				if (file.isFolder()) {
-					System.out.println(file.getName());
+					env.printMessage(file.getName());
 				} else {
-					System.out.println(file.getName() + "/");
+					env.printMessage(file.getName() + "/");
 				}
 			}
 
