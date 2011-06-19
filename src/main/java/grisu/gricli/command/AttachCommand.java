@@ -9,9 +9,9 @@ import grisu.gricli.completors.GridFilesystemCompletor;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang.StringUtils;
@@ -78,12 +78,16 @@ GricliCommand {
 	private String[] getAllFiles(String glob) {
 		LinkedList<String> all = new LinkedList<String>();
 		File dir = null;
-		List<String> dirComponents = Arrays.asList(StringUtils
-				.split(glob, "/"));
-		if (globs[0].startsWith("/") && globs[0].startsWith("~")) {
+		ArrayList<String> dirComponents = 
+			new ArrayList<String>(Arrays.asList(StringUtils.split(glob, "/")));
+		if (glob.startsWith("/")) {
 			// absolute path
 			dir = new File("/");
-		} else {
+		} else if (glob.startsWith("~")){
+			dir = new File(System.getProperty("user.dir"));
+			dirComponents.remove(0);
+		}
+		else {
 			// relative path
 			dir = new File(System.getProperty("user.dir"));
 		}
