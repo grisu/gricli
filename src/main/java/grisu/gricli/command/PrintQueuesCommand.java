@@ -1,5 +1,8 @@
 package grisu.gricli.command;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import grisu.control.ServiceInterface;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
@@ -23,16 +26,19 @@ GricliCommand {
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
+			throws GricliRuntimeException {
 		ServiceInterface si = env.getServiceInterface();
 		DtoSubmissionLocations queues = (fqan == null) ? si
 				.getAllSubmissionLocations() : si
 				.getAllSubmissionLocationsForFqan(fqan);
 
-				for (String queue : queues.asSubmissionLocationStrings()) {
-					env.printMessage(queue);
-				}
-				return env;
+		String[] queueStrings = queues.asSubmissionLocationStrings();
+		Arrays.sort(queueStrings);
+
+		for (String queue : queues.asSubmissionLocationStrings()) {
+			env.printMessage(queue);
+		}
+		return env;
 	}
 
 }
