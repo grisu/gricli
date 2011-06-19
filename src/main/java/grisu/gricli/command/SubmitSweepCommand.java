@@ -5,9 +5,11 @@ import grisu.gricli.GricliRuntimeException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.io.FilenameUtils;
 
-public class SubmitSweepCommand implements GricliCommand {
+public class SubmitSweepCommand implements
+GricliCommand {
 	private final String template;
 
 	public SubmitSweepCommand(String template) {
@@ -15,7 +17,7 @@ public class SubmitSweepCommand implements GricliCommand {
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-			throws GricliRuntimeException {
+	throws GricliRuntimeException {
 
 		String tempTemplate = this.template;
 

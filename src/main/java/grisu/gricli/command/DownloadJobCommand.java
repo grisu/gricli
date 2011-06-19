@@ -22,7 +22,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
 @SuppressWarnings("restriction")
-public class DownloadJobCommand implements GricliCommand {
+public class DownloadJobCommand implements
+GricliCommand {
 	private final String jobFilter;
 
 	@SyntaxDescription(command={"download","job"}, arguments={"jobname"})
@@ -32,7 +33,7 @@ public class DownloadJobCommand implements GricliCommand {
 	}
 
 	private void download(ServiceInterface si, GridFile df, File dst)
-			throws RemoteFileSystemException, IOException {
+	throws RemoteFileSystemException, IOException {
 		Set<GridFile> files = df.getChildren();
 		for (GridFile file : files) {
 			DataHandler dh = si.download(file.getUrl());
@@ -58,7 +59,7 @@ public class DownloadJobCommand implements GricliCommand {
 	}
 
 	private void downloadDir(String src, String dst, ServiceInterface si)
-			throws GricliRuntimeException {
+	throws GricliRuntimeException {
 		try {
 			File dir = new File(dst);
 			dir.mkdir();
@@ -75,7 +76,7 @@ public class DownloadJobCommand implements GricliCommand {
 	}
 
 	private void downloadJob(GricliEnvironment env, ServiceInterface si, String jobname, String dst)
-			throws GricliRuntimeException {
+	throws GricliRuntimeException {
 		try {
 			env.printMessage("downloading job " + jobname);
 			DtoJob job = si.getJob(jobname);
@@ -87,8 +88,8 @@ public class DownloadJobCommand implements GricliCommand {
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-			throws GricliRuntimeException {
-		
+	throws GricliRuntimeException {
+
 		boolean hasError = false;
 
 		ServiceInterface si = env.getServiceInterface();
@@ -96,11 +97,11 @@ public class DownloadJobCommand implements GricliCommand {
 				System.getProperty("user.home"));
 		for (String jobname : ServiceInterfaceUtils.filterJobNames(si,
 				jobFilter)) {
-			
+
 			try {
-			downloadJob(env,si, jobname,
-					FilenameUtils.concat(normalDirName, jobname));
-			} 
+				downloadJob(env,si, jobname,
+						FilenameUtils.concat(normalDirName, jobname));
+			}
 			catch (GricliRuntimeException ex){
 				hasError = true;
 				env.printError(ex.getMessage());
