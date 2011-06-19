@@ -39,6 +39,8 @@ public class GricliEnvironment {
 	
 	static {
 		validators.put("email", new Validator());
+		validators.put("email_on_start", new SetValidator(new String[] {"true","false"}));
+		validators.put("email_on_finish", new SetValidator(new String[] {"true","false"}));
 		validators.put("prompt", new Validator());
 		validators.put("dir", new DirValidator());
 		validators.put("group", new Validator());
@@ -191,6 +193,15 @@ public class GricliEnvironment {
 		
 		job.setCpus(Integer.parseInt(get("cpus")));
 		job.setEmail_address(get("email"));
+		
+		if ("true".equals(get("email_on_start"))){
+			job.setEmail_on_job_start(true);
+		}
+		
+		if ("true".equals(get("email_on_finish"))){
+			job.setEmail_on_job_finish(true);
+		}
+		
 		job.setWalltimeInSeconds(Integer.parseInt(get("walltime")) * 60
 				* job.getCpus());
 		job.setMemory(Long.parseLong(get("memory")) * 1024 * 1024);
