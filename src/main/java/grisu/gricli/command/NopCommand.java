@@ -15,9 +15,9 @@ public class NopCommand implements GricliCommand {
 	public NopCommand(){
 		super();
 	}
-	
+
 	public GricliEnvironment execute(GricliEnvironment env)
-			throws GricliRuntimeException {
+	throws GricliRuntimeException {
 		return env;
 	}
 

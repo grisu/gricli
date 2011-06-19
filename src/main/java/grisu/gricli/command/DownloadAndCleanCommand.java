@@ -5,9 +5,10 @@ import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.util.ServiceInterfaceUtils;
 
-public class DownloadAndCleanCommand implements GricliCommand {
+public class DownloadAndCleanCommand implements
+GricliCommand {
 
-	private String jobFilter;
+	private final String jobFilter;
 
 	@SyntaxDescription(command={"downloadclean","job"},arguments={"jobname"})
 	@AutoComplete(completors={JobnameCompletor.class})
@@ -16,8 +17,8 @@ public class DownloadAndCleanCommand implements GricliCommand {
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-			throws GricliRuntimeException {
-		
+	throws GricliRuntimeException {
+
 		for (String jobname : ServiceInterfaceUtils.filterJobNames(env.getServiceInterface(),
 				this.jobFilter)) {
 			try {
@@ -28,10 +29,10 @@ public class DownloadAndCleanCommand implements GricliCommand {
 			} catch (GricliRuntimeException ex){
 				env.printError(ex.getMessage());
 			}
-				
+
 		}
-				
+
 		return env;
 	}
-	
+
 }

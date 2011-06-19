@@ -1,19 +1,20 @@
 package grisu.gricli.command;
 
+import grisu.gricli.GricliEnvironment;
+import grisu.gricli.GricliRuntimeException;
+import grisu.gricli.SyntaxException;
+import grisu.gricli.parser.GricliTokenizer;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import jline.FileNameCompletor;
-import grisu.gricli.GricliEnvironment;
-import grisu.gricli.GricliRuntimeException;
-import grisu.gricli.SyntaxException;
-import grisu.gricli.parser.GricliTokenizer;
 
 public class RunCommand implements GricliCommand {
-	
-	private String script;
+
+	private final String script;
 
 	@SyntaxDescription(command={"run"}, arguments={"script"})
 	@AutoComplete(completors={FileNameCompletor.class})
@@ -22,17 +23,17 @@ public class RunCommand implements GricliCommand {
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-			throws GricliRuntimeException {
-		
+	throws GricliRuntimeException {
+
 		GricliCommandFactory f = env.getCommandFactory();
 		ArrayList<GricliCommand> cl = new ArrayList<GricliCommand>();
-		
+
 		try {
 			GricliTokenizer tokenizer = new GricliTokenizer(new FileInputStream(script));
 			String[] tokens;
-				while ((tokens = tokenizer.nextCommand()).length > 0){
-					cl.add(f.create(tokens));
-				}
+			while ((tokens = tokenizer.nextCommand()).length > 0){
+				cl.add(f.create(tokens));
+			}
 		} catch (FileNotFoundException e) {
 			throw new GricliRuntimeException("file " + script + " not found ");
 		} catch (IOException e){

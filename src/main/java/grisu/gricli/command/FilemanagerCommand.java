@@ -6,13 +6,14 @@ import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.model.dto.GridFile;
 
-/** 
+/**
  * experiment with new style of filemanager.
  */
 
-public class FilemanagerCommand implements GricliCommand {
-	
-	private String url;
+public class FilemanagerCommand implements
+GricliCommand {
+
+	private final String url;
 
 	@SyntaxDescription(command={"filemanager"})
 	public FilemanagerCommand(String url){
@@ -20,9 +21,9 @@ public class FilemanagerCommand implements GricliCommand {
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-			throws GricliRuntimeException {
+	throws GricliRuntimeException {
 		ServiceInterface si = env.getServiceInterface();
-		try {			
+		try {
 			GridFile folder = si.ls(url, 1);
 			for (GridFile file : folder.getChildren()) {
 				if (file.isFolder()) {

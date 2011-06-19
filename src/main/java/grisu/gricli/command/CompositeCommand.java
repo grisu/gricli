@@ -3,16 +3,17 @@ package grisu.gricli.command;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 
-public class CompositeCommand implements GricliCommand {
-	
-	private GricliCommand[] cs;
+public class CompositeCommand implements
+GricliCommand {
+
+	private final GricliCommand[] cs;
 
 	public CompositeCommand(GricliCommand[] cs){
 		this.cs = cs;
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-			throws GricliRuntimeException {
+	throws GricliRuntimeException {
 		for (GricliCommand c: cs){
 			env = c.execute(env);
 		}

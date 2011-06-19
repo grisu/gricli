@@ -6,15 +6,16 @@ import grisu.gricli.GricliRuntimeException;
 
 import java.util.Map;
 
-public class PrintHostsCommand implements GricliCommand {
-	
+public class PrintHostsCommand implements
+GricliCommand {
+
 	@SyntaxDescription(command={"print","hosts"})
 	public PrintHostsCommand(){
 		super();
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-			throws GricliRuntimeException {
+	throws GricliRuntimeException {
 		ServiceInterface si = env.getServiceInterface();
 		Map<String, String> hostMap = si.getAllHosts().asMap();
 

@@ -7,27 +7,28 @@ import grisu.frontend.model.job.BatchJobObject;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 
-public class SubmitBatchCommand implements GricliCommand {
-	
-	private String batchname;
+public class SubmitBatchCommand implements
+GricliCommand {
+
+	private final String batchname;
 
 	@SyntaxDescription(command={"batch","submit"},
 			arguments={"name"},
 			help="submits batch job (which should be created beforehand with 'batch create [name]' command")
-	public SubmitBatchCommand(String batchname){
+			public SubmitBatchCommand(String batchname){
 		this.batchname = batchname;
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-			throws GricliRuntimeException {
-		
+	throws GricliRuntimeException {
+
 		BatchJobObject obj;
 		try {
 			obj = new BatchJobObject(env.getServiceInterface(),this.batchname,false);
 		} catch (BatchJobException e) {
 			throw new GricliRuntimeException(e);
 		} catch (NoSuchJobException e) {
-			throw new GricliRuntimeException("batch job container " + this.batchname + 
+			throw new GricliRuntimeException("batch job container " + this.batchname +
 			" does not exist. Use 'create batch [containername]' command");
 		}
 		try {
