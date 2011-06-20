@@ -48,9 +48,9 @@ public class TestCommands {
 		} catch (IOException e) {
 			
 		} finally {
-			/* if (!fileExists){
+			 if (!fileExists){
 				testfile.delete();
-			} */
+			} 
 		}
 	}
 	
