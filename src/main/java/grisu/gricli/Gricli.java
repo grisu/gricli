@@ -41,6 +41,9 @@ public class Gricli {
 	static final String HISTORY_FILE_PATH = FilenameUtils.concat(Environment.getGrisuClientDirectory().getPath() , 
 			"gricli.hist");
 	
+	static final String DEBUG_FILE_PATH = FilenameUtils.concat(Environment.getGrisuClientDirectory().getPath() , 
+	"gricli.debug");
+	
 	static String scriptName = null;
 	
 	static private GricliEnvironment env;
@@ -166,7 +169,14 @@ public class Gricli {
 			exitStatus = RUNTIME;
 			error = ex;
 			System.err.println(ex.getMessage());
-		} finally {
+		} catch (RuntimeException ex){
+			exitStatus = RUNTIME;
+			error = ex;
+			System.err.println("command failed. Either connection to server failed, or this is gricli bug. " +
+					"Please send " + DEBUG_FILE_PATH +
+					" to eresearch-admin@auckland.ac.nz together with description of what triggered the problem");
+		}
+		finally {
 			if ("true".equals(env.get("debug")) && (error != null)){
 				error.printStackTrace();
 			}
