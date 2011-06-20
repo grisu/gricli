@@ -5,44 +5,61 @@ import grisu.control.exceptions.NoSuchJobException;
 import grisu.frontend.model.job.BatchJobObject;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
+import grisu.gricli.completors.GridFilesystemCompletor;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
-
-import grisu.gricli.completors.GridFilesystemCompletor;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang.StringUtils;
 
-public class AttachCommand implements GricliCommand {
-	private String[] globs;
-	private String batchname;
-	
-	@SyntaxDescription(command={"batch","attach"}, 
-	arguments={"batchjob","files"}, help="attach files to batch job")
-	public AttachCommand(String batchname, String... globs){
-		this.batchname = batchname;
-		this.globs = globs;
-	} 
+public class AttachCommand implements
+GricliCommand {
+	private final String[] globs;
+	private final String batchname;
 
 	@SyntaxDescription(command={"attach"},
-			arguments={"files"},
-			help="Sets attached file list.Supports multiple arguments and glob regular expressions\n" +
-					"example: attach *.txt submit.sh")
-	@AutoComplete(completors={GridFilesystemCompletor.class})
-	public AttachCommand(String... globs) {
+ arguments = { "files" })
+			@AutoComplete(completors={GridFilesystemCompletor.class})
+			public AttachCommand(String... globs) {
 		this(null,globs);
 	}
 
+	@SyntaxDescription(command={"batch","attach"},
+			arguments={"batchjob","files"}, help="attach files to batch job")
+			public AttachCommand(String batchname, String... globs){
+		this.batchname = batchname;
+		this.globs = globs;
+	}
+
+	private void addFile(String file,GricliEnvironment env) throws GricliRuntimeException{
+		if (this.batchname == null){
+			env.add("files",file);
+		} else {
+
+			BatchJobObject obj;
+			try {
+				obj = new BatchJobObject(env.getServiceInterface(),this.batchname,false);
+			} catch (BatchJobException e) {
+				throw new GricliRuntimeException(e);
+			} catch (NoSuchJobException e) {
+				throw new GricliRuntimeException("batch job container " + this.batchname +
+				" does not exist. Use 'create batch [containername]' command");
+			}
+
+			obj.addInputFile(file);
+		}
+	}
+
 	public GricliEnvironment execute(GricliEnvironment env)
-			throws GricliRuntimeException {
-		
+	throws GricliRuntimeException {
+
 		env.clear("files");
 		for (String glob: globs){
-			if (glob != null && (glob.startsWith("grid://") || glob.startsWith("gsiftp://"))){
+			if ((glob != null) && (glob.startsWith("grid://") || glob.startsWith("gsiftp://"))){
 				addFile(glob,env);
 			}
 			else {
@@ -57,24 +74,27 @@ public class AttachCommand implements GricliCommand {
 		}
 		return env;
 	}
-	
-	private void addFile(String file,GricliEnvironment env) throws GricliRuntimeException{
-		if (this.batchname == null){
-			env.add("files",file);
-		} else {
-			
-			BatchJobObject obj;
-			try {
-				obj = new BatchJobObject(env.getServiceInterface(),this.batchname,false);
-			} catch (BatchJobException e) {
-				throw new GricliRuntimeException(e);
-			} catch (NoSuchJobException e) {
-				throw new GricliRuntimeException("batch job container " + this.batchname + 
-				" does not exist. Use 'create batch [containername]' command");
-			}
-			
-			obj.addInputFile(file);
+
+	private String[] getAllFiles(String glob) {
+		LinkedList<String> all = new LinkedList<String>();
+		File dir = null;
+		ArrayList<String> dirComponents = 
+			new ArrayList<String>(Arrays.asList(StringUtils.split(glob, "/")));
+		if (glob.startsWith("/")) {
+			// absolute path
+			dir = new File("/");
+		} else if (glob.startsWith("~")){
+			dir = new File(System.getProperty("user.dir"));
+			dirComponents.remove(0);
 		}
+		else {
+			// relative path
+			dir = new File(System.getProperty("user.dir"));
+		}
+
+		getSubdirs(dir.getAbsolutePath(), new LinkedList(dirComponents), all);
+
+		return all.toArray(new String[] {});
 	}
 
 	private void getSubdirs(String path, LinkedList<String> globs,
@@ -95,24 +115,6 @@ public class AttachCommand implements GricliCommand {
 			getSubdirs(sc.getAbsolutePath(), new LinkedList(globs), result);
 		}
 		return;
-	}
-
-	private String[] getAllFiles(String glob) {
-		LinkedList<String> all = new LinkedList<String>();
-		File dir = null;
-		List<String> dirComponents = (List<String>) Arrays.asList(StringUtils
-				.split(glob, "/"));
-		if (globs[0].startsWith("/") && globs[0].startsWith("~")) {
-			// absolute path
-			dir = new File("/");
-		} else {
-			// relative path
-			dir = new File(System.getProperty("user.dir"));
-		}
-
-		getSubdirs(dir.getAbsolutePath(), new LinkedList(dirComponents), all);
-
-		return all.toArray(new String[] {});
 	}
 
 }

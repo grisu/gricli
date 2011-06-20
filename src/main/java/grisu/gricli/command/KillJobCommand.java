@@ -10,7 +10,8 @@ import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.util.ServiceInterfaceUtils;
 
 
-public class KillJobCommand implements GricliCommand {
+public class KillJobCommand implements
+GricliCommand {
 	private final String jobFilter;
 	private final boolean clean;
 
@@ -19,7 +20,7 @@ public class KillJobCommand implements GricliCommand {
 	public KillJobCommand(String jobFilter){
 		this(jobFilter, false);
 	}
-	
+
 	public KillJobCommand(String jobFilter, boolean clean) {
 		this.jobFilter = jobFilter;
 		this.clean = clean;

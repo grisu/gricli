@@ -3,7 +3,8 @@ package grisu.gricli.command;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 
-public class ClearListCommand implements GricliCommand {
+public class ClearListCommand implements
+GricliCommand {
 	private final String list;
 
 	@SyntaxDescription(command={"clear"},arguments={"list"})
@@ -12,7 +13,7 @@ public class ClearListCommand implements GricliCommand {
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-			throws GricliRuntimeException {
+	throws GricliRuntimeException {
 		env.clear(list);
 		return env;
 	}

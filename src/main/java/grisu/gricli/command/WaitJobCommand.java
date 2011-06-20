@@ -6,11 +6,11 @@ import grisu.frontend.model.job.JobObject;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobnameCompletor;
-import grisu.model.dto.DtoJob;
 
-public class WaitJobCommand implements GricliCommand {
+public class WaitJobCommand implements
+GricliCommand {
 
-	private String jobname;
+	private final String jobname;
 
 	@SyntaxDescription(command={"wait","job"},arguments={"jobname"})
 	@AutoComplete(completors={JobnameCompletor.class})
@@ -18,10 +18,10 @@ public class WaitJobCommand implements GricliCommand {
 		this.jobname = jobname;
 	}
 
-	
-	
+
+
 	public GricliEnvironment execute(GricliEnvironment env)
-			throws GricliRuntimeException {
+	throws GricliRuntimeException {
 		ServiceInterface si = env.getServiceInterface();
 		try {
 			JobObject job = new JobObject(si,si.getJob(this.jobname));
@@ -29,7 +29,7 @@ public class WaitJobCommand implements GricliCommand {
 		} catch (NoSuchJobException e) {
 			env.printError("job " + jobname + " not found");
 		}
-		
+
 		return env;
 	}
 

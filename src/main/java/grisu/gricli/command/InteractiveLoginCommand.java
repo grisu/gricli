@@ -10,7 +10,8 @@ import grisu.gricli.completors.BackendCompletor;
 import grisu.gricli.completors.CompletionCache;
 
 
-public class InteractiveLoginCommand implements GricliCommand {
+public class InteractiveLoginCommand implements
+GricliCommand {
 	private final String backend;
 
 	@SyntaxDescription(command={"ilogin"},arguments={"backend"})
@@ -20,7 +21,7 @@ public class InteractiveLoginCommand implements GricliCommand {
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-			throws GricliRuntimeException {
+	throws GricliRuntimeException {
 		try {
 			ServiceInterface si = LoginManager.loginCommandline(backend);
 			env.setServiceInterface(si);

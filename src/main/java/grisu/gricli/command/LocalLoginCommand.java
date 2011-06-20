@@ -10,7 +10,8 @@ import grisu.gricli.completors.BackendCompletor;
 import grisu.gricli.completors.CompletionCache;
 
 
-public class LocalLoginCommand implements GricliCommand {
+public class LocalLoginCommand implements
+GricliCommand {
 	private String siUrl;
 
 	@SyntaxDescription(command={"login"}, arguments={"backend"})
@@ -20,7 +21,7 @@ public class LocalLoginCommand implements GricliCommand {
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-			throws GricliRuntimeException {
+	throws GricliRuntimeException {
 		try {
 			if (siUrl == null) {
 				siUrl = env.getServiceInterfaceUrl();

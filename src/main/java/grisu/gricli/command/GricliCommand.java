@@ -9,5 +9,5 @@ import grisu.gricli.GricliRuntimeException;
 public interface GricliCommand {
 
 	public GricliEnvironment execute(GricliEnvironment env)
-			throws GricliRuntimeException;
+	throws GricliRuntimeException;
 }

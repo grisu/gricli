@@ -39,6 +39,8 @@ public class GricliEnvironment {
 	
 	static {
 		validators.put("email", new Validator());
+		validators.put("email_on_start", new SetValidator(new String[] {"true","false"}));
+		validators.put("email_on_finish", new SetValidator(new String[] {"true","false"}));
 		validators.put("prompt", new Validator());
 		validators.put("dir", new DirValidator());
 		validators.put("group", new Validator());
@@ -53,12 +55,13 @@ public class GricliEnvironment {
 		validators.put("jobname", new Validator());
 		validators.put("application", new NullValidator());
 		validators.put("outputfile", new NullValidator());
-		validators.put("queue", new NullValidator());
+		validators.put("queue", new Validator());
 	}
 	
 
 	public GricliEnvironment(GricliCommandFactory f) {
 		
+		environment.put("queue", Constants.NO_SUBMISSION_LOCATION_INDICATOR_STRING);
 		environment.put("version", Constants.NO_VERSION_INDICATOR_STRING);
 		environment.put("walltime", "10");
 		environment.put("jobname", "gricli");
@@ -95,7 +98,7 @@ public class GricliEnvironment {
 	}
 
 	public Set<String> getGlobalNames() {
-		return new HashSet<String>(environment.keySet());
+		return new HashSet<String>(validators.keySet());
 	}
 
 	public void put(String global, String value) throws GricliRuntimeException {
@@ -191,6 +194,15 @@ public class GricliEnvironment {
 		
 		job.setCpus(Integer.parseInt(get("cpus")));
 		job.setEmail_address(get("email"));
+		
+		if ("true".equals(get("email_on_start"))){
+			job.setEmail_on_job_start(true);
+		}
+		
+		if ("true".equals(get("email_on_finish"))){
+			job.setEmail_on_job_finish(true);
+		}
+		
 		job.setWalltimeInSeconds(Integer.parseInt(get("walltime")) * 60
 				* job.getCpus());
 		job.setMemory(Long.parseLong(get("memory")) * 1024 * 1024);
@@ -249,6 +261,7 @@ public class GricliEnvironment {
 	}
 	
 	static class NullValidator extends Validator {
+			
 		public String validate(String var,String value) throws GricliSetValueException{
 			if ("null".equals(value)){
 				return null;

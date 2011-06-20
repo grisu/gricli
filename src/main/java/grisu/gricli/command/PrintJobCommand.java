@@ -5,16 +5,28 @@ import grisu.control.ServiceInterface;
 import grisu.control.exceptions.NoSuchJobException;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
-import grisu.gricli.util.ServiceInterfaceUtils;
 import grisu.gricli.completors.JobPropertiesCompletor;
 import grisu.gricli.completors.JobnameCompletor;
+import grisu.gricli.util.ServiceInterfaceUtils;
 import grisu.model.dto.DtoJob;
 
 import java.util.Map;
 
-public class PrintJobCommand implements GricliCommand {
+public class PrintJobCommand implements
+GricliCommand {
 	private final String jobname;
 	private final String attribute;
+
+	@SyntaxDescription(command={"print","jobs"})
+	public PrintJobCommand(){
+		this("*","status");
+	}
+
+	@SyntaxDescription(command={"print","job"},arguments={"jobname"})
+	@AutoComplete(completors={JobnameCompletor.class})
+	public PrintJobCommand(String jobname){
+		this(jobname,null);
+	}
 
 	@SyntaxDescription(command={"print","job"},arguments={"jobname","attribute"})
 	@AutoComplete(completors={JobnameCompletor.class,JobPropertiesCompletor.class})
@@ -22,20 +34,9 @@ public class PrintJobCommand implements GricliCommand {
 		this.jobname = jobname;
 		this.attribute = attribute;
 	}
-	
-	@SyntaxDescription(command={"print","job"},arguments={"jobname"})
-	@AutoComplete(completors={JobnameCompletor.class})
-	public PrintJobCommand(String jobname){
-		this(jobname,null);
-	}
-	
-	@SyntaxDescription(command={"print","jobs"})
-	public PrintJobCommand(){
-		this("*","status");
-	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-			throws GricliRuntimeException {
+	throws GricliRuntimeException {
 		ServiceInterface si = env.getServiceInterface();
 		for (String j : ServiceInterfaceUtils.filterJobNames(si, jobname)) {
 			try {
@@ -52,6 +53,18 @@ public class PrintJobCommand implements GricliCommand {
 		return env;
 	}
 
+	private void printJob(GricliEnvironment env, ServiceInterface si, String j)
+	throws NoSuchJobException {
+		DtoJob job = si.getJob(j);
+		env.printMessage("Printing details for job " + jobname);
+		env.printMessage("status: "
+				+ JobConstants.translateStatus(si.getJobStatus(jobname)));
+		Map<String, String> props = job.propertiesAsMap();
+		for (String key : props.keySet()) {
+			env.printMessage(key + " : " + props.get(key));
+		}
+	}
+
 	private void printJobAttribute(GricliEnvironment env, ServiceInterface si, String j,
 			String attribute) throws NoSuchJobException {
 		DtoJob job = si.getJob(j);
@@ -60,18 +73,6 @@ public class PrintJobCommand implements GricliCommand {
 		} else {
 			env.printMessage(j + " : "
 					+ JobConstants.translateStatus(si.getJobStatus(j)));
-		}
-	}
-
-	private void printJob(GricliEnvironment env, ServiceInterface si, String j)
-			throws NoSuchJobException {
-		DtoJob job = si.getJob(j);
-		env.printMessage("Printing details for job " + jobname);
-		env.printMessage("status: "
-				+ JobConstants.translateStatus(si.getJobStatus(jobname)));
-		Map<String, String> props = job.propertiesAsMap();
-		for (String key : props.keySet()) {
-			env.printMessage(key + " : " + props.get(key));
 		}
 	}
 

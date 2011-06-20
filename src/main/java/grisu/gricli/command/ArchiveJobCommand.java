@@ -12,7 +12,8 @@ import grisu.gricli.util.ServiceInterfaceUtils;
 import grisu.jcommons.constants.Constants;
 
 
-public class ArchiveJobCommand implements GricliCommand {
+public class ArchiveJobCommand implements
+GricliCommand {
 	private final String jobFilter;
 
 	@SyntaxDescription(command={"archive","job"},arguments={"jobname"})
@@ -22,7 +23,7 @@ public class ArchiveJobCommand implements GricliCommand {
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-			throws GricliRuntimeException {
+	throws GricliRuntimeException {
 		ServiceInterface si = env.getServiceInterface();
 		si.setUserProperty(Constants.DEFAULT_JOB_ARCHIVE_LOCATION, null);
 		String jobname = null;
