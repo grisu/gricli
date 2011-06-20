@@ -97,7 +97,7 @@ public class GricliEnvironment {
 	}
 
 	public Set<String> getGlobalNames() {
-		return new HashSet<String>(environment.keySet());
+		return new HashSet<String>(validators.keySet());
 	}
 
 	public void put(String global, String value) throws GricliRuntimeException {
