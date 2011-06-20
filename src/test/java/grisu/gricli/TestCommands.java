@@ -33,23 +33,25 @@ public class TestCommands {
 	
 	@Test
 	public void testAttachWithTilda() throws Exception{
-		String filename = "~/test";
-		AttachCommand attach = new AttachCommand(new String[] {filename});
+		String filename = "testAttachWithTilda";
+		AttachCommand attach = new AttachCommand(new String[] {"~" + File.pathSeparator + filename});
 		boolean fileExists = false;
-		File testfile = new File(filename);
+		File testfile = new File(System.getProperty("home.dir") + File.pathSeparator + filename);
 		try {		
 			fileExists = testfile.exists();
 			if (!fileExists){
 				FileUtils.touch(new File(filename));
 			} 
-		} catch (IOException e) {
-		} finally {
 			attach.execute(env);
-			if (!fileExists){
+			assertTrue(env.getList("files").size() > 0);
+			
+		} catch (IOException e) {
+			
+		} finally {
+			/* if (!fileExists){
 				testfile.delete();
-			}
+			} */
 		}
-		assertTrue(env.getList("files").size() > 0);
 	}
 	
 	@Test
