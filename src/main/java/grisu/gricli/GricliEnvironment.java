@@ -55,12 +55,13 @@ public class GricliEnvironment {
 		validators.put("jobname", new Validator());
 		validators.put("application", new NullValidator());
 		validators.put("outputfile", new NullValidator());
-		validators.put("queue", new NullValidator());
+		validators.put("queue", new Validator());
 	}
 	
 
 	public GricliEnvironment(GricliCommandFactory f) {
 		
+		environment.put("queue", Constants.NO_SUBMISSION_LOCATION_INDICATOR_STRING);
 		environment.put("version", Constants.NO_VERSION_INDICATOR_STRING);
 		environment.put("walltime", "10");
 		environment.put("jobname", "gricli");
@@ -260,6 +261,7 @@ public class GricliEnvironment {
 	}
 	
 	static class NullValidator extends Validator {
+			
 		public String validate(String var,String value) throws GricliSetValueException{
 			if ("null".equals(value)){
 				return null;
