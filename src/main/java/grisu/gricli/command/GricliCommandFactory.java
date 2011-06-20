@@ -63,6 +63,7 @@ public class GricliCommandFactory {
 		f.add(QuitCommand.class);
 		f.add(LogoutCommand.class);
 		f.add(HelpCommand.class);
+		f.add(AboutCommand.class);
 		
 		// filesystem commands
 		f.add(GridLsCommand.class);
