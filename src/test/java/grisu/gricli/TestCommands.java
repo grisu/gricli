@@ -25,11 +25,13 @@ public class TestCommands {
 		env = new GricliEnvironment(f);
 	}
 	
+	
 	@Test(expected=GricliRuntimeException.class)
 	public void testAddError() throws Exception{
 		AddCommand c = new AddCommand("x","y");
 		c.execute(env);
 	}
+	
 	
 	@Test
 	public void testAttachWithTilda() throws Exception{
@@ -54,6 +56,7 @@ public class TestCommands {
 		}
 	}
 	
+	
 	@Test
 	public void testAttachAbsolutePath() throws Exception {
 		String filename = "testAttachAbsolutePath";
@@ -62,6 +65,7 @@ public class TestCommands {
 		attach.execute(env);
 		assertEquals(env.getList("files").get(0),f.getAbsolutePath());
 	}
+	
 	
 	@Test
 	public void testAttachTwoFiles() throws Exception {
@@ -78,6 +82,7 @@ public class TestCommands {
 		assertEquals(env.getList("files").get(1),f2.getAbsolutePath());
 	}
 	
+	
 	@Test
 	public void testAttachNothingAfterSomething() throws Exception {
 		String filename = "testAttachNothingAfterSomething";
@@ -90,6 +95,7 @@ public class TestCommands {
 		
 		assertEquals(env.getList("files").size(),0);
 	}
+	
 	
 	@Test(expected=GricliRuntimeException.class)
 	public void testAttachNonExistent() throws Exception{

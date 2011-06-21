@@ -82,14 +82,14 @@ GricliCommand {
 			new ArrayList<String>(Arrays.asList(StringUtils.split(glob, System.getProperty("file.separator"))));
 		if (dir.isAbsolute()) {
 			// absolute path
-			if (System.getProperty("file.separator") == "/"){
+			if (System.getProperty("file.separator").equals("/")){
 				//unix
 				dir = new File("/");
 			} else {
 				//windows
 				String root = dirComponents.get(0)+"\\\\";
 				dir = new File(root);	
-				dirComponents.remove(0);		
+				dirComponents.remove(0);	
 			}
 		} else if (glob.startsWith("~")){
 			//unix home
