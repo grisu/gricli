@@ -4,6 +4,8 @@ import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.VarCompletor;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -40,7 +42,8 @@ GricliCommand {
 	
 	private void printAllGlobals(GricliEnvironment env)
 		throws  GricliRuntimeException {
-		Set<String> globals = env.getGlobalNames();
+		List<String> globals = new ArrayList<String>(env.getGlobalNames());
+		Collections.sort(globals);
 		for (String global : globals) {
 			printGlobal(global,env);
 		}
