@@ -36,7 +36,6 @@ public class RunCommand implements GricliCommand {
 
 		try {
 			java.io.File file = new java.io.File(script);
-			System.out.println("script: "+script+", exists: "+file.exists());
 			GricliTokenizer tokenizer = new GricliTokenizer(new FileInputStream(script));
 			String[] tokens;
 			while ((tokens = tokenizer.nextCommand()).length > 0){
