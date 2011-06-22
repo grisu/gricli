@@ -25,6 +25,12 @@ public class TestCommands {
 		env = new GricliEnvironment(f);
 	}
 	
+	@Test
+	public void testSetDirAsHome() throws Exception {
+		SetCommand set = new SetCommand("dir", "~");
+		set.execute(env);
+		assertEquals(env.get("dir"),"~");
+	}
 	
 	@Test(expected=GricliRuntimeException.class)
 	public void testAddError() throws Exception{
@@ -32,20 +38,22 @@ public class TestCommands {
 		c.execute(env);
 	}
 	
-	
+	@Ignore
 	@Test
 	public void testAttachWithTilda() throws Exception{
 		String filename = "testAttachWithTilda";
-		AttachCommand attach = new AttachCommand(new String[] {"~" + File.pathSeparator + filename});
+		String path = System.getProperty("user.home") + System.getProperty("file.separator") + filename;
+		AttachCommand attach = new AttachCommand(new String[] {"~" + System.getProperty("file.separator") + filename});
 		boolean fileExists = false;
-		File testfile = new File(System.getProperty("home.dir") + File.pathSeparator + filename);
+		File testfile = new File(path);
 		try {		
 			fileExists = testfile.exists();
 			if (!fileExists){
-				FileUtils.touch(new File(filename));
+				FileUtils.touch(new File(path));
+				assertTrue(testfile.exists());
 			} 
 			attach.execute(env);
-			assertTrue(env.getList("files").size() > 0);
+			assertEquals(env.getList("files").get(0), path);
 			
 		} catch (IOException e) {
 			
@@ -82,6 +90,43 @@ public class TestCommands {
 		assertEquals(env.getList("files").get(1),f2.getAbsolutePath());
 	}
 	
+	@Test
+	/**
+	 * @author Sina Masoud-Ansari
+	 * 
+	 * Made this as testAttachWithTilda was not working as expected
+	 * (has been fixed now)
+	 */
+	public void testAttachWithTilda_2() throws Exception {
+		String rand = ""+(int)(Math.random()*10000);
+		String partname = System.getProperty("file.separator") + "testAttachFromHomeDir_"+rand;
+		String filename = System.getProperty("user.home")+partname;
+		String shortname = "~" + partname;
+		File f = null;
+		try {
+			f = new File(filename);
+			f.createNewFile();
+			assertTrue(f.exists());
+			AttachCommand attach = new AttachCommand(new String[] {shortname});
+			attach.execute(env);
+			assertEquals(env.getList("files").get(0), f.getAbsolutePath());
+		} catch (GricliException e) {
+			System.err.println(e.getMessage());
+			fail();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (f != null && f.exists()){
+				try {
+					f.delete();
+				} catch (SecurityException e) {
+					System.err.println("Unable to delete temp file: "+
+							f.getAbsolutePath());
+				}
+			}
+		}
+	}
+	
 	
 	@Test
 	public void testAttachNothingAfterSomething() throws Exception {
@@ -96,7 +141,6 @@ public class TestCommands {
 		assertEquals(env.getList("files").size(),0);
 	}
 	
-	
 	@Test(expected=GricliRuntimeException.class)
 	public void testAttachNonExistent() throws Exception{
 		String filename = folder.getRoot().getCanonicalPath() + File.pathSeparator + "a";
@@ -106,5 +150,34 @@ public class TestCommands {
 		AttachCommand attach = new AttachCommand(new String[] {filename});
 		attach.execute(env);
 	}
-	
+
+	@Test
+	public void testRunWithTilda() throws Exception{
+		String rand = ""+(int)(Math.random()*10000);
+		String partname = System.getProperty("file.separator") + "testRunWithTilda_"+rand;
+		String filename = System.getProperty("user.home")+partname;
+		String shortname = "~" + partname;
+		File f = null;
+		try {
+			f = new File(filename);
+			f.createNewFile();
+			assertTrue(f.exists());
+			RunCommand run = new RunCommand(shortname);
+			run.execute(env);
+		} catch (GricliException e) {
+			System.err.println(e.getMessage());
+			fail();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (f != null && f.exists()){
+				try {
+					f.delete();
+				} catch (SecurityException e) {
+					System.err.println("Unable to delete temp file: "+
+							f.getAbsolutePath());
+				}
+			}
+		}
+	}	
 }
