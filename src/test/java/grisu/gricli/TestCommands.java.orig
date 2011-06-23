@@ -150,6 +150,7 @@ public class TestCommands {
 		AttachCommand attach = new AttachCommand(new String[] {filename});
 		attach.execute(env);
 	}
+<<<<<<< HEAD
 
 	@Test
 	public void testRunWithTilda() throws Exception{
@@ -180,6 +181,7 @@ public class TestCommands {
 			}
 		}
 	}	
+=======
 	
 	@Test
 	public void testChdir() throws Exception {
@@ -203,4 +205,5 @@ public class TestCommands {
 		assertEquals(home.getCanonicalPath(),current.getCanonicalPath());
 	}
 	
+>>>>>>> upstream/develop
 }
