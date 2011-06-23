@@ -228,14 +228,21 @@ public class GricliEnvironment {
 	static class DirValidator extends Validator {
 		public String validate(String var,String value) throws GricliSetValueException{
 			try {
+				value = StringUtils.replace(value, "~", System.getProperty("user.home"));
 				File dir = new File(value);
 				if (!dir.exists()) {
 					throw new GricliSetValueException(var,
 							dir.getCanonicalPath(), "directory does not exist");
 				}
-				String resultValue = StringUtils.replace(
-						dir.getCanonicalPath(),
-						System.getProperty("user.home"), "~");
+				
+				String resultValue =dir.getCanonicalPath();
+				
+				File f = new File(resultValue);
+				if (! (f.exists() && f.isDirectory())) {
+					throw new GricliSetValueException(var,value," not a directory");
+				}
+				
+				System.setProperty("user.dir",resultValue);
 				return resultValue;
 			} catch (IOException ex) {
 				throw new GricliSetValueException(var, value, ex.getMessage());

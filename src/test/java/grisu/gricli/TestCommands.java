@@ -101,4 +101,26 @@ public class TestCommands {
 		attach.execute(env);
 	}
 	
+	@Test
+	public void testChdir() throws Exception {
+		String dir = folder.getRoot().getCanonicalPath();
+		
+		ChdirCommand cd = new ChdirCommand(dir);
+		cd.execute(env);
+		
+		File cFile = new File(System.getProperty("user.dir"));
+		assertEquals(dir, cFile.getCanonicalPath());
+	}
+	
+	@Test
+	public void testCdToHomeDir() throws Exception {
+		ChdirCommand cd = new ChdirCommand("~");
+		cd.execute(env);
+		
+		File home = new File(System.getProperty("user.home"));
+		File current = new File(System.getProperty("user.dir"));
+		
+		assertEquals(home.getCanonicalPath(),current.getCanonicalPath());
+	}
+	
 }

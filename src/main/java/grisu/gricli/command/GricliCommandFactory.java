@@ -71,6 +71,8 @@ public class GricliCommandFactory {
 		// filesystem commands
 		f.add(GridLsCommand.class);
 		f.add(ClearCacheCommand.class);
+		f.add(PwdCommand.class);
+		f.add(ChdirCommand.class);
 		
 		//batch commands
 		f.add(CreateBatchCommand.class);
