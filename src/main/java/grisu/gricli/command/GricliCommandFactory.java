@@ -45,10 +45,13 @@ public class GricliCommandFactory {
 		f.add(LocalLoginCommand.class);
 		f.add(InteractiveLoginCommand.class);
 		f.add(NopCommand.class);
+		
+		// print commands
 		f.add(PrintGlobalsCommand.class);
 		f.add(PrintQueuesCommand.class);
 		f.add(PrintAppsCommand.class);
 		f.add(PrintHostsCommand.class);
+		f.add(PrintGroupsCommand.class);
 		
 		f.add(RunCommand.class);
 		
