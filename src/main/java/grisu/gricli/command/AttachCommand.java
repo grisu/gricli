@@ -77,21 +77,31 @@ GricliCommand {
 
 	private String[] getAllFiles(String glob) {
 		LinkedList<String> all = new LinkedList<String>();
-		File dir = null;
+		File dir = new File (glob);
 		ArrayList<String> dirComponents = 
-			new ArrayList<String>(Arrays.asList(StringUtils.split(glob, "/")));
-		if (glob.startsWith("/")) {
+			new ArrayList<String>(Arrays.asList(StringUtils.split(glob, System.getProperty("file.separator"))));
+		if (dir.isAbsolute()) {
 			// absolute path
-			dir = new File("/");
+			if (System.getProperty("file.separator").equals("/")){
+				//unix
+				dir = new File("/");
+			} else {
+				//windows
+				String root = dirComponents.get(0)+"\\\\";
+				dir = new File(root);	
+				dirComponents.remove(0);	
+			}
 		} else if (glob.startsWith("~")){
-			dir = new File(System.getProperty("user.dir"));
+			//unix home
+			dir = new File(System.getProperty("user.home")); 
 			dirComponents.remove(0);
 		}
 		else {
 			// relative path
 			dir = new File(System.getProperty("user.dir"));
 		}
-
+		
+		
 		getSubdirs(dir.getAbsolutePath(), new LinkedList(dirComponents), all);
 
 		return all.toArray(new String[] {});
@@ -99,7 +109,6 @@ GricliCommand {
 
 	private void getSubdirs(String path, LinkedList<String> globs,
 			LinkedList<String> result) {
-
 		if (globs.size() == 0) {
 			result.add(path);
 			return;
