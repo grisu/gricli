@@ -132,7 +132,7 @@ public class Gricli {
 		
 		GricliTokenizer t = new GricliTokenizer(in);
 		String[] tokens;
-		while ((tokens = t.nextCommand()).length != 0){
+		while ((tokens = t.nextCommand()) != null){
 			runCommand(tokens,f,env);
 		}
 	}
