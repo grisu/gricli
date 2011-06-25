@@ -242,6 +242,9 @@ public class GricliEnvironment {
 					throw new GricliSetValueException(var,
 							dir.getCanonicalPath(), "directory does not exist");
 				}
+				
+				System.setProperty("user.dir", resultValue);
+				
 				//summarize path for display
 				resultValue = StringUtils.replace(
 						dir.getCanonicalPath(),
