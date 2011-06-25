@@ -50,6 +50,7 @@ public class GricliEnvironment {
 		validators.put("cpus", new PositiveIntValidator());
 		validators.put("walltime", new PositiveIntValidator());
 		validators.put("jobtype", new SetValidator(new String[] {"single","mpi","threaded"}));
+		validators.put("description", new Validator());
 		validators.put("version", new Validator());
 		validators.put("debug", new SetValidator(new String[] {"true","false"}));
 		validators.put("jobname", new Validator());
@@ -76,6 +77,7 @@ public class GricliEnvironment {
 		environment.put("debug","false");
 		environment.put("prompt","gricli> ");
 		environment.put("outputfile",null);
+		environment.put("description", "gricli job");
 
 		this.f = f;
 		globalLists.put("files", new LinkedList<String>());
@@ -203,6 +205,8 @@ public class GricliEnvironment {
 			job.setEmail_on_job_finish(true);
 		}
 		
+		job.setDescription(get("description"));
+		
 		job.setWalltimeInSeconds(Integer.parseInt(get("walltime")) * 60
 				* job.getCpus());
 		job.setMemory(Long.parseLong(get("memory")) * 1024 * 1024);
@@ -214,6 +218,7 @@ public class GricliEnvironment {
 		// attach input files
 		List<String> files = getList("files");;
 		for (String file : files) {
+			System.out.println("grid file is " + new GridFile(file).getUrl());
 			job.addInputFileUrl(new GridFile(file).getUrl());
 		}
 
