@@ -1,10 +1,6 @@
 gricli shell allows commandline interaction with the grid.  
 
-<<<<<<< HEAD
-Latest stable version can be downloaded from http://code.ceres.auckland.ac.nz/downloads/gricli.jar
-=======
 Latest version can be downloaded from http://code.ceres.auckland.ac.nz/downloads/gricli.jar
->>>>>>> upstream/master
 
 The latest development version can be downloaded from http://code.ceres.auckland.ac.nz/snapshot-downloads/gricli-dev.jar
 
