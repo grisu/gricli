@@ -4,8 +4,10 @@
 # file to get descriptions for all commands
 # needs pandoc installed (http://johnmacfarlane.net/pandoc/index.html)
 # also sed, awk
+# first and only argument is gricli parent dir
 
 GRICLI_DIR=$1
+
 HELPFILE=$GRICLI_DIR/src/main/resources/help.properties
 
 TEMPFILE=/tmp/gricli.md
