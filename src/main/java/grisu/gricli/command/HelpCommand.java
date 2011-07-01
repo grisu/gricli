@@ -1,6 +1,5 @@
 package grisu.gricli.command;
 
-import grisu.X;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 
@@ -28,18 +27,18 @@ public class HelpCommand implements GricliCommand {
 
 	public static final ResourceBundle help = ResourceBundle.getBundle("help");
 	public static final ResourceBundle examples = ResourceBundle
-	.getBundle("examples");
+			.getBundle("examples");
 
 	private final String[] keywords;
 
 	@SyntaxDescription(command={"help"},
 			arguments={"keywords"}, help="prints this help message")
-			public HelpCommand(String... keywords){
+	public HelpCommand(String... keywords){
 		this.keywords = keywords;
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
+			throws GricliRuntimeException {
 
 		List<SyntaxDescription> commands = getAllCommands(env);
 
@@ -94,13 +93,12 @@ public class HelpCommand implements GricliCommand {
 		StringBuffer argsDescription = new StringBuffer();
 
 		for (String arg: desc.arguments()){
-			X.p(arg);
+
 			helpMessage.append(" [" + arg +"]");
 
 			String argDescription = null;
 			try {
 				argDescription = help.getString(helpKey + "." + arg);
-				X.p(argDescription);
 			} catch (MissingResourceException e) {
 				// doesn't matter
 			}
@@ -134,7 +132,7 @@ public class HelpCommand implements GricliCommand {
 		return helpMessage.toString();
 	}
 
-	private ArrayList<SyntaxDescription> getAllCommands(GricliEnvironment env){
+	private ArrayList<SyntaxDescription> getAllCommands(GricliEnvironment env) {
 
 		ArrayList<SyntaxDescription> result = new ArrayList<SyntaxDescription>();
 

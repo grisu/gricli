@@ -1,29 +1,18 @@
 package grisu.gricli.command;
 
-import grisu.gricli.InvalidCommandException;
 import grisu.gricli.SyntaxException;
-import grisu.gricli.UnknownCommandException;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import jline.ArgumentCompletor;
-import jline.MultiCompletor;
-import jline.SimpleCompletor;
 import jline.Completor;
+import jline.MultiCompletor;
 import jline.NullCompletor;
-import org.apache.commons.lang.StringUtils;
+import jline.SimpleCompletor;
 
 public class GricliCommandFactory {
-	
-	private  List<Class<? extends GricliCommand>> commands = new ArrayList<Class<? extends GricliCommand>>();
-	/** private HashMap<String, Constructor<? extends GricliCommand>> commandMap;
-	private HashSet<String> commandSet; **/
-	private Completor tabCompletor;
-	private CommandCreator creator;
 	
 	public static GricliCommandFactory getCustomFactory(Class<? extends GricliCommand>... commands ) throws CompileException{
 		GricliCommandFactory f = new GricliCommandFactory();
@@ -33,7 +22,6 @@ public class GricliCommandFactory {
 		f.init();
 		return f;
 	}
-	
 	public static GricliCommandFactory getStandardFactory() {
 		GricliCommandFactory f = new GricliCommandFactory();
 		f.add(AddCommand.class);
@@ -66,6 +54,7 @@ public class GricliCommandFactory {
 		f.add(QuitCommand.class);
 		f.add(LogoutCommand.class);
 		f.add(HelpCommand.class);
+		f.add(AproposCommand.class);
 		f.add(AboutCommand.class);
 		
 		// filesystem commands
@@ -88,22 +77,20 @@ public class GricliCommandFactory {
 		
 		return f;
 	}
+	private  List<Class<? extends GricliCommand>> commands = new ArrayList<Class<? extends GricliCommand>>();
+	
+	/** private HashMap<String, Constructor<? extends GricliCommand>> commandMap;
+	private HashSet<String> commandSet; **/
+	private Completor tabCompletor;
+	
+	private CommandCreator creator;
+	
+	public GricliCommandFactory(){		
+		this.commands = new ArrayList<Class<? extends GricliCommand>>();	
+	}
 	
 	public void add(Class<? extends GricliCommand> c){
 		commands.add(c);
-	}
-	
-	public List<Class<? extends GricliCommand>> getCommands(){
-		return new ArrayList<Class<? extends GricliCommand>>(commands);
-	}
-	
-	public Completor createCompletor(){
-		return this.tabCompletor;
-	}
-	
-
-	public GricliCommandFactory(){		
-		this.commands = new ArrayList<Class<? extends GricliCommand>>();	
 	}
 	
 	private void addCommand(Constructor<? extends GricliCommand> cons, CommandCreator creator)
@@ -122,6 +109,19 @@ public class GricliCommandFactory {
 			}
 		}
 		creator.addConstructor(cons);
+	}
+	
+
+	public GricliCommand create(String[] args) throws SyntaxException {
+		return creator.create(args);
+	}
+	
+	public Completor createCompletor(){
+		return this.tabCompletor;
+	}
+	
+	public List<Class<? extends GricliCommand>> getCommands(){
+		return new ArrayList<Class<? extends GricliCommand>>(commands);
 	}
 	
 	private ArgumentCompletor getTabCompletor(SyntaxDescription sd, AutoComplete auto, boolean isVar){
@@ -175,9 +175,5 @@ public class GricliCommandFactory {
 		}
 
 		this.tabCompletor = new MultiCompletor(commandCompletors.toArray(new Completor[] {}));
-	}
-	
-	public GricliCommand create(String[] args) throws SyntaxException {
-		return creator.create(args);
 	}
 }
