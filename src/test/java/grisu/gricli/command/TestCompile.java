@@ -13,10 +13,11 @@ import org.junit.Test;
 @SuppressWarnings("unchecked")
 public class TestCompile {
 	
-	GricliCommandFactory trivial,simple,multi,language1,args2;
+	GricliCommandFactory empty,trivial,simple,multi,language1,args2;
 	
 	@Before 
 	public void setUp() throws Exception{
+		empty = GricliCommandFactory.getCustomFactory(NopCommand.class);
 		trivial = GricliCommandFactory.getCustomFactory(SimpleCommand.class);
 		simple = GricliCommandFactory.getCustomFactory(Args1Command.class);
 		multi = GricliCommandFactory.getCustomFactory(MultiCommand.class);
@@ -25,6 +26,11 @@ public class TestCompile {
 				Args1Command.class, MultiCommand.class);
 		
 		args2 = GricliCommandFactory.getCustomFactory(Args2Command.class);
+	}
+	
+	@Test
+	public void testEmpty() throws Exception {
+		NopCommand nop = (NopCommand)empty.create(new String[] {});
 	}
 	
 	@Test

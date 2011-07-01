@@ -10,6 +10,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.commons.lang.StringUtils;
+
 import jline.FileNameCompletor;
 
 public class RunCommand implements GricliCommand {
@@ -19,6 +21,10 @@ public class RunCommand implements GricliCommand {
 	@SyntaxDescription(command={"run"}, arguments={"script"})
 	@AutoComplete(completors={FileNameCompletor.class})
 	public RunCommand(String script) {
+		if (script.startsWith("~")){
+			script = StringUtils.replace(
+					script, "~", System.getProperty("user.home"));
+		}
 		this.script = script;
 	}
 
@@ -31,12 +37,13 @@ public class RunCommand implements GricliCommand {
 		try {
 			GricliTokenizer tokenizer = new GricliTokenizer(new FileInputStream(script));
 			String[] tokens;
-			while ((tokens = tokenizer.nextCommand()).length > 0){
+			while ((tokens = tokenizer.nextCommand()) != null){
 				cl.add(f.create(tokens));
 			}
 		} catch (FileNotFoundException e) {
 			throw new GricliRuntimeException("file " + script + " not found ");
 		} catch (IOException e){
+			e.printStackTrace();
 			throw new GricliRuntimeException("IO error while reading " + script);
 		} catch (SyntaxException e){
 			throw new GricliRuntimeException("error during parsing of " + script + ": " + e.getMessage() );
