@@ -6,8 +6,12 @@ Latest development version can be downloaded from http://code.ceres.auckland.ac.
 
 Javadoc: http://grisu.github.com/gricli/javadoc/
 
-Tutorial
+Usage
 ======
+
+Detailed information about the usage of *gricli* can be found here: [Usage](https://github.com/grisu/gricli/blob/develop/USAGE.md)
+Tutorial / Examples
+===================
 
 Let's get going. Start gricli:
 
