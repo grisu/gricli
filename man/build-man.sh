@@ -35,3 +35,4 @@ echo 'The Gricli source code and all documentation may be downloaded from
 
 pandoc -s -w man $USAGE_FILE -o $GRICLI_DIR/man/gricli.1
 
+
