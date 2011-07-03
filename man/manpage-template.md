@@ -1,8 +1,8 @@
-<!-- don't edit the USAGE.md file directly since it'll be overwritten with regularly. Edit man/manpage-template.md instead -->
-
 % GRICLI(1) Gricli user manual
 % Yuriy Halytskyy, Markus Binsteiner
 % July 1, 2011
+
+<!-- don't edit the USAGE.md file directly since it'll be overwritten with regularly. Edit man/manpage-template.md instead -->
 
 # NAME
 
@@ -24,7 +24,7 @@ Gricli is based on the *Grisu* framework and can connect to different *Grisu bac
  
      gricli -b Local
      
- The above command would connect to the default *BeSTGRID* backend that publishes the *Grisu* API via SOAP. The latter would connect to a local *Grisu* backend which sits on the same computer as *gricli*, as long as the local backend jar (http://code.ceres.auckland.ac.nz/downloads/local-backend.jar) is in the classpath (either in the same folder as gricli or in %HOME/.grisu.beta/lib/).
+ The above command would connect to the default *BeSTGRID* backend that publishes the *Grisu* API via SOAP. The latter would connect to a local *Grisu* backend which sits on the same computer as *gricli*, as long as the local backend jar (http://code.ceres.auckland.ac.nz/downloads/local-backend.jar) is in the classpath (either in the same folder as gricli or in %$HOME/.grisu.beta/lib/).
 
 # OPTIONS
 
