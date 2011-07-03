@@ -1,3 +1,5 @@
+<!-- don't edit the USAGE.md file directly since it'll be overwritten with regularly. Edit man/manpage-template.md instead -->
+
 % GRICLI(1) Gricli user manual
 % Yuriy Halytskyy, Markus Binsteiner
 % July 1, 2011
