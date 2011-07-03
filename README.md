@@ -9,7 +9,7 @@ Javadoc: http://grisu.github.com/gricli/javadoc/
 Usage
 ======
 
-Detailed information about the usage of *gricli* can be found here: (Usage)[Usage]
+Detailed information about the usage of *gricli* can be found here: (Usage)[/Usage.md]
 
 Tutorial / Examples
 ===================
