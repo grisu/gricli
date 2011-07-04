@@ -23,6 +23,37 @@ public class CompletionCacheImpl implements CompletionCache {
 		this.env = env;
 		this.reg = env.getGrisuRegistry();
 		this.jm = RunningJobManager.getDefault(this.env.getServiceInterface());
+		new Thread() {
+			@Override
+			public void run() {
+				getAllFqans();
+			}
+		}.start();
+		new Thread() {
+			@Override
+			public void run() {
+				getAllQueues();
+			}
+		}.start();
+		new Thread() {
+			@Override
+			public void run() {
+				getAllSites();
+			}
+		}.start();
+
+		new Thread() {
+			@Override
+			public void run() {
+				getJobnames();
+			}
+		}.start();
+		new Thread() {
+			@Override
+			public void run() {
+
+			}
+		}.start();
 	}
 
 	/* (non-Javadoc)
