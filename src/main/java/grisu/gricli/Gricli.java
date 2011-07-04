@@ -41,6 +41,8 @@ public class Gricli {
 	static final String DEBUG_FILE_PATH = FilenameUtils.concat(Environment.getGrisuClientDirectory().getPath() ,
 			"gricli.debug");
 
+	public static final String COMPLETION_CACHE_REGISTRY_KEY = "CompletionCache";
+
 	static String scriptName = null;
 
 	static private GricliEnvironment env;

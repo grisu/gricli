@@ -1,7 +1,6 @@
 package grisu.gricli.completors;
 
 import java.util.List;
-import java.util.SortedSet;
 
 import jline.Completor;
 import jline.FileNameCompletor;
@@ -12,8 +11,8 @@ public class GridFilesystemCompletor implements Completor{
 
 	public int complete(String s, int index, List l) {
 		FileNameCompletor fc = new FileNameCompletor();
-		SortedSet<String> fqans = CompletionCache.fqans;
-		String[] gridUrls = new String[fqans.size()];
+		String[] fqans = CompletionCache.singleton.getAllFqans();
+		String[] gridUrls = new String[fqans.length];
 		int i = 0;
 		for (String fqan: fqans){
 			gridUrls[i] = "grid://Groups" + fqan;
