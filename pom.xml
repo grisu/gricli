@@ -107,6 +107,18 @@
 			</dependency> -->
 
 
+		<dependency>
+			<groupId>bouncycastle</groupId>
+			<artifactId>bcprov-jdk15</artifactId>
+			<version>140</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>grisu.backend</groupId>
+			<artifactId>grisu-core</artifactId>
+			<version>${grisu.dependency.version}</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 	<issueManagement>
