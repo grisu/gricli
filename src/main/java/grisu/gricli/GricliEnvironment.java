@@ -104,6 +104,7 @@ public class GricliEnvironment {
 	private GrisuRegistry reg;
 	private String siUrl;
 
+
 	private final HashMap<String, List<String>> globalLists = new HashMap<String, List<String>>();
 
 	private boolean quiet = false;
@@ -156,7 +157,7 @@ public class GricliEnvironment {
 		environment.put("group","/nz");
 		environment.put("dir",System.getProperty("user.dir"));
 		environment.put("gdir","/");
-		environment.put("application",null);
+		environment.put("application", null);
 		environment.put("queue",null);
 		environment.put("debug","false");
 		environment.put("prompt","gricli> ");

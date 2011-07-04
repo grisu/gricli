@@ -46,7 +46,7 @@ public class Gricli {
 	public static final String COMPLETION_CACHE_REGISTRY_KEY = "CompletionCache";
 
 	public static CompletionCache completionCache = new DummyCompletionCache();
-	
+
 	static String scriptName = null;
 
 	static private GricliEnvironment env;
@@ -71,6 +71,7 @@ public class Gricli {
 
 			String prompt = getPrompt();
 			String line = reader.readLine(prompt);
+
 			if (line==null){
 				break;
 			}

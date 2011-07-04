@@ -8,7 +8,12 @@ import grisu.model.GrisuRegistry;
 import java.util.Set;
 import java.util.SortedSet;
 
+import org.apache.log4j.Logger;
+
 public class CompletionCacheImpl implements CompletionCache {
+
+	static final Logger myLogger = Logger.getLogger(CompletionCacheImpl.class
+			.getName());
 
 	// public static SortedSet<String> jobnames = new TreeSet<String>();
 	// public static SortedSet<String> fqans = new TreeSet<String>();
@@ -26,19 +31,26 @@ public class CompletionCacheImpl implements CompletionCache {
 		new Thread() {
 			@Override
 			public void run() {
-				getAllFqans();
+				getAllQueues();
+				myLogger.debug("All queues loaded for completion");
 			}
 		}.start();
 		new Thread() {
 			@Override
 			public void run() {
-				getAllQueues();
+				String[] fqans = getAllFqans();
+				myLogger.debug("All vos loaded for completion");
+				for (String fqan : fqans) {
+					getAllQueuesForFqan(fqan);
+					myLogger.debug("All queues loaded for fqan: " + fqan);
+				}
 			}
 		}.start();
 		new Thread() {
 			@Override
 			public void run() {
 				getAllSites();
+				myLogger.debug("All sites loaded for completion");
 			}
 		}.start();
 
@@ -46,14 +58,22 @@ public class CompletionCacheImpl implements CompletionCache {
 			@Override
 			public void run() {
 				getJobnames();
+				myLogger.debug("All jobnames loaded for completion");
 			}
 		}.start();
 		new Thread() {
 			@Override
 			public void run() {
-
+				getAllApplications();
+				myLogger.debug("All applications loaded for completion");
 			}
 		}.start();
+	}
+
+	public String[] getAllApplications() {
+
+		return this.reg.getUserEnvironmentManager()
+				.getAllAvailableApplications();
 	}
 
 	/* (non-Javadoc)
@@ -70,11 +90,19 @@ public class CompletionCacheImpl implements CompletionCache {
 		return this.reg.getUserEnvironmentManager().getAllAvailableSubmissionLocations();
 	}
 
+	public String[] getAllQueuesForFqan(String fqan) {
+		return this.reg.getResourceInformation().getAllAvailableSubmissionLocations(fqan);
+	}
+
 	/* (non-Javadoc)
 	 * @see grisu.gricli.completors.CompletionCache#getAllSites()
 	 */
 	public Set<String> getAllSites() {
 		return this.reg.getUserEnvironmentManager().getAllAvailableSites();
+	}
+
+	public GricliEnvironment getEnvironment() {
+		return env;
 	}
 
 	/* (non-Javadoc)
@@ -84,7 +112,9 @@ public class CompletionCacheImpl implements CompletionCache {
 		return this.reg.getUserEnvironmentManager().getReallyAllJobnames(false);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see grisu.gricli.completors.CompletionCache#refreshJobnames()
 	 */
 	public void refreshJobnames() {
@@ -95,7 +125,5 @@ public class CompletionCacheImpl implements CompletionCache {
 			}
 		}.start();
 	}
-
-
 
 }
