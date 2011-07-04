@@ -3,9 +3,9 @@ package grisu.gricli.command;
 import grisu.control.exceptions.JobPropertiesException;
 import grisu.control.exceptions.JobSubmissionException;
 import grisu.frontend.model.job.JobObject;
+import grisu.gricli.Gricli;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
-import grisu.gricli.completors.CompletionCache;
 import grisu.gricli.completors.ExecutablesCompletor;
 import grisu.jcommons.constants.Constants;
 
@@ -53,7 +53,7 @@ GricliCommand {
 		final JobObject job = createJob(env);
 		String jobname = job.getJobname();
 		System.out.println(" job name is " + jobname);
-		CompletionCache.singleton.refreshJobnames();
+		Gricli.completionCache.refreshJobnames();
 
 		if (this.isAsync){
 			new Thread() {

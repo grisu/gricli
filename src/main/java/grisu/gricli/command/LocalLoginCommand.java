@@ -9,6 +9,7 @@ import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.BackendCompletor;
 import grisu.gricli.completors.CompletionCache;
+import grisu.gricli.completors.CompletionCacheImpl;
 import grisu.model.GrisuRegistryManager;
 
 
@@ -31,11 +32,11 @@ GricliCommand {
 			ServiceInterface serviceInterface = LoginManager.login(siUrl);
 			env.setServiceInterface(serviceInterface);
 
-			CompletionCache cc = new CompletionCache(env);
+			CompletionCache cc = new CompletionCacheImpl(env);
 			GrisuRegistryManager.getDefault(serviceInterface).set(
 					Gricli.COMPLETION_CACHE_REGISTRY_KEY, cc);
 
-			CompletionCache.singleton = cc;
+			Gricli.completionCache = cc;
 
 			// CompletionCache.jobnames =
 			// serviceInterface.getAllJobnames(null).asSortedSet();

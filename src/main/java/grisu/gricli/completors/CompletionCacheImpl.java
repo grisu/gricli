@@ -8,9 +8,7 @@ import grisu.model.GrisuRegistry;
 import java.util.Set;
 import java.util.SortedSet;
 
-public class CompletionCache {
-
-	public static CompletionCache singleton;
+public class CompletionCacheImpl implements CompletionCache {
 
 	// public static SortedSet<String> jobnames = new TreeSet<String>();
 	// public static SortedSet<String> fqans = new TreeSet<String>();
@@ -21,28 +19,43 @@ public class CompletionCache {
 	private final GrisuRegistry reg;
 	private final RunningJobManager jm;
 
-	public CompletionCache(GricliEnvironment env) throws LoginRequiredException {
+	public CompletionCacheImpl(GricliEnvironment env) throws LoginRequiredException {
 		this.env = env;
 		this.reg = env.getGrisuRegistry();
 		this.jm = RunningJobManager.getDefault(this.env.getServiceInterface());
 	}
 
+	/* (non-Javadoc)
+	 * @see grisu.gricli.completors.CompletionCache#getAllFqans()
+	 */
 	public String[] getAllFqans() {
 		return this.reg.getUserEnvironmentManager().getAllAvailableFqans(true);
 	}
 
+	/* (non-Javadoc)
+	 * @see grisu.gricli.completors.CompletionCache#getAllQueues()
+	 */
 	public Set<String> getAllQueues() {
 		return this.reg.getUserEnvironmentManager().getAllAvailableSubmissionLocations();
 	}
 
+	/* (non-Javadoc)
+	 * @see grisu.gricli.completors.CompletionCache#getAllSites()
+	 */
 	public Set<String> getAllSites() {
 		return this.reg.getUserEnvironmentManager().getAllAvailableSites();
 	}
 
+	/* (non-Javadoc)
+	 * @see grisu.gricli.completors.CompletionCache#getJobnames()
+	 */
 	public SortedSet<String> getJobnames() {
 		return this.reg.getUserEnvironmentManager().getReallyAllJobnames(false);
 	}
 
+	/* (non-Javadoc)
+	 * @see grisu.gricli.completors.CompletionCache#refreshJobnames()
+	 */
 	public void refreshJobnames() {
 		new Thread() {
 			@Override
