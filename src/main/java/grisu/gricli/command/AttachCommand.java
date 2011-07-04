@@ -22,15 +22,15 @@ GricliCommand {
 	private final String batchname;
 
 	@SyntaxDescription(command={"attach"},
- arguments = { "files" })
-			@AutoComplete(completors={GridFilesystemCompletor.class})
-			public AttachCommand(String... globs) {
+			arguments = { "files" })
+	@AutoComplete(completors={GridFilesystemCompletor.class})
+	public AttachCommand(String... globs) {
 		this(null,globs);
 	}
 
 	@SyntaxDescription(command={"batch","attach"},
 			arguments={"batchjob","files"}, help="attach files to batch job")
-			public AttachCommand(String batchname, String... globs){
+	public AttachCommand(String batchname, String... globs){
 		this.batchname = batchname;
 		this.globs = globs;
 	}
@@ -47,7 +47,7 @@ GricliCommand {
 				throw new GricliRuntimeException(e);
 			} catch (NoSuchJobException e) {
 				throw new GricliRuntimeException("batch job container " + this.batchname +
-				" does not exist. Use 'create batch [containername]' command");
+						" does not exist. Use 'create batch [containername]' command");
 			}
 
 			obj.addInputFile(file);
@@ -55,7 +55,7 @@ GricliCommand {
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
+			throws GricliRuntimeException {
 
 		env.clear("files");
 		for (String glob: globs){
@@ -75,11 +75,11 @@ GricliCommand {
 		return env;
 	}
 
-	private String[] getAllFiles(String glob) {
+	private String[] getAllFiles(String glob) throws GricliRuntimeException {
 		LinkedList<String> all = new LinkedList<String>();
 		File dir = new File (glob);
-		ArrayList<String> dirComponents = 
-			new ArrayList<String>(Arrays.asList(StringUtils.split(glob, System.getProperty("file.separator"))));
+		ArrayList<String> dirComponents =
+				new ArrayList<String>(Arrays.asList(StringUtils.split(glob, System.getProperty("file.separator"))));
 		if (dir.isAbsolute()) {
 			// absolute path
 			if (System.getProperty("file.separator").equals("/")){
@@ -88,27 +88,30 @@ GricliCommand {
 			} else {
 				//windows
 				String root = dirComponents.get(0)+"\\\\";
-				dir = new File(root);	
-				dirComponents.remove(0);	
+				dir = new File(root);
+				dirComponents.remove(0);
 			}
 		} else if (glob.startsWith("~")){
 			//unix home
-			dir = new File(System.getProperty("user.home")); 
+			dir = new File(System.getProperty("user.home"));
 			dirComponents.remove(0);
 		}
 		else {
 			// relative path
 			dir = new File(System.getProperty("user.dir"));
 		}
-		
-		
+
+		if ( ! dir.exists() ) {
+			throw new GricliRuntimeException(dir.toString() + " does not exist");
+		}
+
 		getSubdirs(dir.getAbsolutePath(), new LinkedList(dirComponents), all);
 
 		return all.toArray(new String[] {});
 	}
 
 	private void getSubdirs(String path, LinkedList<String> globs,
-			LinkedList<String> result) {
+			LinkedList<String> result) throws GricliRuntimeException {
 		if (globs.size() == 0) {
 			result.add(path);
 			return;
@@ -120,6 +123,13 @@ GricliCommand {
 		if (subComponents == null) {
 			return;
 		}
+
+		if (subComponents.length == 0) {
+			throw new GricliRuntimeException("No files found for: "
+					+ dir.toString()
+					+ File.separator + glob);
+		}
+
 		for (File sc : subComponents) {
 			getSubdirs(sc.getAbsolutePath(), new LinkedList(globs), result);
 		}
