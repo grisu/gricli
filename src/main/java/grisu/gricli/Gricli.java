@@ -8,6 +8,8 @@ import grisu.frontend.view.cli.CliHelpers;
 import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.GricliCommandFactory;
 import grisu.gricli.command.InteractiveLoginCommand;
+import grisu.gricli.completors.CompletionCache;
+import grisu.gricli.completors.DummyCompletionCache;
 import grisu.gricli.parser.GricliTokenizer;
 import grisu.settings.Environment;
 
@@ -41,6 +43,10 @@ public class Gricli {
 	static final String DEBUG_FILE_PATH = FilenameUtils.concat(Environment.getGrisuClientDirectory().getPath() ,
 			"gricli.debug");
 
+	public static final String COMPLETION_CACHE_REGISTRY_KEY = "CompletionCache";
+
+	public static CompletionCache completionCache = new DummyCompletionCache();
+
 	static String scriptName = null;
 
 	static private GricliEnvironment env;
@@ -65,6 +71,7 @@ public class Gricli {
 
 			String prompt = getPrompt();
 			String line = reader.readLine(prompt);
+
 			if (line==null){
 				break;
 			}

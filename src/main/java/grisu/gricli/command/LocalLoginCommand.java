@@ -4,10 +4,13 @@ package grisu.gricli.command;
 import grisu.control.ServiceInterface;
 import grisu.frontend.control.login.LoginException;
 import grisu.frontend.control.login.LoginManager;
+import grisu.gricli.Gricli;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.BackendCompletor;
 import grisu.gricli.completors.CompletionCache;
+import grisu.gricli.completors.CompletionCacheImpl;
+import grisu.model.GrisuRegistryManager;
 
 
 public class LocalLoginCommand implements
@@ -21,17 +24,27 @@ GricliCommand {
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
+			throws GricliRuntimeException {
 		try {
 			if (siUrl == null) {
 				siUrl = env.getServiceInterfaceUrl();
 			}
 			ServiceInterface serviceInterface = LoginManager.login(siUrl);
 			env.setServiceInterface(serviceInterface);
-			CompletionCache.jobnames = serviceInterface.getAllJobnames(null).asSortedSet();
-			CompletionCache.fqans = serviceInterface.getFqans().asSortedSet();
-			CompletionCache.queues = serviceInterface.getAllSubmissionLocations().asSubmissionLocationStrings();
-			CompletionCache.sites = serviceInterface.getAllSites().asArray();
+
+			CompletionCache cc = new CompletionCacheImpl(env);
+			GrisuRegistryManager.getDefault(serviceInterface).set(
+					Gricli.COMPLETION_CACHE_REGISTRY_KEY, cc);
+
+			Gricli.completionCache = cc;
+
+			// CompletionCache.jobnames =
+			// serviceInterface.getAllJobnames(null).asSortedSet();
+			// CompletionCache.fqans =
+			// serviceInterface.getFqans().asSortedSet();
+			// CompletionCache.queues = serviceInterface
+			// .getAllSubmissionLocations().asSubmissionLocationStrings();
+			// CompletionCache.sites = serviceInterface.getAllSites().asArray();
 			return env;
 		} catch (LoginException ex) {
 			throw new GricliRuntimeException(ex);
