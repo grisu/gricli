@@ -13,7 +13,7 @@ import org.junit.Test;
 public class TestCommandCreators {
 	
 	CommandCreator c;
-	Constructor<? extends GricliCommand> cons1,cons2,cons3,cons4;
+	Constructor<? extends GricliCommand> cons1,cons2,cons3,cons4, consNop;
 	
 	@SuppressWarnings("unchecked")
 	@Before
@@ -23,6 +23,8 @@ public class TestCommandCreators {
 		cons1 = (Constructor<? extends GricliCommand>) SimpleCommand.class.getConstructors()[0];
 		cons2 = (Constructor<? extends GricliCommand>) Args1Command.class.getConstructors()[0];
 		cons3 = (Constructor<? extends GricliCommand>) VarArgsCommand.class.getConstructors()[0];
+		
+		consNop = (Constructor<? extends GricliCommand>) NopCommand.class.getConstructors()[0];
 	}
 
 	@Test(expected=SyntaxException.class)
@@ -86,6 +88,13 @@ public class TestCommandCreators {
 	public void testVarArgs() throws Exception {
 		c.addKeyword("var").addVarArg("files").addConstructor(cons3);
 		assertEquals(VarArgsCommand.class, c.create(new String[] {"var","file1","file2"}).getClass());
+	}
+	
+	@Test
+	public void testNop() throws Exception {
+		c.addKeyword("var").addVarArg("files").addConstructor(cons3);
+		c.addConstructor(consNop);
+		assertEquals(NopCommand.class, c.create(new String[] {}).getClass());
 	}
 	
 }

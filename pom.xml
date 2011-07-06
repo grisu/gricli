@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>grisu.frontend</groupId>
 	<artifactId>gricli</artifactId>
@@ -60,19 +61,19 @@
 
 
 	<dependencies>
-	  <dependency>
-	    <groupId>junit</groupId>
-	    <artifactId>junit</artifactId>
-	    <version>4.8</version>
-	    <scope>test</scope>
-	  </dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8</version>
+			<scope>test</scope>
+		</dependency>
 
-	   <dependency>
-	     <groupId>org.easymock</groupId>
-	     <artifactId>easymock</artifactId>
-	     <version>3.0</version>
-	     <scope>test</scope>
-	   </dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>3.0</version>
+			<scope>test</scope>
+		</dependency>
 
 		<!-- the main grisu dependency. -->
 		<dependency>
@@ -95,21 +96,29 @@
 			<version>1.6</version>
 			<scope>compile</scope>
 		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>jline</groupId> -->
+		<!-- <artifactId>jline</artifactId> -->
+		<!-- <version>1.0</version> -->
+		<!-- <scope>compile</scope> -->
+		<!-- </dependency> -->
+		<!-- <dependency> <groupId>grisu.backend</groupId> <artifactId>grisu-core</artifactId> 
+			<version>${grisu.dependency.version}</version> <type>jar</type> <scope>provided</scope> 
+			</dependency> -->
+
+
 		<dependency>
-			<groupId>jline</groupId>
-			<artifactId>jline</artifactId>
-			<version>0.9.93</version>
-			<scope>compile</scope>
+			<groupId>bouncycastle</groupId>
+			<artifactId>bcprov-jdk15</artifactId>
+			<version>140</version>
+			<scope>provided</scope>
 		</dependency>
-<!--		<dependency>
+		<dependency>
 			<groupId>grisu.backend</groupId>
 			<artifactId>grisu-core</artifactId>
 			<version>${grisu.dependency.version}</version>
-			<type>jar</type>
 			<scope>provided</scope>
-		</dependency> -->
-
-
+		</dependency>
 	</dependencies>
 
 	<issueManagement>
@@ -130,6 +139,7 @@
 	</organization>
 	<build>
 		<plugins>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -167,17 +177,17 @@
 			</plugin>
 
 			<plugin>
-			  <groupId>org.apache.maven.plugins</groupId>
-			  <artifactId>maven-surefire-plugin</artifactId>
-			  <version>2.3</version>
-			  <configuration>
-			    <includes>
-			      <include>**/Test*.java</include>
-			    </includes>
-			    <forkMode>once</forkMode>
-			  </configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<includes>
+						<include>**/Test*.java</include>
+					</includes>
+					<forkMode>once</forkMode>
+				</configuration>
 			</plugin>
-			
+
 
 			<!-- you can disable the assembly plugin if you want, your builds will 
 				be faster I find it quite handy to have maven build an executable jar, though -->
@@ -198,9 +208,9 @@
 									<mainClass>grisu.gricli.Gricli</mainClass>
 								</manifest>
 								<manifestEntries>
-									<Class-Path>bcprov.jar bcprov-jdk15-143.jar local-backend-dev.jar local-backend.jar
-										grisu-client-dependencies.jar
-	    </Class-Path>
+									<Class-Path>bcprov.jar bcprov-jdk15-143.jar
+										local-backend-dev.jar local-backend.jar
+										grisu-client-dependencies.jar</Class-Path>
 								</manifestEntries>
 							</archive>
 
@@ -216,6 +226,20 @@
 	</build>
 
 	<profiles>
+		<profile>
+			<id>exec</id>
+
+			<dependencies>
+				<dependency>
+					<groupId>bouncycastle</groupId>
+					<artifactId>bcprov-jdk15</artifactId>
+					<version>140</version>
+					<scope>compile</scope>
+				</dependency>
+			</dependencies>
+
+		</profile>
+
 		<profile>
 			<id>sign</id>
 			<activation>
@@ -243,9 +267,44 @@
 							<keypass>FxAKs3p6</keypass>
 						</configuration>
 					</plugin>
+
+
 				</plugins>
 			</build>
 		</profile>
+
+		<!-- This profile creates/updates man and USAGE.md page, needs pandoc installed -->
+		<profile>
+			<id>doc</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.1</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<executable>sh</executable>
+							<workingDirectory>${project.basedir}</workingDirectory>
+							<arguments>
+								<argument>${project.basedir}/man/build-man.sh</argument>
+								<argument>${project.basedir}</argument>
+							</arguments>
+						</configuration>
+					</plugin>
+
+				</plugins>
+
+			</build>
+
+		</profile>
+
 	</profiles>
 
 </project>

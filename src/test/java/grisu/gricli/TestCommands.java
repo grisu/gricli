@@ -2,10 +2,13 @@ package grisu.gricli;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import grisu.gricli.command.*;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 
@@ -38,7 +41,6 @@ public class TestCommands {
 		c.execute(env);
 	}
 	
-	@Ignore
 	@Test
 	public void testAttachWithTilda() throws Exception{
 		String filename = "testAttachWithTilda";
@@ -93,13 +95,13 @@ public class TestCommands {
 	@Test
 	/**
 	 * @author Sina Masoud-Ansari
-	 * 
+	 *
 	 * Made this as testAttachWithTilda was not working as expected
 	 * (has been fixed now)
 	 */
 	public void testAttachWithTilda_2() throws Exception {
 		String rand = ""+(int)(Math.random()*10000);
-		String partname = System.getProperty("file.separator") + "testAttachFromHomeDir_"+rand;
+		String partname = File.pathSeparator + "testAttachFromHomeDir_"+rand;
 		String filename = System.getProperty("user.home")+partname;
 		String shortname = "~" + partname;
 		File f = null;
@@ -113,8 +115,8 @@ public class TestCommands {
 		} catch (GricliException e) {
 			System.err.println(e.getMessage());
 			fail();
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (IOException e) {
+			//e.printStackTrace();
 		} finally {
 			if (f != null && f.exists()){
 				try {
@@ -154,7 +156,7 @@ public class TestCommands {
 	@Test
 	public void testRunWithTilda() throws Exception{
 		String rand = ""+(int)(Math.random()*10000);
-		String partname = System.getProperty("file.separator") + "testRunWithTilda_"+rand;
+		String partname = File.pathSeparator + "testRunWithTilda_"+rand;
 		String filename = System.getProperty("user.home")+partname;
 		String shortname = "~" + partname;
 		File f = null;
@@ -164,11 +166,8 @@ public class TestCommands {
 			assertTrue(f.exists());
 			RunCommand run = new RunCommand(shortname);
 			run.execute(env);
-		} catch (GricliException e) {
-			System.err.println(e.getMessage());
-			fail();
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (IOException ex){
+			
 		} finally {
 			if (f != null && f.exists()){
 				try {
@@ -203,6 +202,35 @@ public class TestCommands {
 		File current = new File(System.getProperty("user.dir"));
 		
 		assertEquals(home.getCanonicalPath(),current.getCanonicalPath());
+	}
+	
+	@Test
+	public void testRunWithNoEndOfLine() throws Exception {
+		File f = folder.newFile("testRun2.script");
+		String scriptName = f.getCanonicalPath();
+		FileUtils.writeByteArrayToFile(f, "set jobname hello".getBytes());
+		
+		RunCommand c = new RunCommand(scriptName);
+		c.execute(env);
+		
+		assertEquals(env.get("jobname"),"hello");
+	}
+	
+	@Test
+	public void testRunWithEmptyLines() throws Exception {
+		List<String> script = new LinkedList<String>();
+		script.add("set description ''");
+		script.add("");
+		script.add("set jobname hello");
+		
+		File f = folder.newFile("testRun1.script");
+		String scriptName = f.getCanonicalPath();
+		FileUtils.writeLines(f,script);
+		
+		RunCommand c = new RunCommand(scriptName);
+		c.execute(env);
+		
+		assertEquals(env.get("jobname"),"hello");
 	}
 	
 }

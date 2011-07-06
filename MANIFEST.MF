@@ -1,4 +1,0 @@
-Manifest-Version: 1.0                   
-Created-By: Markus Binsteiner
-Class-Path: bcprov.jar bcprov-jdk15-140.jar grisu-local-backend.jar
-Main-Class: grisu.client.gricli.Gricli

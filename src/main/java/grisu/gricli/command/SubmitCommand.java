@@ -3,9 +3,10 @@ package grisu.gricli.command;
 import grisu.control.exceptions.JobPropertiesException;
 import grisu.control.exceptions.JobSubmissionException;
 import grisu.frontend.model.job.JobObject;
+import grisu.gricli.Gricli;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
-import grisu.gricli.completors.CompletionCache;
+import grisu.gricli.completors.ExecutablesCompletor;
 import grisu.jcommons.constants.Constants;
 
 
@@ -16,11 +17,13 @@ GricliCommand {
 	private final boolean isAsync;
 
 	@SyntaxDescription(command={"submit"}, arguments={"commandline"})
+	@AutoComplete(completors = { ExecutablesCompletor.class })
 	public SubmitCommand(String cmd) {
 		this(cmd,null);
 	}
 
 	@SyntaxDescription(command={"submit"},arguments={"commandline","&"})
+	@AutoComplete(completors = { ExecutablesCompletor.class })
 	public SubmitCommand(String cmd, String mod){
 		this.cmd = cmd;
 		this.isAsync = "&".equals(mod);
@@ -46,11 +49,11 @@ GricliCommand {
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
+			throws GricliRuntimeException {
 		final JobObject job = createJob(env);
 		String jobname = job.getJobname();
 		System.out.println(" job name is " + jobname);
-		CompletionCache.jobnames.add(jobname);
+		Gricli.completionCache.refreshJobnames();
 
 		if (this.isAsync){
 			new Thread() {

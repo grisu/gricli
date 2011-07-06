@@ -1,13 +1,17 @@
 gricli shell allows commandline interaction with the grid.  
 
-Latest version can be downloaded from http://code.ceres.auckland.ac.nz/downloads/gricli.jar
 
-The latest development version can be downloaded from http://code.ceres.auckland.ac.nz/snapshot-downloads/gricli-dev.jar
+Latest version can be downloaded from http://code.ceres.auckland.ac.nz/downloads/gricli.jar
+Latest development version can be downloaded from http://code.ceres.auckland.ac.nz/snapshot-downloads/gricli-dev.jar
 
 Javadoc: http://grisu.github.com/gricli/javadoc/
 
-Tutorial
+Usage
 ======
+
+Detailed information about the usage of *gricli* can be found here: [Usage](https://github.com/grisu/gricli/blob/develop/USAGE.md)
+Tutorial / Examples
+===================
 
 Let's get going. Start gricli:
 

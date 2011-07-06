@@ -1,28 +1,27 @@
 package grisu.gricli;
 
+import static grisu.gricli.GricliExitStatus.LOGIN;
+import static grisu.gricli.GricliExitStatus.RUNTIME;
+import static grisu.gricli.GricliExitStatus.SUCCESS;
+import static grisu.gricli.GricliExitStatus.SYNTAX;
+import grisu.frontend.view.cli.CliHelpers;
 import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.GricliCommandFactory;
 import grisu.gricli.command.InteractiveLoginCommand;
+import grisu.gricli.completors.CompletionCache;
+import grisu.gricli.completors.DummyCompletionCache;
 import grisu.gricli.parser.GricliTokenizer;
 import grisu.settings.Environment;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.LinkedList;
-import org.apache.commons.lang.StringUtils;
-import java.util.List;
 import java.util.logging.Level;
 
 import jline.ArgumentCompletor;
 import jline.ConsoleReader;
 import jline.History;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -30,36 +29,89 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-
-import static grisu.gricli.GricliExitStatus.*;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 
 public class Gricli {
 
 	static final String CONFIG_FILE_PATH = FilenameUtils.concat(Environment
 			.getGrisuClientDirectory().getPath(), "gricli.profile");
-	
-	static final String HISTORY_FILE_PATH = FilenameUtils.concat(Environment.getGrisuClientDirectory().getPath() , 
+
+	static final String HISTORY_FILE_PATH = FilenameUtils.concat(Environment.getGrisuClientDirectory().getPath() ,
 			"gricli.hist");
-	
-	static final String DEBUG_FILE_PATH = FilenameUtils.concat(Environment.getGrisuClientDirectory().getPath() , 
-	"gricli.debug");
-	
+
+	static final String DEBUG_FILE_PATH = FilenameUtils.concat(Environment.getGrisuClientDirectory().getPath() ,
+			"gricli.debug");
+
+	public static final String COMPLETION_CACHE_REGISTRY_KEY = "CompletionCache";
+
+	public static CompletionCache completionCache = new DummyCompletionCache();
+
 	static String scriptName = null;
-	
+
 	static private GricliEnvironment env;
 	static private GricliCommandFactory f = GricliCommandFactory.getStandardFactory();
-	
+
 	static private GricliExitStatus exitStatus = SUCCESS;
+
+	private static void executionLoop() throws IOException{
+
+		if (System.console() == null){
+			run(System.in);
+			return;
+		}
+
+		if (scriptName != null){
+			run(new FileInputStream(scriptName));
+			return;
+		}
+
+		ConsoleReader reader = getReader();
+		while (true) {
+
+			String prompt = getPrompt();
+			String line = reader.readLine(prompt);
+
+			if (line==null){
+				break;
+			}
+			String[] commandsOnOneLine = line.split(";");
+			for (String c: commandsOnOneLine){
+				runCommand(GricliTokenizer.tokenize(c), f, env);
+			}
+		}
+	}
+
+	private static  String getPrompt(){
+		String prompt = env.get("prompt");
+		for (String var : env.getGlobalNames()) {
+			prompt = StringUtils.replace(prompt, "${" + var + "}",
+					env.get(var));
+
+		}
+		return prompt;
+	}
+
+	private static ConsoleReader getReader() throws IOException {
+		//		ConsoleReader reader = new ConsoleReader();
+		ConsoleReader reader = CliHelpers.getConsoleReader();
+		reader.setHistory(new History(new File(HISTORY_FILE_PATH)));
+
+		ArgumentCompletor completor = new ArgumentCompletor(f.createCompletor(), new SemicolonDelimiter());
+		completor.setStrict(false);
+		reader.addCompletor(completor);
+		return reader;
+	}
 
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) throws IOException,GricliException {
-		
+
 		// stop javaxws logging
 		java.util.logging.LogManager.getLogManager().reset();
 		java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);
-		
+
 		env = new GricliEnvironment(f);
-		
+
 		CommandLineParser parser = new PosixParser();
 		Options options = new Options();
 		options.addOption(OptionBuilder.withLongOpt("nologin").withDescription("disables login at the start").create('n'));
@@ -72,7 +124,7 @@ public class Gricli {
 				backend = (backend != null)?backend:"BeSTGRID";
 				new InteractiveLoginCommand(backend).execute(env);
 			}
-			
+
 			if (cl.hasOption('f')){
 				scriptName = cl.getOptionValue('f');
 			}
@@ -80,7 +132,7 @@ public class Gricli {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-			
+
 		try {
 			run(new FileInputStream(CONFIG_FILE_PATH));
 		} catch (IOException ex){
@@ -89,50 +141,13 @@ public class Gricli {
 		executionLoop();
 		System.exit(exitStatus.getStatus());
 	}
-	
-	private static void executionLoop() throws IOException{
-		
-		if (System.console() == null){
-			run(System.in);
-			return;
-		}
-		
-		if (scriptName != null){
-			run(new FileInputStream(scriptName));
-			return;
-		}
-		
-		ConsoleReader reader = getReader(); 		
-		while (true) {
-						
-			String prompt = getPrompt();
-			String line = reader.readLine(prompt);
-			if (line==null){
-				break;
-			}
-			String[] commandsOnOneLine = line.split(";");
-			for (String c: commandsOnOneLine){
-				runCommand(GricliTokenizer.tokenize(c), f, env);
-			}
-		}
-	}
-	
-	private static  String getPrompt(){
-		String prompt = env.get("prompt");
-		for (String var : env.getGlobalNames()) {
-			prompt = StringUtils.replace(prompt, "${" + var + "}",
-					env.get(var));
 
-		}
-		return prompt;
-	}
-	
 	@SuppressWarnings("unchecked")
 	private static void run(InputStream in) throws IOException{
-		
+
 		GricliTokenizer t = new GricliTokenizer(in);
 		String[] tokens;
-		while ((tokens = t.nextCommand()).length != 0){
+		while ((tokens = t.nextCommand()) != null){
 			runCommand(tokens,f,env);
 		}
 	}
@@ -144,9 +159,9 @@ public class Gricli {
 			GricliCommand command = f.create(c);
 			command.execute(env);
 			exitStatus = SUCCESS;
-			
+
 		} catch (InvalidCommandException ex) {
-			System.out.println(ex.getMessage());			
+			System.out.println(ex.getMessage());
 		} catch (UnknownCommandException ex) {
 			exitStatus = SYNTAX;
 			error = ex;
@@ -182,23 +197,14 @@ public class Gricli {
 			}
 		}
 	}
-	
-	private static ConsoleReader getReader() throws IOException {
-		ConsoleReader reader = new ConsoleReader();
-		reader.setHistory(new History(new File(HISTORY_FILE_PATH)));
-		
-		ArgumentCompletor completor = new ArgumentCompletor(f.createCompletor(), new SemicolonDelimiter());
-		completor.setStrict(false);
-		reader.addCompletor(completor);
-		return reader;
-	}
 
 }
 
 class SemicolonDelimiter extends ArgumentCompletor.AbstractArgumentDelimiter {
 
+	@Override
 	public boolean isDelimiterChar(String s, int i) {
-		return (s!=null && s.length() > i && (s.charAt(i) == ';'));
+		return ((s!=null) && (s.length() > i) && (s.charAt(i) == ';'));
 	}
-	
+
 }

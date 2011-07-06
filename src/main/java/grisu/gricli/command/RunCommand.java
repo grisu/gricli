@@ -35,15 +35,15 @@ public class RunCommand implements GricliCommand {
 		ArrayList<GricliCommand> cl = new ArrayList<GricliCommand>();
 
 		try {
-			java.io.File file = new java.io.File(script);
 			GricliTokenizer tokenizer = new GricliTokenizer(new FileInputStream(script));
 			String[] tokens;
-			while ((tokens = tokenizer.nextCommand()).length > 0){
+			while ((tokens = tokenizer.nextCommand()) != null){
 				cl.add(f.create(tokens));
 			}
 		} catch (FileNotFoundException e) {
 			throw new GricliRuntimeException("file " + script + " not found ");
 		} catch (IOException e){
+			e.printStackTrace();
 			throw new GricliRuntimeException("IO error while reading " + script);
 		} catch (SyntaxException e){
 			throw new GricliRuntimeException("error during parsing of " + script + ": " + e.getMessage() );

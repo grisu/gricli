@@ -27,10 +27,14 @@ GricliCommand {
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
+			throws GricliRuntimeException {
 		ServiceInterface si = env.getServiceInterface();
 		for (String j : ServiceInterfaceUtils.filterJobNames(si, jobFilter)) {
-			env.printMessage("killing job " + j);
+			if (this instanceof CleanJobCommand) {
+				env.printMessage("cleaning job " + j);
+			} else {
+				env.printMessage("killing job " + j);
+			}
 			try {
 				si.kill(j, clean);
 			} catch (RemoteFileSystemException ex) {

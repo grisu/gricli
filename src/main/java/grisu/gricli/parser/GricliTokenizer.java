@@ -20,15 +20,20 @@ public class GricliTokenizer {
 		
 		StringBuffer command = new StringBuffer();
 		int c;
-		while ((c = in.read()) != -1){
+		c = in.read();
+		if (c == -1 ){
+			return null;
+		}
+		while (c != -1){
 			if (c != '\n' && c != ';'){
 				command.append((char)c);
 			} else {
 				return tokenize(command.toString());
 			}
-		}
+			c = in.read();
+		} 
 		
-		in.close();
+		
 		
 		return tokenize(command.toString());
 	}
@@ -37,7 +42,7 @@ public class GricliTokenizer {
 		
 		if (str == null ){
 			return null;
-		}
+		} 
 		
 		StreamTokenizer st = new StreamTokenizer(
 				new BufferedReader(new InputStreamReader(
