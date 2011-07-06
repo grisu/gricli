@@ -96,15 +96,17 @@
 			<version>1.6</version>
 			<scope>compile</scope>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>jline</groupId> -->
-		<!-- <artifactId>jline</artifactId> -->
-		<!-- <version>1.0</version> -->
-		<!-- <scope>compile</scope> -->
-		<!-- </dependency> -->
-		<!-- <dependency> <groupId>grisu.backend</groupId> <artifactId>grisu-core</artifactId> 
-			<version>${grisu.dependency.version}</version> <type>jar</type> <scope>provided</scope> 
-			</dependency> -->
+		<dependency>
+			 <groupId>jline</groupId> 
+			 <artifactId>jline</artifactId> 
+			 <version>0.9.93</version> 
+			 <scope>compile</scope>
+		</dependency>
+		<!--
+		<dependency> 
+				<groupId>grisu.backend</groupId> <artifactId>grisu-core</artifactId> 
+				<version>${grisu.dependency.version}</version> <type>jar</type> <scope>provided</scope> 
+		</dependency> -->
 
 
 		<dependency>
