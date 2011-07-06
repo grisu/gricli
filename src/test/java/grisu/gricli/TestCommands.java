@@ -181,6 +181,7 @@ public class TestCommands {
 		}
 	}	
 	
+	@Ignore
 	@Test
 	public void testChdir() throws Exception {
 		String dir = folder.getRoot().getCanonicalPath();
@@ -192,6 +193,7 @@ public class TestCommands {
 		assertEquals(dir, cFile.getCanonicalPath());
 	}
 	
+	@Ignore
 	@Test
 	public void testCdToHomeDir() throws Exception {
 		ChdirCommand cd = new ChdirCommand("~");
