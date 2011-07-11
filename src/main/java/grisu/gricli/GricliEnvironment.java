@@ -13,11 +13,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.text.DateFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -60,6 +63,46 @@ public class GricliEnvironment {
 			return value;
 		}
 	}
+	
+	static class DateValidator extends Validator {
+		@Override 
+		public String validate(String var, String value) throws GricliSetValueException {
+			int ivalue = 0;
+			try {
+				ivalue = Integer.parseInt(value);
+			} catch (NumberFormatException ex){
+				Pattern date = Pattern.compile("([0-9]+d)?([0-9]+h)?([0-9]+m)?");
+				Matcher m = date.matcher(value);
+				if (!m.matches()){
+					throw new GricliSetValueException(var,value,"not a valid date format");
+				}
+				String days = m.group(1);
+				String hours = m.group(2);
+				String minutes = m.group(3);
+				
+				days = (days == null)?"0":days.replace("d","");
+				hours = (hours == null)?"0":hours.replace("h","");
+				minutes = (minutes == null)?"0":minutes.replace("m","");
+				
+				try {
+					ivalue = Integer.parseInt(days) * 1440 +
+							Integer.parseInt(hours) * 60 +
+							Integer.parseInt(minutes);
+					
+				} catch (NumberFormatException ex2){
+					throw new GricliSetValueException(var,value,"not valid date format");
+				}
+				
+			}
+			
+			if (ivalue < 0){
+				throw new GricliSetValueException(var,value, "must be positive");
+			}
+			
+			return "" + ivalue;
+		}
+	}
+	
 	static class PositiveIntValidator extends Validator {
 		@Override
 		public String validate(String var,String value) throws GricliSetValueException{
@@ -127,7 +170,7 @@ public class GricliEnvironment {
 		validators.put("gdir", new Validator());
 		validators.put("memory", new PositiveIntValidator());
 		validators.put("cpus", new PositiveIntValidator());
-		validators.put("walltime", new PositiveIntValidator());
+		validators.put("walltime", new DateValidator());
 		validators.put("jobtype", new SetValidator(new String[] {"single","mpi","threaded"}));
 		validators.put("description", new Validator());
 		validators.put("version", new Validator());
