@@ -2,6 +2,7 @@ package grisu.gricli.command;
 
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
+import grisu.gricli.command.help.Topics;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -40,34 +41,32 @@ public class HelpCommand implements GricliCommand {
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
-		List<SyntaxDescription> commands = getAllCommands(env);
-
-		for (int i = 0; i< keywords.length; i++){
-			commands = findCommandList(i, keywords[i],commands);
-		}
-
-		if (commands.size() == 0){
-			env.printMessage("command \"" + StringUtils.join(keywords," ") + "\" not found");
-		} else if (commands.size() == 1){
-			env.printMessage(generateHelpMessage(commands.get(0)));
-		} else {
-			for (SyntaxDescription c: commands){
-				String help = StringUtils.join(c.command()," ");
-				for (String arg: c.arguments()){
-					help += " [" + arg + "]";
-				}
-				env.printMessage(help);
+		switch (keywords.length) {
+		case 0:
+			printAllTopics(env);
+			break;
+		case 1:
+			String keyword = keywords[0];
+			if ("commands".equals(keyword)) {
+				printAllCommands(env, keyword);
+			} else {
+				printApropos(env, keyword);
 			}
+			break;
+		default:
+			printCommand(env, keywords);
 		}
 
 		return env;
+
 	}
 
-	private ArrayList<SyntaxDescription> findCommandList(
-			int pos,String keyword, List<SyntaxDescription> commands) {
+	private ArrayList<SyntaxDescription> findCommandList(int pos,
+			String keyword, List<SyntaxDescription> commands) {
 		ArrayList<SyntaxDescription> result = new ArrayList<SyntaxDescription>();
 		for (SyntaxDescription desc : commands) {
-			if ((desc.command().length > pos) && keyword.equals(desc.command()[pos])){
+			if ((desc.command().length > pos)
+					&& keyword.equals(desc.command()[pos])) {
 				result.add(desc);
 			}
 		}
@@ -147,6 +146,69 @@ public class HelpCommand implements GricliCommand {
 		}
 		Collections.sort(result,new SyntaxComparator());
 		return result;
+	}
+
+	private void printAllCommands(GricliEnvironment env, String keyword) {
+		List<SyntaxDescription> commands = getAllCommands(env);
+
+		for (int i = 0; i < keywords.length; i++) {
+			commands = findCommandList(i, keywords[i], commands);
+		}
+
+		if (commands.size() == 0) {
+			env.printMessage("command \"" + StringUtils.join(keywords, " ")
+					+ "\" not found");
+		} else if (commands.size() == 1) {
+			env.printMessage(generateHelpMessage(commands.get(0)));
+		} else {
+			for (SyntaxDescription c : commands) {
+				String help = StringUtils.join(c.command(), " ");
+				for (String arg : c.arguments()) {
+					help += " [" + arg + "]";
+				}
+				env.printMessage(help);
+			}
+		}
+
+	}
+
+	private void printAllTopics(GricliEnvironment env) {
+
+		Topics t = new Topics();
+
+		for (String topic : t.getTopics() ) {
+			env.printMessage(topic);
+		}
+
+	}
+
+	private void printApropos(GricliEnvironment env, String keyword) {
+		// do nothing
+	}
+
+	private void printCommand(GricliEnvironment env, String[] keywords) {
+
+		List<SyntaxDescription> commands = getAllCommands(env);
+
+		for (int i = 0; i < keywords.length; i++) {
+			commands = findCommandList(i, keywords[i], commands);
+		}
+
+		if (commands.size() == 0) {
+			env.printMessage("command \"" + StringUtils.join(keywords, " ")
+					+ "\" not found");
+		} else if (commands.size() == 1) {
+			env.printMessage(generateHelpMessage(commands.get(0)));
+		} else {
+			for (SyntaxDescription c : commands) {
+				String help = StringUtils.join(c.command(), " ");
+				for (String arg : c.arguments()) {
+					help += " [" + arg + "]";
+				}
+				env.printMessage(help);
+			}
+			// }
+		}
 	}
 
 }
