@@ -288,7 +288,8 @@ public class GricliEnvironment {
 		// attach input files
 		List<String> files = getList("files");;
 		for (String file : files) {
-			System.out.println("grid file is " + new GridFile(file).getUrl());
+			System.out.println("adding input file "
+					+ new GridFile(file).getUrl());
 			job.addInputFileUrl(new GridFile(file).getUrl());
 		}
 
