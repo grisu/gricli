@@ -13,7 +13,7 @@ import jline.NullCompletor;
 import jline.SimpleCompletor;
 
 public class GricliCommandFactory {
-	
+
 	public static GricliCommandFactory getCustomFactory(Class<? extends GricliCommand>... commands ) throws CompileException{
 		GricliCommandFactory f = new GricliCommandFactory();
 		for (Class<? extends GricliCommand> c: commands){
@@ -33,16 +33,16 @@ public class GricliCommandFactory {
 		f.add(LocalLoginCommand.class);
 		f.add(InteractiveLoginCommand.class);
 		f.add(NopCommand.class);
-		
+
 		// print commands
 		f.add(PrintGlobalsCommand.class);
 		f.add(PrintQueuesCommand.class);
 		f.add(PrintAppsCommand.class);
 		f.add(PrintHostsCommand.class);
 		f.add(PrintGroupsCommand.class);
-		
+
 		f.add(RunCommand.class);
-		
+
 		f.add(KillJobCommand.class);
 		f.add(CleanJobCommand.class);
 		f.add(PrintJobCommand.class);
@@ -50,51 +50,52 @@ public class GricliCommandFactory {
 		f.add(SubmitCommand.class);
 		f.add(DownloadAndCleanCommand.class);
 		f.add(WaitJobCommand.class);
-		
+
 		f.add(QuitCommand.class);
 		f.add(LogoutCommand.class);
 		f.add(HelpCommand.class);
 		f.add(AproposCommand.class);
 		f.add(AboutCommand.class);
-		
+
 		// filesystem commands
 		f.add(GridLsCommand.class);
 		f.add(ClearCacheCommand.class);
 		f.add(PwdCommand.class);
 		f.add(ChdirCommand.class);
-		
+		f.add(LsCommand.class);
+
 		//batch commands
 		f.add(CreateBatchCommand.class);
 		f.add(AddBatchCommand.class);
 		f.add(SubmitBatchCommand.class);
-		
+
 		try {
 			f.init();
 		} catch (CompileException e) {
 			// shouldn't happen
 			e.printStackTrace();
 		}
-		
+
 		return f;
 	}
 	private  List<Class<? extends GricliCommand>> commands = new ArrayList<Class<? extends GricliCommand>>();
-	
+
 	/** private HashMap<String, Constructor<? extends GricliCommand>> commandMap;
 	private HashSet<String> commandSet; **/
 	private Completor tabCompletor;
-	
+
 	private CommandCreator creator;
-	
-	public GricliCommandFactory(){		
-		this.commands = new ArrayList<Class<? extends GricliCommand>>();	
+
+	public GricliCommandFactory(){
+		this.commands = new ArrayList<Class<? extends GricliCommand>>();
 	}
-	
+
 	public void add(Class<? extends GricliCommand> c){
 		commands.add(c);
 	}
-	
+
 	private void addCommand(Constructor<? extends GricliCommand> cons, CommandCreator creator)
-		throws CompileException{
+			throws CompileException{
 		SyntaxDescription sd = cons.getAnnotation(SyntaxDescription.class);
 
 		for (String keyword: sd.command()){
@@ -110,20 +111,20 @@ public class GricliCommandFactory {
 		}
 		creator.addConstructor(cons);
 	}
-	
+
 
 	public GricliCommand create(String[] args) throws SyntaxException {
 		return creator.create(args);
 	}
-	
+
 	public Completor createCompletor(){
 		return this.tabCompletor;
 	}
-	
+
 	public List<Class<? extends GricliCommand>> getCommands(){
 		return new ArrayList<Class<? extends GricliCommand>>(commands);
 	}
-	
+
 	private ArgumentCompletor getTabCompletor(SyntaxDescription sd, AutoComplete auto, boolean isVar){
 		List<Completor> simpleCompletors = new ArrayList<Completor>();
 		for (String token: sd.command()){
@@ -132,12 +133,12 @@ public class GricliCommandFactory {
 
 		// specialised argument annotations
 		if (auto != null){
-			Class<? extends Completor>[] argumentCompletors = auto.completors();				
+			Class<? extends Completor>[] argumentCompletors = auto.completors();
 			for (Class<? extends Completor> argumentCompletor: argumentCompletors){
 				try {
 					simpleCompletors.add(argumentCompletor.newInstance());
 				} catch (InstantiationException e) {
-					// cannot happen 
+					// cannot happen
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {
 					// cannot happen
@@ -149,10 +150,10 @@ public class GricliCommandFactory {
 		if (!isVar){
 			simpleCompletors.add(new NullCompletor());
 		}
-		
+
 		return new ArgumentCompletor(simpleCompletors.toArray(new Completor[] {}));
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void init() throws CompileException{
 
@@ -160,8 +161,8 @@ public class GricliCommandFactory {
 		List<Completor> commandCompletors = new ArrayList<Completor>();
 
 		for (Class<? extends GricliCommand> c: commands){
-			Constructor<? extends GricliCommand>[] conss = 
-				(Constructor<? extends GricliCommand>[])c.getDeclaredConstructors();
+			Constructor<? extends GricliCommand>[] conss =
+					(Constructor<? extends GricliCommand>[])c.getDeclaredConstructors();
 			for (Constructor<? extends GricliCommand> cons: conss){
 				SyntaxDescription sd = cons.getAnnotation(SyntaxDescription.class);
 

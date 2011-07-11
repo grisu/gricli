@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.text.DateFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -26,6 +25,45 @@ import org.apache.commons.lang.StringUtils;
 
 public class GricliEnvironment {
 
+	static class DateValidator extends Validator {
+		@Override
+		public String validate(String var, String value) throws GricliSetValueException {
+			int ivalue = 0;
+			try {
+				ivalue = Integer.parseInt(value);
+			} catch (NumberFormatException ex){
+				Pattern date = Pattern.compile("([0-9]+d)?([0-9]+h)?([0-9]+m)?");
+				Matcher m = date.matcher(value);
+				if (!m.matches()){
+					throw new GricliSetValueException(var,value,"not a valid date format");
+				}
+				String days = m.group(1);
+				String hours = m.group(2);
+				String minutes = m.group(3);
+
+				days = (days == null)?"0":days.replace("d","");
+				hours = (hours == null)?"0":hours.replace("h","");
+				minutes = (minutes == null)?"0":minutes.replace("m","");
+
+				try {
+					ivalue = (Integer.parseInt(days) * 1440) +
+							(Integer.parseInt(hours) * 60) +
+							Integer.parseInt(minutes);
+
+				} catch (NumberFormatException ex2){
+					throw new GricliSetValueException(var,value,"not valid date format");
+				}
+
+			}
+
+			if (ivalue < 0){
+				throw new GricliSetValueException(var,value, "must be positive");
+			}
+
+			return "" + ivalue;
+		}
+	}
+
 	static class DirValidator extends Validator {
 		@Override
 		public String validate(String var,String value) throws GricliSetValueException{
@@ -34,6 +72,11 @@ public class GricliEnvironment {
 				String resultValue = StringUtils.replace(
 						value, "~", System.getProperty("user.home"));
 				File dir = new File(resultValue);
+
+				if (!dir.isAbsolute()) {
+					dir = new File(System.getProperty("user.dir"), value);
+					resultValue = dir.getAbsolutePath();
+				}
 				//check path
 				if (!dir.exists()) {
 					throw new GricliSetValueException(var,
@@ -63,46 +106,7 @@ public class GricliEnvironment {
 			return value;
 		}
 	}
-	
-	static class DateValidator extends Validator {
-		@Override 
-		public String validate(String var, String value) throws GricliSetValueException {
-			int ivalue = 0;
-			try {
-				ivalue = Integer.parseInt(value);
-			} catch (NumberFormatException ex){
-				Pattern date = Pattern.compile("([0-9]+d)?([0-9]+h)?([0-9]+m)?");
-				Matcher m = date.matcher(value);
-				if (!m.matches()){
-					throw new GricliSetValueException(var,value,"not a valid date format");
-				}
-				String days = m.group(1);
-				String hours = m.group(2);
-				String minutes = m.group(3);
-				
-				days = (days == null)?"0":days.replace("d","");
-				hours = (hours == null)?"0":hours.replace("h","");
-				minutes = (minutes == null)?"0":minutes.replace("m","");
-				
-				try {
-					ivalue = Integer.parseInt(days) * 1440 +
-							Integer.parseInt(hours) * 60 +
-							Integer.parseInt(minutes);
-					
-				} catch (NumberFormatException ex2){
-					throw new GricliSetValueException(var,value,"not valid date format");
-				}
-				
-			}
-			
-			if (ivalue < 0){
-				throw new GricliSetValueException(var,value, "must be positive");
-			}
-			
-			return "" + ivalue;
-		}
-	}
-	
+
 	static class PositiveIntValidator extends Validator {
 		@Override
 		public String validate(String var,String value) throws GricliSetValueException{
@@ -338,7 +342,8 @@ public class GricliEnvironment {
 	public void put(String global, String value) throws GricliRuntimeException {
 		Validator v = validators.get(global);
 		if (v != null) {
-			environment.put(global, v.validate(global, value));
+			String result = v.validate(global, value);
+			environment.put(global, result);
 		} else {
 			throw new GricliRuntimeException(global
 					+ " global variable does not exist");
