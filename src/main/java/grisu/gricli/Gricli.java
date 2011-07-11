@@ -31,8 +31,11 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 public class Gricli {
+
+	static final Logger myLogger = Logger.getLogger(Gricli.class.getName());
 
 	static final String CONFIG_FILE_PATH = FilenameUtils.concat(Environment
 			.getGrisuClientDirectory().getPath(), "gricli.profile");
@@ -187,6 +190,8 @@ public class Gricli {
 		} catch (RuntimeException ex){
 			exitStatus = RUNTIME;
 			error = ex;
+			myLogger.error(ex);
+			ex.printStackTrace();
 			System.err.println("command failed. Either connection to server failed, or this is gricli bug. " +
 					"Please send " + DEBUG_FILE_PATH +
 					" to eresearch-admin@auckland.ac.nz together with description of what triggered the problem");
