@@ -13,14 +13,22 @@ import org.apache.commons.lang.StringUtils;
 
 public class Topics {
 
+	public enum Type {
+		topics,
+		globals,
+		commands;
+	}
+
 	public static String[] TOPICS = new String[] { "Example" };
 
-	public static String getTopicText(String s) {
+	public static String getHelpText(Type type, String s) {
 		InputStream is = null;
 		List<String> list = null;
 
 		try {
-			is = FileUtils.class.getResourceAsStream("/help/"+s+".md");
+			is = FileUtils.class.getResourceAsStream("/help/" + type.toString()
+					+ "/" + s
+					+ ".md");
 			list = IOUtils.readLines(is);
 		}
 		catch (Exception e) {
@@ -53,32 +61,42 @@ public class Topics {
 
 	}
 
-	public Map<String, String> topicStrings = new TreeMap<String, String>();
+	public Map<String, String> topics = new TreeMap<String, String>();
+	public Map<String, String> globals = new TreeMap<String, String>();
+	public Map<String, String> commands = new TreeMap<String, String>();
 
 	public Topics() {
 
 		for (String TOPIC : TOPICS) {
-			String temp = getTopicText(TOPIC);
-			topicStrings.put(TOPIC, temp);
+			String temp = getHelpText(Type.topics, TOPIC);
+			topics.put(TOPIC, temp);
+		}
+		for (String TOPIC : TOPICS) {
+			String temp = getHelpText(Type.topics, TOPIC);
+			globals.put(TOPIC, temp);
+		}
+		for (String TOPIC : TOPICS) {
+			String temp = getHelpText(Type.topics, TOPIC);
+			commands.put(TOPIC, temp);
 		}
 
 	}
 
 	public String getTopic(String topic) {
-		return topicStrings.get(topic);
+		return topics.get(topic);
 	}
 
 	public Set<String> getTopics() {
-		return topicStrings.keySet();
+		return topics.keySet();
 	}
 
 	public Map<String, String> getTopicsWithKeyword(String keyword) {
 		Map<String, String> result = new TreeMap<String, String>();
-		for (String topic : topicStrings.keySet()) {
+		for (String topic : topics.keySet()) {
 			if (topic.toLowerCase().contains(keyword.toLowerCase())
-					|| topicStrings.get(topic).toLowerCase()
+					|| topics.get(topic).toLowerCase()
 					.contains(keyword.toLowerCase())) {
-				result.put(topic, topicStrings.get(topic));
+				result.put(topic, topics.get(topic));
 			}
 		}
 		return result;
