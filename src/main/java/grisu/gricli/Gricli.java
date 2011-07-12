@@ -53,7 +53,8 @@ public class Gricli {
 	static String scriptName = null;
 
 	static private GricliEnvironment env;
-	static private GricliCommandFactory f = GricliCommandFactory.getStandardFactory();
+	public static final GricliCommandFactory SINGLETON_COMMANDFACTORY = GricliCommandFactory
+			.getStandardFactory();
 
 	static private GricliExitStatus exitStatus = SUCCESS;
 
@@ -80,7 +81,8 @@ public class Gricli {
 			}
 			String[] commandsOnOneLine = line.split(";");
 			for (String c: commandsOnOneLine){
-				runCommand(GricliTokenizer.tokenize(c), f, env);
+				runCommand(GricliTokenizer.tokenize(c),
+						SINGLETON_COMMANDFACTORY, env);
 			}
 		}
 	}
@@ -100,7 +102,9 @@ public class Gricli {
 		ConsoleReader reader = CliHelpers.getConsoleReader();
 		reader.setHistory(new History(new File(HISTORY_FILE_PATH)));
 
-		ArgumentCompletor completor = new ArgumentCompletor(f.createCompletor(), new SemicolonDelimiter());
+		ArgumentCompletor completor = new ArgumentCompletor(
+				SINGLETON_COMMANDFACTORY.createCompletor(),
+				new SemicolonDelimiter());
 		completor.setStrict(false);
 		reader.addCompletor(completor);
 		return reader;
@@ -113,7 +117,7 @@ public class Gricli {
 		java.util.logging.LogManager.getLogManager().reset();
 		java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);
 
-		env = new GricliEnvironment(f);
+		env = new GricliEnvironment(SINGLETON_COMMANDFACTORY);
 
 		CommandLineParser parser = new PosixParser();
 		Options options = new Options();
@@ -151,7 +155,7 @@ public class Gricli {
 		GricliTokenizer t = new GricliTokenizer(in);
 		String[] tokens;
 		while ((tokens = t.nextCommand()) != null){
-			runCommand(tokens,f,env);
+			runCommand(tokens, SINGLETON_COMMANDFACTORY, env);
 		}
 	}
 

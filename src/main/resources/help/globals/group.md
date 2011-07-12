@@ -1,4 +1,1 @@
-group
-======
-
-This is a text explaining the group global variable
+group is the group you use to submit a job
