@@ -4,6 +4,8 @@ import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.command.help.HelpManager;
 
+import java.util.Arrays;
+
 import org.apache.commons.lang.StringUtils;
 
 public class HelpCommand implements GricliCommand {
@@ -35,7 +37,22 @@ public class HelpCommand implements GricliCommand {
 			break;
 		case 1:
 			String keyword = keywords[0];
-			help = HelpManager.singleton.get(keyword);
+
+			if ("commands".equals(keyword) || "command".equals(keyword)) {
+				help = HelpManager.singleton.getCommandList();
+			} else if ("topics".equals(keyword) || "topic".equals(keyword)) {
+				help = HelpManager.singleton.getTopicList();
+			} else if ("global".equals(keyword) || "globals".equals(keyword)) {
+				help = HelpManager.singleton.getGlobalsList();
+			} else if ("all".equals(keyword)) {
+				help = "Commands:\n" + HelpManager.singleton.getCommandList();
+				help = help + "\nGlobals:\n"
+						+ HelpManager.singleton.getGlobalsList();
+				help = help + "\nTopics:\n"
+						+ HelpManager.singleton.getTopicList();
+			} else {
+				help = HelpManager.singleton.get(keyword);
+			}
 
 			env.printMessage(help);
 			break;
@@ -43,11 +60,20 @@ public class HelpCommand implements GricliCommand {
 			if ("search".equals(keywords[0])) {
 				help = HelpManager.singleton.get(keywords[1]);
 
-				env.printMessage(help);
+			} else if ("command".equals(keywords[0])) {
+				String cmd = StringUtils.join(Arrays.copyOfRange(keywords, 1, keywords.length), " ");
+				help = HelpManager.singleton.getCommand(cmd);
+				if (StringUtils.isBlank(help)) {
+					help = "Command \"" + cmd + "\" not available.";
+				}
 			} else {
-				help = HelpManager.singleton.getCommand(StringUtils.join(
-						keywords, " "));
+				String tmp = StringUtils.join(keywords, " ");
+				help = HelpManager.singleton.getCommand(tmp);
+				if (StringUtils.isBlank(help)) {
+					help = "Command \"" + tmp + "\" not available.";
+				}
 			}
+			env.printMessage(help);
 		}
 
 		return env;

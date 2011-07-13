@@ -334,6 +334,30 @@ public class HelpManager {
 		return commandArguments.get(command);
 	}
 
+	public String getCommandList() {
+
+		int max = 0;
+		int max2 = 0;
+		for (String c : commands.keySet()) {
+			if (c.length() > max) {
+				max = c.length();
+			}
+			if (commands.get(c).length() > max2) {
+				max2 = commands.get(c).length();
+			}
+		}
+		StringBuffer result = new StringBuffer();
+		Formatter formatter = new Formatter(result, Locale.US);
+
+		for (String c : getCommands()) {
+			String helpLine = getFirstLine(Type.commands, c);
+			formatter.format("%4s%" + -(max + 4) + "s%" + -(max + 4 + 4 + max2)
+					+ "s%n", "    ", c, helpLine);
+		}
+
+		return result.toString();
+	}
+
 	public Set<String> getCommands() {
 		return commands.keySet();
 	}
@@ -412,6 +436,30 @@ public class HelpManager {
 		return globals.keySet();
 	}
 
+	public String getGlobalsList() {
+
+		int max = 0;
+		int max2 = 0;
+		for (String c : globals.keySet()) {
+			if (c.length() > max) {
+				max = c.length();
+			}
+			if (globals.get(c).length() > max2) {
+				max2 = globals.get(c).length();
+			}
+		}
+		StringBuffer result = new StringBuffer();
+		Formatter formatter = new Formatter(result, Locale.US);
+
+		for (String c : getCommands()) {
+			String helpLine = getFirstLine(Type.globals, c);
+			formatter.format("%4s%" + -(max + 4) + "s%" + -(max + 4 + 4 + max2)
+					+ "s%n", "    ", c, helpLine);
+		}
+
+		return result.toString();
+	}
+
 	public Map<String, String> getHelpTextsContainingKeyword(String keyword) {
 		Map<String, String> result = new TreeMap<String, String>();
 		for (String topic : topics.keySet()) {
@@ -443,6 +491,30 @@ public class HelpManager {
 		} else {
 			return result;
 		}
+	}
+
+	public String getTopicList() {
+
+		int max = 0;
+		int max2 = 0;
+		for (String c : topics.keySet()) {
+			if (c.length() > max) {
+				max = c.length();
+			}
+			if (topics.get(c).length() > max2) {
+				max2 = topics.get(c).length();
+			}
+		}
+		StringBuffer result = new StringBuffer();
+		Formatter formatter = new Formatter(result, Locale.US);
+
+		for (String c : getTopics()) {
+			String helpLine = getFirstLine(Type.topics, c);
+			formatter.format("%4s%" + -(max + 4) + "s%" + -(max + 4 + 4 + max2)
+					+ "s%n", "    ", c, helpLine);
+		}
+
+		return result.toString();
 	}
 
 	public Set<String> getTopics() {
