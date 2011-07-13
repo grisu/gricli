@@ -25,7 +25,7 @@ public class GricliTokenizer {
 			return null;
 		}
 		while (c != -1){
-			if (c != '\n' && c != ';'){
+			if (c != '\r' && c != '\n' && c != ';'){
 				command.append((char)c);
 			} else {
 				return tokenize(command.toString());
