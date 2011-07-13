@@ -9,41 +9,13 @@ import java.io.StreamTokenizer;
 import java.util.ArrayList;
 
 public class GricliTokenizer {
-	
-	private InputStream in;
-
-	public GricliTokenizer(InputStream in){
-		this.in = in;
-	}
-	
-	public String[] nextCommand() throws IOException{
-		
-		StringBuffer command = new StringBuffer();
-		int c;
-		c = in.read();
-		if (c == -1 ){
-			return null;
-		}
-		while (c != -1){
-			if (c != '\n' && c != ';'){
-				command.append((char)c);
-			} else {
-				return tokenize(command.toString());
-			}
-			c = in.read();
-		} 
-		
-		
-		
-		return tokenize(command.toString());
-	}
 
 	public static String[] tokenize(String str) {
-		
-		if (str == null ){
+
+		if (str == null) {
 			return null;
-		} 
-		
+		}
+
 		StreamTokenizer st = new StreamTokenizer(
 				new BufferedReader(new InputStreamReader(
 						new ByteArrayInputStream(str.getBytes()))));
@@ -61,9 +33,9 @@ public class GricliTokenizer {
 		st.wordChars('.', '.');
 		st.wordChars('*', '*');
 		st.wordChars('?', '?');
-		st.wordChars('#','#');
-		st.wordChars('&','&');
-		st.wordChars('~','~');
+		st.wordChars('#', '#');
+		st.wordChars('&', '&');
+		st.wordChars('~', '~');
 		st.whitespaceChars(' ', ' ');
 
 		ArrayList<String> argumentList = new ArrayList<String>();
@@ -77,5 +49,31 @@ public class GricliTokenizer {
 		}
 		return argumentList.toArray(new String[] {});
 
+	}
+
+	private final InputStream in;
+
+	public GricliTokenizer(InputStream in) {
+		this.in = in;
+	}
+
+	public String[] nextCommand() throws IOException {
+
+		StringBuffer command = new StringBuffer();
+		int c;
+		c = in.read();
+		if (c == -1) {
+			return null;
+		}
+		while (c != -1) {
+			if ((c != '\r') && (c != '\n') && (c != ';')) {
+				command.append((char) c);
+			} else {
+				return tokenize(command.toString());
+			}
+			c = in.read();
+		}
+
+		return tokenize(command.toString());
 	}
 }
