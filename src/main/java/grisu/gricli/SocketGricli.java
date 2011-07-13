@@ -1,5 +1,7 @@
 package grisu.gricli;
 
+
+
 import grisu.gricli.parser.GricliTokenizer;
 
 import java.io.BufferedReader;
@@ -34,7 +36,7 @@ public class SocketGricli {
 					try {
 						Gricli.SINGLETON_COMMANDFACTORY.create(
 								GricliTokenizer.tokenize(command))
-						.execute(env);
+								.execute(env);
 						System.out.println(command + " executed ");
 					} catch (GricliException ex) {
 						ex.printStackTrace();

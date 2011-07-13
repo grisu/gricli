@@ -117,7 +117,7 @@ public class Gricli {
 		java.util.logging.LogManager.getLogManager().reset();
 		java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);
 
-		env = new GricliEnvironment(SINGLETON_COMMANDFACTORY);
+		env = new GricliEnvironment();
 
 		CommandLineParser parser = new PosixParser();
 		Options options = new Options();
