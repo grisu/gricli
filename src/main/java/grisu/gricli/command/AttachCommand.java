@@ -76,6 +76,7 @@ GricliCommand {
 	}
 
 	private String[] getAllFiles(String glob) throws GricliRuntimeException {
+
 		LinkedList<String> all = new LinkedList<String>();
 		File dir = new File (glob);
 		ArrayList<String> dirComponents =
@@ -98,7 +99,11 @@ GricliCommand {
 		}
 		else {
 			// relative path
-			dir = new File(System.getProperty("user.dir"));
+			dir = new File(System.getProperty("user.dir"), glob)
+			.getParentFile();
+			String temp = dirComponents.get(dirComponents.size() - 1);
+			dirComponents.clear();
+			dirComponents.add(temp);
 		}
 
 		if ( ! dir.exists() ) {

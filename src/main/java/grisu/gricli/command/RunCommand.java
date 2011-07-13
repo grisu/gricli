@@ -1,5 +1,6 @@
 package grisu.gricli.command;
 
+import grisu.gricli.Gricli;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.SyntaxException;
@@ -10,9 +11,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.apache.commons.lang.StringUtils;
-
 import jline.FileNameCompletor;
+
+import org.apache.commons.lang.StringUtils;
 
 public class RunCommand implements GricliCommand {
 
@@ -29,16 +30,16 @@ public class RunCommand implements GricliCommand {
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
+			throws GricliRuntimeException {
 
-		GricliCommandFactory f = env.getCommandFactory();
+
 		ArrayList<GricliCommand> cl = new ArrayList<GricliCommand>();
 
 		try {
 			GricliTokenizer tokenizer = new GricliTokenizer(new FileInputStream(script));
 			String[] tokens;
 			while ((tokens = tokenizer.nextCommand()) != null){
-				cl.add(f.create(tokens));
+				cl.add(Gricli.SINGLETON_COMMANDFACTORY.create(tokens));
 			}
 		} catch (FileNotFoundException e) {
 			throw new GricliRuntimeException("file " + script + " not found ");
