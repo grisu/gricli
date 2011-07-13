@@ -370,7 +370,8 @@ public class HelpManager {
 			}
 
 			for ( String line : desc.split("\n") ) {
-				if (line.toLowerCase().trim().startsWith("global")) {
+				if (line.toLowerCase().trim().startsWith("global")
+						|| line.toLowerCase().trim().startsWith(word)) {
 					continue;
 				} else if (line.contains("---") || line.contains("===")) {
 					continue;
@@ -387,7 +388,8 @@ public class HelpManager {
 			}
 
 			for ( String line : desc.split("\n") ) {
-				if (line.toLowerCase().trim().startsWith("topic")) {
+				if (line.toLowerCase().trim().startsWith("topic")
+						|| line.toLowerCase().trim().startsWith(word)) {
 					continue;
 				} else if (line.contains("---") || line.contains("===")) {
 					continue;

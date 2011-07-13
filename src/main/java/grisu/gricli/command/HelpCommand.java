@@ -13,8 +13,6 @@ public class HelpCommand implements GricliCommand {
 		HelpCommand hc = new HelpCommand("example");
 
 		hc.execute(new GricliEnvironment());
-
-
 	}
 
 	private final String[] keywords;
