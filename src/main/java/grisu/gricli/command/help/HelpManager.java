@@ -11,7 +11,9 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Formatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -165,16 +167,121 @@ public class HelpManager {
 			String temp;
 			try {
 				temp = getHelpText(Type.globals, global).trim();
-				commands.put(global, temp);
+				globals.put(global, temp);
 			} catch (Exception e) {
 				missingGlobals.add(global);
 			}
 		}
 
 	}
+
+	public String apropos(String keyword) {
+
+		StringBuffer result = new StringBuffer();
+		Formatter formatter = new Formatter(result, Locale.US);
+		Map<String, String> temp = new TreeMap<String, String>();
+		for (String command : commands.keySet()) {
+			if (command.toLowerCase().contains(keyword.toLowerCase())
+					|| commands.get(command).toLowerCase()
+					.contains(keyword.toLowerCase())) {
+				temp.put(command, getFirstLine(Type.commands, command));
+			}
+		}
+		int max = 0;
+		int max2 = 0;
+		if (temp.size() > 0) {
+			result.append("Commands:\n");
+			for (String c : temp.keySet()) {
+				if (c.length() > max) {
+					max = c.length();
+				}
+				if (temp.get(c).length() > max2) {
+					max2 = temp.get(c).length();
+				}
+			}
+			for (String c : temp.keySet()) {
+
+				formatter.format("%4s%" + -(max + 4) + "s%"
+						+ -(max + 4 + 4 + max2) + "s%n", "    ", c,
+						temp.get(c));
+			}
+			result.append("\n");
+		}
+		temp = new TreeMap<String, String>();
+		for (String global : globals.keySet()) {
+			if (global.toLowerCase().contains(keyword.toLowerCase())
+					|| globals.get(global).toLowerCase()
+					.contains(keyword.toLowerCase())) {
+				temp.put(global, getFirstLine(Type.globals, global));
+			}
+		}
+		if (temp.size() > 0) {
+			result.append("Globals:\n");
+			max = 0;
+			max2 = 0;
+			for (String c : temp.keySet()) {
+				if (c.length() > max) {
+					max = c.length();
+				}
+				if (temp.get(c).length() > max2) {
+					max2 = temp.get(c).length();
+				}
+			}
+			for (String c : temp.keySet()) {
+
+				formatter
+				.format("%4s%" + -(max + 4) + "s%"
+						+ -(max + 4 + 4 + max2) + "s%n", "    ", c,
+						temp.get(c));
+			}
+			result.append("\n");
+		}
+		temp = new TreeMap<String, String>();
+		for (String topic : topics.keySet()) {
+			if (topic.toLowerCase().contains(keyword.toLowerCase())
+					|| topics.get(topic).toLowerCase()
+					.contains(keyword.toLowerCase())) {
+				temp.put(topic, getFirstLine(Type.topics, topic));
+			}
+		}
+		if (temp.size() > 0) {
+			result.append("Topics:\n");
+			max = 0;
+			max2 = 0;
+			for (String c : temp.keySet()) {
+				if (c.length() > max) {
+					max = c.length();
+				}
+				if (temp.get(c).length() > max2) {
+					max2 = temp.get(c).length();
+				}
+			}
+			for (String c : temp.keySet()) {
+
+				formatter
+				.format("%4s%" + -(max + 4) + "s%"
+						+ -(max + 4 + 4 + max2) + "s%n", "    ", c,
+						temp.get(c));
+			}
+			result.append("\n");
+		}
+
+		if ( result.length() == 0 ) {
+			result.append("No help texts found that contain the keyword \""
+					+ keyword + "\".");
+			return result.toString();
+		}
+
+		result.insert(0, "Help texts containing keyword \"" + keyword
+				+ "\":\n\n");
+
+		return result.toString();
+
+	}
+
 	public String get(String keyword) {
 		String result = getCommand(keyword);
-		if ( StringUtils.isNotBlank(result)) {
+		if (StringUtils.isNotBlank(result)) {
 
 			return result;
 		}
@@ -182,7 +289,17 @@ public class HelpManager {
 		if (StringUtils.isNotBlank(result)) {
 			return result;
 		}
-		return getTopic(keyword);
+		result = getTopic(keyword);
+		if (StringUtils.isNotBlank(result)) {
+			return result;
+		}
+		result = apropos(keyword);
+		if (StringUtils.isNotBlank(result)) {
+			return result;
+		}
+
+		return null;
+
 	}
 
 	private ArrayList<SyntaxDescription> getAllCommands() {
@@ -207,8 +324,7 @@ public class HelpManager {
 	public String getCommand(String command) {
 		String result = commands.get(command);
 		if (StringUtils.isNotBlank(result)) {
-			return "Command:\t" + command + " " + commandArguments.get(command)
-					+ "\n\n" + result;
+			return result;
 		} else {
 			return null;
 		}
@@ -222,8 +338,72 @@ public class HelpManager {
 		return commands.keySet();
 	}
 
+	public String getFirstLine(Type type, String word) {
+
+		String desc = null;
+		switch(type) {
+
+
+		case commands:
+
+			desc = commands.get(word);
+			if ( StringUtils.isBlank(desc) ) {
+				return "n/a";
+			}
+
+			for ( String line : desc.split("\n") ) {
+				if (line.toLowerCase().trim().startsWith("command")) {
+					continue;
+				} else if (StringUtils.isEmpty(line.trim())) {
+					continue;
+				}
+				return line;
+
+			}
+
+			return "n/a";
+
+		case globals:
+			desc = globals.get(word);
+			if ( StringUtils.isBlank(desc) ) {
+				return "n/a";
+			}
+
+			for ( String line : desc.split("\n") ) {
+				if (line.toLowerCase().trim().startsWith("global")) {
+					continue;
+				} else if (line.contains("---") || line.contains("===")) {
+					continue;
+				} else if (StringUtils.isEmpty(line.trim())) {
+					continue;
+				}
+				return line;
+			}
+			return "n/a";
+		case topics:
+			desc = topics.get(word);
+			if ( StringUtils.isBlank(desc) ) {
+				return "n/a";
+			}
+
+			for ( String line : desc.split("\n") ) {
+				if (line.toLowerCase().trim().startsWith("topic")) {
+					continue;
+				} else if (line.contains("---") || line.contains("===")) {
+					continue;
+				} else if (StringUtils.isEmpty(line.trim())) {
+					continue;
+				}
+				return line;
+			}
+			return "n/a";
+		default: return "n/a";
+		}
+	}
+
 	public String getGlobal(String global) {
-		return globals.get(global);
+		String result = globals.get(global);
+		return result;
 	}
 
 	public Set<String> getGlobals() {
@@ -255,7 +435,12 @@ public class HelpManager {
 	}
 
 	public String getTopic(String topic) {
-		return topics.get(topic);
+		String result = topics.get(topic);
+		if (result == null ) {
+			return topics.get(StringUtils.capitalize(topic));
+		} else {
+			return result;
+		}
 	}
 
 	public Set<String> getTopics() {
