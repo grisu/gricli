@@ -2,7 +2,6 @@ package grisu.gricli;
 
 import grisu.control.ServiceInterface;
 import grisu.frontend.model.job.JobObject;
-import grisu.gricli.command.GricliCommandFactory;
 import grisu.jcommons.constants.Constants;
 import grisu.model.GrisuRegistry;
 import grisu.model.GrisuRegistryManager;
@@ -18,10 +17,51 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
 public class GricliEnvironment {
+
+	static class DateValidator extends Validator {
+		@Override
+		public String validate(String var, String value) throws GricliSetValueException {
+			int ivalue = 0;
+			try {
+				ivalue = Integer.parseInt(value);
+			} catch (NumberFormatException ex){
+				Pattern date = Pattern.compile("([0-9]+d)?([0-9]+h)?([0-9]+m)?");
+				Matcher m = date.matcher(value);
+				if (!m.matches()){
+					throw new GricliSetValueException(var,value,"not a valid date format");
+				}
+				String days = m.group(1);
+				String hours = m.group(2);
+				String minutes = m.group(3);
+
+				days = (days == null)?"0":days.replace("d","");
+				hours = (hours == null)?"0":hours.replace("h","");
+				minutes = (minutes == null)?"0":minutes.replace("m","");
+
+				try {
+					ivalue = (Integer.parseInt(days) * 1440) +
+							(Integer.parseInt(hours) * 60) +
+							Integer.parseInt(minutes);
+
+				} catch (NumberFormatException ex2){
+					throw new GricliSetValueException(var,value,"not valid date format");
+				}
+
+			}
+
+			if (ivalue < 0){
+				throw new GricliSetValueException(var,value, "must be positive");
+			}
+
+			return "" + ivalue;
+		}
+	}
 
 	static class DirValidator extends Validator {
 		@Override
@@ -31,6 +71,11 @@ public class GricliEnvironment {
 				String resultValue = StringUtils.replace(
 						value, "~", System.getProperty("user.home"));
 				File dir = new File(resultValue);
+
+				if (!dir.isAbsolute()) {
+					dir = new File(System.getProperty("user.dir"), value);
+					resultValue = dir.getAbsolutePath();
+				}
 				//check path
 				if (!dir.exists()) {
 					throw new GricliSetValueException(var,
@@ -60,6 +105,7 @@ public class GricliEnvironment {
 			return value;
 		}
 	}
+
 	static class PositiveIntValidator extends Validator {
 		@Override
 		public String validate(String var,String value) throws GricliSetValueException{
@@ -110,8 +156,6 @@ public class GricliEnvironment {
 	private boolean quiet = false;
 
 
-	private final GricliCommandFactory f;
-
 	private final HashMap<String,String> environment = new HashMap<String,String>();
 
 	private static HashMap<String,Validator> validators = new HashMap<String,Validator>();
@@ -127,7 +171,7 @@ public class GricliEnvironment {
 		validators.put("gdir", new Validator());
 		validators.put("memory", new PositiveIntValidator());
 		validators.put("cpus", new PositiveIntValidator());
-		validators.put("walltime", new PositiveIntValidator());
+		validators.put("walltime", new DateValidator());
 		validators.put("jobtype", new SetValidator(new String[] {"single","mpi","threaded"}));
 		validators.put("description", new Validator());
 		validators.put("version", new Validator());
@@ -145,7 +189,7 @@ public class GricliEnvironment {
 		return result;
 	}
 
-	public GricliEnvironment(GricliCommandFactory f) {
+	public GricliEnvironment() {
 
 		environment.put("queue", Constants.NO_SUBMISSION_LOCATION_INDICATOR_STRING);
 		environment.put("version", Constants.NO_VERSION_INDICATOR_STRING);
@@ -164,7 +208,6 @@ public class GricliEnvironment {
 		environment.put("outputfile",null);
 		environment.put("description", "gricli job");
 
-		this.f = f;
 		globalLists.put("files", new LinkedList<String>());
 	}
 
@@ -189,10 +232,6 @@ public class GricliEnvironment {
 
 	public String get(String global) {
 		return environment.get(global);
-	}
-
-	public GricliCommandFactory getCommandFactory(){
-		return f;
 	}
 
 	public Set<String> getGlobalNames() {
@@ -241,7 +280,8 @@ public class GricliEnvironment {
 		// attach input files
 		List<String> files = getList("files");;
 		for (String file : files) {
-			System.out.println("grid file is " + new GridFile(file).getUrl());
+			System.out.println("adding input file "
+					+ new GridFile(file).getUrl());
 			job.addInputFileUrl(new GridFile(file).getUrl());
 		}
 
@@ -295,7 +335,8 @@ public class GricliEnvironment {
 	public void put(String global, String value) throws GricliRuntimeException {
 		Validator v = validators.get(global);
 		if (v != null) {
-			environment.put(global, v.validate(global, value));
+			String result = v.validate(global, value);
+			environment.put(global, result);
 		} else {
 			throw new GricliRuntimeException(global
 					+ " global variable does not exist");

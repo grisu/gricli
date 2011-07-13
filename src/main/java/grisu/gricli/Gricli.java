@@ -31,8 +31,11 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 public class Gricli {
+
+	static final Logger myLogger = Logger.getLogger(Gricli.class.getName());
 
 	static final String CONFIG_FILE_PATH = FilenameUtils.concat(Environment
 			.getGrisuClientDirectory().getPath(), "gricli.profile");
@@ -50,7 +53,8 @@ public class Gricli {
 	static String scriptName = null;
 
 	static private GricliEnvironment env;
-	static private GricliCommandFactory f = GricliCommandFactory.getStandardFactory();
+	public static final GricliCommandFactory SINGLETON_COMMANDFACTORY = GricliCommandFactory
+			.getStandardFactory();
 
 	static private GricliExitStatus exitStatus = SUCCESS;
 
@@ -77,7 +81,8 @@ public class Gricli {
 			}
 			String[] commandsOnOneLine = line.split(";");
 			for (String c: commandsOnOneLine){
-				runCommand(GricliTokenizer.tokenize(c), f, env);
+				runCommand(GricliTokenizer.tokenize(c),
+						SINGLETON_COMMANDFACTORY, env);
 			}
 		}
 	}
@@ -97,7 +102,9 @@ public class Gricli {
 		ConsoleReader reader = CliHelpers.getConsoleReader();
 		reader.setHistory(new History(new File(HISTORY_FILE_PATH)));
 
-		ArgumentCompletor completor = new ArgumentCompletor(f.createCompletor(), new SemicolonDelimiter());
+		ArgumentCompletor completor = new ArgumentCompletor(
+				SINGLETON_COMMANDFACTORY.createCompletor(),
+				new SemicolonDelimiter());
 		completor.setStrict(false);
 		reader.addCompletor(completor);
 		return reader;
@@ -110,7 +117,7 @@ public class Gricli {
 		java.util.logging.LogManager.getLogManager().reset();
 		java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);
 
-		env = new GricliEnvironment(f);
+		env = new GricliEnvironment();
 
 		CommandLineParser parser = new PosixParser();
 		Options options = new Options();
@@ -148,7 +155,7 @@ public class Gricli {
 		GricliTokenizer t = new GricliTokenizer(in);
 		String[] tokens;
 		while ((tokens = t.nextCommand()) != null){
-			runCommand(tokens,f,env);
+			runCommand(tokens, SINGLETON_COMMANDFACTORY, env);
 		}
 	}
 
@@ -187,6 +194,8 @@ public class Gricli {
 		} catch (RuntimeException ex){
 			exitStatus = RUNTIME;
 			error = ex;
+			myLogger.error(ex);
+			ex.printStackTrace();
 			System.err.println("command failed. Either connection to server failed, or this is gricli bug. " +
 					"Please send " + DEBUG_FILE_PATH +
 					" to eresearch-admin@auckland.ac.nz together with description of what triggered the problem");

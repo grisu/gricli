@@ -3,8 +3,11 @@ package grisu.gricli.completors;
 import grisu.frontend.control.jobMonitoring.RunningJobManager;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.LoginRequiredException;
+import grisu.jcommons.constants.Constants;
 import grisu.model.GrisuRegistry;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -71,9 +74,12 @@ public class CompletionCacheImpl implements CompletionCache {
 	}
 
 	public String[] getAllApplications() {
+		ArrayList<String> results = new ArrayList<String>();
+		Collections.addAll(results, this.reg.getUserEnvironmentManager()
+				.getAllAvailableApplications());
+		results.add(0, Constants.GENERIC_APPLICATION_NAME);
 
-		return this.reg.getUserEnvironmentManager()
-				.getAllAvailableApplications();
+		return results.toArray(new String[] {});
 	}
 
 	/* (non-Javadoc)

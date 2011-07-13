@@ -1,5 +1,6 @@
 package grisu.gricli.command;
 
+import grisu.gricli.Gricli;
 import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 
@@ -47,7 +48,7 @@ public class AproposCommand implements GricliCommand {
 
 		Map<String, String> result = new TreeMap<String, String>();
 
-		List<Class<? extends GricliCommand>> cs = env.getCommandFactory()
+		List<Class<? extends GricliCommand>> cs = Gricli.SINGLETON_COMMANDFACTORY
 				.getCommands();
 		for (Class<? extends GricliCommand> c : cs) {
 			Constructor<? extends GricliCommand>[] conss = (Constructor<? extends GricliCommand>[]) c
@@ -63,7 +64,7 @@ public class AproposCommand implements GricliCommand {
 					String helpKey = StringUtils.join(sd.command(), ".");
 					String desc = "";
 					try {
-						desc = HelpCommand.help.getString(helpKey);
+						// desc = HelpCommand.help.getString(helpKey);
 					} catch (Exception e) {
 					}
 
