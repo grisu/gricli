@@ -1,6 +1,5 @@
 package grisu.gricli;
 
-import grisu.gricli.command.GricliCommandFactory;
 import grisu.gricli.parser.GricliTokenizer;
 
 import java.io.BufferedReader;
@@ -14,9 +13,7 @@ public class SocketGricli {
 
 	public static void main(String[] args) throws IOException {
 
-		GricliCommandFactory f = new GricliCommandFactory();
-		
-		GricliEnvironment env = new GricliEnvironment(f);
+		GricliEnvironment env = new GricliEnvironment();
 
 		ServerSocket myService;
 		myService = new ServerSocket(Integer.parseInt(args[0]));
@@ -31,11 +28,13 @@ public class SocketGricli {
 				String command;
 				while (true) {
 					command = input.readLine();
-					if (command == null)
+					if (command == null) {
 						break;
+					}
 					try {
-						f.create(GricliTokenizer.tokenize(command))
-								.execute(env);
+						Gricli.SINGLETON_COMMANDFACTORY.create(
+								GricliTokenizer.tokenize(command))
+						.execute(env);
 						System.out.println(command + " executed ");
 					} catch (GricliException ex) {
 						ex.printStackTrace();

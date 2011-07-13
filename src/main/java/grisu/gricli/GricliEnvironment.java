@@ -2,7 +2,6 @@ package grisu.gricli;
 
 import grisu.control.ServiceInterface;
 import grisu.frontend.model.job.JobObject;
-import grisu.gricli.command.GricliCommandFactory;
 import grisu.jcommons.constants.Constants;
 import grisu.model.GrisuRegistry;
 import grisu.model.GrisuRegistryManager;
@@ -157,8 +156,6 @@ public class GricliEnvironment {
 	private boolean quiet = false;
 
 
-	private final GricliCommandFactory f;
-
 	private final HashMap<String,String> environment = new HashMap<String,String>();
 
 	private static HashMap<String,Validator> validators = new HashMap<String,Validator>();
@@ -192,7 +189,7 @@ public class GricliEnvironment {
 		return result;
 	}
 
-	public GricliEnvironment(GricliCommandFactory f) {
+	public GricliEnvironment() {
 
 		environment.put("queue", Constants.NO_SUBMISSION_LOCATION_INDICATOR_STRING);
 		environment.put("version", Constants.NO_VERSION_INDICATOR_STRING);
@@ -211,7 +208,6 @@ public class GricliEnvironment {
 		environment.put("outputfile",null);
 		environment.put("description", "gricli job");
 
-		this.f = f;
 		globalLists.put("files", new LinkedList<String>());
 	}
 
@@ -236,10 +232,6 @@ public class GricliEnvironment {
 
 	public String get(String global) {
 		return environment.get(global);
-	}
-
-	public GricliCommandFactory getCommandFactory(){
-		return f;
 	}
 
 	public Set<String> getGlobalNames() {
