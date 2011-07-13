@@ -32,6 +32,7 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 
 public class Gricli {
 
@@ -116,6 +117,15 @@ public class Gricli {
 		// stop javaxws logging
 		java.util.logging.LogManager.getLogManager().reset();
 		java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);
+
+		String log4jPath = "/etc/gricli/gricli-log4j.xml";
+		if (new File(log4jPath).exists() && (new File(log4jPath).length() > 0)) {
+			try {
+				DOMConfigurator.configure(log4jPath);
+			} catch (Exception e) {
+				myLogger.error(e);
+			}
+		}
 
 		env = new GricliEnvironment();
 
