@@ -10,4 +10,8 @@ grisu backend version:       The version of Grisu used to perform Grid funcitons
 documentation:               Where you may find further help and information.
 contact:                     Who to contact in case you have problems or questions.
 
+Example usage:
+
+    about
+
 
