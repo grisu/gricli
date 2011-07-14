@@ -1,13 +1,13 @@
-Command:	add <list> <value>
+Command:	add <list> <item>
 
 Adds a value to a list.
-X
 
-Y
+Currently only a single value can be added per call. To add multiple items, use this command once for each item.
 
+Parameters:
 
     list	: The name of the list.
-    value	: The value to add. Currently only a single value can be added per call.
+    item	: The value to add. Currently only a single value can be added per call.
 
 Currently available lists are:
 
