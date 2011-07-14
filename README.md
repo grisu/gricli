@@ -1,7 +1,8 @@
-gricli shell allows commandline interaction with the grid.  
+Gricli shell allows commandline interaction with the grid.  
 
 
 Latest version can be downloaded from http://code.ceres.auckland.ac.nz/downloads/gricli.jar
+
 Latest development version can be downloaded from http://code.ceres.auckland.ac.nz/snapshot-downloads/gricli-dev.jar
 
 Javadoc: http://grisu.github.com/gricli/javadoc/

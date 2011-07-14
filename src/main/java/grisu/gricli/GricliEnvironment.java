@@ -269,8 +269,7 @@ public class GricliEnvironment {
 
 		job.setDescription(get("description"));
 
-		job.setWalltimeInSeconds(Integer.parseInt(get("walltime")) * 60
-				* job.getCpus());
+		job.setWalltimeInSeconds(Integer.parseInt(get("walltime")) * 60);
 		job.setMemory(Long.parseLong(get("memory")) * 1024 * 1024);
 		job.setSubmissionLocation(get("queue"));
 
