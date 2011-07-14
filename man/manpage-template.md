@@ -38,9 +38,7 @@ The Grisu backend to connect to. The default is *BeSTGRID* abd other possible ba
 
 Examples:
 
-gricli -b BeSTGRID
-
-gricli --backend=BeSTGRID
+gricli -b BeSTGRID \ngricli --backend=BeSTGRID
 
 -f  *SCRIPT* or \--file=*SCRIPT*
 
