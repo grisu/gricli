@@ -7,7 +7,7 @@ Adds a value to a list.
 
 Currently available lists are:
 
-files:            The files attached for a job.
+files           : The files attached for a job.
 
 
 
