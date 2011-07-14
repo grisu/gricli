@@ -26,7 +26,7 @@ Gricli is based on the *Grisu* framework and can connect to different *Grisu bac
     
  or 
  
-     gricli -b Local
+    gricli -b Local
      
 The above first would connect to the default *BeSTGRID* backend that publishes the *Grisu* API via SOAP. The latter would connect to a local *Grisu* backend which sits on the same computer as *gricli*, as long as the local backend jar (http://code.ceres.auckland.ac.nz/downloads/local-backend.jar) is in the classpath (either in the same folder as gricli or in %$HOME/.grisu.beta/lib/).
 
@@ -34,15 +34,30 @@ The above first would connect to the default *BeSTGRID* backend that publishes t
 
 -b *BACKEND* or \--backend=*BACKEND*
 
-The Grisu backend to connect to. The default is *BeSTGRID* abd other possible backends are *BeSTGRID-TEST*, *BeSTGRID-DEV* and *Local*.
+  The Grisu backend to connect to. The default is *BeSTGRID* abd other possible backends are
+  *BeSTGRID-TEST*,*BeSTGRID-DEV* and *Local*.
+
+  Examples:
+
+    gricli -b BeSTGRID
+    gricli --backend=BeSTGRID
 
 -f  *SCRIPT* or \--file=*SCRIPT*
 
-Executes a gricli script
+  Executes a gricli script.
 
--n, \--nologin
+  Examples:
 
-Disables login at gricli startup
+    gricli -f myexp.gs
+    gricli --file=myexp.gs
+
+-n or \--nologin
+
+  Disables login at gricli startup.
+
+  Example:
+
+    gricli -n
 
 # COMMANDS
 
