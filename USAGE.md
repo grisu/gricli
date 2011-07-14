@@ -28,10 +28,10 @@ The first command would connect to the default *BeSTGRID* backend that publishes
 
 # OPTIONS
 
--b *BACKEND*, \--backend=*BACKEND*
+-b *BACKEND* or \--backend=*BACKEND*
 :    The Grisu backend to connect to. The default is *BeSTGRID* and other possible backends are *BeSTGRID-TEST*, *BeSTGRID-DEV* and *Local*.
 
--f  *SCRIPT*, \--file=*SCRIPT*
+-f  *SCRIPT* or \--file=*SCRIPT*
 :    Executes a gricli script.
 
 -n, \--nologin
