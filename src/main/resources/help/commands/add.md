@@ -7,9 +7,13 @@ Adds a value to a list.
 
 Currently available lists are:
 
-files           : The files attached for a job.
+    files       : The files attached for a job.
 
+Example usage:
 
+    add files myinput.txt
+    add files "~/Desktop/my input.txt"
+    
 
 
 	
