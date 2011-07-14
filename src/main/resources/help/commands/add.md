@@ -1,6 +1,10 @@
 Command:	add <list> <value>
 
-Adds a value to a list. 
+Adds a value to a list.
+X
+
+Y
+
 
     list	: The name of the list.
     value	: The value to add. Currently only a single value can be added per call.
