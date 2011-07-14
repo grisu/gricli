@@ -34,29 +34,29 @@ The above first would connect to the default *BeSTGRID* backend that publishes t
 
 -b *BACKEND* or \--backend=*BACKEND*
 
-The Grisu backend to connect to. The default is *BeSTGRID* abd other possible backends are *BeSTGRID-TEST*, *BeSTGRID-DEV* and *Local*.
+    The Grisu backend to connect to. The default is *BeSTGRID* abd other possible backends are *BeSTGRID-TEST*,     *BeSTGRID-DEV* and *Local*.
 
-Examples:
+    Examples:
 
-gricli -b BeSTGRID
-gricli --backend=BeSTGRID
+    gricli -b BeSTGRID
+    gricli --backend=BeSTGRID
 
 -f  *SCRIPT* or \--file=*SCRIPT*
 
-Executes a gricli script.
+    Executes a gricli script.
 
-Examples:
+    Examples:
 
-gricli -f myexp.gs
-gricli --file=myexp.gs
+    gricli -f myexp.gs
+    gricli --file=myexp.gs
 
 -n, \--nologin
 
-Disables login at gricli startup.
+    Disables login at gricli startup.
 
-Example:
+    Example:
 
-gricli -n
+    gricli -n
 
 # COMMANDS
 
