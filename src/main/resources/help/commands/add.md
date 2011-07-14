@@ -1,8 +1,8 @@
 Command:	add <list> <item>
 
-Adds a value to a list.
+Adds an item to a list.
 
-Currently only a single value can be added per call. To add multiple items, use this command once for each item.
+Currently only a single item can be added per call. To add multiple items, use this command once for each item.
 
 Parameters:
 
