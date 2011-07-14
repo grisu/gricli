@@ -17,8 +17,8 @@ Usage:
     help all			- lists all available commands, globals and topics
 
     help command <command>	- prints the help message for the specified command
-    help global <command>	- prints the help message for the specified global variable
-    help topic <command>	- prints the help message for the specified topic
+    help global <global>	- prints the help message for the specified global variable
+    help topic <topic>		- prints the help message for the specified topic
 
     help <keywords>		- prints the help message for the command that is called by this combination of keywords (if it exists)
 

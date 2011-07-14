@@ -49,21 +49,17 @@ public class HelpManager {
 
 		try {
 			is = FileUtils.class.getResourceAsStream("/help/" + type.toString()
-					+ "/" + s
-					+ ".md");
+					+ "/" + s + ".md");
 			list = IOUtils.readLines(is);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new Exception("Can't get get text for " + type.toString()
 					+ " " + s + ": " + e.getLocalizedMessage());
-		}
-		finally {
+		} finally {
 			try {
 				if (is != null) {
 					is.close();
 				}
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -73,7 +69,7 @@ public class HelpManager {
 	public static void main(String[] args) throws Exception {
 		HelpManager t = new HelpManager();
 
-		for ( String topic : t.getTopics() ) {
+		for (String topic : t.getTopics()) {
 			System.out.println(topic);
 			System.out.println("====================================");
 			System.out.println(t.getTopic(topic));
@@ -201,8 +197,7 @@ public class HelpManager {
 			}
 			for (String c : temp.keySet()) {
 
-				formatter.format("%4s%" + -(max + 4) + "s%"
-						+ -(max + 4 + 4 + max2) + "s%n", "    ", c,
+				formatter.format("%4s%" + -(max + 4) + "s%" + "s%n", "    ", c,
 						temp.get(c));
 			}
 			result.append("\n");
@@ -229,9 +224,7 @@ public class HelpManager {
 			}
 			for (String c : temp.keySet()) {
 
-				formatter
-				.format("%4s%" + -(max + 4) + "s%"
-						+ -(max + 4 + 4 + max2) + "s%n", "    ", c,
+				formatter.format("%4s%" + -(max + 4) + "s%" + "s%n", "    ", c,
 						temp.get(c));
 			}
 			result.append("\n");
@@ -258,15 +251,13 @@ public class HelpManager {
 			}
 			for (String c : temp.keySet()) {
 
-				formatter
-				.format("%4s%" + -(max + 4) + "s%"
-						+ -(max + 4 + 4 + max2) + "s%n", "    ", c,
+				formatter.format("%4s%" + -(max + 4) + "s%" + "s%n", "    ", c,
 						temp.get(c));
 			}
 			result.append("\n");
 		}
 
-		if ( result.length() == 0 ) {
+		if (result.length() == 0) {
 			result.append("No help texts found that contain the keyword \""
 					+ keyword + "\".");
 			return result.toString();
@@ -351,8 +342,8 @@ public class HelpManager {
 
 		for (String c : getCommands()) {
 			String helpLine = getFirstLine(Type.commands, c);
-			formatter.format("%4s%" + -(max + 4) + "s%" + -(max + 4 + 4 + max2)
-					+ "s%n", "    ", c, helpLine);
+			formatter.format("%4s%" + -(max + 4) + "s%" + "s%n", "    ", c,
+					helpLine);
 		}
 
 		return result.toString();
@@ -365,17 +356,16 @@ public class HelpManager {
 	public String getFirstLine(Type type, String word) {
 
 		String desc = null;
-		switch(type) {
-
+		switch (type) {
 
 		case commands:
 
 			desc = commands.get(word);
-			if ( StringUtils.isBlank(desc) ) {
+			if (StringUtils.isBlank(desc)) {
 				return "n/a";
 			}
 
-			for ( String line : desc.split("\n") ) {
+			for (String line : desc.split("\n")) {
 				if (line.toLowerCase().trim().startsWith("command")) {
 					continue;
 				} else if (StringUtils.isEmpty(line.trim())) {
@@ -389,11 +379,11 @@ public class HelpManager {
 
 		case globals:
 			desc = globals.get(word);
-			if ( StringUtils.isBlank(desc) ) {
+			if (StringUtils.isBlank(desc)) {
 				return "n/a";
 			}
 
-			for ( String line : desc.split("\n") ) {
+			for (String line : desc.split("\n")) {
 				if (line.toLowerCase().trim().startsWith("global")
 						|| line.toLowerCase().trim().startsWith(word)) {
 					continue;
@@ -407,11 +397,11 @@ public class HelpManager {
 			return "n/a";
 		case topics:
 			desc = topics.get(word);
-			if ( StringUtils.isBlank(desc) ) {
+			if (StringUtils.isBlank(desc)) {
 				return "n/a";
 			}
 
-			for ( String line : desc.split("\n") ) {
+			for (String line : desc.split("\n")) {
 				if (line.toLowerCase().trim().startsWith("topic")
 						|| line.toLowerCase().trim().startsWith(word)) {
 					continue;
@@ -423,7 +413,8 @@ public class HelpManager {
 				return line;
 			}
 			return "n/a";
-		default: return "n/a";
+		default:
+			return "n/a";
 		}
 	}
 
@@ -453,8 +444,8 @@ public class HelpManager {
 
 		for (String c : getCommands()) {
 			String helpLine = getFirstLine(Type.globals, c);
-			formatter.format("%4s%" + -(max + 4) + "s%" + -(max + 4 + 4 + max2)
-					+ "s%n", "    ", c, helpLine);
+			formatter.format("%4s%" + -(max + 4) + "s%" + "s%n", "    ", c,
+					helpLine);
 		}
 
 		return result.toString();
@@ -486,7 +477,7 @@ public class HelpManager {
 
 	public String getTopic(String topic) {
 		String result = topics.get(topic);
-		if (result == null ) {
+		if (result == null) {
 			return topics.get(StringUtils.capitalize(topic));
 		} else {
 			return result;
@@ -510,7 +501,7 @@ public class HelpManager {
 
 		for (String c : getTopics()) {
 			String helpLine = getFirstLine(Type.topics, c);
-			formatter.format("%4s%" + -(max + 4) + "s%" + -(max + 4 + 4 + max2)
+			formatter.format("%4s%" + -(max + 4) + "s%"
 					+ "s%n", "    ", c, helpLine);
 		}
 
