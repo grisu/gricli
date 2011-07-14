@@ -34,7 +34,7 @@ The above first would connect to the default *BeSTGRID* backend that publishes t
 
 -b *BACKEND* or \--backend=*BACKEND*
 
-  The Grisu backend to connect to. The default is *BeSTGRID* abd other possible backends are
+  The Grisu backend to connect to. The default is *BeSTGRID* and other possible backends are
   *BeSTGRID-TEST*,*BeSTGRID-DEV* and *Local*.
 
   Examples:
