@@ -27,7 +27,7 @@ institutions credentials:
     [3]     Certificate login
     [0]     Exit
     Login method: 1
-    Loading list of institutions...
+    Loading...
     ...
 
 
@@ -47,13 +47,13 @@ This gives you a list of all the queues available in a particular group:
     route@er171.ceres.auckland.ac.nz:ng2.auckland.ac.nz
 
 If you don't care which queue to submit to, but want to run specific
-application, queue needs to be set to null:
+application, queue needs to be set to auto:
 
    gricli> set application R
    gricli> set version 2.10
-   gricli> set queue null
+   gricli> set queue auto
 
-'print application' command can be used to discover available applications
+The 'print application' command can be used to discover available applications
 and versions:
 
     gricli> print application R
@@ -73,9 +73,9 @@ Submitting a job
 ======
 
     gricli> submit "echo hello world"
-    job name is gricli_1285812002395
+    job name is gricli
     gricli> print jobs
-    gricli_1285812002395 : Done
+    gricli : Done
 
 This command takes a while, but when it returns, it will give you an
 auto-generated job name. This job name can be used for further
