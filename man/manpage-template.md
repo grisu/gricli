@@ -51,7 +51,7 @@ The above first would connect to the default *BeSTGRID* backend that publishes t
     gricli -f myexp.gs
     gricli --file=myexp.gs
 
--n, \--nologin
+-n or \--nologin
 
   Disables login at gricli startup.
 
