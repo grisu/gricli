@@ -38,7 +38,8 @@ The Grisu backend to connect to. The default is *BeSTGRID* abd other possible ba
 
 Examples:
 
-gricli -b BeSTGRID \ngricli --backend=BeSTGRID
+gricli -b BeSTGRID
+gricli --backend=BeSTGRID
 
 -f  *SCRIPT* or \--file=*SCRIPT*
 
@@ -47,7 +48,6 @@ Executes a gricli script.
 Examples:
 
 gricli -f myexp.gs
-
 gricli --file=myexp.gs
 
 -n, \--nologin
