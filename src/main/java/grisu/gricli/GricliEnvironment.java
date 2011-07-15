@@ -275,6 +275,11 @@ public class GricliEnvironment {
 
 		boolean isMpi = "mpi".equals(get("jobtype"));
 		job.setForce_mpi(isMpi);
+		boolean isThreaded = "threaded".equals("jobtype");
+		if (isThreaded){
+			job.setForce_single(isThreaded);
+			job.setHostCount(1);
+		}
 
 		// attach input files
 		List<String> files = getList("files");;
