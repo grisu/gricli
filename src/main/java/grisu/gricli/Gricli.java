@@ -110,53 +110,79 @@ public class Gricli {
 		reader.addCompletor(completor);
 		return reader;
 	}
+	
+	private static void login(GricliEnvironment env, String backend){
+		
+		try {
+			new InteractiveLoginCommand(backend).execute(env);
+		} catch (GricliException ex){
+			myLogger.error("login exception", ex);
+			System.err.println("Cannot login to " + backend);
+		}
+	}
 
 	@SuppressWarnings("static-access")
-	public static void main(String[] args) throws IOException,GricliException {
+	public static void main(String[] args) {
 
-		// stop javaxws logging
-		java.util.logging.LogManager.getLogManager().reset();
-		java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);
+		try {
 
-		String log4jPath = "/etc/gricli/gricli-log4j.xml";
-		if (new File(log4jPath).exists() && (new File(log4jPath).length() > 0)) {
+			// stop javaxws logging
+			java.util.logging.LogManager.getLogManager().reset();
+			java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);
+
+			String log4jPath = "/etc/gricli/gricli-log4j.xml";
+			if (new File(log4jPath).exists()
+					&& (new File(log4jPath).length() > 0)) {
+				try {
+					DOMConfigurator.configure(log4jPath);
+				} catch (Exception e) {
+					myLogger.error(e);
+				}
+			}
+
+			env = new GricliEnvironment();
+
+			CommandLineParser parser = new PosixParser();
+			Options options = new Options();
+			options
+					.addOption(OptionBuilder.withLongOpt("nologin")
+							.withDescription("disables login at the start")
+							.create('n'));
+			options.addOption(OptionBuilder.withLongOpt("backend").hasArg()
+					.withArgName("backend").withDescription("change backend")
+					.create('b'));
+			options.addOption(OptionBuilder.withLongOpt("script").hasArg()
+					.withArgName("file").withDescription("execute script")
+					.create('f'));
 			try {
-				DOMConfigurator.configure(log4jPath);
-			} catch (Exception e) {
-				myLogger.error(e);
-			}
-		}
+				CommandLine cl = parser.parse(options, args);
+				if (!cl.hasOption('n')) {
+					String backend = cl.getOptionValue('b');
+					backend = (backend != null) ? backend : "BeSTGRID";
+					login(env,backend);
+				}
 
-		env = new GricliEnvironment();
-
-		CommandLineParser parser = new PosixParser();
-		Options options = new Options();
-		options.addOption(OptionBuilder.withLongOpt("nologin").withDescription("disables login at the start").create('n'));
-		options.addOption(OptionBuilder.withLongOpt("backend").hasArg().withArgName("backend").withDescription("change backend").create('b'));
-		options.addOption(OptionBuilder.withLongOpt("script").hasArg().withArgName("file").withDescription("execute script").create('f'));
-		try {
-			CommandLine cl = parser.parse(options, args);
-			if (!cl.hasOption('n')){
-				String backend = cl.getOptionValue('b');
-				backend = (backend != null)?backend:"BeSTGRID";
-				new InteractiveLoginCommand(backend).execute(env);
+				if (cl.hasOption('f')) {
+					scriptName = cl.getOptionValue('f');
+				}
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
-			if (cl.hasOption('f')){
-				scriptName = cl.getOptionValue('f');
+			try {
+				run(new FileInputStream(CONFIG_FILE_PATH));
+			} catch (IOException ex) {
+				// config does not exist
 			}
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			executionLoop();
+			System.exit(exitStatus.getStatus());
+		} catch (Throwable th) {
+			System.err.println("Something went terribly wrong.  Please check if you have internet connection, and your firewall settings." +
+					" If you think there is nothing wrong with your connection, send " + DEBUG_FILE_PATH + 
+					" to eresearch-admin@auckland.ac.nz together with description of what you are trying to do.");
+			myLogger.error("something went terribly wrong ",th);
 		}
-
-		try {
-			run(new FileInputStream(CONFIG_FILE_PATH));
-		} catch (IOException ex){
-			// config does not exist
-		}
-		executionLoop();
-		System.exit(exitStatus.getStatus());
 	}
 
 	@SuppressWarnings("unchecked")

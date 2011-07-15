@@ -15,7 +15,7 @@ public class VarValueCompletor implements Completor {
 	private final SimpleCompletor tfc = new SimpleCompletor(new String[] {
 			"true", "false" });
 	private final SimpleCompletor jtc = new SimpleCompletor(new String[] {
-			"mpi", "single" });
+			"threaded","mpi", "single" });
 	private final ApplicationVersionCompletor avc = new ApplicationVersionCompletor();
 
 	public VarValueCompletor() {
