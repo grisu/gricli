@@ -30,22 +30,19 @@ GricliCommand {
 
 	}
 
-	protected JobObject createJob(GricliEnvironment env) throws GricliRuntimeException{
+	protected JobObject createJob(GricliEnvironment env)
+			throws GricliRuntimeException {
 		JobObject job = env.getJob();
 		job.setCommandline(cmd);
+
 		try {
 			job.createJob(env.get("group"), Constants.UNIQUE_NUMBER_METHOD);
 			return job;
 		} catch (JobPropertiesException ex) {
-
-			try {
-				job.createJob(env.get("group"), Constants.TIMESTAMP_METHOD);
-				return job;
-			} catch (JobPropertiesException ex2){
-				throw new GricliRuntimeException("job property is not valid"
-						+ ex.getMessage(),ex);
-			}
+			throw new GricliRuntimeException("job property is not valid"
+					+ ex.getMessage(), ex);
 		}
+
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
