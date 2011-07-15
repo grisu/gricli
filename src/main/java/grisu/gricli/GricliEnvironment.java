@@ -275,7 +275,7 @@ public class GricliEnvironment {
 
 		boolean isMpi = "mpi".equals(get("jobtype"));
 		job.setForce_mpi(isMpi);
-		boolean isThreaded = "threaded".equals("jobtype");
+		boolean isThreaded = "threaded".equals(get("jobtype"));
 		if (isThreaded){
 			job.setForce_single(isThreaded);
 			job.setHostCount(1);
