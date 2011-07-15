@@ -10,6 +10,8 @@ import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.util.ServiceInterfaceUtils;
 import grisu.model.dto.DtoJob;
 
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.Map;
 
 public class PrintJobCommand implements
@@ -61,18 +63,32 @@ GricliCommand {
 				+ JobConstants.translateStatus(si.getJobStatus(jobname)));
 		Map<String, String> props = job.propertiesAsMap();
 		for (String key : props.keySet()) {
-			env.printMessage(key + " : " + props.get(key));
+			env.printMessage(key + " : " + formatAttribute(key,props.get(key)));
 		}
 	}
 
 	private void printJobAttribute(GricliEnvironment env, ServiceInterface si, String j,
 			String attribute) throws NoSuchJobException {
 		DtoJob job = si.getJob(j);
-		if (!("status".equals(attribute))) {
-			env.printMessage(j + " : " + job.jobProperty(attribute));
-		} else {
+		if (("status".equals(attribute))) {
 			env.printMessage(j + " : "
 					+ JobConstants.translateStatus(si.getJobStatus(j)));
+		} else {
+			env.printMessage(j + " : " + formatAttribute(attribute,job.jobProperty(attribute)));
+		}
+	}
+	
+	private String formatAttribute(String aName, String aVal){
+		if ("submissionTime".equals(aName)){
+			Date d = new Date(Long.parseLong(aVal));
+			return DateFormat.getInstance().format(d);
+		} else if ("memory".equals(aName)){
+			double memory = Long.parseLong(aVal);
+			memory = memory / 1024.0 / 1024.0 / 1024.0;
+			return String.format("%.2f GB", memory);
+			
+		} else {
+			return aVal;
 		}
 	}
 
