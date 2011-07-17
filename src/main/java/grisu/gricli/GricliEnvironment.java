@@ -21,8 +21,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 public class GricliEnvironment {
+	
+	static final Logger myLogger = Logger.getLogger(GricliEnvironment.class.getName());
 
 	static class DateValidator extends Validator {
 		@Override
@@ -308,6 +311,7 @@ public class GricliEnvironment {
 	}
 
 	public void printError(String message){
+		myLogger.info("gricli-audit-error username=" + System.getProperty("user.name") + "command=" + message );
 		System.err.println(message);
 	}
 
