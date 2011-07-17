@@ -175,7 +175,7 @@ public class GricliEnvironment {
 		validators.put("memory", new PositiveIntValidator());
 		validators.put("cpus", new PositiveIntValidator());
 		validators.put("walltime", new DateValidator());
-		validators.put("jobtype", new SetValidator(new String[] {"single","mpi","threaded"}));
+		validators.put("jobtype", new SetValidator(new String[] {"single","mpi","smp"}));
 		validators.put("description", new Validator());
 		validators.put("version", new Validator());
 		validators.put("debug", new SetValidator(new String[] {"true","false"}));
@@ -278,9 +278,9 @@ public class GricliEnvironment {
 
 		boolean isMpi = "mpi".equals(get("jobtype"));
 		job.setForce_mpi(isMpi);
-		boolean isThreaded = "threaded".equals(get("jobtype"));
-		if (isThreaded){
-			job.setForce_single(isThreaded);
+		boolean isSmp = "smp".equals(get("jobtype"));
+		if (isSmp){
+			job.setForce_single(true);
 			job.setHostCount(1);
 		}
 
