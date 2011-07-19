@@ -55,6 +55,22 @@ GricliCommand {
 		return env;
 	}
 
+	private String formatAttribute(String aName, String aVal){
+		if ("submissionTime".equals(aName)){
+			Date d = new Date(Long.parseLong(aVal));
+			return DateFormat.getInstance().format(d);
+		} else if ("memory".equals(aName)){
+			double memory = Long.parseLong(aVal);
+			memory = memory / 1024.0 / 1024.0 / 1024.0;
+			return String.format("%.2f GB", memory);
+			
+//		} else if ("walltime".equals(aName)) {
+//			
+		} else {
+			return aVal;
+		}
+	}
+
 	private void printJob(GricliEnvironment env, ServiceInterface si, String j)
 	throws NoSuchJobException {
 		DtoJob job = si.getJob(j);
@@ -66,7 +82,7 @@ GricliCommand {
 			env.printMessage(key + " : " + formatAttribute(key,props.get(key)));
 		}
 	}
-
+	
 	private void printJobAttribute(GricliEnvironment env, ServiceInterface si, String j,
 			String attribute) throws NoSuchJobException {
 		DtoJob job = si.getJob(j);
@@ -75,20 +91,6 @@ GricliCommand {
 					+ JobConstants.translateStatus(si.getJobStatus(j)));
 		} else {
 			env.printMessage(j + " : " + formatAttribute(attribute,job.jobProperty(attribute)));
-		}
-	}
-	
-	private String formatAttribute(String aName, String aVal){
-		if ("submissionTime".equals(aName)){
-			Date d = new Date(Long.parseLong(aVal));
-			return DateFormat.getInstance().format(d);
-		} else if ("memory".equals(aName)){
-			double memory = Long.parseLong(aVal);
-			memory = memory / 1024.0 / 1024.0 / 1024.0;
-			return String.format("%.2f GB", memory);
-			
-		} else {
-			return aVal;
 		}
 	}
 
