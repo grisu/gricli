@@ -12,6 +12,9 @@ import grisu.gricli.completors.CompletionCache;
 import grisu.gricli.completors.CompletionCacheImpl;
 import grisu.model.GrisuRegistryManager;
 
+import java.io.File;
+
+import org.apache.commons.lang.StringUtils;
 
 public class InteractiveLoginCommand implements
 GricliCommand {
@@ -36,6 +39,16 @@ GricliCommand {
 			Gricli.completionCache = cc;
 
 			new ChdirCommand(System.getProperty("user.dir")).execute(env);
+
+			String value = System
+					.getenv(LocalLoginCommand.GRICLI_LOGIN_SCRIPT_ENV_NAME);
+			if (StringUtils
+					.isNotBlank(LocalLoginCommand.GRICLI_LOGIN_SCRIPT_ENV_NAME)) {
+				File script = new File(value);
+				if (script.canExecute()) {
+					new ExecCommand(script.getPath()).execute(env);
+				}
+			}
 
 			// CompletionCache.jobnames = si.getAllJobnames(null).asSortedSet();
 			// CompletionCache.fqans = si.getFqans().asSortedSet();
