@@ -69,7 +69,7 @@ GricliCommand {
 
 		} else if ("walltime".equals(aName)) {
 			String[] strings = WalltimeUtils
-					.convertSecondsInHumanReadableString(Integer.parseInt(aVal));
+					.convertSecondsInHumanReadableString(Integer.parseInt(aVal) * 60);
 			return StringUtils.join(strings, " ");
 		} else {
 			return aVal;
