@@ -38,7 +38,7 @@ GricliCommand {
 
 			Gricli.completionCache = cc;
 
-			new ChdirCommand(System.getProperty("user.home")).execute(env);
+			new ChdirCommand(System.getProperty("user.dir")).execute(env);
 
 			// CompletionCache.jobnames =
 			// serviceInterface.getAllJobnames(null).asSortedSet();
