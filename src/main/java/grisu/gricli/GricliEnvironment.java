@@ -129,6 +129,10 @@ public class GricliEnvironment {
 	static class SetValidator extends Validator {
 
 		private final String[] values;
+		
+		public String[] getValues(){
+			return this.values;
+		}
 
 		public SetValidator(String[] values){
 			this.values = values;
@@ -162,7 +166,7 @@ public class GricliEnvironment {
 	private final HashMap<String,String> environment = new HashMap<String,String>();
 
 	private static HashMap<String,Validator> validators = new HashMap<String,Validator>();
-
+	
 	static {
 		validators.put("email", new Validator());
 		validators.put("email_on_start", new SetValidator(new String[] {"true","false"}));
