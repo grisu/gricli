@@ -47,8 +47,8 @@ GricliCommand {
 			new ChdirCommand(System.getProperty("user.dir")).execute(env);
 
 			String value = System.getenv(GRICLI_LOGIN_SCRIPT_ENV_NAME);
-			if (StringUtils.isNotBlank(GRICLI_LOGIN_SCRIPT_ENV_NAME)) {
-				File script = new File(GRICLI_LOGIN_SCRIPT_ENV_NAME);
+			if (StringUtils.isNotBlank(value)) {
+				File script = new File(value);
 				if (script.canExecute()) {
 					new ExecCommand(script.getPath()).execute(env);
 				}

@@ -15,12 +15,11 @@
 		<param name="ConversionPattern" value="%5p %d{ISO8601} [%t][%x] %c - %m%n" 
 		/> </layout> </appender> -->
 
-	<appender name="console" class="org.apache.log4j.ConsoleAppender">
-		<!-- A1 uses PatternLayout -->
+	<!-- <appender name="console" class="org.apache.log4j.ConsoleAppender">
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%-4r [%t] %-5p %c %x - %m%n" />
 		</layout>
-	</appender>
+	</appender> -->
 
 	<appender name="file" class="org.apache.log4j.FileAppender">
 		<param name="File" value="${user.home}/.grisu.beta/gricli.debug" />

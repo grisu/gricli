@@ -43,7 +43,7 @@ GricliCommand {
 			String value = System
 					.getenv(LocalLoginCommand.GRICLI_LOGIN_SCRIPT_ENV_NAME);
 			if (StringUtils
-					.isNotBlank(LocalLoginCommand.GRICLI_LOGIN_SCRIPT_ENV_NAME)) {
+					.isNotBlank(value)) {
 				File script = new File(value);
 				if (script.canExecute()) {
 					new ExecCommand(script.getPath()).execute(env);
