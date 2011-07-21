@@ -205,6 +205,8 @@ public class Gricli {
 			exitStatus = SUCCESS;
 
 		} catch (InvalidCommandException ex) {
+			exitStatus = SYNTAX;
+			error = ex;
 			System.out.println(ex.getMessage());
 		} catch (UnknownCommandException ex) {
 			exitStatus = SYNTAX;
@@ -231,13 +233,12 @@ public class Gricli {
 		} catch (RuntimeException ex){
 			exitStatus = RUNTIME;
 			error = ex;
-			myLogger.error(ex);
-			ex.printStackTrace();
 			System.err.println("command failed. Either connection to server failed, or this is gricli bug. " +
 					"Please send " + DEBUG_FILE_PATH +
 					" to eresearch-admin@auckland.ac.nz together with description of what triggered the problem");
 		}
 		finally {
+			myLogger.error(error);
 			if ("true".equals(env.get("debug")) && (error != null)){
 				error.printStackTrace();
 			}
