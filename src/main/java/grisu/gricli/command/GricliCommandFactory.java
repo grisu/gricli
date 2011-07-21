@@ -69,6 +69,9 @@ public class GricliCommandFactory {
 		f.add(AddBatchCommand.class);
 		f.add(SubmitBatchCommand.class);
 
+		// other commands
+		f.add(ExecCommand.class);
+
 		try {
 			f.init();
 		} catch (CompileException e) {
