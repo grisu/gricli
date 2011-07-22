@@ -50,11 +50,6 @@ GricliCommand {
 				}
 			}
 
-			// CompletionCache.jobnames = si.getAllJobnames(null).asSortedSet();
-			// CompletionCache.fqans = si.getFqans().asSortedSet();
-			// CompletionCache.queues = si.getAllSubmissionLocations()
-			// .asSubmissionLocationStrings();
-			// CompletionCache.sites = si.getAllSites().asArray();
 
 			return env;
 		} catch (LoginException ex) {
