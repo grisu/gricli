@@ -70,7 +70,7 @@ public class TestCommands {
 
 		attach2.execute(attach1.execute(env));
 
-		assertEquals(env.getList("files").size(),0);
+		assertEquals(env.getList("files").size(), 1);
 	}
 
 
