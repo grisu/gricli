@@ -26,6 +26,41 @@ import org.apache.log4j.Logger;
 public class GricliEnvironment {
 	
 	static final Logger myLogger = Logger.getLogger(GricliEnvironment.class.getName());
+	
+	static class MemoryValidator extends Validator {
+		@Override
+		public String validate(String var, String value) throws GricliSetValueException {
+			int imem = 0;
+			try {
+				imem = Integer.parseInt(value);
+			} catch (NumberFormatException ex){
+				Pattern mp = Pattern.compile("([0-9]+g)?([0-9]+m)?([0-9]+k)?");
+				Matcher m = mp.matcher(value);
+				if (!m.matches()){
+					throw new GricliSetValueException(var,value,"not a valid memory format");
+				}
+				String gb = m.group(1);
+				String mb = m.group(2);
+				String kb = m.group(3);
+				
+				gb = (gb == null)?"0":gb.replace("g", "");
+				mb = (mb == null)?"0":mb.replace("m", "");
+				kb = (kb == null)?"0":kb.replace("k", "");
+				
+				try {
+					imem = (Integer.parseInt(gb) * 1024) + (Integer.parseInt(mb) + (Integer.parseInt(kb) / 1024));
+				} catch (NumberFormatException ex2){
+					throw new GricliSetValueException(var,value,"not valid memory format");
+				}
+			}
+			
+			if (imem < 0 ){
+				throw new GricliSetValueException(var,value, "must be positive");
+			}
+			
+			return "" + imem;
+		}
+	}
 
 	static class DateValidator extends Validator {
 		@Override
@@ -176,7 +211,7 @@ public class GricliEnvironment {
 		validators.put("group", new Validator());
 		validators.put("host", new Validator());
 		validators.put("gdir", new Validator());
-		validators.put("memory", new PositiveIntValidator());
+		validators.put("memory", new MemoryValidator());
 		validators.put("cpus", new PositiveIntValidator());
 		validators.put("walltime", new DateValidator());
 		validators.put("jobtype", new SetValidator(new String[] {"single","mpi","smp"}));
