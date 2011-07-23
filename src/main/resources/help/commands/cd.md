@@ -11,5 +11,9 @@ Parameters:
 
 Example usage:
 
-    cd ~/myfiles
+    cd /home/whoami/myfolder
+
+    attach ~/myfolder/myfile_1 ~/myfolder/myfile_2
+    cd ~/myfolder
+    attach myfile_1 myfile_2
 
