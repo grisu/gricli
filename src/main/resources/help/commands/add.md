@@ -7,7 +7,7 @@ Currently only a single item can be added per call. To add multiple items, use t
 Parameters:
 
     list	: The name of the list.
-    item	: The value to add. Currently only a single value can be added per call.
+    item	: The value to add. 
 
 Currently available lists are:
 
