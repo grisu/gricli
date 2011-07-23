@@ -15,8 +15,9 @@ Currently available lists are:
 
 Example usage:
 
-    add files myinput.txt
-    add files "~/Desktop/my input.txt"
+    add files ~/myfile.txt
+    add files "~/my file.txt"
+    add files grid://Groups/nz/nesi/myfile.txt
     
 
 
