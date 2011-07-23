@@ -2,9 +2,11 @@ Command: archive job <jobname>
 
 Downloads the job to the default archive location and then cleans the job.
 
+Supports glob regular expressions.
+
 Parameters:
 
-    jobname    : The name of the job to archive. Supports expansion (*).
+    jobname    : The name of the job to archive. 
 
 The default archive location is in the user's home directory on the Data Fabric:
 
