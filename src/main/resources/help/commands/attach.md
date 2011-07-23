@@ -12,5 +12,5 @@ Example usage:
 
     attach ~/myfile.txt
     attach "~/my file.txt"
-    attach ~/myfile_1.txt /~myfile_2.txt
+    attach ~/myfile_1.txt ~/myfile_2.txt
     attach ~/*.txt
