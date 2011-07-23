@@ -2,7 +2,7 @@ Command: archive job <jobname>
 
 Downloads the job to the default archive location and then cleans the job.
 
-Supports glob regular expressions.
+Supports glob regular expressions. Note that if a job is still running it will be stopped.
 
 Parameters:
 
@@ -19,6 +19,7 @@ You can also access the Data Fabric via your browser at the following address:
 Your files will be located in your home directory.
 
 If the archiving was successful, the job will be deleted from the job database and the original job directory will be deleted.
+
 
 Example usage:
 
