@@ -8,7 +8,7 @@ Parameters:
 
 Currently available lists in gricli are:
 
-    files       : The files assocaited with a job.
+    files       : The files associated with a job.
 
 Example usage:
 
