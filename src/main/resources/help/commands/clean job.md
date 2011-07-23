@@ -1,5 +1,17 @@
-Command:	clean job [jobname]
+Command: clean job <jobname>
 
-Cleans a job from the database and deletes its job directory (also kills it beforehand if it is still running)
+Kills a job if it still running and then removes it from the database and deletes the job directory.
 
-    jobname : the name of the job to clean
+Supports glob regular expressions.
+
+Parameters:
+
+    jobname : The name of the job to clean
+
+Example usage:
+
+    clean myjob
+    clean myjob_1
+    clean myjob_2
+    clean myjob*
+    clean *
