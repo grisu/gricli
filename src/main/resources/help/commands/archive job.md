@@ -4,7 +4,7 @@ Downloads the job to the default archive location and then cleans the job.
 
 Parameters:
 
-    jobname    : The name of the job to archive.
+    jobname    : The name of the job to archive. Supports expansion (*).
 
 The default archive location is in the user's home directory on the Data Fabric:
 
@@ -21,4 +21,6 @@ If the archiving was successful, the job will be deleted from the job database a
 Example usage:
 
     archive job myjob
+    archive job myjob_1
+    archive job myjob*
 
