@@ -12,5 +12,5 @@ Choose a meaningful name and make sure it is unique with respect to other job na
 
 Example usage:
 
-    batch create myjob
+    batch create mybatch
 
