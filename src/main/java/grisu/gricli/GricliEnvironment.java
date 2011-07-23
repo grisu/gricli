@@ -21,8 +21,46 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 public class GricliEnvironment {
+	
+	static final Logger myLogger = Logger.getLogger(GricliEnvironment.class.getName());
+	
+	static class MemoryValidator extends Validator {
+		@Override
+		public String validate(String var, String value) throws GricliSetValueException {
+			int imem = 0;
+			try {
+				imem = Integer.parseInt(value);
+			} catch (NumberFormatException ex){
+				Pattern mp = Pattern.compile("([0-9]+g)?([0-9]+m)?([0-9]+k)?");
+				Matcher m = mp.matcher(value);
+				if (!m.matches()){
+					throw new GricliSetValueException(var,value,"not a valid memory format");
+				}
+				String gb = m.group(1);
+				String mb = m.group(2);
+				String kb = m.group(3);
+				
+				gb = (gb == null)?"0":gb.replace("g", "");
+				mb = (mb == null)?"0":mb.replace("m", "");
+				kb = (kb == null)?"0":kb.replace("k", "");
+				
+				try {
+					imem = (Integer.parseInt(gb) * 1024) + (Integer.parseInt(mb) + (Integer.parseInt(kb) / 1024));
+				} catch (NumberFormatException ex2){
+					throw new GricliSetValueException(var,value,"not valid memory format");
+				}
+			}
+			
+			if (imem < 0 ){
+				throw new GricliSetValueException(var,value, "must be positive");
+			}
+			
+			return "" + imem;
+		}
+	}
 
 	static class DateValidator extends Validator {
 		@Override
@@ -126,6 +164,10 @@ public class GricliEnvironment {
 	static class SetValidator extends Validator {
 
 		private final String[] values;
+		
+		public String[] getValues(){
+			return this.values;
+		}
 
 		public SetValidator(String[] values){
 			this.values = values;
@@ -159,7 +201,7 @@ public class GricliEnvironment {
 	private final HashMap<String,String> environment = new HashMap<String,String>();
 
 	private static HashMap<String,Validator> validators = new HashMap<String,Validator>();
-
+	
 	static {
 		validators.put("email", new Validator());
 		validators.put("email_on_start", new SetValidator(new String[] {"true","false"}));
@@ -169,10 +211,10 @@ public class GricliEnvironment {
 		validators.put("group", new Validator());
 		validators.put("host", new Validator());
 		validators.put("gdir", new Validator());
-		validators.put("memory", new PositiveIntValidator());
+		validators.put("memory", new MemoryValidator());
 		validators.put("cpus", new PositiveIntValidator());
 		validators.put("walltime", new DateValidator());
-		validators.put("jobtype", new SetValidator(new String[] {"single","mpi","threaded"}));
+		validators.put("jobtype", new SetValidator(new String[] {"single","mpi","smp"}));
 		validators.put("description", new Validator());
 		validators.put("version", new Validator());
 		validators.put("debug", new SetValidator(new String[] {"true","false"}));
@@ -275,9 +317,9 @@ public class GricliEnvironment {
 
 		boolean isMpi = "mpi".equals(get("jobtype"));
 		job.setForce_mpi(isMpi);
-		boolean isThreaded = "threaded".equals(get("jobtype"));
-		if (isThreaded){
-			job.setForce_single(isThreaded);
+		boolean isSmp = "smp".equals(get("jobtype"));
+		if (isSmp){
+			job.setForce_single(true);
 			job.setHostCount(1);
 		}
 
@@ -308,6 +350,7 @@ public class GricliEnvironment {
 	}
 
 	public void printError(String message){
+		myLogger.info("gricli-audit-error username=" + System.getProperty("user.name") + "command=" + message );
 		System.err.println(message);
 	}
 

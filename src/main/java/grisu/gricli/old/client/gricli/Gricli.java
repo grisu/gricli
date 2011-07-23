@@ -29,6 +29,9 @@ import org.apache.log4j.Logger;
 
 public class Gricli {
 
+	private static Logger myLogger = Logger.getLogger(Gricli.class.getName());
+
+
 	public static final int DEFAULT_SLEEP_TIME_IN_SECONDS = 600;
 	public static final String JOBNAME_PLACEHOLDER = "XXX_JOBNAME_XXX";
 	public static final String APPLICATION_NAME_PLACEHOLDER = "XXX_APPLICATION_NAME_XXX";
@@ -130,7 +133,7 @@ public class Gricli {
 
 		jobProperties = new CommandlineProperties(serviceInterface,
 				((GrisuClientCommandlineProperties) clientProperties)
-						.getCommandLine());
+				.getCommandLine());
 
 	}
 
@@ -150,7 +153,7 @@ public class Gricli {
 	 *             username/password)
 	 */
 	public Gricli(String[] args) throws ServiceInterfaceException, IOException,
-			LoginException {
+	LoginException {
 
 		clientProperties = new GrisuClientCommandlineProperties(args);
 
@@ -172,7 +175,7 @@ public class Gricli {
 
 		jobProperties = new CommandlineProperties(serviceInterface,
 				((GrisuClientCommandlineProperties) clientProperties)
-						.getCommandLine());
+				.getCommandLine());
 	}
 
 	private int checkStatus() throws ExecutionException {
@@ -197,8 +200,7 @@ public class Gricli {
 						try {
 							stageoutdir = new File(".").getCanonicalPath();
 						} catch (final IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							myLogger.error(e);
 						}
 					}
 					System.out.println("Trying to stageout job directory to "
@@ -210,7 +212,7 @@ public class Gricli {
 							|| forced_all_mode) {
 						if (verbose) {
 							System.out
-									.println("Deleting job & job directory...");
+							.println("Deleting job & job directory...");
 						}
 						killAndCleanJob();
 						if (verbose) {
@@ -227,7 +229,7 @@ public class Gricli {
 
 				if (verbose) {
 					System.out
-							.println("Didn't stageout files since either job failed or didn't finish with exit code 0.");
+					.println("Didn't stageout files since either job failed or didn't finish with exit code 0.");
 				}
 
 			}
@@ -246,7 +248,7 @@ public class Gricli {
 	}
 
 	private void executeSubmission() throws NoSuchJobException,
-			JobStagingException {
+	JobStagingException {
 
 		final InputStream in = Gricli.class
 				.getResourceAsStream("/templates/generic_memory.xml");
@@ -262,8 +264,8 @@ public class Gricli {
 			try {
 				if (verbose) {
 					System.out
-							.println("Trying to kill possibly existing job with jobname \""
-									+ jobProperties.getJobname() + "\"");
+					.println("Trying to kill possibly existing job with jobname \""
+							+ jobProperties.getJobname() + "\"");
 				}
 				serviceInterface.kill(jobProperties.getJobname(), true);
 				if (verbose) {
@@ -274,8 +276,8 @@ public class Gricli {
 				// that's ok
 				if (verbose) {
 					System.out
-							.println("No job killed because no job with jobname "
-									+ jobProperties.getJobname() + " existed.");
+					.println("No job killed because no job with jobname "
+							+ jobProperties.getJobname() + " existed.");
 				}
 			} catch (final Exception e) {
 				throw new RuntimeException(
@@ -374,7 +376,7 @@ public class Gricli {
 		if (verbose) {
 			System.out.println("Job submitted.");
 			System.out
-					.println("Adding job properties for this job on the grisu backend...");
+			.println("Adding job properties for this job on the grisu backend...");
 		}
 
 		// TODO this won't work anymore. better to use the uploadInputFiles
@@ -432,8 +434,7 @@ public class Gricli {
 				try {
 					Thread.sleep(sleepTime * 1000);
 				} catch (final InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					myLogger.error(e);
 				}
 			}
 
@@ -446,8 +447,8 @@ public class Gricli {
 		try {
 			if (verbose) {
 				System.out
-						.println("Trying to kill possibly existing job with jobname \""
-								+ jobProperties.getJobname() + "\"");
+				.println("Trying to kill possibly existing job with jobname \""
+						+ jobProperties.getJobname() + "\"");
 			}
 			serviceInterface.kill(jobProperties.getJobname(), true);
 			if (verbose) {
@@ -608,7 +609,7 @@ public class Gricli {
 
 		if (serviceInterface == null) {
 			System.err
-					.println("Could not find valid serviceInterface. Are you logged in?");
+			.println("Could not find valid serviceInterface. Are you logged in?");
 			System.exit(1);
 		}
 

@@ -82,6 +82,7 @@ public class Gricli {
 			}
 			String[] commandsOnOneLine = line.split(";");
 			for (String c: commandsOnOneLine){
+				myLogger.info("gricli-audit-command username=" + System.getProperty("user.name") + "command=" +c );
 				runCommand(GricliTokenizer.tokenize(c),
 						SINGLETON_COMMANDFACTORY, env);
 			}
@@ -110,9 +111,9 @@ public class Gricli {
 		reader.addCompletor(completor);
 		return reader;
 	}
-	
+
 	private static void login(GricliEnvironment env, String backend){
-		
+
 		try {
 			new InteractiveLoginCommand(backend).execute(env);
 		} catch (GricliException ex){
@@ -145,9 +146,9 @@ public class Gricli {
 			CommandLineParser parser = new PosixParser();
 			Options options = new Options();
 			options
-					.addOption(OptionBuilder.withLongOpt("nologin")
-							.withDescription("disables login at the start")
-							.create('n'));
+			.addOption(OptionBuilder.withLongOpt("nologin")
+					.withDescription("disables login at the start")
+					.create('n'));
 			options.addOption(OptionBuilder.withLongOpt("backend").hasArg()
 					.withArgName("backend").withDescription("change backend")
 					.create('b'));
@@ -166,8 +167,7 @@ public class Gricli {
 					scriptName = cl.getOptionValue('f');
 				}
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				myLogger.error(e);
 			}
 
 			try {
@@ -179,7 +179,7 @@ public class Gricli {
 			System.exit(exitStatus.getStatus());
 		} catch (Throwable th) {
 			System.err.println("Something went terribly wrong.  Please check if you have internet connection, and your firewall settings." +
-					" If you think there is nothing wrong with your connection, send " + DEBUG_FILE_PATH + 
+					" If you think there is nothing wrong with your connection, send " + DEBUG_FILE_PATH +
 					" to eresearch-admin@auckland.ac.nz together with description of what you are trying to do.");
 			myLogger.error("something went terribly wrong ",th);
 		}
@@ -204,6 +204,8 @@ public class Gricli {
 			exitStatus = SUCCESS;
 
 		} catch (InvalidCommandException ex) {
+			exitStatus = SYNTAX;
+			error = ex;
 			System.out.println(ex.getMessage());
 		} catch (UnknownCommandException ex) {
 			exitStatus = SYNTAX;
@@ -230,13 +232,12 @@ public class Gricli {
 		} catch (RuntimeException ex){
 			exitStatus = RUNTIME;
 			error = ex;
-			myLogger.error(ex);
-			ex.printStackTrace();
 			System.err.println("command failed. Either connection to server failed, or this is gricli bug. " +
 					"Please send " + DEBUG_FILE_PATH +
 					" to eresearch-admin@auckland.ac.nz together with description of what triggered the problem");
 		}
 		finally {
+			myLogger.error(error);
 			if ("true".equals(env.get("debug")) && (error != null)){
 				error.printStackTrace();
 			}

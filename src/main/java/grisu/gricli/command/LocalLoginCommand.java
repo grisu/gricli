@@ -12,9 +12,15 @@ import grisu.gricli.completors.CompletionCache;
 import grisu.gricli.completors.CompletionCacheImpl;
 import grisu.model.GrisuRegistryManager;
 
+import java.io.File;
+
+import org.apache.commons.lang.StringUtils;
 
 public class LocalLoginCommand implements
 GricliCommand {
+
+	public final static String GRICLI_LOGIN_SCRIPT_ENV_NAME = "GRICLI_LOGIN_SCRIPT";
+
 	private String siUrl;
 
 	@SyntaxDescription(command={"login"}, arguments={"backend"})
@@ -38,15 +44,16 @@ GricliCommand {
 
 			Gricli.completionCache = cc;
 
-			new ChdirCommand(System.getProperty("user.home")).execute(env);
+			new ChdirCommand(System.getProperty("user.dir")).execute(env);
 
-			// CompletionCache.jobnames =
-			// serviceInterface.getAllJobnames(null).asSortedSet();
-			// CompletionCache.fqans =
-			// serviceInterface.getFqans().asSortedSet();
-			// CompletionCache.queues = serviceInterface
-			// .getAllSubmissionLocations().asSubmissionLocationStrings();
-			// CompletionCache.sites = serviceInterface.getAllSites().asArray();
+			String value = System.getenv(GRICLI_LOGIN_SCRIPT_ENV_NAME);
+			if (StringUtils.isNotBlank(value)) {
+				File script = new File(value);
+				if (script.canExecute()) {
+					new ExecCommand(script.getPath()).execute(env);
+				}
+			}
+
 			return env;
 		} catch (LoginException ex) {
 			throw new GricliRuntimeException(ex);

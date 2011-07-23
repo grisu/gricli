@@ -9,10 +9,13 @@ import grisu.gricli.completors.JobPropertiesCompletor;
 import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.util.ServiceInterfaceUtils;
 import grisu.model.dto.DtoJob;
+import grisu.utils.WalltimeUtils;
 
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 
 public class PrintJobCommand implements
 GricliCommand {
@@ -38,7 +41,7 @@ GricliCommand {
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
+			throws GricliRuntimeException {
 		ServiceInterface si = env.getServiceInterface();
 		for (String j : ServiceInterfaceUtils.filterJobNames(si, jobname)) {
 			try {
@@ -55,8 +58,26 @@ GricliCommand {
 		return env;
 	}
 
+	private String formatAttribute(String aName, String aVal){
+		if ("submissionTime".equals(aName)){
+			Date d = new Date(Long.parseLong(aVal));
+			return DateFormat.getInstance().format(d);
+		} else if ("memory".equals(aName)){
+			double memory = Long.parseLong(aVal);
+			memory = memory / 1024.0 / 1024.0 / 1024.0;
+			return String.format("%.2f GB", memory);
+
+		} else if ("walltime".equals(aName)) {
+			String[] strings = WalltimeUtils
+					.convertSecondsInHumanReadableString(Integer.parseInt(aVal) * 60);
+			return StringUtils.join(strings, " ");
+		} else {
+			return aVal;
+		}
+	}
+
 	private void printJob(GricliEnvironment env, ServiceInterface si, String j)
-	throws NoSuchJobException {
+			throws NoSuchJobException {
 		DtoJob job = si.getJob(j);
 		env.printMessage("Printing details for job " + jobname);
 		env.printMessage("status: "
@@ -75,20 +96,6 @@ GricliCommand {
 					+ JobConstants.translateStatus(si.getJobStatus(j)));
 		} else {
 			env.printMessage(j + " : " + formatAttribute(attribute,job.jobProperty(attribute)));
-		}
-	}
-	
-	private String formatAttribute(String aName, String aVal){
-		if ("submissionTime".equals(aName)){
-			Date d = new Date(Long.parseLong(aVal));
-			return DateFormat.getInstance().format(d);
-		} else if ("memory".equals(aName)){
-			double memory = Long.parseLong(aVal);
-			memory = memory / 1024.0 / 1024.0 / 1024.0;
-			return String.format("%.2f GB", memory);
-			
-		} else {
-			return aVal;
 		}
 	}
 

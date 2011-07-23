@@ -5,8 +5,12 @@ import grisu.control.exceptions.NoSuchJobException;
 import grisu.jcommons.constants.Constants;
 import grisu.model.MountPoint;
 
+import org.apache.log4j.Logger;
 
 public abstract class AbstractJobProperties implements JobProperties {
+
+	private static Logger myLogger = Logger
+			.getLogger(AbstractJobProperties.class.getName());
 
 	protected ServiceInterface serviceInterface = null;
 
@@ -22,8 +26,7 @@ public abstract class AbstractJobProperties implements JobProperties {
 				absoluteJobDir = serviceInterface.getJobProperty(getJobname(),
 						Constants.JOBDIRECTORY_KEY);
 			} catch (final NoSuchJobException e) {
-				// TODO log output?
-				e.printStackTrace();
+				myLogger.error(e);
 				return null;
 			}
 		}
