@@ -1,6 +1,14 @@
-Command:	batch submit [name]
+Command:	batch submit <batchjob>
 
-Submits a batch job (which should be created beforehand with 'batch create [name]' command.
+Submits a batch job for execution.
 
-    name : the name of the batchjob to submit
+The batch job should created beforehand using the 'batch create' command.
+
+Parameters:
+
+    name    : The name of the batch job to submit.
+
+Example usage:
+
+    batch submit mybatch
 
