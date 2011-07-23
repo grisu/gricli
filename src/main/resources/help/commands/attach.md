@@ -14,3 +14,4 @@ Example usage:
     attach "~/my file.txt"
     attach ~/myfile_1.txt ~/myfile_2.txt
     attach ~/*.txt
+    attach grid://Groups/nz/nesi/myfile.txt
