@@ -1,41 +1,79 @@
-Command: help
+Command:	help [keywords]
 
-    Prints this help message.
-
-
-Command: help <keywords>
-
-    Prints a help message for a command, topic or global variable with this exact name. If no such command, topic or global variable exists it lists all commands, topics or global variables that contain the keyword in the name or help message.
+Prints this help message or a help message for a certain command, topic or global variable.
 
 Parameters:
 
     keywords	: A whitespace seperated list of keywords.
 
-Command:
+Usage:
 
     help			
 
-Prints this message.
+        Prints this message.
 
-    help <keyword>
+    help <keyword>		
 
+        Prints a help message for a command, topic or global variable with this exact name or, if no such command, topic
+        or global variable exists it lists all commands, topics or global variables that contain the keyword in the name
+        or help message.
+
+    help commands		
+
+        Lists all available commands.
+
+    help globals	
+
+	Lists all available globals.
+
+    help topics			
+        
+        Lists all available topics.
+    
+    help all			
+    
+        Lists all available commands, globals and topics.
+
+    help command <command>	
+     
+        Prints the help message for the specified command.
+
+    help global <global>	
+
+        Prints the help message for the specified global variable.
+    
+    help topic <topic>		
+
+        Prints the help message for the specified topic.
+
+    help <keywords>		
+
+        Prints the help message for the command that is called by this combination of keywords (if it exists)
+
+    help search <keyword>	
+  
+       Prints a list of all commands, topics or global variables that contain the keyword in the name or help message
+
+Example usage:
+
+    help
+    help all
 
     help commands
+    help command print jobs
+    help print jobs
+    help jobs
 
-Lists all available commands
+    help globals
+    help global memory
+    help memory
 
-    help globals		- Lists all available globals
-    help topics			- Lists all available topics
-    
-    help all			- Lists all available commands, globals and topics
+    help topics
+    help topic data fabric
+    help fabric
 
-    help command <command>	- Prints the help message for the specified command
-    help global <global>	- Prints the help message for the specified global variable
-    help topic <topic>		- Prints the help message for the specified topic
+    help search batch
 
-    help <keywords>		- Prints the help message for the command that is called by this combination of keywords (if it exists)
-
-    help search keyword		- Prints a list of all commands, topics or global variables that contain the keyword in the name or help message
-
+   
 
 
