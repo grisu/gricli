@@ -4,4 +4,4 @@ Lists all global variables.
 
 Example usage:
 
-  print globals
+   print globals
