@@ -1,19 +1,29 @@
-Command:	help [keywords]
+Command: help
 
-Prints this help message or a help message for a certain command, topic or global variable.
+    Prints this help message.
+
+
+Command: help <keywords>
+
+    Prints a help message for a command, topic or global variable with this exact name. If no such command, topic or global variable exists it lists all commands, topics or global variables that contain the keyword in the name or help message.
 
 Parameters:
 
     keywords	: A whitespace seperated list of keywords.
 
-Usage:
+Command:
 
-    help			- Prints this message
+    help			
 
-    help keyword		- Prints a help message for a command, topic or global variable with this exact name.
-                                  If no such command, topic or global variable exists it lists all commands, topics or                                global variables that contain the keyword in the name or help message.
+Prints this message.
 
-    help commands		- Lists all available commands
+    help <keyword>
+
+
+    help commands
+
+Lists all available commands
+
     help globals		- Lists all available globals
     help topics			- Lists all available topics
     
@@ -26,4 +36,6 @@ Usage:
     help <keywords>		- Prints the help message for the command that is called by this combination of keywords (if it exists)
 
     help search keyword		- Prints a list of all commands, topics or global variables that contain the keyword in the name or help message
+
+
 
