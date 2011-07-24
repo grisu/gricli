@@ -1,6 +1,7 @@
 Global: application
 
-This is the application used by the job.
+The is the application used by the job.
+
 To set the application use the 'set' command.
 To see a list of available applications use the 'print applications' command.
 To see the currently set application for a job use the command 'print global application'.
