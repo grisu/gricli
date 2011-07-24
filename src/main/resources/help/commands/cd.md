@@ -4,6 +4,7 @@ Changes the current job directory.
 
 Can be used in conjunction with the 'pwd' and 'ls' commands to explore the file system.
 The command also sets the job global 'dir' which determines where relative paths start from.
+Grid locations (starting with prefix grid://) are currently not supported.
 
 Parameters:
 
