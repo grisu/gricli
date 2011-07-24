@@ -1,4 +1,5 @@
-cpus
-=========================
+Global: cpus
 
-dummy for global cpus
+The number of cpus to be usef by a job.
+
+
