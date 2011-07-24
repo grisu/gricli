@@ -9,4 +9,4 @@ To view setting after submission use the command 'print job <jobname> email_on_f
 Example usage:
 
     set email_on_finish true
-    set email_on finish false
+    set email_on_finish false
