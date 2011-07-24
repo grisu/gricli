@@ -13,3 +13,11 @@ To set the memory for the job, use the 'set' command. The command accepts values
 To view the memory of a job before sumbmission use the command 'print global memory'.
 To view the memory of a job after submission use the command 'print job <jobname> memory.
 
+Example usage:
+
+   set memory 1224
+   set memory 1g200m
+   print global memory
+   print job myjob memory
+   
+
