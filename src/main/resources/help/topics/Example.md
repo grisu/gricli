@@ -1,16 +1,19 @@
-Topic: Example Topic
-=====================
+Topic: Globals
 
-First line of example topic to describe topic. That gets used in help overview.
+Globals define the properties of a job.
 
-Overview
----------
+You may use the 'set' command to set any of the global properties.
+To view a list of properties and their values use the command 'print globals'.
+To view an individual property use the command 'print global <global>'.
 
-This is a dummy page to display some dummy text. Testkeyword print
+To view information and examples on each global use the command 'help <global>'
 
-Another heading
-----------------
+Example usage:
 
-another paragraph
+    print globals
+    print global memory
+    set global memory
+    help memory
+    help global memory
 
  
