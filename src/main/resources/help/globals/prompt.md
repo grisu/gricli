@@ -7,7 +7,7 @@ The command can accept macros, substituting the values of other globals into the
 
 Example usage:
 
-   set prompt "myprompt>"
-   set prompt "${dir}>"
-   set prompt "${jobname}"
+   set prompt "myprompt> "
+   set prompt "${dir}> "
+   set prompt "${jobname}> "
 
