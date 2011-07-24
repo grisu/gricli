@@ -1,6 +1,12 @@
-Command:	download job [jobname]
+Command:	download job <jobname>
 
-Downloads the whole jobdirectory of the job
+Downloads the whole job directory to the location specified in the global 'dir'
 
-    jobname	: the name of the job to download
+Parameters:
+
+    jobname	: The name of the job to download.
+
+Example usage:
+
+    download job myjob
 
