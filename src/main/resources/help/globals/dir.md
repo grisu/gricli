@@ -12,6 +12,8 @@ To set the dir use the 'set' command or the 'cd' command.
 To view the dir before a job has been submitted use the command 'print global dir'.
 To view the dir after a job as been submitted use the command 'print job <jobname> jobDirectory'.
 
+Grid locations (starting with prefix grid://) are currently not supported for this command.
+
 Example usage:
 
     set dir ~
