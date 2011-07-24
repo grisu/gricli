@@ -17,10 +17,15 @@ To see a list of applications use the command 'print applicaitons'.
 If you have set the application, then the queue locaiton can be determined automatically.
 Use the command 'set queue auto' to enable this option.
 
+To see the queue before a job is submitted use the command 'print global queue'.
+To see the queue after a job has been submitted use the command 'print job <jobname> submissionLocation'.
+
 Example usage:
 
     set queue auto
     set queue gpu:gram5.ceres.auckland.ac.nz
+    print global queue
+    print job myjob submissionLocation
 
 
 
