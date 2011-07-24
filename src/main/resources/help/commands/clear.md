@@ -1,6 +1,15 @@
-Command:	clear [list]
+Command: clear <list>
 
-Clears a list
+Clears the selected list.
 
-    list	: the list to clear (e.g. global)
+Parameters:
 
+    list	: The list to clear
+
+Currently available lists in gricli are:
+
+    files       : The files associated with a job.
+
+Example usage:
+
+    clear files

@@ -1,6 +1,12 @@
-Command:	batch add [name] [command]
+Command: batch add <name> <command>
 
-Add job to batch job container
+Add a new command to a batch job container.
 
-    name	: the name of the batchjob
-    command	: the (new) command to add
+Parameters:
+
+    name	: The name of the batchjob.
+    command	: The new command string to add.
+
+Example usage:
+
+    batch add mybatch "sleep 100"
