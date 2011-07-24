@@ -6,7 +6,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.apache.log4j.Logger;
+
 public class AsyncProcessStreamReader {
+
+	private static Logger myLogger = Logger
+			.getLogger(AsyncProcessStreamReader.class.getName());
 
 	private final GricliEnvironment env;
 	private final Process process;
@@ -34,7 +39,7 @@ public class AsyncProcessStreamReader {
 						env.printMessage(line);
 					}
 				} catch (IOException ioe) {
-					ioe.printStackTrace();
+					myLogger.error(ioe);
 				}
 			}
 		};

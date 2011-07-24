@@ -22,6 +22,7 @@ import java.util.TreeSet;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 public class HelpManager {
 
@@ -40,6 +41,9 @@ public class HelpManager {
 		globals,
 		commands;
 	}
+
+	private static Logger myLogger = Logger.getLogger(HelpManager.class
+			.getName());
 
 	public static String[] TOPICS = new String[] { "Example" };
 
@@ -60,7 +64,7 @@ public class HelpManager {
 					is.close();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				myLogger.error(e);
 			}
 		}
 		return StringUtils.join(list, "\n");
