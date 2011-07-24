@@ -1,6 +1,6 @@
 Command:	download job <jobname>
 
-Downloads the whole job directory to the location specified in the global 'dir'
+Downloads the whole job directory to the location specified in the global 'dir'.
 
 Parameters:
 
