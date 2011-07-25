@@ -112,6 +112,27 @@ Stopping a Job
 
 If you need to stop a job for any reason, use the 'kill job' command. Note that once a job has been stopped it cannot be resumed.
 
+Example
+--------
+
+Here is an example of how you can use Gricli commands to setup, submit and download a job for a user in the group /nz/nesi:
+
+    > set group /nz/nesi
+    > print queues /nz/nesi
+    > set queue demo:gram5.ceres.auckland.ac.nz
+    > set application UnixCommands
+    > set jobtype single
+    > set cpus 1
+    > set memory 100
+    > set walltime 10
+    > set jobname echoJob
+    > set description "Job to test echo command"
+    > submit "echo \"Hello World\""
+    > print job echoJob status
+    > download job echoJob
+    > clean job echoJob 
+
+
 Further Information
 --------------------
 
