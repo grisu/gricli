@@ -12,7 +12,12 @@ import jline.MultiCompletor;
 import jline.NullCompletor;
 import jline.SimpleCompletor;
 
+import org.apache.log4j.Logger;
+
 public class GricliCommandFactory {
+
+	private static Logger myLogger = Logger
+			.getLogger(GricliCommandFactory.class.getName());
 
 	public static GricliCommandFactory getCustomFactory(Class<? extends GricliCommand>... commands ) throws CompileException{
 		GricliCommandFactory f = new GricliCommandFactory();
@@ -76,7 +81,7 @@ public class GricliCommandFactory {
 			f.init();
 		} catch (CompileException e) {
 			// shouldn't happen
-			e.printStackTrace();
+			myLogger.error(e);
 		}
 
 		return f;
@@ -141,11 +146,9 @@ public class GricliCommandFactory {
 				try {
 					simpleCompletors.add(argumentCompletor.newInstance());
 				} catch (InstantiationException e) {
-					// cannot happen
-					e.printStackTrace();
+					myLogger.error(e);
 				} catch (IllegalAccessException e) {
-					// cannot happen
-					e.printStackTrace();
+					myLogger.error(e);
 				}
 			}
 		}

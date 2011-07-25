@@ -42,12 +42,13 @@ public class RunCommand implements GricliCommand {
 				cl.add(Gricli.SINGLETON_COMMANDFACTORY.create(tokens));
 			}
 		} catch (FileNotFoundException e) {
-			throw new GricliRuntimeException("file " + script + " not found ");
+			throw new GricliRuntimeException("file " + script + " not found ", e);
 		} catch (IOException e){
-			e.printStackTrace();
-			throw new GricliRuntimeException("IO error while reading " + script);
+			throw new GricliRuntimeException(
+					"IO error while reading " + script, e);
 		} catch (SyntaxException e){
-			throw new GricliRuntimeException("error during parsing of " + script + ": " + e.getMessage() );
+			throw new GricliRuntimeException("error during parsing of "
+					+ script + ": " + e.getMessage(), e);
 		}
 		return new CompositeCommand(cl.toArray(new GricliCommand[] {})).execute(env);
 	}

@@ -1,5 +1,17 @@
-Command:	run [script]
+Command: run <script>
 
-Runs a gricli script.
+Runs a Gricli script.
 
-    script	: the script to run
+Parameters:
+
+    script	: The script to run.
+
+A Gricli script can be of any file extension.
+
+Example usage:
+
+    run myscript
+    run myscript.txt
+    run myscript.xyz
+
+

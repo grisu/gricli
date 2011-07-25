@@ -79,7 +79,7 @@ public class ExecCommand implements GricliCommand {
 		try {
 			process = builder.start();
 		} catch (IOException e) {
-			e.printStackTrace();
+			myLogger.error(e);
 			env.printError(e.getLocalizedMessage());
 
 			return env;
