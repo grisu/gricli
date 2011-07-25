@@ -1,9 +1,19 @@
-Command:	submit [commandline] [&]
+Command: submit <command> [&]
 
-Submits a new job using the currently set environment and the specified commandline.
+Submits a new job.
 
-    commandline		: the commandline
+The job parameters are set using the global variables and the command returns the name of the job on success.
+
+Parameters:
+
+    command    : The command to be executed.
+    &          : Specifies asynchronous execution.  
+
+
+If & is specificed the command will run in the background and not print the job name.        
     	
-Example:
+Example usage:
 
-    submit job echo "hello world"
+    submit echo "hello world"
+    submit "echo \"hello world\""
+    submit "sleep 100" &

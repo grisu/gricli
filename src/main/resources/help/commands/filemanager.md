@@ -1,4 +1,4 @@
-Command:	filemanager 
+Command: filemanager 
 
-experimental command
+Not yet implemented.
 
