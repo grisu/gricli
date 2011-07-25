@@ -7,7 +7,7 @@ To find out more use the help command on the command,  global or topic of intere
 
 Parameters:
 
-  keyword       : The keyword to search for.
+   keyword       : The keyword to search for.
 
 Example usage
 
