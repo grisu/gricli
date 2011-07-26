@@ -57,7 +57,6 @@ GricliCommand {
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
-		env.clear("files");
 		for (String glob: globs){
 			if ((glob != null) && (glob.startsWith("grid://") || glob.startsWith("gsiftp://"))){
 				addFile(glob,env);

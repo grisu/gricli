@@ -66,6 +66,28 @@ public class HelpCommand implements GricliCommand {
 				if (StringUtils.isBlank(help)) {
 					help = "Command \"" + cmd + "\" not available.";
 				}
+			} else if ("topic".equals(keywords[0])
+					|| "topics".equals(keywords[0])) {
+				help = "";
+				for (int i = 1; i < keywords.length; i++) {
+					help = help + HelpManager.singleton.getTopic(keywords[i])
+							+ "\n\n";
+				}
+				help = help.trim();
+				if (StringUtils.isBlank(help)) {
+					help = "No topic found for keyword(s).";
+				}
+			} else if ("global".equals(keywords[0])
+					|| "globals".equals(keywords[0])) {
+				help = "";
+				for (int i = 1; i < keywords.length; i++) {
+					help = help + HelpManager.singleton.getGlobal(keywords[i])
+							+ "\n\n";
+				}
+				help = help.trim();
+				if (StringUtils.isBlank(help)) {
+					help = "No global found for keyword(s).";
+				}
 			} else {
 				String tmp = StringUtils.join(keywords, " ");
 				help = HelpManager.singleton.getCommand(tmp);
