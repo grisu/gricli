@@ -1,9 +1,11 @@
 package grisu.gricli.command;
 
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.VarCompletor;
+import grisu.gricli.environment.GricliEnvironment;
+import grisu.gricli.environment.GricliVar;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,35 +33,26 @@ GricliCommand {
 	throws GricliRuntimeException {
 		if (this.global == null){
 			printAllGlobals(env);
-		} else if ("files".equals(this.global)){
-			List<String> files = env.getList("files");
-			env.printMessage("files = [" + StringUtils.join(files,",") + "]");
 		} else {
-			printGlobal(this.global,env);
+			printGlobal(env.getVariable(global),env);
 		}
 		return env;
 	}
 	
 	private void printAllGlobals(GricliEnvironment env)
 		throws  GricliRuntimeException {
-		List<String> globals = new ArrayList<String>(env.getGlobalNames());
-		Collections.sort(globals);
-		for (String global : globals) {
-			printGlobal(global,env);
+		
+		for (GricliVar<?> var: env.getVariables()){
+			printGlobal(var,env);
 		}
-
-		List<String> files = env.getList("files");
-		env.printMessage("files = [" + StringUtils.join(files,",") + "]");
+		
 	}
 	
-	private void printGlobal(String global, GricliEnvironment env) 
-		throws GricliRuntimeException {
-		if (!env.getGlobalNames().contains(global)){
-			throw new GricliRuntimeException("global " + global + " does not exist");
+	private void printGlobal(GricliVar<?> var, GricliEnvironment env){
+		String name = var.getName();
+		if (var.get() != null){
+			env.printMessage(name + " = " + var);
 		}
-		String value = env.get(global);
-		value = (value == null) ? "" : value;
-		env.printMessage(global + " = " + value);
 	}
 
 }

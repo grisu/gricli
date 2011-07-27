@@ -3,9 +3,9 @@ package grisu.gricli.command;
 import grisu.control.exceptions.BatchJobException;
 import grisu.control.exceptions.NoSuchJobException;
 import grisu.frontend.model.job.BatchJobObject;
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.GridFilesystemCompletor;
+import grisu.gricli.environment.GricliEnvironment;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -37,7 +37,7 @@ GricliCommand {
 
 	private void addFile(String file,GricliEnvironment env) throws GricliRuntimeException{
 		if (this.batchname == null){
-			env.add("files",file);
+			env.files.get().add(file);
 		} else {
 
 			BatchJobObject obj;
@@ -57,7 +57,7 @@ GricliCommand {
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
-		env.clear("files");
+		env.files.get().clear();
 		for (String glob: globs){
 			if ((glob != null) && (glob.startsWith("grid://") || glob.startsWith("gsiftp://"))){
 				addFile(glob,env);

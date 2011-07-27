@@ -3,9 +3,9 @@ package grisu.gricli.command;
 import grisu.control.ServiceInterface;
 import grisu.control.exceptions.NoSuchJobException;
 import grisu.control.exceptions.RemoteFileSystemException;
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobnameCompletor;
+import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.util.ServiceInterfaceUtils;
 import grisu.model.dto.DtoJob;
 import grisu.model.dto.GridFile;
@@ -93,7 +93,7 @@ GricliCommand {
 		boolean hasError = false;
 
 		ServiceInterface si = env.getServiceInterface();
-		String normalDirName = StringUtils.replace(env.get("dir"), "~",
+		String normalDirName = StringUtils.replace(env.dir.get().toString(), "~",
 				System.getProperty("user.home"));
 		for (String jobname : ServiceInterfaceUtils.filterJobNames(si,
 				jobFilter)) {

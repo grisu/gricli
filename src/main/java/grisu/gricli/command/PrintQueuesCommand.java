@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import grisu.control.ServiceInterface;
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.FqanCompletor;
+import grisu.gricli.environment.GricliEnvironment;
 import grisu.model.dto.DtoSubmissionLocations;
 
 

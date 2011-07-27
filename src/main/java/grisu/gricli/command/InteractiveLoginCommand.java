@@ -5,11 +5,11 @@ import grisu.control.ServiceInterface;
 import grisu.frontend.control.login.LoginException;
 import grisu.frontend.control.login.LoginManager;
 import grisu.gricli.Gricli;
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.BackendCompletor;
 import grisu.gricli.completors.CompletionCache;
 import grisu.gricli.completors.CompletionCacheImpl;
+import grisu.gricli.environment.GricliEnvironment;
 import grisu.model.GrisuRegistryManager;
 
 import java.io.File;

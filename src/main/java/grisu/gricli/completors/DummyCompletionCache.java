@@ -1,6 +1,6 @@
 package grisu.gricli.completors;
 
-import grisu.gricli.GricliEnvironment;
+import grisu.gricli.environment.GricliEnvironment;
 
 import java.util.Set;
 import java.util.SortedSet;

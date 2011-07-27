@@ -2,8 +2,8 @@ package grisu.gricli.command;
 
 import grisu.control.ServiceInterface;
 import grisu.control.exceptions.RemoteFileSystemException;
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
+import grisu.gricli.environment.GricliEnvironment;
 
 import javax.activation.DataHandler;
 
@@ -18,7 +18,7 @@ public class GetCommand implements GricliCommand {
 	@SyntaxDescription(command={"get"})
 	public GricliEnvironment execute(GricliEnvironment env)
 	throws GricliRuntimeException {
-		String url = "gsiftp://" + env.get("host") + env.get("gdir") + "/"
+		String url = "gsiftp://" + env.host.get() + env.gdir.get() + "/"
 		+ file;
 		ServiceInterface si = env.getServiceInterface();
 		try {

@@ -1,7 +1,7 @@
 package grisu.gricli.command;
 
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
+import grisu.gricli.environment.GricliEnvironment;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,7 +28,7 @@ GricliCommand {
 
 			String found = singleInputFileM.group();
 			String filename = found.substring(4, found.length() - 1);
-			env.add("files", filename);
+			env.files.get().add(filename);
 			tempTemplate = tempTemplate.replace(found,
 					FilenameUtils.getName(filename));
 		}

@@ -9,6 +9,7 @@ import grisu.gricli.command.ChdirCommand;
 import grisu.gricli.command.GricliCommandFactory;
 import grisu.gricli.command.RunCommand;
 import grisu.gricli.command.SetCommand;
+import grisu.gricli.environment.GricliEnvironment;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -35,6 +37,7 @@ public class TestCommands {
 	}
 
 	@Test(expected=GricliRuntimeException.class)
+	@Ignore
 	public void testAddError() throws Exception{
 		AddCommand c = new AddCommand("x","y");
 		c.execute(env);
@@ -46,7 +49,7 @@ public class TestCommands {
 		File f = folder.newFile(filename);
 		AttachCommand attach = new AttachCommand(new String[] {f.getAbsolutePath()});
 		attach.execute(env);
-		assertEquals(env.getList("files").get(0),f.getAbsolutePath());
+		assertEquals(env.files.get().get(0),f.getAbsolutePath());
 	}
 
 	@Test(expected=GricliRuntimeException.class)
@@ -70,7 +73,7 @@ public class TestCommands {
 
 		attach2.execute(attach1.execute(env));
 
-		assertEquals(env.getList("files").size(),0);
+		assertEquals(env.files.get().size(),0);
 	}
 
 
@@ -85,8 +88,8 @@ public class TestCommands {
 		AttachCommand attach = new AttachCommand(new String[] {f1.getAbsolutePath(), f2.getAbsolutePath()});
 		attach.execute(env);
 
-		assertEquals(env.getList("files").get(0),f1.getAbsolutePath());
-		assertEquals(env.getList("files").get(1),f2.getAbsolutePath());
+		assertEquals(env.files.get().get(0),f1.getAbsolutePath());
+		assertEquals(env.files.get().get(1),f2.getAbsolutePath());
 	}
 
 	@Test
@@ -103,7 +106,7 @@ public class TestCommands {
 				assertTrue(testfile.exists());
 			}
 			attach.execute(env);
-			assertEquals(env.getList("files").get(0), path);
+			assertEquals(env.files.get().get(0), path);
 
 		} catch (IOException e) {
 
@@ -134,7 +137,7 @@ public class TestCommands {
 			assertTrue(f.exists());
 			AttachCommand attach = new AttachCommand(new String[] {shortname});
 			attach.execute(env);
-			assertEquals(env.getList("files").get(0), f.getAbsolutePath());
+			assertEquals(env.files.get().get(0), f.getAbsolutePath());
 		} catch (GricliException e) {
 			System.err.println(e.getMessage());
 			fail();
@@ -188,7 +191,7 @@ public class TestCommands {
 		RunCommand c = new RunCommand(scriptName);
 		c.execute(env);
 
-		assertEquals(env.get("jobname"),"hello");
+		assertEquals(env.jobname.get(),"hello");
 	}
 
 	@Test
@@ -200,7 +203,7 @@ public class TestCommands {
 		RunCommand c = new RunCommand(scriptName);
 		c.execute(env);
 
-		assertEquals(env.get("jobname"),"hello");
+		assertEquals(env.jobname.get(),"hello");
 	}
 
 	@Test
@@ -234,7 +237,12 @@ public class TestCommands {
 	public void testSetDirAsHome() throws Exception {
 		SetCommand set = new SetCommand("dir", "~");
 		set.execute(env);
-		assertEquals(env.get("dir"),"~");
+		assertEquals(env.dir.toString(),"~");
+	}
+	
+	@Test(expected=GricliSetValueException.class)
+	public void testSetJobNameWithSpaces() throws Exception {
+		env.jobname.set("job name with spaces");
 	}
 
 }

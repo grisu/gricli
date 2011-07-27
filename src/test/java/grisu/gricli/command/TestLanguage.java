@@ -2,8 +2,8 @@ package grisu.gricli.command;
 
 import org.junit.Test;
 
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
+import grisu.gricli.environment.GricliEnvironment;
 
 public class TestLanguage {
 	

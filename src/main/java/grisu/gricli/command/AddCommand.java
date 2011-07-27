@@ -1,7 +1,7 @@
 package grisu.gricli.command;
 
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
+import grisu.gricli.environment.GricliEnvironment;
 
 /**
  * add value to  list
@@ -19,7 +19,7 @@ public class AddCommand implements GricliCommand {
 
 	public GricliEnvironment execute(GricliEnvironment env)
 	throws GricliRuntimeException {
-		env.add(list, value);
+		env.files.get().add(value);
 		return env;
 	}
 

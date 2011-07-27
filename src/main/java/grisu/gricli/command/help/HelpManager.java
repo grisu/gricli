@@ -1,9 +1,9 @@
 package grisu.gricli.command.help;
 
 import grisu.gricli.Gricli;
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.SyntaxDescription;
+import grisu.gricli.environment.GricliEnvironment;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -163,7 +163,8 @@ public class HelpManager {
 				missingCommands.add(cmd);
 			}
 		}
-		for (String global : GricliEnvironment.getVariables()) {
+				
+		for (String global : GricliEnvironment.getVariableNames()) {
 			String temp;
 			try {
 				temp = getHelpText(Type.globals, global).trim();

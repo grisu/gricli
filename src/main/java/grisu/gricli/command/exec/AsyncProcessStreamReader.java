@@ -1,6 +1,6 @@
 package grisu.gricli.command.exec;
 
-import grisu.gricli.GricliEnvironment;
+import grisu.gricli.environment.GricliEnvironment;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -10,6 +10,7 @@ import grisu.gricli.command.GricliCommandFactory;
 import grisu.gricli.command.InteractiveLoginCommand;
 import grisu.gricli.completors.CompletionCache;
 import grisu.gricli.completors.DummyCompletionCache;
+import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.parser.GricliTokenizer;
 import grisu.settings.Environment;
 
@@ -90,12 +91,12 @@ public class Gricli {
 	}
 
 	private static  String getPrompt(){
-		String prompt = env.get("prompt");
+		String prompt = env.prompt.get(); /* will have to restore this function later
 		for (String var : env.getGlobalNames()) {
 			prompt = StringUtils.replace(prompt, "${" + var + "}",
 					env.get(var));
 
-		}
+		} */
 		return prompt;
 	}
 
@@ -238,7 +239,7 @@ public class Gricli {
 		}
 		finally {
 			myLogger.error(error);
-			if ("true".equals(env.get("debug")) && (error != null)){
+			if (env.debug.get() && (error != null)){
 				error.printStackTrace();
 			}
 		}

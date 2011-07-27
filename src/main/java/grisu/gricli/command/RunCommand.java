@@ -1,9 +1,9 @@
 package grisu.gricli.command;
 
 import grisu.gricli.Gricli;
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.SyntaxException;
+import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.parser.GricliTokenizer;
 
 import java.io.FileInputStream;

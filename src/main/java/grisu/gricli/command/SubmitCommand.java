@@ -4,9 +4,9 @@ import grisu.control.exceptions.JobPropertiesException;
 import grisu.control.exceptions.JobSubmissionException;
 import grisu.frontend.model.job.JobObject;
 import grisu.gricli.Gricli;
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.ExecutablesCompletor;
+import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 
 
@@ -36,7 +36,7 @@ GricliCommand {
 		job.setCommandline(cmd);
 
 		try {
-			job.createJob(env.get("group"), Constants.UNIQUE_NUMBER_METHOD);
+			job.createJob(env.group.get(), Constants.UNIQUE_NUMBER_METHOD);
 			return job;
 		} catch (JobPropertiesException ex) {
 			throw new GricliRuntimeException("job property is not valid"

@@ -1,7 +1,7 @@
 package grisu.gricli.command;
 
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
+import grisu.gricli.environment.GricliEnvironment;
 
 public class ClearListCommand implements
 GricliCommand {
@@ -14,7 +14,7 @@ GricliCommand {
 
 	public GricliEnvironment execute(GricliEnvironment env)
 	throws GricliRuntimeException {
-		env.clear(list);
+		env.files.get().clear();
 		return env;
 	}
 

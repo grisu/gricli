@@ -2,9 +2,9 @@ package grisu.gricli.command;
 
 import grisu.control.ServiceInterface;
 import grisu.control.exceptions.RemoteFileSystemException;
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.FileCompletor;
+import grisu.gricli.environment.GricliEnvironment;
 import grisu.model.FileManager;
 import grisu.model.GrisuRegistryManager;
 import grisu.model.dto.GridFile;
@@ -36,7 +36,7 @@ public class LsCommand implements GricliCommand {
 
 		String urlToList = url;
 		if (StringUtils.isBlank(urlToList)) {
-			urlToList = env.get("dir");
+			urlToList = env.dir.toString();
 		}
 
 
