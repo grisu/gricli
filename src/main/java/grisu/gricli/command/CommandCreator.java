@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 public class CommandCreator{
@@ -112,7 +113,7 @@ public class CommandCreator{
 			return this;
 		}
 
-		throw new UnknownCommandException("unknown command");
+		throw new UnknownCommandException("unknown command: ");
 	}
 
 
