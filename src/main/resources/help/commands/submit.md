@@ -10,7 +10,7 @@ Parameters:
     &          : Specifies asynchronous execution.  
 
 
-If & is specificed the command will run in the background and not print the job name.        
+If & is specificed the command will run in the background.     
     	
 Example usage:
 

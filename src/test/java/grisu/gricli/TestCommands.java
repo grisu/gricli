@@ -72,8 +72,9 @@ public class TestCommands {
 		AttachCommand attach2 = new AttachCommand(new String[] {});
 
 		attach2.execute(attach1.execute(env));
+		
+		assertEquals(env.files.get().size(), 1);
 
-		assertEquals(env.files.get().size(),0);
 	}
 
 

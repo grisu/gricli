@@ -39,7 +39,7 @@ GricliCommand {
 			job.createJob(env.group.get(), Constants.UNIQUE_NUMBER_METHOD);
 			return job;
 		} catch (JobPropertiesException ex) {
-			throw new GricliRuntimeException("job property is not valid"
+			throw new GricliRuntimeException("job property not valid: "
 					+ ex.getMessage(), ex);
 		}
 
