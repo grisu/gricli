@@ -446,7 +446,7 @@ public class HelpManager {
 		StringBuffer result = new StringBuffer();
 		Formatter formatter = new Formatter(result, Locale.US);
 
-		for (String c : getCommands()) {
+		for (String c : getGlobals()) {
 			String helpLine = getFirstLine(Type.globals, c);
 			formatter.format("%4s%" + -(max + 4) + "s%" + "s%n", "    ", c,
 					helpLine);
