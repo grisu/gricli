@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.3.5
-------
+0.4
+----
 
 * improved internal help system
 * overall improvement of ease of use
