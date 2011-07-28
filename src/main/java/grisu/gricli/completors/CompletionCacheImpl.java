@@ -1,8 +1,8 @@
 package grisu.gricli.completors;
 
 import grisu.frontend.control.jobMonitoring.RunningJobManager;
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.LoginRequiredException;
+import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 import grisu.model.GrisuRegistry;
 

@@ -1,7 +1,7 @@
 package grisu.gricli.completors;
 
 import grisu.gricli.Gricli;
-import grisu.gricli.GricliEnvironment;
+import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 import grisu.model.info.ApplicationInformation;
 
@@ -20,9 +20,9 @@ public class QueueCompletor implements Completor {
 	public int complete(String s, int i, List l) {
 
 		GricliEnvironment env = Gricli.completionCache.getEnvironment();
-		String app = env.get(Constants.APPLICATIONNAME_KEY);
+		String app = env.application.get();
 		// String queue = env.get("queue");
-		String fqan = env.get("group");
+		String fqan = env.group.get();
 
 		if (StringUtils.isBlank(fqan)) {
 			return new SimpleCompletor(Gricli.completionCache.getAllQueues()

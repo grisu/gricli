@@ -2,8 +2,8 @@ package grisu.gricli.command;
 
 import grisu.control.ServiceInterface;
 import grisu.control.exceptions.RemoteFileSystemException;
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
+import grisu.gricli.environment.GricliEnvironment;
 import grisu.model.dto.GridFile;
 
 /**
