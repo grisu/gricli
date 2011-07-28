@@ -69,8 +69,8 @@ Example usage:
     help memory
 
     help topics
-    help topic data fabric
-    help fabric
+    help topic Jobs
+    help Jobs
 
     help search batch
 
