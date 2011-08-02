@@ -27,13 +27,13 @@ public class WalltimeVar extends ScalarVar<Integer> {
 			if (!m.matches()){
 				throw new GricliSetValueException(getName(),arg,"not a valid date format");
 			}
-			String days = m.group(1).toLowerCase();
-			String hours = m.group(2).toLowerCase();
-			String minutes = m.group(3).toLowerCase();
+			String days = m.group(1);
+			String hours = m.group(2);
+			String minutes = m.group(3);
 
-			days = (days == null)?"0":days.replace("d","");
-			hours = (hours == null)?"0":hours.replace("h","");
-			minutes = (minutes == null)?"0":minutes.replace("m","");
+			days = (days == null)?"0":days.toLowerCase().replace("d","");
+			hours = (hours == null)?"0":hours.toLowerCase().replace("h","");
+			minutes = (minutes == null)?"0":minutes.toLowerCase().replace("m","");
 
 			try {
 				ivalue = (Integer.parseInt(days) * 1440) +
