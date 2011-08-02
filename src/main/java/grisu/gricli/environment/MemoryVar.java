@@ -17,14 +17,14 @@ public class MemoryVar extends ScalarVar<Integer> {
 		try {
 			imem = Integer.parseInt(arg);
 		} catch (NumberFormatException ex){
-			Pattern mp = Pattern.compile("([0-9]+g)?([0-9]+m)?([0-9]+k)?");
+			Pattern mp = Pattern.compile("([0-9]+[gG])?([0-9]+[mM])?([0-9]+[kK])?");
 			Matcher m = mp.matcher(arg);
 			if (!m.matches()){
 				throw new GricliSetValueException(getName(),arg,"not a valid memory format");
 			}
-			String gb = m.group(1);
-			String mb = m.group(2);
-			String kb = m.group(3);
+			String gb = m.group(1).toLowerCase();
+			String mb = m.group(2).toLowerCase();
+			String kb = m.group(3).toLowerCase();
 			
 			gb = (gb == null)?"0":gb.replace("g", "");
 			mb = (mb == null)?"0":mb.replace("m", "");
