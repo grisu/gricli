@@ -22,14 +22,14 @@ public class WalltimeVar extends ScalarVar<Integer> {
 		try {
 			ivalue = Integer.parseInt(arg);
 		} catch (NumberFormatException ex){
-			Pattern date = Pattern.compile("([0-9]+d)?([0-9]+h)?([0-9]+m)?");
+			Pattern date = Pattern.compile("([0-9]+[dD])?([0-9]+[hH])?([0-9]+[mM])?");
 			Matcher m = date.matcher(arg);
 			if (!m.matches()){
 				throw new GricliSetValueException(getName(),arg,"not a valid date format");
 			}
-			String days = m.group(1);
-			String hours = m.group(2);
-			String minutes = m.group(3);
+			String days = m.group(1).toLowerCase();
+			String hours = m.group(2).toLowerCase();
+			String minutes = m.group(3).toLowerCase();
 
 			days = (days == null)?"0":days.replace("d","");
 			hours = (hours == null)?"0":hours.replace("h","");
