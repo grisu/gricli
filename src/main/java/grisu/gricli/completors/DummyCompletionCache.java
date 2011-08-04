@@ -49,4 +49,7 @@ public class DummyCompletionCache implements CompletionCache {
 	public void refreshJobnames() {
 	}
 
+	public void removeFileListingFromCache(String url) {
+	}
+
 }

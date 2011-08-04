@@ -22,8 +22,10 @@ public interface CompletionCache {
 
 	public abstract SortedSet<String> getJobnames();
 
-	public abstract GridFile ls(String url);
+	public abstract GridFile ls(String url) throws StillLoadingException;
 
 	public abstract void refreshJobnames();
+
+	public abstract void removeFileListingFromCache(String url);
 
 }

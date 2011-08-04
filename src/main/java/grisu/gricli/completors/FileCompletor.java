@@ -4,13 +4,15 @@ import grisu.control.ServiceInterface;
 import grisu.gricli.Gricli;
 import grisu.model.FileManager;
 import grisu.model.dto.GridFile;
+import grisu.settings.ClientPropertiesManager;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import jline.Completor;
+
+import org.python.google.common.collect.Sets;
 
 import com.google.common.base.Strings;
 
@@ -26,7 +28,26 @@ public class FileCompletor implements Completor {
 
 		String url = FileManager.ensureTrailingSlash(urlTemp);
 
-		GridFile f = Gricli.completionCache.ls(url);
+		GridFile f;
+		try {
+			f = Gricli.completionCache.ls(url);
+		} catch (StillLoadingException e) {
+
+			try {
+				Thread.sleep(ClientPropertiesManager
+						.getGricliCompletionSleepTimeInMS());
+			} catch (InterruptedException e1) {
+			}
+			// try again
+			try {
+				f = Gricli.completionCache.ls(url);
+			} catch (StillLoadingException e1) {
+				l.add("*** loading...");
+				l.add("...try again ***");
+				return url.length();
+			}
+
+		}
 
 		return matchRemoteFiles(s, s, f.getChildren(), l);
 	}
@@ -67,15 +88,8 @@ public class FileCompletor implements Completor {
 
 		final File [] entries = dir == null ? new File [0] : dir.listFiles ();
 
-		try
-		{
-			return matchFiles (buffer, translated, entries, candidates);
-		}
-		finally
-		{
-			// we want to output a sorted list of files
-			sortFileNames (candidates);
-		}
+		return matchFiles(buffer, translated, entries, candidates);
+
 	}
 
 	/**
@@ -102,7 +116,11 @@ public class FileCompletor implements Completor {
 		if ((ServiceInterface.VIRTUAL_GRID_PROTOCOL_NAME + "://")
 				.startsWith(buffer)) {
 			matches = 1;
-			candidates.add(ServiceInterface.VIRTUAL_GRID_PROTOCOL_NAME + "://");
+			//			String temp = new ANSIBuffer().blue(
+			// ServiceInterface.VIRTUAL_GRID_PROTOCOL_NAME + "://") .toString();
+			String temp = ServiceInterface.VIRTUAL_GRID_PROTOCOL_NAME+"://";
+
+			candidates.add(temp);
 		}
 
 		// first pass: just count the matches
@@ -117,6 +135,8 @@ public class FileCompletor implements Completor {
 		// blue - directory
 		// red - compressed
 		// cyan - symlink
+
+		Set<String> tempSet = Sets.newTreeSet();
 		for (File entrie : entries) {
 			if (entrie.getAbsolutePath ().startsWith (translated))
 			{
@@ -131,9 +151,11 @@ public class FileCompletor implements Completor {
 	                        }
 				 */
 
-				candidates.add (name);
+				tempSet.add(name);
 			}
 		}
+
+		candidates.addAll(tempSet);
 
 		final int index = buffer.lastIndexOf (File.separator);
 		return index + File.separator.length ();
@@ -210,11 +232,6 @@ public class FileCompletor implements Completor {
 		final int index = buffer.lastIndexOf("/");
 
 		return index + 1;
-	}
-
-	protected void sortFileNames (final List fileNames)
-	{
-		Collections.sort (fileNames);
 	}
 
 }

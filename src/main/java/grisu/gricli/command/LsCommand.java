@@ -42,17 +42,25 @@ public class LsCommand implements GricliCommand {
 
 		try {
 			GridFile list = fm.ls(urlToList);
-			for (GridFile c : list.getChildren()) {
-				String result = null;
-				if (c.isFolder()) {
-					result = c.getName() + "/";
-				} else {
-					result = c.getName();
+
+			if (list.isFolder()) {
+
+				for (GridFile c : list.getChildren()) {
+					String result = null;
+					if (c.isFolder()) {
+						result = c.getName() + "/";
+					} else {
+						result = c.getName();
+					}
+					if (c.isVirtual()) {
+						result = new ANSIBuffer().red(result).toString();
+					}
+					env.printMessage(result);
 				}
-				if (c.isVirtual()) {
-					result = new ANSIBuffer().red(result).toString();
-				}
-				env.printMessage(result);
+			} else {
+				String msg = list.getName() + "\t\t" + list.getLastModified()
+						+ list.getSize();
+				env.printMessage(msg);
 			}
 		} catch (RemoteFileSystemException e) {
 			throw new GricliRuntimeException(e);

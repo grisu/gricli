@@ -10,6 +10,7 @@ import grisu.model.dto.GridFile;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -28,6 +29,9 @@ public class CompletionCacheImpl implements CompletionCache {
 	// public static SortedSet<String> fqans = new TreeSet<String>();
 	// public static String[] queues = new String[] {};
 	// public static String[] sites = new String[] {};
+
+	public final Set<String> currentlyListedUrls = Collections
+			.synchronizedSet(new HashSet<String>());
 
 	private final GricliEnvironment env;
 	private final GrisuRegistry reg;
@@ -126,20 +130,39 @@ public class CompletionCacheImpl implements CompletionCache {
 		return this.reg.getUserEnvironmentManager().getReallyAllJobnames(false);
 	}
 
-	public GridFile ls(String url) {
+	public GridFile ls(final String url) throws StillLoadingException {
 
 		if (fsCache.get(url) == null) {
-			try {
-				GridFile f = this.reg.getFileManager().ls(url);
-				Element e = new Element(url, f);
-				fsCache.put(e);
-			} catch (RemoteFileSystemException e) {
-				myLogger.error(e);
-				GridFile f = new GridFile(url, false, e);
-				Element el = new Element(url, f);
-				fsCache.put(el);
-			}
 
+			synchronized (url) {
+				// if url is not in short time cache or
+				// url is not loaded currently, load it now in background
+				// and give back loading string...
+				if (!currentlyListedUrls.contains(url)) {
+
+					currentlyListedUrls.add(url);
+					new Thread() {
+						@Override
+						public void run() {
+
+							try {
+								GridFile f = reg.getFileManager().ls(url);
+								Element e = new Element(url, f);
+								fsCache.put(e);
+							} catch (RemoteFileSystemException e) {
+								myLogger.error(e);
+								GridFile f = new GridFile(url, false, e);
+								Element el = new Element(url, f);
+								fsCache.put(el);
+							} finally {
+								currentlyListedUrls.remove(url);
+							}
+						}
+					}.start();
+				}
+
+				throw new StillLoadingException(url);
+			}
 		}
 
 		return (GridFile) (fsCache.get(url).getObjectValue());
@@ -157,6 +180,10 @@ public class CompletionCacheImpl implements CompletionCache {
 				reg.getUserEnvironmentManager().getReallyAllJobnames(true);
 			}
 		}.start();
+	}
+
+	public void removeFileListingFromCache(String url) {
+		fsCache.remove(url);
 	}
 
 }
