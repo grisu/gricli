@@ -1,15 +1,21 @@
 package grisu.gricli.completors;
 
+import grisu.control.exceptions.RemoteFileSystemException;
 import grisu.frontend.control.jobMonitoring.RunningJobManager;
 import grisu.gricli.LoginRequiredException;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 import grisu.model.GrisuRegistry;
+import grisu.model.dto.GridFile;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
 import java.util.SortedSet;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 import org.apache.log4j.Logger;
 
@@ -26,6 +32,8 @@ public class CompletionCacheImpl implements CompletionCache {
 	private final GricliEnvironment env;
 	private final GrisuRegistry reg;
 	private final RunningJobManager jm;
+
+	private static Cache fsCache = CacheManager.getInstance().getCache("short");
 
 	public CompletionCacheImpl(GricliEnvironment env) throws LoginRequiredException {
 		this.env = env;
@@ -116,6 +124,25 @@ public class CompletionCacheImpl implements CompletionCache {
 	 */
 	public SortedSet<String> getJobnames() {
 		return this.reg.getUserEnvironmentManager().getReallyAllJobnames(false);
+	}
+
+	public GridFile ls(String url) {
+
+		if (fsCache.get(url) == null) {
+			try {
+				GridFile f = this.reg.getFileManager().ls(url);
+				Element e = new Element(url, f);
+				fsCache.put(e);
+			} catch (RemoteFileSystemException e) {
+				myLogger.error(e);
+				GridFile f = new GridFile(url, false, e);
+				Element el = new Element(url, f);
+				fsCache.put(el);
+			}
+
+		}
+
+		return (GridFile) (fsCache.get(url).getObjectValue());
 	}
 
 	/*

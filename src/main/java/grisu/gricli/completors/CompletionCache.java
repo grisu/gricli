@@ -1,6 +1,7 @@
 package grisu.gricli.completors;
 
 import grisu.gricli.environment.GricliEnvironment;
+import grisu.model.dto.GridFile;
 
 import java.util.Set;
 import java.util.SortedSet;
@@ -20,6 +21,8 @@ public interface CompletionCache {
 	public abstract GricliEnvironment getEnvironment();
 
 	public abstract SortedSet<String> getJobnames();
+
+	public abstract GridFile ls(String url);
 
 	public abstract void refreshJobnames();
 
