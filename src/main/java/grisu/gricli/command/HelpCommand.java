@@ -58,7 +58,7 @@ public class HelpCommand implements GricliCommand {
 			break;
 		default:
 			if ("search".equals(keywords[0])) {
-				help = HelpManager.singleton.get(keywords[1]);
+				help = HelpManager.singleton.apropos(keywords[1]);
 
 			} else if ("command".equals(keywords[0])) {
 				String cmd = StringUtils.join(Arrays.copyOfRange(keywords, 1, keywords.length), " ");
