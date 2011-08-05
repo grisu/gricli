@@ -1,4 +1,4 @@
-package grisu.gricli.completors;
+package grisu.gricli.completors.file;
 
 public class StillLoadingException extends Exception {
 

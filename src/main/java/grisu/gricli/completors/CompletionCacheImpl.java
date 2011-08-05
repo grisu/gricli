@@ -3,6 +3,7 @@ package grisu.gricli.completors;
 import grisu.control.exceptions.RemoteFileSystemException;
 import grisu.frontend.control.jobMonitoring.RunningJobManager;
 import grisu.gricli.LoginRequiredException;
+import grisu.gricli.completors.file.StillLoadingException;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 import grisu.model.GrisuRegistry;

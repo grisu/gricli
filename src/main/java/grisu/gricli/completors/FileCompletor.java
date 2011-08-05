@@ -2,6 +2,7 @@ package grisu.gricli.completors;
 
 import grisu.control.ServiceInterface;
 import grisu.gricli.Gricli;
+import grisu.gricli.completors.file.StillLoadingException;
 import grisu.model.FileManager;
 import grisu.model.dto.GridFile;
 import grisu.settings.ClientPropertiesManager;

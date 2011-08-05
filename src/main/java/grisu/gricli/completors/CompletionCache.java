@@ -1,5 +1,6 @@
 package grisu.gricli.completors;
 
+import grisu.gricli.completors.file.StillLoadingException;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.model.dto.GridFile;
 
