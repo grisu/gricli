@@ -4,7 +4,7 @@ import grisu.control.exceptions.BatchJobException;
 import grisu.control.exceptions.NoSuchJobException;
 import grisu.frontend.model.job.BatchJobObject;
 import grisu.gricli.GricliRuntimeException;
-import grisu.gricli.completors.GridFilesystemCompletor;
+import grisu.gricli.completors.FileCompletor;
 import grisu.gricli.environment.GricliEnvironment;
 
 import java.io.File;
@@ -23,7 +23,7 @@ GricliCommand {
 
 	@SyntaxDescription(command={"attach"},
 			arguments = { "files" })
-	@AutoComplete(completors={GridFilesystemCompletor.class})
+	@AutoComplete(completors = { FileCompletor.class })
 	public AttachCommand(String... globs) {
 		this(null,globs);
 	}

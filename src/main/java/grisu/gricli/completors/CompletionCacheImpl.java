@@ -1,15 +1,22 @@
 package grisu.gricli.completors;
 
+import grisu.control.exceptions.RemoteFileSystemException;
 import grisu.frontend.control.jobMonitoring.RunningJobManager;
 import grisu.gricli.LoginRequiredException;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 import grisu.model.GrisuRegistry;
+import grisu.model.dto.GridFile;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 import org.apache.log4j.Logger;
 
@@ -23,9 +30,14 @@ public class CompletionCacheImpl implements CompletionCache {
 	// public static String[] queues = new String[] {};
 	// public static String[] sites = new String[] {};
 
+	public final Set<String> currentlyListedUrls = Collections
+			.synchronizedSet(new HashSet<String>());
+
 	private final GricliEnvironment env;
 	private final GrisuRegistry reg;
 	private final RunningJobManager jm;
+
+	private static Cache fsCache = CacheManager.getInstance().getCache("short");
 
 	public CompletionCacheImpl(GricliEnvironment env) throws LoginRequiredException {
 		this.env = env;
@@ -73,6 +85,12 @@ public class CompletionCacheImpl implements CompletionCache {
 		}.start();
 	}
 
+	public void addFileListingToCache(String urlToList, GridFile list) {
+		Element el = new Element(urlToList, list);
+		fsCache.put(el);
+
+	}
+
 	public String[] getAllApplications() {
 		ArrayList<String> results = new ArrayList<String>();
 		Collections.addAll(results, this.reg.getUserEnvironmentManager()
@@ -118,6 +136,44 @@ public class CompletionCacheImpl implements CompletionCache {
 		return this.reg.getUserEnvironmentManager().getReallyAllJobnames(false);
 	}
 
+	public GridFile ls(final String url) throws StillLoadingException {
+
+		if (fsCache.get(url) == null) {
+
+			synchronized (url) {
+				// if url is not in short time cache or
+				// url is not loaded currently, load it now in background
+				// and give back loading string...
+				if (!currentlyListedUrls.contains(url)) {
+
+					currentlyListedUrls.add(url);
+					new Thread() {
+						@Override
+						public void run() {
+
+							try {
+								GridFile f = reg.getFileManager().ls(url);
+								Element e = new Element(url, f);
+								fsCache.put(e);
+							} catch (RemoteFileSystemException e) {
+								myLogger.error(e);
+								GridFile f = new GridFile(url, false, e);
+								Element el = new Element(url, f);
+								fsCache.put(el);
+							} finally {
+								currentlyListedUrls.remove(url);
+							}
+						}
+					}.start();
+				}
+
+				throw new StillLoadingException(url);
+			}
+		}
+
+		return (GridFile) (fsCache.get(url).getObjectValue());
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -130,6 +186,10 @@ public class CompletionCacheImpl implements CompletionCache {
 				reg.getUserEnvironmentManager().getReallyAllJobnames(true);
 			}
 		}.start();
+	}
+
+	public void removeFileListingFromCache(String url) {
+		fsCache.remove(url);
 	}
 
 }
