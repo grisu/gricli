@@ -21,7 +21,7 @@ Changelog
 * patches that fix bugs on Windows
 
 Related Issues
-===
+---
 
 Full details of all issues resolved in this release are available here:
 
