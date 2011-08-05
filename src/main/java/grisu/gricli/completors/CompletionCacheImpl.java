@@ -85,6 +85,12 @@ public class CompletionCacheImpl implements CompletionCache {
 		}.start();
 	}
 
+	public void addFileListingToCache(String urlToList, GridFile list) {
+		Element el = new Element(urlToList, list);
+		fsCache.put(el);
+
+	}
+
 	public String[] getAllApplications() {
 		ArrayList<String> results = new ArrayList<String>();
 		Collections.addAll(results, this.reg.getUserEnvironmentManager()

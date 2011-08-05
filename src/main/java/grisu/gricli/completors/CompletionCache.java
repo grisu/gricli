@@ -8,6 +8,8 @@ import java.util.SortedSet;
 
 public interface CompletionCache {
 
+	public abstract void addFileListingToCache(String urlToList, GridFile list);
+
 	public abstract String[] getAllApplications();
 
 	public abstract String[] getAllFqans();

@@ -14,6 +14,10 @@ public class DummyCompletionCache implements CompletionCache {
 
 	private final GridFile dummyFile = new GridFile();
 
+	public void addFileListingToCache(String urlToList, GridFile list) {
+
+	}
+
 	public String[] getAllApplications() {
 		return dummyArray;
 	}

@@ -190,7 +190,8 @@ public class FileCompletor implements Completor {
 		for (GridFile f : entries) {
 
 			if (f.getPath() != null) {
-				if (f.getPath().startsWith(translated)) {
+				if (FileManager.removeDoubleSlashes(f.getPath()).startsWith(
+						translated)) {
 					matches = matches + 1;
 				}
 			} else {
@@ -208,7 +209,8 @@ public class FileCompletor implements Completor {
 		// cyan - symlink
 		for (GridFile f : entries) {
 			if (f.getPath() != null) {
-				if (f.getPath().startsWith(translated)) {
+				if (FileManager.removeDoubleSlashes(f.getPath()).startsWith(
+						translated)) {
 					String name = f.getName()
 							+ (((matches == 1) && f.isFolder()) ? "/" : " ");
 
