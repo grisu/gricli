@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.5
+---
+
+* tab-completion for remote file systems
+
 0.4
 ---
 
