@@ -23,4 +23,5 @@ Changelog
 Full details of all issues resolved in this release are available here:
 
 July 2011 Milestone: https://github.com/grisu/gricli/issues?state=closed&milestone=1
+
 June 2011 Milestone: https://github.com/grisu/gricli/issues?state=closed&milestone=5
