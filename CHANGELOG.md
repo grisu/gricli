@@ -5,7 +5,7 @@ Changelog
 ---
 
 * tab-completion for remote file systems
-* BESTGRID-DEV renamed to dev
+* BeSTGRID-DEV renamed to **dev** case insensitive
 
 0.4
 ---
