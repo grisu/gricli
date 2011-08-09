@@ -5,6 +5,7 @@ Changelog
 ---
 
 * tab-completion for remote file systems
+* BESTGRID-DEV renamed to dev
 
 0.4
 ---
