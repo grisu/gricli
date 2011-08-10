@@ -127,6 +127,10 @@ public class PrintQueuesCommand implements GricliCommand {
 		Set<GridResource> grs = ai.getAllSubmissionLocationsAsGridResources(
 				job.getJobSubmissionPropertyMap(), fqan);
 
+		if (grs.size() == 0) {
+			env.printMessage("No queues available for your currently setup environment. Maybe try to set another group/application?");
+		}
+
 		String output = formatOutput(grs);
 		env.printMessage("\n" + output);
 
