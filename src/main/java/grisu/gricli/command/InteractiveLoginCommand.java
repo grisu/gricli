@@ -29,36 +29,39 @@ GricliCommand {
 
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
+
+		ServiceInterface si;
 		try {
-			ServiceInterface si = LoginManager.loginCommandline(backend);
-			env.setServiceInterface(si);
-
-			CompletionCache cc = new CompletionCacheImpl(env);
-			GrisuRegistryManager.getDefault(si).set(
-					Gricli.COMPLETION_CACHE_REGISTRY_KEY, cc);
-
-			Gricli.completionCache = cc;
-
-			new ChdirCommand(System.getProperty("user.dir")).execute(env);
-
-			new SetCommand("application", Constants.GENERIC_APPLICATION_NAME)
-			.execute(env);
-
-			String value = System
-					.getenv(LocalLoginCommand.GRICLI_LOGIN_SCRIPT_ENV_NAME);
-			if (StringUtils
-					.isNotBlank(value)) {
-				File script = new File(value);
-				if (script.canExecute()) {
-					new ExecCommand(script.getPath()).execute(env);
-				}
-			}
-
-
-			return env;
+			si = LoginManager.loginCommandline(backend);
 		} catch (LoginException ex) {
 			throw new GricliRuntimeException(ex);
 		}
+		env.setServiceInterface(si);
+
+		CompletionCache cc = new CompletionCacheImpl(env);
+		GrisuRegistryManager.getDefault(si).set(
+				Gricli.COMPLETION_CACHE_REGISTRY_KEY, cc);
+
+		Gricli.completionCache = cc;
+
+		new ChdirCommand(System.getProperty("user.dir")).execute(env);
+
+		new SetCommand("application", Constants.GENERIC_APPLICATION_NAME)
+		.execute(env);
+
+		String value = System
+				.getenv(LocalLoginCommand.GRICLI_LOGIN_SCRIPT_ENV_NAME);
+		if (StringUtils
+				.isNotBlank(value)) {
+			File script = new File(value);
+			if (script.canExecute()) {
+				new ExecCommand(script.getPath()).execute(env);
+			}
+		}
+
+
+		return env;
+
 	}
 
 }

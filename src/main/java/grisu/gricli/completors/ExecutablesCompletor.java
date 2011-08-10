@@ -51,6 +51,10 @@ public class ExecutablesCompletor implements Completor {
 
 			Set<String> exes = ai.getExecutablesForVo(fqan, version);
 
+			if (exes.size() == 0) {
+				return -1;
+			}
+
 
 			return new SimpleCompletor(exes.toArray(new String[] {})).complete(
 					s, i, list);

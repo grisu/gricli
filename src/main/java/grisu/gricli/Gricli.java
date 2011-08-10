@@ -31,7 +31,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
@@ -113,13 +112,15 @@ public class Gricli {
 		return reader;
 	}
 
-	private static void login(GricliEnvironment env, String backend){
+	private static boolean login(GricliEnvironment env, String backend){
 
 		try {
 			new InteractiveLoginCommand(backend).execute(env);
+			return true;
 		} catch (GricliException ex){
 			myLogger.error("login exception", ex);
-			System.err.println("Cannot login to " + backend);
+			System.err.println(ex.getCause().getLocalizedMessage());
+			return false;
 		}
 	}
 
@@ -161,7 +162,9 @@ public class Gricli {
 				if (!cl.hasOption('n')) {
 					String backend = cl.getOptionValue('b');
 					backend = (backend != null) ? backend : "BeSTGRID";
-					login(env,backend);
+					if (!login(env, backend)) {
+						System.exit(1);
+					}
 				}
 
 				if (cl.hasOption('f')) {
