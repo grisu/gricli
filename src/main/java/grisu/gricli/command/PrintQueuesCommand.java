@@ -129,6 +129,7 @@ public class PrintQueuesCommand implements GricliCommand {
 
 		if (grs.size() == 0) {
 			env.printMessage("No queues available for your currently setup environment. Maybe try to set another group/application?");
+			return env;
 		}
 
 		String output = formatOutput(grs);
