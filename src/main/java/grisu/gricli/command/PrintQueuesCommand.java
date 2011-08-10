@@ -9,6 +9,7 @@ import grisu.jcommons.utils.SubmissionLocationHelpers;
 import grisu.model.info.ApplicationInformation;
 import grisu.model.job.JobSubmissionObjectImpl;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -46,6 +47,7 @@ public class PrintQueuesCommand implements GricliCommand {
 			for ( int i=0; i<PROPERTY.values().length; i++ ) {
 				PROPERTY_NAMES[i] = PROPERTY.values()[i].toString();
 			}
+			Arrays.sort(PROPERTY_NAMES);
 		}
 		return PROPERTY_NAMES;
 	}
