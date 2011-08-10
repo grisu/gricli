@@ -52,6 +52,7 @@ GricliCommand {
 			.execute(env);
 			String lastVo = ClientPropertiesManager.getLastUsedFqan();
 			if (StringUtils.isNotBlank(lastVo)) {
+				env.printMessage("Setting last used group: " + lastVo);
 				new SetCommand("group", lastVo).execute(env);
 			}
 
