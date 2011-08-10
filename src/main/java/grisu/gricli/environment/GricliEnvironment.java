@@ -115,8 +115,8 @@ public class GricliEnvironment {
 								GrisuRegistry reg = getGrisuRegistry();
 								myLogger.debug("Pre-loading cache for "+fqan+" / "+app);
 								reg.getApplicationInformation(app).getAllAvailableVersionsForFqan(fqan);
-								reg.getApplicationInformation(app)
-										.getExecutablesForVo(fqan);
+								// reg.getApplicationInformation(app)
+								// .getExecutablesForVo(fqan);
 								myLogger.debug("Pre-loading finished.");
 							}
 						}.start();
