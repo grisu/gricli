@@ -42,6 +42,7 @@ public class GricliCommandFactory {
 		// print commands
 		f.add(PrintGlobalsCommand.class);
 		f.add(PrintQueuesCommand.class);
+		f.add(PrintQueueCommand.class);
 		f.add(PrintAppsCommand.class);
 		f.add(PrintHostsCommand.class);
 		f.add(PrintGroupsCommand.class);
@@ -76,7 +77,7 @@ public class GricliCommandFactory {
 
 		// other commands
 		f.add(ExecCommand.class);
-		
+
 		f.add(ViewCommand.class);
 
 		try {
