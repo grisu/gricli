@@ -10,6 +10,7 @@ import grisu.jcommons.constants.Constants;
 import grisu.model.GrisuRegistry;
 import grisu.model.GrisuRegistryManager;
 import grisu.model.dto.GridFile;
+import grisu.settings.ClientPropertiesManager;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -80,6 +81,10 @@ public class GricliEnvironment {
 			@Override
 			public void set(String group) throws GricliSetValueException {
 				if (validate){
+					if (Gricli.completionCache.getAllFqans().length == 0) {
+						super.set(group);
+						return;
+					}
 					for (String pg: Gricli.completionCache.getAllFqans()){
 						if (pg.equals(group)){
 							super.set(group);
@@ -97,6 +102,9 @@ public class GricliEnvironment {
 
 			public void valueChanged(String value) {
 				if (StringUtils.isNotBlank(value)) {
+
+					ClientPropertiesManager.setLastUsedFqan(value);
+
 					final String app = application.get();
 					if (StringUtils.isNotBlank(app) && !Constants.GENERIC_APPLICATION_NAME.equals(app)) {
 						final String fqan = value;
@@ -107,6 +115,8 @@ public class GricliEnvironment {
 								GrisuRegistry reg = getGrisuRegistry();
 								myLogger.debug("Pre-loading cache for "+fqan+" / "+app);
 								reg.getApplicationInformation(app).getAllAvailableVersionsForFqan(fqan);
+								reg.getApplicationInformation(app)
+										.getExecutablesForVo(fqan);
 								myLogger.debug("Pre-loading finished.");
 							}
 						}.start();

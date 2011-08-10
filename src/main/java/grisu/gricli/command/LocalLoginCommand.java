@@ -12,6 +12,7 @@ import grisu.gricli.completors.CompletionCacheImpl;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 import grisu.model.GrisuRegistryManager;
+import grisu.settings.ClientPropertiesManager;
 
 import java.io.File;
 
@@ -49,6 +50,10 @@ GricliCommand {
 
 			new SetCommand("application", Constants.GENERIC_APPLICATION_NAME)
 			.execute(env);
+			String lastVo = ClientPropertiesManager.getLastUsedFqan();
+			if (StringUtils.isNotBlank(lastVo)) {
+				new SetCommand("group", lastVo).execute(env);
+			}
 
 			String value = System.getenv(GRICLI_LOGIN_SCRIPT_ENV_NAME);
 			if (StringUtils.isNotBlank(value)) {
