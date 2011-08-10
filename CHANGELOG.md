@@ -6,6 +6,9 @@ Changelog
 
 * tab-completion for remote file systems
 * BeSTGRID-DEV renamed to **dev** case insensitive
+* "print queues" now displays only queues that are available for the currently setup environment
+* "print queues" can now display more information about queues, like free job slots, total running jobs
+* new command: "print queue [queue]" -- displays all information that is known for a queue (which needs to be available for the current environment).
 
 0.4
 ---
