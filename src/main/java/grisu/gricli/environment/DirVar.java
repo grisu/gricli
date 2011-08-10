@@ -1,18 +1,18 @@
 package grisu.gricli.environment;
 
+import grisu.gricli.GricliSetValueException;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
-
-import grisu.gricli.GricliSetValueException;
 
 public class DirVar extends ScalarVar<File> {
 
 	public DirVar(String name, File value) {
 		super(name, value);
 	}
-	
+
 	public DirVar(String name, File value, boolean nullable) {
 		super(name, value, nullable);
 	}
@@ -33,13 +33,14 @@ public class DirVar extends ScalarVar<File> {
 				throw new GricliSetValueException(getName(),
 						dir.getCanonicalPath(), "directory does not exist");
 			}
-			
+
 			return dir;
 		} catch (IOException ex) {
 			throw new GricliSetValueException(getName(), arg, ex.getMessage());
 		}
 	}
-	
+
+	@Override
 	public String toString(){
 		try {
 			String value = get().getCanonicalPath();
@@ -51,7 +52,8 @@ public class DirVar extends ScalarVar<File> {
 		} catch (IOException e) {
 			return null;
 		}
-		
+
 	}
+
 
 }

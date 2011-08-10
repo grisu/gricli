@@ -6,8 +6,6 @@ import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.GricliSetValueException;
 import grisu.gricli.LoginRequiredException;
-import grisu.gricli.completors.CompletionCache;
-import grisu.gricli.completors.CompletionCacheImpl;
 import grisu.jcommons.constants.Constants;
 import grisu.model.GrisuRegistry;
 import grisu.model.GrisuRegistryManager;
@@ -19,44 +17,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 public class GricliEnvironment {
-	
+
 	static final Logger myLogger = Logger.getLogger(GricliEnvironment.class.getName());
-	
-	public final GricliVar<String> email, prompt, host, group, gdir, queue, outputfile, version, application, jobname, jobtype, description;
-	public final GricliVar<Boolean> email_on_start, email_on_finish, debug;
-	public final GricliVar<Integer> memory, walltime, cpus;
-	public final GricliVar<File> dir;
-	public final FileListVar files;
-	
-	public List<GricliVar<?>> getVariables(){
-		List<GricliVar<?>> result = new LinkedList<GricliVar<?>>();
-		Object o;
-		
-		for (Field f: this.getClass().getFields()){
-			try {
-				o = f.get(this);
-			} catch (Exception ex){
-				continue;
-			}
-			if (o instanceof GricliVar<?>){
-				result.add((GricliVar<?>)o);
-			}
-		}
-		return result;
-	}
-	
+
 	public static List<String> getVariableNames(){
 		List<String> result = new LinkedList<String>();
 		for (Field f: GricliEnvironment.class.getFields()){
@@ -66,23 +37,28 @@ public class GricliEnvironment {
 		}
 		return result;
 	}
-	
-	public GricliVar<?> getVariable(String var) throws GricliRuntimeException {
-		try {
-			Field f = this.getClass().getField(var);
-			return (GricliVar<?>)(f.get(this));
-		} catch (Exception ex){
-			throw new GricliRuntimeException("global " + var + " does not exist");
-		}
-	}
-	
+	public final GricliVar<String> email, prompt, host, group, gdir, queue, outputfile, version, application, jobname, jobtype, description;
+	public final GricliVar<Boolean> email_on_start, email_on_finish, debug;
+	public final GricliVar<Integer> memory, walltime, cpus;
+	public final GricliVar<File> dir;
+
+	public final FileListVar files;
+
+	private ServiceInterface si;
+
+	private GrisuRegistry reg;
+
+	private String siUrl;
+
+
+	private boolean quiet;
 	public GricliEnvironment() {
 		this.email = new StringVar("email", "");
 		this.email_on_start = new BoolVar("email_on_start", false);
 		this.email_on_finish = new BoolVar("email_on_finish", false);
-		
+
 		this.prompt = new StringVar("prompt","gricli> ");
-		
+
 		this.host = new StringVar("host","");
 		this.gdir = new StringVar("gdir","");
 		this.dir = new DirVar("dir", new File(System.getProperty("user.dir")));
@@ -92,15 +68,16 @@ public class GricliEnvironment {
 					System.setProperty("user.dir", value.getCanonicalPath());
 				} catch (IOException e) {
 					myLogger.error(e);
-				}		
-			}	
+				}
+			}
 		});
-		
+
 		this.description = new StringVar("description","gricli job");
 		this.group = new StringVar("group","/nz") {
-			
+
 			private boolean validate = false;
-					
+
+			@Override
 			public void set(String group) throws GricliSetValueException {
 				if (validate){
 					for (String pg: Gricli.completionCache.getAllFqans()){
@@ -114,7 +91,7 @@ public class GricliEnvironment {
 				this.validate = true;
 				super.set(group);
 			};
-			
+
 		};
 		this.group.addListener(new GricliVarListener<String>() {
 
@@ -132,23 +109,25 @@ public class GricliEnvironment {
 								reg.getApplicationInformation(app).getAllAvailableVersionsForFqan(fqan);
 								myLogger.debug("Pre-loading finished.");
 							}
-						}.start(); 
+						}.start();
 					}
 				}
 			}
 		});
-		
+
 		this.queue = new StringVar("queue","");
-		
+
 		this.jobname = new StringVar("jobname","gricli") {
+			@Override
 			public void set(String jobname) throws GricliSetValueException {
 				if (jobname.contains(" ")){
 					throw new GricliSetValueException(getName(), jobname, "cannot contain spaces");
-				} 
+				}
 				super.set(jobname);
 			}
 		};
 		this.jobtype = new StringVar("jobtype","single") {
+			@Override
 			public String fromString(String arg) throws GricliSetValueException {
 				if (!("single".equals(arg) || "mpi".equals(arg) || "smp".equals(arg))){
 					throw new GricliSetValueException(getName(), arg, "jobtype has to be one of: smp, mpi or single");
@@ -156,10 +135,11 @@ public class GricliEnvironment {
 				return arg;
 			}
 		};
-		
+
 		this.memory = new MemoryVar("memory", 2048);
 		this.walltime = new WalltimeVar("walltime",10);
 		this.cpus = new IntVar("cpus",1) {
+			@Override
 			public void set(Integer value) throws GricliSetValueException {
 				super.set(value);
 				if (value <= 0){
@@ -167,7 +147,7 @@ public class GricliEnvironment {
 				}
 			}
 		};
-		
+
 		this.version = new StringVar("version", null, true);
 		this.application = new StringVar("application", null, true);
 		this.application.addListener(new GricliVarListener<String>() {
@@ -192,22 +172,14 @@ public class GricliEnvironment {
 					}
 				}
 			}
-			
+
 		});
-		
+
 		this.debug = new BoolVar("debug", false);
 		this.outputfile = new StringVar("outputfile", null, true);
-		
+
 		this.files = new FileListVar("files");
 	}
-	
-
-	private ServiceInterface si;
-	private GrisuRegistry reg;
-	private String siUrl;
-
-	private boolean quiet;
-
 	public GrisuRegistry getGrisuRegistry() {
 		return this.reg;
 	}
@@ -224,7 +196,7 @@ public class GricliEnvironment {
 		else {
 			job.setApplication(app);
 		}
-		
+
 		String v = version.get();
 		if (v == null){
 			job.setApplicationVersion(Constants.NO_VERSION_INDICATOR_STRING);
@@ -262,7 +234,6 @@ public class GricliEnvironment {
 		return job;
 	}
 
-
 	public ServiceInterface getServiceInterface() throws LoginRequiredException {
 		if (si == null) {
 			throw new LoginRequiredException();
@@ -272,6 +243,34 @@ public class GricliEnvironment {
 
 	public String getServiceInterfaceUrl() {
 		return siUrl;
+	}
+
+
+	public GricliVar<?> getVariable(String var) throws GricliRuntimeException {
+		try {
+			Field f = this.getClass().getField(var);
+			return (GricliVar<?>)(f.get(this));
+		} catch (Exception ex){
+			throw new GricliRuntimeException("global " + var + " does not exist");
+		}
+	}
+
+	public List<GricliVar<?>> getVariables(){
+		List<GricliVar<?>> result = new LinkedList<GricliVar<?>>();
+		Object o;
+
+		for (Field f: this.getClass().getFields()){
+			try {
+				o = f.get(this);
+			} catch (Exception ex){
+				continue;
+			}
+			if (o instanceof GricliVar<?>){
+				result.add((GricliVar<?>)o);
+			}
+		}
+		Collections.sort(result);
+		return result;
 	}
 
 	public void printError(String message){
