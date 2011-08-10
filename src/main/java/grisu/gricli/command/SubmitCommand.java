@@ -6,6 +6,7 @@ import grisu.frontend.model.job.JobObject;
 import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.ExecutablesCompletor;
+import grisu.gricli.completors.InputFileCompletor;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 
@@ -17,7 +18,8 @@ GricliCommand {
 	private final boolean isAsync;
 
 	@SyntaxDescription(command={"submit"}, arguments={"commandline"})
-	@AutoComplete(completors = { ExecutablesCompletor.class })
+	@AutoComplete(completors = { ExecutablesCompletor.class,
+			InputFileCompletor.class })
 	public SubmitCommand(String cmd) {
 		this(cmd,null);
 	}

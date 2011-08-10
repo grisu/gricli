@@ -9,6 +9,7 @@ Changelog
 * "print queues" now displays only queues that are available for the currently setup environment
 * "print queues" can now display more information about queues, like free job slots, total running jobs
 * new command: "print queue [queue]" -- displays all information that is known for a queue (which needs to be available for the current environment).
+* tab-completion now also works on "submit" command for executables and input files
 
 0.4
 ---
