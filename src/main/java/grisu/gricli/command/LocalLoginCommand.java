@@ -10,6 +10,7 @@ import grisu.gricli.completors.BackendCompletor;
 import grisu.gricli.completors.CompletionCache;
 import grisu.gricli.completors.CompletionCacheImpl;
 import grisu.gricli.environment.GricliEnvironment;
+import grisu.jcommons.constants.Constants;
 import grisu.model.GrisuRegistryManager;
 
 import java.io.File;
@@ -45,6 +46,9 @@ GricliCommand {
 			Gricli.completionCache = cc;
 
 			new ChdirCommand(System.getProperty("user.dir")).execute(env);
+
+			new SetCommand("application", Constants.GENERIC_APPLICATION_NAME)
+			.execute(env);
 
 			String value = System.getenv(GRICLI_LOGIN_SCRIPT_ENV_NAME);
 			if (StringUtils.isNotBlank(value)) {
