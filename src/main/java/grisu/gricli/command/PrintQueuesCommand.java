@@ -176,7 +176,8 @@ public class PrintQueuesCommand implements GricliCommand {
 
 		}
 
-		String output = OutputHelpers.getTable(grListList, true);
+		String output = OutputHelpers.getTable(grListList, true, 0,
+				new Integer[] {});
 
 		return output;
 

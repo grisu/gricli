@@ -1,5 +1,6 @@
 package grisu.gricli.util;
 
+import java.util.Arrays;
 import java.util.Formatter;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,11 +11,14 @@ import com.google.common.collect.Lists;
 public class OutputHelpers {
 
 	public static String getTable(List<List<String>> listlist) {
-		return getTable(listlist, false);
+		return getTable(listlist, false, 0, new Integer[] {});
 	}
 
 	public static String getTable(List<List<String>> listlist,
-			boolean emptyLineAfterTitle) {
+			boolean emptyLineAfterTitle, int leftColumnMinWidth,
+			Integer[] columnsToRightAlign) {
+
+		Arrays.sort(columnsToRightAlign);
 
 		int listSize = listlist.get(0).size();
 
@@ -27,7 +31,11 @@ public class OutputHelpers {
 					max = length;
 				}
 			}
-			maxValues.add(max);
+			if ((listIndex == 0) && (max < leftColumnMinWidth)) {
+				maxValues.add(leftColumnMinWidth);
+			} else {
+				maxValues.add(max);
+			}
 		}
 
 		StringBuffer result = new StringBuffer();
@@ -42,7 +50,10 @@ public class OutputHelpers {
 			StringBuffer formatterString = new StringBuffer();
 
 			for (int j = 0; j < listlist.get(i).size(); j++) {
-				formatterString.append("%-");
+				formatterString.append("%");
+				if (Arrays.binarySearch(columnsToRightAlign, j) < 0) {
+					formatterString.append("-");
+				}
 				formatterString.append(maxValues.get(j) + 3 + "s");
 			}
 			formatterString.append("%n");
