@@ -190,6 +190,17 @@ public class GricliEnvironment {
 
 		this.files = new FileListVar("files");
 	}
+
+	public String getCurrentAbsoluteDirectory() {
+		try {
+			File dir = (File) getVariable("dir").get();
+			return dir.getAbsolutePath();
+		} catch (GricliRuntimeException e) {
+			myLogger.error(e);
+			return null;
+		}
+	}
+
 	public GrisuRegistry getGrisuRegistry() {
 		return this.reg;
 	}

@@ -69,6 +69,7 @@ public class GricliCommandFactory {
 		f.add(PwdCommand.class);
 		f.add(ChdirCommand.class);
 		f.add(LsCommand.class);
+		f.add(CpCommand.class);
 
 		//batch commands
 		f.add(CreateBatchCommand.class);
