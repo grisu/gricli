@@ -1,7 +1,6 @@
 package grisu.gricli.completors;
 
 import grisu.control.exceptions.RemoteFileSystemException;
-import grisu.frontend.control.jobMonitoring.RunningJobManager;
 import grisu.gricli.LoginRequiredException;
 import grisu.gricli.completors.file.StillLoadingException;
 import grisu.gricli.environment.GricliEnvironment;
@@ -36,14 +35,15 @@ public class CompletionCacheImpl implements CompletionCache {
 
 	private final GricliEnvironment env;
 	private final GrisuRegistry reg;
-	private final RunningJobManager jm;
+	// private final RunningJobManager jm;
 
 	private static Cache fsCache = CacheManager.getInstance().getCache("short");
 
 	public CompletionCacheImpl(GricliEnvironment env) throws LoginRequiredException {
 		this.env = env;
 		this.reg = env.getGrisuRegistry();
-		this.jm = RunningJobManager.getDefault(this.env.getServiceInterface());
+		// this.jm =
+		// RunningJobManager.getDefault(this.env.getServiceInterface());
 		new Thread() {
 			@Override
 			public void run() {
