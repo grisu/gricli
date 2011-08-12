@@ -119,7 +119,11 @@ public class Gricli {
 			return true;
 		} catch (GricliException ex){
 			myLogger.error("login exception", ex);
-			System.err.println(ex.getCause().getLocalizedMessage());
+			Throwable t = ex;
+			while (t.getCause() != null) {
+				t = t.getCause();
+			}
+			System.err.println(t.getLocalizedMessage());
 			return false;
 		}
 	}
@@ -201,7 +205,7 @@ public class Gricli {
 
 	private static void runCommand(String[] c, GricliCommandFactory f,
 			GricliEnvironment env) {
-		Exception error = null;
+		Throwable error = null;
 		try {
 			GricliCommand command = f.create(c);
 			command.execute(env);
@@ -231,8 +235,12 @@ public class Gricli {
 			System.err.println("reason: " + ex.getReason());
 		} catch (GricliRuntimeException ex) {
 			exitStatus = RUNTIME;
-			error = ex;
-			System.err.println(ex.getMessage());
+			Throwable exc = ex;
+			while (exc.getCause() != null) {
+				exc = exc.getCause();
+			}
+			error = exc;
+			System.err.println(exc.getMessage());
 		} catch (RuntimeException ex){
 			exitStatus = RUNTIME;
 			error = ex;
