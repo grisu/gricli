@@ -11,4 +11,7 @@ Be aware, you can't use commands with remote files (yet).
 Example usage:
 
     exec ls -lah
+    exec javac -version
+    exec cat myscript.gs
+
 
