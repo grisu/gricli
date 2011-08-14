@@ -19,7 +19,7 @@ public class AboutCommand implements GricliCommand {
 				+ env.getServiceInterface().getInterfaceInfo("HOSTNAME"));
 		env.printMessage("grisu backend version: "
 				+ env.getServiceInterface().getInterfaceInfo("VERSION"));
-		env.printMessage("documentation: https://github.com/grisu/gricli");
+		env.printMessage("documentation: https://github.com/grisu/gricli/wiki");
 		env.printMessage("contact: eresearch-admin@list.auckland.ac.nz");
 		return env;
 	}
