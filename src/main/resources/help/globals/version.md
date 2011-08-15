@@ -1,22 +1,22 @@
 Global: version
 
-The application version.
+The application package version.
 
-The is the application version to be used. 
+This is the package version to be used. 
 By default the value is 'any'.
 
-If an application is specified and the queue is set to auto then the job will be submitted
-to valid queue locaiton that supports a version of the chosen applicaiton.
+If a package is specified and the queue is set to auto then the job will be submitted
+to valid queue locaiton that supports a version of the chosen package.
 
-To ensure a specific version of the applicaiton is used, use the 'set' command to choose the version.
-To see the list of versions available for an applicaiton use the command 'print application <applicaiton'.
+To ensure a specific version of the package is used, use the 'set' command to choose the version.
+To see the list of versions available for a package use the command 'print package <package>'.
 
 Example usage:
 
-    set application R
+    set package R
     set version any
 
-    set application R
+    set package R
     set version  2.11.1
 
     
