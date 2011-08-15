@@ -7,8 +7,8 @@ The job type determines how the job is configured for execution.
 The current values are:
 
     smp          : A job that will use one or more CPUs on a single host.
-    mpi          : A job that will use one or more CPUs across one or more hosts.
-    single       : A job that will use one or more CPUs across one or more hosts using a custom configuration.
+    mpi          : A job that will use one or more CPUs across one or more hosts using the Open MPI framework.
+    custom       : A job that will use one or more CPUs across one or more hosts using a custom configuration.
 
 The number of hosts used for an mpi job can be checked after submission using the command 'print job <jobname> hostCount'.
 
@@ -22,9 +22,9 @@ MPI
 
 When you select a job of this type, please ensure that the requested resources do not exceed the maximum capacity of the queue.
 
-Single
+Custom
 
-Please note that is is up to you to ensure your job is scheduled correctly as this job type implies you may not be relying on MPI to coordinate your processes.
+Please note that is is up to you to ensure your job is scheduled correctly as this job type implies you may not be relying on Open MPI to coordinate your processes.
     
 
 Example usage:
