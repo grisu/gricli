@@ -15,5 +15,5 @@ Example usage:
     batch attach "~/my file.txt"
     batch attach ~/myfile_1.txt ~/myfile_2.txt
     batch attach ~/*.txt
-    batch attach grid://Groups/nz/nesi/myfile.txt
+    batch attach grid://groups/nz/nesi/myfile.txt
  
