@@ -7,7 +7,7 @@ Overview
 ---------
 
 A job is the configuration for the program you would like to execute on the cluster.
-Job properties are set through globals. These allow you to set the application and version to run
+Job properties are set through globals. These allow you to set the application package and version to run
 as well as the resources that the application needs such as the memory and the number of cpus.
 
 To see a list of available job properties use the command 'print globals'.
@@ -17,14 +17,14 @@ To see the value for a specific job property use the command 'print global <prop
 Job Requirements
 -----------------
 
-A typical job requires that that an application be set and that the version be specific or 'any'.
-To view the available applications, use the command 'print applications'.
+A typical job requires that that a package be set and that the version be specific or 'any'.
+To view the available packages, use the command 'print packages'.
 
-Note that applications belong to a specific queues and to use the application you must have access
-to the appropriate queue. To see the versions and queues for an application use the command 'print application <application>'.
+Note that packages belong to a specific queues and to use applications in the package you must have access
+to the appropriate queue. To see the versions and queues for a package use the command 'print package <package>'.
 
 To set the queue, use the 'set' command. You can view all available queues with the 'print queues' command or 
-you can filter by application using the command 'print application <application>'. You may also filter by group using the 
+you can filter by package using the command 'print package <package>'. You may also filter by group using the 
 command 'print queues <group>'.
   
 If you do not mind which queue your job is submitted to, you can use 'set queue auto' to let the system determine
@@ -34,7 +34,7 @@ Note that regardless of your queue choice, you must choose a group. You can view
 'print groups'. To set the group use the command 'set group <group>'.
 
 Job memory and cpu count will depend on your application. By default a job has 2 GB of memory and 1 CPU. This is the
-default configuration for a 'single' jobtype. To use multiple cpus you will need to set the jobtype to 'smp' or 'mpi'.
+default configuration for a 'smp' jobtype. To use multiple cpus you will need to set the jobtype to 'smp' or 'mpi' and increase the number of cpus. You may also use the 'custom' jobtype but here it is up to you to ensure correct parallelism.
 For more information on these job types use the command 'help jobtype'.
 
 If your job requires any files to run you can use the 'attach' command to set them. The files can include input files
@@ -120,7 +120,7 @@ Here is an example of how you can use Gricli commands to setup, submit and downl
     > set group /nz/nesi
     > print queues /nz/nesi
     > set queue demo:gram5.ceres.auckland.ac.nz
-    > set application UnixCommands
+    > set package UnixCommands
     > set jobtype single
     > set cpus 1
     > set memory 100
