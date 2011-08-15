@@ -101,7 +101,7 @@ You can set the dir with the command 'set dir <path>' and view it with the comma
 commands to navigate to the appropriate directory. The global 'dir' will match the current working directory. You can use the command 'pwd'
 to see the current directory.
 
-The job directory can also be archived to your home directory on the Data Fabric. This will be grid://Groups/nz/nesi
+The job directory can also be archived to your home directory on the Data Fabric. This will be grid://groups/nz/nesi
 You can do this using the 'archive job' command. Note that this command cleans the job upon success.
 
 When you are finished with a job you can use the 'clean job' command. This will remove the job directory in ~/active-jobs and remove the job from
