@@ -6,6 +6,7 @@ import grisu.gricli.SyntaxException;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.parser.GricliTokenizer;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 
 import jline.FileNameCompletor;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
 public class RunCommand implements GricliCommand {
@@ -36,7 +38,9 @@ public class RunCommand implements GricliCommand {
 		ArrayList<GricliCommand> cl = new ArrayList<GricliCommand>();
 
 		try {
-			GricliTokenizer tokenizer = new GricliTokenizer(new FileInputStream(script));
+			File f = new File(FilenameUtils.concat(env.getCurrentAbsoluteDirectory(), script));
+			System.out.println(f.getCanonicalPath());
+			GricliTokenizer tokenizer = new GricliTokenizer(new FileInputStream(f));
 			String[] tokens;
 			while ((tokens = tokenizer.nextCommand()) != null){
 				cl.add(Gricli.SINGLETON_COMMANDFACTORY.create(tokens));

@@ -112,12 +112,16 @@ public class GricliEnvironment {
 							@Override
 							public void run() {
 
-								GrisuRegistry reg = getGrisuRegistry();
-								myLogger.debug("Pre-loading cache for "+fqan+" / "+app);
-								reg.getApplicationInformation(app).getAllAvailableVersionsForFqan(fqan);
+								try {
+									GrisuRegistry reg = getGrisuRegistry();
+									myLogger.debug("Pre-loading cache for "+fqan+" / "+app);
+									reg.getApplicationInformation(app).getAllAvailableVersionsForFqan(fqan);
 								// reg.getApplicationInformation(app)
 								// .getExecutablesForVo(fqan);
-								myLogger.debug("Pre-loading finished.");
+									myLogger.debug("Pre-loading finished.");
+								} catch (Throwable th){
+									myLogger.error(th);
+								}
 							}
 						}.start();
 					}
@@ -171,12 +175,17 @@ public class GricliEnvironment {
 						new Thread() {
 							@Override
 							public void run() {
-								GrisuRegistry reg = getGrisuRegistry();
-								myLogger.debug("Pre-loading cache for " + a + " / "
-										+ fqan);
-								reg.getApplicationInformation(a)
-								.getAllAvailableVersionsForFqan(fqan);
-								myLogger.debug("Pre-loading finished.");
+								
+								try {
+									GrisuRegistry reg = getGrisuRegistry();
+									myLogger.debug("Pre-loading cache for " + a + " / "
+											+ fqan);
+									reg.getApplicationInformation(a)
+									.getAllAvailableVersionsForFqan(fqan);
+									myLogger.debug("Pre-loading finished.");
+								} catch (Throwable th){
+									myLogger.error(th);
+								}
 							}
 						}.start();
 					}
