@@ -2,7 +2,7 @@ Command: print queue [queue]
 
 Displays all details about a queue.
 
-Beware that the queue you are querying about needs to be available for your currently setup environment (application, group,...).
+Beware that the queue you are querying about needs to be available for your currently setup environment (package, group,...).
 
 Parameters:
 
