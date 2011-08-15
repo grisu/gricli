@@ -132,7 +132,7 @@ public class Gricli {
 	public static void main(String[] args) {
 
 		try {
-
+			
 			// stop javaxws logging
 			java.util.logging.LogManager.getLogManager().reset();
 			java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);

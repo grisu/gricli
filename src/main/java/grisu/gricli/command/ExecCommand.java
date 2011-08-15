@@ -73,7 +73,7 @@ public class ExecCommand implements GricliCommand {
 
 		ProcessBuilder builder = new ProcessBuilder(cmdList);
 		Map<String, String> environ = builder.environment();
-		builder.directory(new File(System.getProperty("user.home")));
+		builder.directory(new File(System.getProperty("user.dir")));
 
 		Process process;
 		try {
