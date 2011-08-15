@@ -1,19 +1,19 @@
-Command: print application <application>
+Command: print package <package>
 
-Prints the availabe versions and queue locations for the specificed application.
+Prints the availabe versions and queue locations for the specificed application package.
 
 Parameters:
 
-    application    : The application.
+    package    : The application package.
 
-To see a list of available applications use:
+To see a list of available packages use:
 
-    print applications
+    print packages
 
 Example usage:
 
-    print application R
-    print application BEAST
-    print application UnixCommands
+    print package R
+    print package BEAST
+    print package UnixCommands
 
 
