@@ -9,4 +9,10 @@ public class CleanJobCommand extends KillJobCommand {
 	public CleanJobCommand(String jobFilter){
 		super(jobFilter, true);
 	}
+	
+	@SyntaxDescription(command={"clean","jobs"})
+	@AutoComplete(completors={JobnameCompletor.class})
+	public CleanJobCommand(){
+		super("*",true);
+	}
 }

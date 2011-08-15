@@ -20,6 +20,12 @@ GricliCommand {
 	public KillJobCommand(String jobFilter){
 		this(jobFilter, false);
 	}
+	
+	@SyntaxDescription(command={"kill","jobs"})
+	@AutoComplete(completors={JobnameCompletor.class})
+	public KillJobCommand(){
+		this("*",true);
+	}
 
 	public KillJobCommand(String jobFilter, boolean clean) {
 		this.jobFilter = jobFilter;
