@@ -10,7 +10,7 @@ Parameters:
 
 The default archive location is in the user's home directory on the Data Fabric:
 
-    grid://Groups/nz/nesi/archived-jobs/<jobname>
+    grid://groups/nz/nesi/archived-jobs/<jobname>
 
 You can also access the Data Fabric via your browser at the following address:
 
