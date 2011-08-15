@@ -12,6 +12,7 @@ Changelog
 * new command: "print queue [queue]" -- displays all information that is known for a queue (which needs to be available for the current environment).
 * fixed job status problem where they are incorrectly marked Done.
 * renamed application to package
+* pwd and exec pwd are the same now
 
 
 0.4
