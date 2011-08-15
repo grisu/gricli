@@ -10,7 +10,7 @@ Example usage:
 
     ls ~
     ls /home/whoami
-    ls grid://Groups/nz/nesi
+    ls grid://groups/nz/nesi
 
 
 
