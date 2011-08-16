@@ -1,4 +1,4 @@
-GLobal: queue
+Global: queue
 
 The job queue.
 
