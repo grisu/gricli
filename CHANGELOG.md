@@ -6,6 +6,7 @@ Changelog
 
 * tab-completion for remote file systems
 * tab-completion now also works on "submit" command for executables and input files
+* submit command no longer needs quotes
 * BeSTGRID-DEV renamed to **dev** case insensitive
 * "print queues" now displays only queues that are available for the currently setup environment
 * "print queues" can now display more information about queues, like free job slots, total running jobs
