@@ -40,7 +40,7 @@ public class GricliEnvironment {
 	}
 	public final GricliVar<String> email, prompt, host, group, gdir, queue, outputfile, version, application, jobname, jobtype, description;
 	public final GricliVar<Boolean> email_on_start, email_on_finish, debug;
-	public final GricliVar<Integer> memory, walltime, cpus;
+	public final GricliVar<Integer> memory, walltime, cpus, hostCount;
 	public final GricliVar<File> dir;
 
 	public final FileListVar files;
@@ -129,7 +129,7 @@ public class GricliEnvironment {
 			}
 		});
 
-		this.queue = new StringVar("queue","");
+		this.queue = new StringVar("queue",null,true);
 
 		this.jobname = new StringVar("jobname","gricli") {
 			@Override
@@ -152,15 +152,8 @@ public class GricliEnvironment {
 
 		this.memory = new MemoryVar("memory", 2048);
 		this.walltime = new WalltimeVar("walltime",10);
-		this.cpus = new IntVar("cpus",1) {
-			@Override
-			public void set(Integer value) throws GricliSetValueException {
-				super.set(value);
-				if (value <= 0){
-					throw new GricliSetValueException(getName(),""+value, "cannot be negative");
-				}
-			}
-		};
+		this.cpus = new PositiveIntVar("cpus",1);
+		this.hostCount = new PositiveIntVar("hostCount", null, true);
 
 		this.version = new StringVar("version", null, true);
 		this.application = new StringVar("application", null, true);
@@ -243,12 +236,22 @@ public class GricliEnvironment {
 
 		job.setWalltimeInSeconds(walltime.get() * 60);
 		job.setMemory(((long)memory.get()) * 1024 * 1024);
-		job.setSubmissionLocation(queue.get());
+		
+		if (queue.get() != null){
+			job.setSubmissionLocation(queue.get());
+		} else {
+			job.setSubmissionLocation(Constants.NO_SUBMISSION_LOCATION_INDICATOR_STRING);
+		}
 
-		boolean isMpi = "mpi".equals(jobtype.get());
-		job.setForce_mpi(isMpi);
-		boolean isSmp = "smp".equals(jobtype.get());
-		if (isSmp){
+		if ("mpi".equals(jobtype.get())){
+			job.setForce_mpi(true);
+		}
+		
+		if (hostCount.get()!= null){
+			job.setHostCount(hostCount.get());
+		}
+		
+		if ("smp".equals(jobtype.get())){
 			job.setForce_single(true);
 			job.setHostCount(1);
 		}

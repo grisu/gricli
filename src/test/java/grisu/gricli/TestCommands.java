@@ -1,8 +1,6 @@
 package grisu.gricli;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import grisu.gricli.command.AddCommand;
 import grisu.gricli.command.AttachCommand;
 import grisu.gricli.command.ChdirCommand;
@@ -271,6 +269,21 @@ public class TestCommands {
 	public void testSubmitWithQuotes() throws Exception {
 		SubmitCommand submit = new SubmitCommand("crazyquotes","\"a\"");
 		assertEquals("crazyquotes \"\\\"a\\\"\"", submit.getCommandline());
+	}
+	
+	// test set and unset commands
+	
+	@Test
+	public void testUnsetRightVar() throws Exception{
+		SetCommand unset = new SetCommand("queue");
+		unset.execute(env);
+		assertNull(env.queue.get());
+	}
+	
+	@Test(expected=GricliSetValueException.class)
+	public void testUnsetWrongVar() throws Exception {
+		SetCommand unset = new SetCommand("cpus");
+		unset.execute(env);
 	}
 
 }
