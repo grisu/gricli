@@ -7,10 +7,12 @@ import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.GricliSetValueException;
 import grisu.gricli.LoginRequiredException;
 import grisu.jcommons.constants.Constants;
+import grisu.jcommons.constants.JobSubmissionProperty;
 import grisu.model.GrisuRegistry;
 import grisu.model.GrisuRegistryManager;
 import grisu.model.dto.GridFile;
 import grisu.settings.ClientPropertiesManager;
+import grisu.utils.StringHelpers;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,6 +45,7 @@ public class GricliEnvironment {
 	public final GricliVar<Boolean> email_on_start, email_on_finish, debug;
 	public final GricliVar<Integer> memory, walltime, cpus, hostCount;
 	public final GricliVar<File> dir;
+	public final GricliVar<Hashtable<String,String>> environment;
 
 	public final FileListVar files;
 
@@ -191,6 +195,8 @@ public class GricliEnvironment {
 		this.outputfile = new StringVar("outputfile", null, true);
 
 		this.files = new FileListVar("files");
+		
+		this.environment = new EnvironmentVar("environment");
 	}
 
 	public String getCurrentAbsoluteDirectory() {
@@ -254,6 +260,11 @@ public class GricliEnvironment {
 		if ("smp".equals(jobtype.get())){
 			job.setForce_single(true);
 			job.setHostCount(1);
+		}
+		
+		// add environment variables
+		for (String var: environment.get().keySet()){
+			job.addEnvironmentVariable(var, environment.get().get(var));
 		}
 
 		// attach input files
