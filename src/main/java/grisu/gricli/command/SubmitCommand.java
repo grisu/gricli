@@ -1,5 +1,7 @@
 package grisu.gricli.command;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import grisu.control.exceptions.JobPropertiesException;
 import grisu.control.exceptions.JobSubmissionException;
 import grisu.frontend.model.job.JobObject;
@@ -14,28 +16,20 @@ import grisu.jcommons.constants.Constants;
 public class SubmitCommand implements
 GricliCommand {
 
-	private final String cmd;
-	private final boolean isAsync;
+	private final String[] args;
 
 	@SyntaxDescription(command={"submit"}, arguments={"commandline"})
 	@AutoComplete(completors = { ExecutablesCompletor.class,
 			InputFileCompletor.class })
-	public SubmitCommand(String cmd) {
-		this(cmd,null);
-	}
-
-	@SyntaxDescription(command={"submit"},arguments={"commandline","&"})
-	@AutoComplete(completors = { ExecutablesCompletor.class })
-	public SubmitCommand(String cmd, String mod){
-		this.cmd = cmd;
-		this.isAsync = "&".equals(mod);
-
+	public SubmitCommand(String... args) {
+		this.args = args;
 	}
 
 	protected JobObject createJob(GricliEnvironment env)
 			throws GricliRuntimeException {
 		JobObject job = env.getJob();
-		job.setCommandline(cmd);
+		
+		job.setCommandline(getCommandline());
 
 		try {
 			job.createJob(env.group.get(), Constants.UNIQUE_NUMBER_METHOD);
@@ -46,6 +40,27 @@ GricliCommand {
 		}
 
 	}
+	
+	public String getCommandline(){
+		int length = this.args.length;
+		String last = this.args[this.args.length - 1];
+		if ("&".equals(last)){
+			length--;
+		}
+		String cmd = "";
+		for (int i =0; i< length; i++){
+			String escaped = StringEscapeUtils.escapeJava(this.args[i]);
+			if (!this.args[i].equals(escaped) || escaped.contains(" ")){
+				escaped = "\"" + escaped + "\"";
+			}
+			cmd += " " + escaped;
+		}
+		return cmd.trim();
+	}
+	
+	public boolean isAsync(){
+		return "&".equals(this.args[this.args.length - 1]);
+	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
@@ -54,7 +69,7 @@ GricliCommand {
 		System.out.println(" job name is " + jobname);
 		Gricli.completionCache.refreshJobnames();
 
-		if (this.isAsync){
+		if (isAsync()){
 			new Thread() {
 				@Override
 				public void run() {

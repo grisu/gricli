@@ -9,6 +9,7 @@ import grisu.gricli.command.ChdirCommand;
 import grisu.gricli.command.GricliCommandFactory;
 import grisu.gricli.command.RunCommand;
 import grisu.gricli.command.SetCommand;
+import grisu.gricli.command.SubmitCommand;
 import grisu.gricli.environment.GricliEnvironment;
 
 import java.io.File;
@@ -244,6 +245,32 @@ public class TestCommands {
 	@Test(expected=GricliSetValueException.class)
 	public void testSetJobNameWithSpaces() throws Exception {
 		env.jobname.set("job name with spaces");
+	}
+	
+	// testing submit commands
+	
+	@Test
+	public void testSimpleSubmitCmd() throws Exception {
+		SubmitCommand submit = new SubmitCommand("java","-version");
+		assertEquals("java -version", submit.getCommandline());
+	}
+	
+	@Test
+	public void testSubmitCmdWithTilda() throws Exception {
+		SubmitCommand submit = new SubmitCommand("java","-version", "&");
+		assertEquals("java -version", submit.getCommandline());
+	}
+	
+	@Test
+	public void testSubmitWithSpaces() throws Exception {
+		SubmitCommand submit = new SubmitCommand("cat","file with spaces");
+		assertEquals("cat \"file with spaces\"", submit.getCommandline());
+	}
+	
+	@Test
+	public void testSubmitWithQuotes() throws Exception {
+		SubmitCommand submit = new SubmitCommand("crazyquotes","\"a\"");
+		assertEquals("crazyquotes \"\\\"a\\\"\"", submit.getCommandline());
 	}
 
 }
