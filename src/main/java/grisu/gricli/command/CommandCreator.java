@@ -112,8 +112,14 @@ public class CommandCreator{
 			pc.arguments.add(nextToken);
 			return this;
 		}
+		
+		String error = "";
+		for (String errToken: pc.arguments){
+			error +=  errToken + " ";
+		}
+		error += nextToken;
 
-		throw new UnknownCommandException("unknown command: ");
+		throw new UnknownCommandException("unknown command: " + error);
 	}
 
 

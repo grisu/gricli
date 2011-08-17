@@ -9,6 +9,12 @@ import java.io.StreamTokenizer;
 import java.util.ArrayList;
 
 public class GricliTokenizer {
+	
+	private int lineNumber = 0;
+	
+	public int getLineNumber(){
+		return this.lineNumber;
+	}
 
 	public static String[] tokenize(String str) {
 
@@ -69,6 +75,9 @@ public class GricliTokenizer {
 			if ((c != '\r') && (c != '\n') && (c != ';')) {
 				command.append((char) c);
 			} else {
+				if (c != ';'){
+					this.lineNumber++;
+				}
 				return tokenize(command.toString());
 			}
 			c = in.read();

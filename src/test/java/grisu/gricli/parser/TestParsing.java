@@ -93,5 +93,29 @@ public class TestParsing {
 		assertArrayEquals(tokenize("attach ~/test"),new String[] {"attach", "~/test"});
 	}
 	
+	// test line numbers
+	@Test
+	public void testFirstLine() throws Exception{
+		tokenizer = str2Tokenizer("aaa bbb");
+		assertEquals(tokenizer.getLineNumber(),0);
+		tokenizer.nextCommand();
+		assertEquals(tokenizer.getLineNumber(),0);
+	}
+	
+	@Test
+	public void testSecondLine() throws Exception{
+		tokenizer = str2Tokenizer("aaa bbb\n");
+		tokenizer.nextCommand();
+		assertEquals(tokenizer.getLineNumber(),1);
+	}
+	
+	@Test
+	public void testThirdLine() throws Exception {
+		tokenizer = str2Tokenizer("aaa bbb\naaa bbb\n");
+		tokenizer.nextCommand();
+		tokenizer.nextCommand();
+		assertEquals(tokenizer.getLineNumber(),2);
+	}
+	
 
 }

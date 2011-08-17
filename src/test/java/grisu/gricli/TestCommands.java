@@ -193,10 +193,22 @@ public class TestCommands {
 
 		assertEquals(env.jobname.get(),"hello");
 	}
+	
+	@Test
+	public void testRunWithComments() throws Exception {
+		List<String> script = new LinkedList<String>();
+		script.add("# this is comment");
+		File f = folder.newFile("testRun2.script");
+		String scriptName = f.getCanonicalPath();
+		FileUtils.writeLines(f,script);
+		
+		RunCommand c = new RunCommand(scriptName);
+		c.execute(env);
+	}
 
 	@Test
 	public void testRunWithNoEndOfLine() throws Exception {
-		File f = folder.newFile("testRun2.script");
+		File f = folder.newFile("testRun3.script");
 		String scriptName = f.getCanonicalPath();
 		FileUtils.writeByteArrayToFile(f, "set jobname hello".getBytes());
 

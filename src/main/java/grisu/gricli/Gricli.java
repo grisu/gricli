@@ -8,6 +8,7 @@ import grisu.frontend.view.cli.CliHelpers;
 import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.GricliCommandFactory;
 import grisu.gricli.command.InteractiveLoginCommand;
+import grisu.gricli.command.help.HelpManager;
 import grisu.gricli.completors.CompletionCache;
 import grisu.gricli.completors.DummyCompletionCache;
 import grisu.gricli.environment.GricliEnvironment;
@@ -26,6 +27,7 @@ import jline.History;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -150,6 +152,7 @@ public class Gricli {
 			env = new GricliEnvironment();
 
 			CommandLineParser parser = new PosixParser();
+			CommandLine cl = null;
 			Options options = new Options();
 			options
 			.addOption(OptionBuilder.withLongOpt("nologin")
@@ -162,12 +165,12 @@ public class Gricli {
 					.withArgName("file").withDescription("execute script")
 					.create('f'));
 			try {
-				CommandLine cl = parser.parse(options, args);
+				cl = parser.parse(options, args);
 				if (!cl.hasOption('n')) {
 					String backend = cl.getOptionValue('b');
 					backend = (backend != null) ? backend : "BeSTGRID";
 					if (!login(env, backend)) {
-						System.exit(1);
+						System.exit(LOGIN.getStatus());
 					}
 				}
 
@@ -176,6 +179,8 @@ public class Gricli {
 				}
 			} catch (ParseException e) {
 				myLogger.error(e);
+				new HelpFormatter().printHelp("griclish ", options);
+				System.exit(SYNTAX.getStatus());
 			}
 
 			try {
@@ -222,7 +227,7 @@ public class Gricli {
 		} catch (SyntaxException ex) {
 			exitStatus = SYNTAX;
 			error = ex;
-			System.err.println("syntax error "+ ex.getMessage());
+			System.err.println("syntax error " + ex.getMessage());
 		} catch (LoginRequiredException ex) {
 			exitStatus = LOGIN;
 			error = ex;
