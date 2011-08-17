@@ -55,5 +55,9 @@ public class WalltimeVar extends ScalarVar<Integer> {
 	public String toString(){
 		return StringUtils.join(WalltimeUtils.convertSecondsInHumanReadableString(get() * 60)," ");
 	}
+	
+	public String marshall(){
+		return "" + get();
+	}
 
 }

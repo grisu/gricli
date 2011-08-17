@@ -1,28 +1,35 @@
 package grisu.gricli;
 
+
+import grisu.gricli.environment.GricliEnvironment;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 
 @SuppressWarnings("restriction")
 public class SigintHandler implements SignalHandler {
-
-	private Thread t;
 	
-	public SigintHandler(Thread t){
-		this.t = t;
+	private GricliEnvironment gricli;
+	private SignalHandler oldHandler;
+
+	public SigintHandler(GricliEnvironment gricli){
+		this.gricli = gricli;
 	}
 
-	public static SigintHandler install(String signalName, Thread t){
+	public static SigintHandler install(GricliEnvironment gricli){
 		
-		SigintHandler s = new SigintHandler(t);
-		Signal signal = new Signal(signalName);
-		Signal.handle(signal, s);
+		SigintHandler s = new SigintHandler(gricli);
+		Signal signal = new Signal("INT");
+		s.oldHandler = Signal.handle(signal, s);
 		return s;
 	}
-	
-	public void handle(Signal s) {
-		t.interrupt();
 
+	public void handle(Signal s) {
+		// Chain back to previous handler, if one exists
+		Gricli.shutdown(gricli);
+		if (oldHandler != SIG_DFL && oldHandler != SIG_IGN) {
+			oldHandler.handle(s);
+		}
 	}
+	
 
 }

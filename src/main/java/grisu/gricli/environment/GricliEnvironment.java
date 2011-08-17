@@ -107,8 +107,6 @@ public class GricliEnvironment {
 			public void valueChanged(String value) {
 				if (StringUtils.isNotBlank(value)) {
 
-					ClientPropertiesManager.setLastUsedFqan(value);
-
 					final String app = application.get();
 					if (StringUtils.isNotBlank(app) && !Constants.GENERIC_APPLICATION_NAME.equals(app)) {
 						final String fqan = value;
@@ -195,8 +193,10 @@ public class GricliEnvironment {
 		this.outputfile = new StringVar("outputfile", null, true);
 
 		this.files = new FileListVar("files");
+		this.files.setPersistent(false);
 		
 		this.environment = new EnvironmentVar("environment");
+		this.environment.setPersistent(false);
 	}
 
 	public String getCurrentAbsoluteDirectory() {

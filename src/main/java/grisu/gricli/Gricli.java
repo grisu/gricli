@@ -8,10 +8,12 @@ import grisu.frontend.view.cli.CliHelpers;
 import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.GricliCommandFactory;
 import grisu.gricli.command.InteractiveLoginCommand;
+import grisu.gricli.command.RunCommand;
 import grisu.gricli.command.help.HelpManager;
 import grisu.gricli.completors.CompletionCache;
 import grisu.gricli.completors.DummyCompletionCache;
 import grisu.gricli.environment.GricliEnvironment;
+import grisu.gricli.environment.GricliVar;
 import grisu.gricli.parser.GricliTokenizer;
 import grisu.settings.Environment;
 
@@ -32,6 +34,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -42,6 +45,8 @@ public class Gricli {
 
 	static final String CONFIG_FILE_PATH = FilenameUtils.concat(Environment
 			.getGrisuClientDirectory().getPath(), "gricli.profile");
+	static final String SESSION_SETTINGS_PATH = FilenameUtils.concat(Environment
+			.getGrisuClientDirectory().getPath(), "gricli-session.profile");
 
 	static final String HISTORY_FILE_PATH = FilenameUtils.concat(Environment.getGrisuClientDirectory().getPath() ,
 			"gricli.hist");
@@ -150,6 +155,7 @@ public class Gricli {
 			}
 
 			env = new GricliEnvironment();
+			SigintHandler.install(env);
 
 			CommandLineParser parser = new PosixParser();
 			CommandLine cl = null;
@@ -184,11 +190,18 @@ public class Gricli {
 			}
 
 			try {
-				run(new FileInputStream(CONFIG_FILE_PATH));
-			} catch (IOException ex) {
+				if (new File(SESSION_SETTINGS_PATH).exists()){
+					env = new RunCommand(SESSION_SETTINGS_PATH).execute(env);
+				}
+				if (new File(CONFIG_FILE_PATH).exists()){
+					env = new RunCommand(CONFIG_FILE_PATH).execute(env);
+				}
+			} catch (GricliRuntimeException ex) {
 				// config does not exist
+				env.printError(ex.getMessage());
 			}
 			executionLoop();
+			shutdown(env);
 			System.exit(exitStatus.getStatus());
 		} catch (Throwable th) {
 			System.err.println("Something went terribly wrong.  Please check if you have internet connection, and your firewall settings." +
@@ -260,8 +273,35 @@ public class Gricli {
 			}
 		}
 	}
+	
+	public static void shutdown(GricliEnvironment env){
+		try {
+			File f = new File(SESSION_SETTINGS_PATH);
+			String session = generateSession(env);	
+			FileUtils.writeStringToFile(f, session);
+		} catch (IOException ex){
+			myLogger.error(ex);
+			env.printError("warning: could not save session");
+		}
+	}
+	
+	private static String generateSession(GricliEnvironment env){
+		String result = "";
+		for (GricliVar<?> var: env.getVariables()){
+			if (var.isPersistent()){
+				Object value = var.get();
+				if (value == null){
+					result+="unset " + var.getName() + "\n";
+				} else {
+					result+= "set " + var.getName() + " " + GricliTokenizer.escape(var.marshall()) + "\n";
+				}
+			}
+		}
+		return result;
+	}
 
 }
+
 
 class SemicolonDelimiter extends ArgumentCompletor.AbstractArgumentDelimiter {
 

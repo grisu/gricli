@@ -297,5 +297,12 @@ public class TestCommands {
 		SetCommand unset = new SetCommand("cpus");
 		unset.execute(env);
 	}
+	
+	@Test
+	public void testUnsetHostCount() throws Exception{
+		SetCommand unset = new SetCommand("hostCount");
+		unset.execute(env);
+		assertNull(env.queue.get());
+	}
 
 }

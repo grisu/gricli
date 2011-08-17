@@ -117,5 +117,26 @@ public class TestParsing {
 		assertEquals(tokenizer.getLineNumber(),2);
 	}
 	
+	// test escape
+	@Test
+	public void testNullEscape(){
+		assertNull(GricliTokenizer.escape(null));
+	}
+	
+	@Test
+	public void testTrivialEscape(){
+		assertEquals("a",GricliTokenizer.escape("a"));
+	}
+	
+	@Test
+	public void testSpaceEscape(){
+		assertEquals("\"a b\"",GricliTokenizer.escape("a b"));
+	}
+	
+	@Test
+	public void testEmptyLineEscape(){
+		assertEquals("\"\"",GricliTokenizer.escape(""));
+	}
+	
 
 }
