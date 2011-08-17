@@ -4,6 +4,7 @@ Changelog
 0.5
 ---
 
+* persistent user session; globals except attached files and env vars saved
 * last used group remembered
 * tab-completion for remote file systems
 * tab-completion now also works on "submit" command for executables and input files
