@@ -31,7 +31,6 @@ public class GricliCommandFactory {
 		GricliCommandFactory f = new GricliCommandFactory();
 		f.add(AddCommand.class);
 		f.add(AttachCommand.class);
-		f.add(ClearListCommand.class);
 		f.add(DownloadJobCommand.class);
 		f.add(FilemanagerCommand.class);
 		f.add(SetCommand.class);

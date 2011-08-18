@@ -27,7 +27,7 @@ public class AddCommand implements GricliCommand {
 		if (file != null){
 			env.files.get().add(file);
 		} else {
-			env.environment.get().put(var, value);
+			env.env.get().put(var, value);
 		}
 		return env;
 	}

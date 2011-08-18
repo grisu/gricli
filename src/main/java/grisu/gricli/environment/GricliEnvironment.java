@@ -41,11 +41,11 @@ public class GricliEnvironment {
 		}
 		return result;
 	}
-	public final GricliVar<String> email, prompt, host, group, gdir, queue, outputfile, version, application, jobname, jobtype, description;
+	public final GricliVar<String> email, prompt, group, gdir, queue, outputfile, version, application, jobname, jobtype, description;
 	public final GricliVar<Boolean> email_on_start, email_on_finish, debug;
 	public final GricliVar<Integer> memory, walltime, cpus, hostCount;
 	public final GricliVar<File> dir;
-	public final GricliVar<Hashtable<String,String>> environment;
+	public final GricliVar<Hashtable<String,String>> env;
 
 	public final FileListVar files;
 
@@ -64,7 +64,6 @@ public class GricliEnvironment {
 
 		this.prompt = new StringVar("prompt","gricli> ");
 
-		this.host = new StringVar("host","");
 		this.gdir = new StringVar("gdir","");
 		this.dir = new DirVar("dir", new File(System.getProperty("user.dir")));
 		this.dir.addListener(new GricliVarListener<File>() {
@@ -195,8 +194,8 @@ public class GricliEnvironment {
 		this.files = new FileListVar("files");
 		this.files.setPersistent(false);
 		
-		this.environment = new EnvironmentVar("environment");
-		this.environment.setPersistent(false);
+		this.env = new EnvironmentVar("environment");
+		this.env.setPersistent(false);
 	}
 
 	public String getCurrentAbsoluteDirectory() {
@@ -263,8 +262,8 @@ public class GricliEnvironment {
 		}
 		
 		// add environment variables
-		for (String var: environment.get().keySet()){
-			job.addEnvironmentVariable(var, environment.get().get(var));
+		for (String var: env.get().keySet()){
+			job.addEnvironmentVariable(var, env.get().get(var));
 		}
 
 		// attach input files
