@@ -8,7 +8,15 @@ import java.io.InputStreamReader;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 public class GricliTokenizer {
+	
+	private int lineNumber = 0;
+	
+	public int getLineNumber(){
+		return this.lineNumber;
+	}
 
 	public static String[] tokenize(String str) {
 
@@ -34,6 +42,7 @@ public class GricliTokenizer {
 		st.wordChars('*', '*');
 		st.wordChars('?', '?');
 		st.wordChars('#', '#');
+		st.wordChars('$', '$');
 		st.wordChars('&', '&');
 		st.wordChars('~', '~');
 		st.whitespaceChars(' ', ' ');
@@ -56,6 +65,18 @@ public class GricliTokenizer {
 	public GricliTokenizer(InputStream in) {
 		this.in = in;
 	}
+	
+	public static String escape(String s){
+		if (s == null){
+			return null;
+		} else {
+			if (s.contains(" ") || s.length() == 0){
+				return "\"" + StringEscapeUtils.escapeJava(s) + "\"";
+			} else {
+				return s;
+			}
+		}
+	}
 
 	public String[] nextCommand() throws IOException {
 
@@ -69,6 +90,9 @@ public class GricliTokenizer {
 			if ((c != '\r') && (c != '\n') && (c != ';')) {
 				command.append((char) c);
 			} else {
+				if (c != ';'){
+					this.lineNumber++;
+				}
 				return tokenize(command.toString());
 			}
 			c = in.read();

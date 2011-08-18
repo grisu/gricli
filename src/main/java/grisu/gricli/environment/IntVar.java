@@ -14,6 +14,9 @@ public class IntVar extends ScalarVar<Integer> {
 
 	@Override
 	protected Integer fromString(String arg) throws GricliSetValueException {
+		if (arg == null){
+			return null;
+		}
 		try {
 			return Integer.parseInt(arg);
 		} catch (NumberFormatException ex){

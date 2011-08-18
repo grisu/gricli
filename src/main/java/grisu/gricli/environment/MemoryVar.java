@@ -48,5 +48,9 @@ public class MemoryVar extends ScalarVar<Integer> {
 	public String toString() {
 		return String.format("%.2f GB", get() / 1024.0);
 	}
+	
+	public String marshall(){
+		return "" + get();
+	}
 
 }

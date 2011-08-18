@@ -3,6 +3,7 @@ package grisu.gricli.command;
 import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.SyntaxException;
+import grisu.gricli.UnknownCommandException;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.parser.GricliTokenizer;
 
@@ -36,14 +37,19 @@ public class RunCommand implements GricliCommand {
 
 
 		ArrayList<GricliCommand> cl = new ArrayList<GricliCommand>();
+		GricliTokenizer tokenizer = null;
 
 		try {
 			File f = new File(FilenameUtils.concat(env.getCurrentAbsoluteDirectory(), script));
-			System.out.println(f.getCanonicalPath());
-			GricliTokenizer tokenizer = new GricliTokenizer(new FileInputStream(f));
+			tokenizer = new GricliTokenizer(new FileInputStream(f));
 			String[] tokens;
 			while ((tokens = tokenizer.nextCommand()) != null){
-				cl.add(Gricli.SINGLETON_COMMANDFACTORY.create(tokens));
+				if ((tokens.length > 0) && (tokens[0].startsWith("#"))){
+					continue;
+				}
+				String annotation = "line number " + tokenizer.getLineNumber() + ": ";
+				AnnotatedCommand c = new AnnotatedCommand(annotation, Gricli.SINGLETON_COMMANDFACTORY.create(tokens));
+				cl.add(c);
 			}
 		} catch (FileNotFoundException e) {
 			throw new GricliRuntimeException("file " + script + " not found ", e);
@@ -52,7 +58,7 @@ public class RunCommand implements GricliCommand {
 					"IO error while reading " + script, e);
 		} catch (SyntaxException e){
 			throw new GricliRuntimeException("error during parsing of "
-					+ script + ": " + e.getMessage(), e);
+					+ script + " on line " + tokenizer.getLineNumber() + "  :" + e.getMessage());
 		}
 		return new CompositeCommand(cl.toArray(new GricliCommand[] {})).execute(env);
 	}

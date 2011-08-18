@@ -10,6 +10,7 @@ public abstract class GricliVar<T> implements Comparable<GricliVar> {
 	private final String name;
 	private T value;
 	private final List<GricliVarListener<T>> listeners;
+	private boolean persistent = true;
 
 
 	public GricliVar(String name){
@@ -64,6 +65,18 @@ public abstract class GricliVar<T> implements Comparable<GricliVar> {
 	@Override
 	public String toString(){
 		return value.toString();
+	}
+	
+	protected void setPersistent(boolean persistent){
+		this.persistent = persistent;
+	}
+	
+	public String marshall(){
+		return toString();
+	}
+	
+	public boolean isPersistent(){
+		return this.persistent;
 	}
 
 

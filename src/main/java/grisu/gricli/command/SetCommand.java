@@ -19,6 +19,12 @@ public class SetCommand implements GricliCommand {
 		this.global = global;
 		this.values = new String[] {value};
 	}
+	
+	@SyntaxDescription(command={"unset"}, arguments={"var"})
+	@AutoComplete(completors={VarCompletor.class})
+	public SetCommand(String global){
+		this(global,null);
+	}
 
 	public GricliEnvironment execute(final GricliEnvironment env)
 			throws GricliRuntimeException {

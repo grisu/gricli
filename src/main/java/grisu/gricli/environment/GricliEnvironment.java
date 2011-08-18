@@ -7,10 +7,12 @@ import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.GricliSetValueException;
 import grisu.gricli.LoginRequiredException;
 import grisu.jcommons.constants.Constants;
+import grisu.jcommons.constants.JobSubmissionProperty;
 import grisu.model.GrisuRegistry;
 import grisu.model.GrisuRegistryManager;
 import grisu.model.dto.GridFile;
 import grisu.settings.ClientPropertiesManager;
+import grisu.utils.StringHelpers;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,10 +41,11 @@ public class GricliEnvironment {
 		}
 		return result;
 	}
-	public final GricliVar<String> email, prompt, host, group, gdir, queue, outputfile, version, application, jobname, jobtype, description;
+	public final GricliVar<String> email, prompt, group, gdir, queue, outputfile, version, application, jobname, jobtype, description;
 	public final GricliVar<Boolean> email_on_start, email_on_finish, debug;
-	public final GricliVar<Integer> memory, walltime, cpus;
+	public final GricliVar<Integer> memory, walltime, cpus, hostCount;
 	public final GricliVar<File> dir;
+	public final GricliVar<Hashtable<String,String>> env;
 
 	public final FileListVar files;
 
@@ -60,7 +64,6 @@ public class GricliEnvironment {
 
 		this.prompt = new StringVar("prompt","gricli> ");
 
-		this.host = new StringVar("host","");
 		this.gdir = new StringVar("gdir","");
 		this.dir = new DirVar("dir", new File(System.getProperty("user.dir")));
 		this.dir.addListener(new GricliVarListener<File>() {
@@ -103,8 +106,6 @@ public class GricliEnvironment {
 			public void valueChanged(String value) {
 				if (StringUtils.isNotBlank(value)) {
 
-					ClientPropertiesManager.setLastUsedFqan(value);
-
 					final String app = application.get();
 					if (StringUtils.isNotBlank(app) && !Constants.GENERIC_APPLICATION_NAME.equals(app)) {
 						final String fqan = value;
@@ -129,7 +130,7 @@ public class GricliEnvironment {
 			}
 		});
 
-		this.queue = new StringVar("queue","");
+		this.queue = new StringVar("queue",null,true);
 
 		this.jobname = new StringVar("jobname","gricli") {
 			@Override
@@ -152,15 +153,8 @@ public class GricliEnvironment {
 
 		this.memory = new MemoryVar("memory", 2048);
 		this.walltime = new WalltimeVar("walltime",10);
-		this.cpus = new IntVar("cpus",1) {
-			@Override
-			public void set(Integer value) throws GricliSetValueException {
-				super.set(value);
-				if (value <= 0){
-					throw new GricliSetValueException(getName(),""+value, "cannot be negative");
-				}
-			}
-		};
+		this.cpus = new PositiveIntVar("cpus",1);
+		this.hostCount = new PositiveIntVar("hostCount", null, true);
 
 		this.version = new StringVar("version", null, true);
 		this.application = new StringVar("application", null, true);
@@ -198,6 +192,10 @@ public class GricliEnvironment {
 		this.outputfile = new StringVar("outputfile", null, true);
 
 		this.files = new FileListVar("files");
+		this.files.setPersistent(false);
+		
+		this.env = new EnvironmentVar("environment");
+		this.env.setPersistent(false);
 	}
 
 	public String getCurrentAbsoluteDirectory() {
@@ -243,14 +241,29 @@ public class GricliEnvironment {
 
 		job.setWalltimeInSeconds(walltime.get() * 60);
 		job.setMemory(((long)memory.get()) * 1024 * 1024);
-		job.setSubmissionLocation(queue.get());
+		
+		if (queue.get() != null){
+			job.setSubmissionLocation(queue.get());
+		} else {
+			job.setSubmissionLocation(Constants.NO_SUBMISSION_LOCATION_INDICATOR_STRING);
+		}
 
-		boolean isMpi = "mpi".equals(jobtype.get());
-		job.setForce_mpi(isMpi);
-		boolean isSmp = "smp".equals(jobtype.get());
-		if (isSmp){
+		if ("mpi".equals(jobtype.get())){
+			job.setForce_mpi(true);
+		}
+		
+		if (hostCount.get()!= null){
+			job.setHostCount(hostCount.get());
+		}
+		
+		if ("smp".equals(jobtype.get())){
 			job.setForce_single(true);
 			job.setHostCount(1);
+		}
+		
+		// add environment variables
+		for (String var: env.get().keySet()){
+			job.addEnvironmentVariable(var, env.get().get(var));
 		}
 
 		// attach input files
