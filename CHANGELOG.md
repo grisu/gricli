@@ -4,6 +4,8 @@ Changelog
 0.5
 ---
 
+* glob support for print package
+* new commands clean/kill jobs
 * persistent user session; globals except attached files and env vars saved
 * last used group remembered
 * tab-completion for remote file systems
