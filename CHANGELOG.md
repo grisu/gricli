@@ -13,7 +13,7 @@ Changelog
 * fixed job status problem where they are incorrectly marked Done.
 * renamed application to package
 * pwd and exec pwd are the same now
-
+* gls command replaced by ls
 
 0.4
 ---
