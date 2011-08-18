@@ -73,7 +73,7 @@ GricliCommand {
 				if  (!FilenameUtils.wildcardMatch(version, this.version, IOCase.INSENSITIVE)){
 					continue;
 				}
-				Set<String> sublocs = m.getAvailableSubmissionLocationsForVersion(version);
+				Set<String> sublocs = m.getAvailableSubmissionLocationsForVersionAndFqan(version, env.group.get());
 				
 				List<String> row = new LinkedList<String>();
 				row.add(app);
