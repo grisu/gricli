@@ -4,6 +4,7 @@ Changelog
 0.5
 ---
 
+* script comments #
 * glob support for print package
 * new commands clean/kill jobs
 * persistent user session; globals except attached files and env vars saved
