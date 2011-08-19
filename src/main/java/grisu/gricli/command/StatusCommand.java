@@ -22,6 +22,7 @@ public class StatusCommand implements GricliCommand {
 		int active = 0;
 		int finished = 0;
 		int failed = 0;
+		int unknown = 0;
 
 		for (DtoJob j : jobs) {
 			if (j.getStatus() >= JobConstants.FINISHED_EITHER_WAY) {
@@ -30,7 +31,11 @@ public class StatusCommand implements GricliCommand {
 					failed = failed + 1;
 				}
 			} else {
-				active = active + 1;
+				if (j.getStatus() < JobConstants.PENDING) {
+					unknown = unknown + 1;
+				} else {
+					active = active + 1;
+				}
 			}
 		}
 
@@ -40,6 +45,9 @@ public class StatusCommand implements GricliCommand {
 					+ failed + ")");
 		} else {
 			env.printMessage("Finished jobs: " + finished);
+		}
+		if (unknown > 0){
+			env.printMessage("Broken (not started) jobs: " + unknown);
 		}
 
 		return env;
