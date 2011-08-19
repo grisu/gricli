@@ -1,6 +1,7 @@
 package grisu.gricli.completors;
 
 import grisu.gricli.environment.GricliEnvironment;
+import grisu.model.dto.DtoJob;
 import grisu.model.dto.GridFile;
 
 import java.util.Set;
@@ -36,6 +37,10 @@ public class DummyCompletionCache implements CompletionCache {
 
 	public Set<String> getAllSites() {
 		return dummySet;
+	}
+
+	public SortedSet<DtoJob> getCurrentJobs(boolean forceRefresh) {
+		return new TreeSet<DtoJob>();
 	}
 
 	public GricliEnvironment getEnvironment() {

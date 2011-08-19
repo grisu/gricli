@@ -2,6 +2,7 @@ package grisu.gricli.completors;
 
 import grisu.gricli.completors.file.StillLoadingException;
 import grisu.gricli.environment.GricliEnvironment;
+import grisu.model.dto.DtoJob;
 import grisu.model.dto.GridFile;
 
 import java.util.Set;
@@ -20,6 +21,8 @@ public interface CompletionCache {
 	public abstract String[] getAllQueuesForFqan(String fqan);
 
 	public abstract Set<String> getAllSites();
+
+	public abstract SortedSet<DtoJob> getCurrentJobs(boolean forceRefresh);
 
 	public abstract GricliEnvironment getEnvironment();
 

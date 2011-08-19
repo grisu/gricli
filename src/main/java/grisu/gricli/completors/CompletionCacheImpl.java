@@ -6,6 +6,7 @@ import grisu.gricli.completors.file.StillLoadingException;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 import grisu.model.GrisuRegistry;
+import grisu.model.dto.DtoJob;
 import grisu.model.dto.GridFile;
 
 import java.util.ArrayList;
@@ -25,19 +26,13 @@ public class CompletionCacheImpl implements CompletionCache {
 	static final Logger myLogger = Logger.getLogger(CompletionCacheImpl.class
 			.getName());
 
-	// public static SortedSet<String> jobnames = new TreeSet<String>();
-	// public static SortedSet<String> fqans = new TreeSet<String>();
-	// public static String[] queues = new String[] {};
-	// public static String[] sites = new String[] {};
-
 	public final Set<String> currentlyListedUrls = Collections
 			.synchronizedSet(new HashSet<String>());
 
 	private final GricliEnvironment env;
 	private final GrisuRegistry reg;
-	// private final RunningJobManager jm;
 
-	private static Cache fsCache = CacheManager.getInstance().getCache("short");
+	private static Cache cache = CacheManager.getInstance().getCache("short");
 
 	public CompletionCacheImpl(GricliEnvironment env) throws LoginRequiredException {
 		this.env = env;
@@ -88,7 +83,7 @@ public class CompletionCacheImpl implements CompletionCache {
 
 	public void addFileListingToCache(String urlToList, GridFile list) {
 		Element el = new Element(urlToList, list);
-		fsCache.put(el);
+		cache.put(el);
 
 	}
 
@@ -126,6 +121,27 @@ public class CompletionCacheImpl implements CompletionCache {
 		return this.reg.getUserEnvironmentManager().getAllAvailableSites();
 	}
 
+	public SortedSet<DtoJob> getCurrentJobs(boolean forceRefresh) {
+
+		SortedSet<DtoJob> jobs = null;
+		if (!forceRefresh) {
+			try {
+				jobs = (SortedSet<DtoJob>) cache
+						.get(Constants.ALLJOBS_KEY);
+			} catch (Exception e) {
+				// doesn't matter
+			}
+		}
+
+		if (jobs == null) {
+			jobs = this.reg.getUserEnvironmentManager().getCurrentJobs(true);
+			Element e = new Element(Constants.ALLJOBS_KEY, jobs);
+			cache.put(e);
+		}
+
+		return jobs;
+	}
+
 	public GricliEnvironment getEnvironment() {
 		return env;
 	}
@@ -139,7 +155,7 @@ public class CompletionCacheImpl implements CompletionCache {
 
 	public GridFile ls(final String url) throws StillLoadingException {
 
-		if (fsCache.get(url) == null) {
+		if (cache.get(url) == null) {
 
 			synchronized (url) {
 				// if url is not in short time cache or
@@ -155,12 +171,12 @@ public class CompletionCacheImpl implements CompletionCache {
 							try {
 								GridFile f = reg.getFileManager().ls(url);
 								Element e = new Element(url, f);
-								fsCache.put(e);
+								cache.put(e);
 							} catch (RemoteFileSystemException e) {
 								myLogger.error(e);
 								GridFile f = new GridFile(url, false, e);
 								Element el = new Element(url, f);
-								fsCache.put(el);
+								cache.put(el);
 							} finally {
 								currentlyListedUrls.remove(url);
 							}
@@ -172,7 +188,7 @@ public class CompletionCacheImpl implements CompletionCache {
 			}
 		}
 
-		return (GridFile) (fsCache.get(url).getObjectValue());
+		return (GridFile) (cache.get(url).getObjectValue());
 	}
 
 	/*
@@ -190,7 +206,7 @@ public class CompletionCacheImpl implements CompletionCache {
 	}
 
 	public void removeFileListingFromCache(String url) {
-		fsCache.remove(url);
+		cache.remove(url);
 	}
 
 }

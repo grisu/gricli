@@ -55,6 +55,7 @@ public class GricliCommandFactory {
 		f.add(SubmitCommand.class);
 		f.add(DownloadAndCleanCommand.class);
 		f.add(WaitJobCommand.class);
+		f.add(StatusCommand.class);
 
 		f.add(QuitCommand.class);
 		f.add(LogoutCommand.class);
