@@ -3,7 +3,7 @@ Changelog
 
 0.5
 ---
-
+* clear files -> unset files
 * script comments #
 * glob support for print package
 * new commands clean/kill jobs
