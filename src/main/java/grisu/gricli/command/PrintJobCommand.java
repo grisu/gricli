@@ -15,6 +15,7 @@ import grisu.utils.WalltimeUtils;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -46,10 +47,16 @@ GricliCommand {
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		ServiceInterface si = env.getServiceInterface();
-		for (String j : ServiceInterfaceUtils.filterJobNames(si, jobname)) {
+		List<String> jobNames = ServiceInterfaceUtils.filterJobNames(si,
+				jobname);
+		for (String j : jobNames) {
 			try {
 				if (attribute != null) {
-					printJobAttribute(env,si, j, attribute);
+					if (jobNames.size() > 1) {
+						printJobAttribute(env, si, j, attribute, true);
+					} else {
+						printJobAttribute(env, si, j, attribute, false);
+					}
 				} else {
 					printJob(env,si, j);
 				}
@@ -118,7 +125,7 @@ GricliCommand {
 	}
 
 	private void printJobAttribute(GricliEnvironment env, ServiceInterface si, String j,
-			String attribute) throws NoSuchJobException {
+			String attribute, boolean displayJobName) throws NoSuchJobException {
 		DtoJob job = si.getJob(j);
 
 		JobSubmissionProperty p = JobSubmissionProperty
@@ -134,10 +141,16 @@ GricliCommand {
 				prop = attribute;
 			}
 		}
+		String msg = null;
 		if ((Constants.STATUS_STRING.equals(prop))) {
-			env.printMessage(JobConstants.translateStatus(si.getJobStatus(j)));
+			msg = JobConstants.translateStatus(si.getJobStatus(j));
 		} else {
-			env.printMessage(formatAttribute(prop, job.jobProperty(prop)));
+			msg = formatAttribute(prop, job.jobProperty(prop));
+		}
+		if (displayJobName){
+			env.printMessage(j + " : " + msg);
+		} else {
+			env.printMessage(msg);
 		}
 	}
 
