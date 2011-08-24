@@ -4,7 +4,6 @@ package grisu.gricli.command;
 import grisu.control.ServiceInterface;
 import grisu.frontend.control.login.LoginException;
 import grisu.frontend.control.login.LoginManager;
-import grisu.frontend.view.cli.CliHelpers;
 import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.BackendCompletor;
@@ -51,10 +50,10 @@ GricliCommand {
 		}
 
 		// load # of active and finished jobs
-		CliHelpers.setIndeterminateProgress("Loading jobs...", true);
+		// CliHelpers.setIndeterminateProgress("Loading jobs...", true);
 		StatusCommand sc = new StatusCommand();
 		sc.execute(env);
-		CliHelpers.setIndeterminateProgress(false);
+		// CliHelpers.setIndeterminateProgress(false);
 
 		return env;
 	}
