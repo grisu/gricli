@@ -24,9 +24,9 @@ public class PrintQueuesCommand implements GricliCommand {
 		queue_name("Queue name"),
 		job_manager("Job manager"),
 		gram_version("Gram version"),
-		ramsize("Main memory RAM size"),
-		virtualramsize("Main memory virtual size"),
-		smp_size("SMP size"),
+		// ramsize("Main memory RAM size"),
+		// virtualramsize("Main memory virtual size"),
+		// smp_size("SMP size"),
 		total_jobs("Total jobs"),
 		running_jobs("Running jobs"),
 		waiting_jobs("Waiting jobs"),
@@ -69,12 +69,12 @@ public class PrintQueuesCommand implements GricliCommand {
 				return gr.getJobManager();
 			case gram_version:
 				return gr.getGRAMVersion();
-			case ramsize:
-				return new Integer(gr.getMainMemoryRAMSize()).toString();
-			case virtualramsize:
-				return new Integer(gr.getMainMemoryVirtualSize()).toString();
-			case smp_size:
-				return new Integer(gr.getSmpSize()).toString();
+				// case ramsize:
+				// return new Integer(gr.getMainMemoryRAMSize()).toString();
+				// case virtualramsize:
+				// return new Integer(gr.getMainMemoryVirtualSize()).toString();
+				// case smp_size:
+				// return new Integer(gr.getSmpSize()).toString();
 			case total_jobs:
 				return new Integer(gr.getTotalJobs()).toString();
 			case running_jobs:

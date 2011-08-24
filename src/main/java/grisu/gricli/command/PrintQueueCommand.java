@@ -87,11 +87,11 @@ GricliCommand {
 		formatter.format("%-25s%s%n", "Queue name", queueName);
 		formatter.format("%-25s%s%n", "Job manager", jobManager);
 		formatter.format("%-25s%s%n%n", "GRAM version", gramVersion);
-		formatter
-				.format("%-25s%s%n", "Main memory RAM size", mainMemoryRAMSize);
-		formatter.format("%-25s%s%n%n", "Main memory virtual size",
-				mainMemoryVirtualSize);
-		formatter.format("%-25s%s%n%n", "SMP size", smpSize);
+		// formatter
+		// .format("%-25s%s%n", "Main memory RAM size", mainMemoryRAMSize);
+		// formatter.format("%-25s%s%n%n", "Main memory virtual size",
+		// mainMemoryVirtualSize);
+		// formatter.format("%-25s%s%n%n", "SMP size", smpSize);
 		formatter.format("%-25s%s%n", "Total jobs", totalJobs);
 		formatter.format("%-25s%s%n", "Running jobs", runningJobs);
 		formatter.format("%-25s%s%n%n", "Waiting jobs", waitingJobs);
