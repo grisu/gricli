@@ -89,7 +89,6 @@ public class Gricli {
 			}
 			String[] commandsOnOneLine = line.split(";");
 			for (String c: commandsOnOneLine){
-				myLogger.info("gricli-audit-command username=" + System.getProperty("user.name") + "command=" +c );
 				runCommand(GricliTokenizer.tokenize(c),
 						SINGLETON_COMMANDFACTORY, env);
 			}
