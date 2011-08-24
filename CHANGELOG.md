@@ -4,6 +4,9 @@ Changelog
 0.5
 ---
 
+* walltime global display has changed to human readable format
+* clear files has been replaced by unset files, unset is a new command
+* new command: unset - can be used to set optional globals to their null values. unset on required globals will throw error 
 * script comments #
 * glob support for print package
 * new commands clean/kill jobs
