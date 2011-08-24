@@ -5,6 +5,9 @@ import java.util.Formatter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Lists;
 
@@ -66,6 +69,23 @@ public class OutputHelpers {
 		}
 
 		return result.toString();
+	}
+
+	public static String getTable(Map<String, String> map) {
+
+		List<List<String>> listlist = Lists.newLinkedList();
+		for ( String key : map.keySet() ) {
+			List<String> list = Lists.newLinkedList();
+			list.add(key);
+			String value = map.get(key);
+			if (StringUtils.isBlank(value)) {
+				value = "";
+			}
+			list.add(value);
+			listlist.add(list);
+		}
+
+		return getTable(listlist);
 	}
 
 	public static void main (String[] args) {

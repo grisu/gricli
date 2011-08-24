@@ -8,6 +8,8 @@ import grisu.gricli.completors.JobPropertiesCompletor;
 import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.util.ServiceInterfaceUtils;
+import grisu.jcommons.constants.Constants;
+import grisu.jcommons.constants.JobSubmissionProperty;
 import grisu.model.dto.DtoJob;
 import grisu.utils.WalltimeUtils;
 
@@ -16,6 +18,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.python.google.common.collect.Maps;
 
 public class PrintJobCommand implements
 GricliCommand {
@@ -59,15 +62,16 @@ GricliCommand {
 	}
 
 	private String formatAttribute(String aName, String aVal){
-		if ("submissionTime".equals(aName)){
+
+		if (Constants.SUBMISSION_TIME_KEY.equals(aName)){
 			Date d = new Date(Long.parseLong(aVal));
 			return DateFormat.getInstance().format(d);
-		} else if ("memory".equals(aName)){
+		} else if (Constants.MEMORY_IN_B_KEY.equals(aName)) {
 			double memory = Long.parseLong(aVal);
 			memory = memory / 1024.0 / 1024.0 / 1024.0;
 			return String.format("%.2f GB", memory);
 
-		} else if ("walltime".equals(aName)) {
+		} else if (Constants.WALLTIME_IN_MINUTES_KEY.equals(aName)) {
 			String[] strings = WalltimeUtils
 					.convertSecondsInHumanReadableString(Integer.parseInt(aVal) * 60);
 			return StringUtils.join(strings, " ");
@@ -79,23 +83,61 @@ GricliCommand {
 	private void printJob(GricliEnvironment env, ServiceInterface si, String j)
 			throws NoSuchJobException {
 		DtoJob job = si.getJob(j);
-		env.printMessage("Printing details for job " + jobname);
-		env.printMessage("status: "
-				+ JobConstants.translateStatus(si.getJobStatus(jobname)));
+		env.printMessage("Printing details for job " + jobname + "/n");
+		// env.printMessage("status: "
+		// + JobConstants.translateStatus(si.getJobStatus(jobname)));
 		Map<String, String> props = job.propertiesAsMap();
+		Map<String, String> result = Maps.newTreeMap();
+
+		result.put(Constants.STATUS_STRING,
+				JobConstants.translateStatus(job.getStatus()));
+
 		for (String key : props.keySet()) {
-			env.printMessage(key + " : " + formatAttribute(key,props.get(key)));
+
+			String valName = JobSubmissionProperty.getPrettyName(key);
+
+			if (StringUtils.isBlank(valName)) {
+				if (Constants.FQAN_KEY.equals(key)) {
+					valName = "group";
+				} else {
+					valName = key;
+				}
+			}
+
+			result.put(valName, formatAttribute(key, props.get(key)));
+
 		}
+
+		for (String key : result.keySet()) {
+			env.printError(key + " : " + result.get(key));
+		}
+
+		// String table = OutputHelpers.getTable(result);
+		// env.printMessage(table);
+
 	}
 
 	private void printJobAttribute(GricliEnvironment env, ServiceInterface si, String j,
 			String attribute) throws NoSuchJobException {
 		DtoJob job = si.getJob(j);
-		if (("status".equals(attribute))) {
-			env.printMessage(j + " : "
-					+ JobConstants.translateStatus(si.getJobStatus(j)));
+
+		JobSubmissionProperty p = JobSubmissionProperty
+				.fromPrettyName(attribute);
+		String prop = null;
+		if (p != null) {
+			prop = p.toString();
+		}
+		if (StringUtils.isBlank(prop)) {
+			if ("group".equals(attribute)) {
+				prop = Constants.FQAN_KEY;
+			} else {
+				prop = attribute;
+			}
+		}
+		if ((Constants.STATUS_STRING.equals(prop))) {
+			env.printMessage(JobConstants.translateStatus(si.getJobStatus(j)));
 		} else {
-			env.printMessage(j + " : " + formatAttribute(attribute,job.jobProperty(attribute)));
+			env.printMessage(formatAttribute(prop, job.jobProperty(prop)));
 		}
 	}
 
