@@ -136,7 +136,9 @@ public class Gricli {
 
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
-
+		
+		Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
+		
 		try {
 			
 			// stop javaxws logging
