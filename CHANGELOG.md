@@ -19,6 +19,7 @@ Changelog
 * "print queues" now displays only queues that are available for the currently setup environment
 * "print queues" can now display more information about queues, like free job slots, total running jobs
 * new command: "print queue [queue]" -- displays all information that is known for a queue (which needs to be available for the current environment).
+* new command: "status" -- prints out a summary of how many jobs are active/finished/failed
 * fixed job status problem where they are incorrectly marked Done.
 * renamed application to package
 * pwd and exec pwd are the same now
