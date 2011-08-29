@@ -1,8 +1,8 @@
 package grisu.gricli.command;
 
 import grisu.gricli.Gricli;
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
+import grisu.gricli.environment.GricliEnvironment;
 
 import java.lang.reflect.Constructor;
 import java.util.Comparator;

@@ -8,8 +8,12 @@ import grisu.frontend.view.cli.CliHelpers;
 import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.GricliCommandFactory;
 import grisu.gricli.command.InteractiveLoginCommand;
+import grisu.gricli.command.RunCommand;
+import grisu.gricli.command.help.HelpManager;
 import grisu.gricli.completors.CompletionCache;
 import grisu.gricli.completors.DummyCompletionCache;
+import grisu.gricli.environment.GricliEnvironment;
+import grisu.gricli.environment.GricliVar;
 import grisu.gricli.parser.GricliTokenizer;
 import grisu.settings.Environment;
 
@@ -25,12 +29,13 @@ import jline.History;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
@@ -40,6 +45,8 @@ public class Gricli {
 
 	static final String CONFIG_FILE_PATH = FilenameUtils.concat(Environment
 			.getGrisuClientDirectory().getPath(), "gricli.profile");
+	static final String SESSION_SETTINGS_PATH = FilenameUtils.concat(Environment
+			.getGrisuClientDirectory().getPath(), "gricli-session.profile");
 
 	static final String HISTORY_FILE_PATH = FilenameUtils.concat(Environment.getGrisuClientDirectory().getPath() ,
 			"gricli.hist");
@@ -82,7 +89,6 @@ public class Gricli {
 			}
 			String[] commandsOnOneLine = line.split(";");
 			for (String c: commandsOnOneLine){
-				myLogger.info("gricli-audit-command username=" + System.getProperty("user.name") + "command=" +c );
 				runCommand(GricliTokenizer.tokenize(c),
 						SINGLETON_COMMANDFACTORY, env);
 			}
@@ -90,12 +96,12 @@ public class Gricli {
 	}
 
 	private static  String getPrompt(){
-		String prompt = env.get("prompt");
+		String prompt = env.prompt.get(); /* will have to restore this function later
 		for (String var : env.getGlobalNames()) {
 			prompt = StringUtils.replace(prompt, "${" + var + "}",
 					env.get(var));
 
-		}
+		} */
 		return prompt;
 	}
 
@@ -112,21 +118,29 @@ public class Gricli {
 		return reader;
 	}
 
-	private static void login(GricliEnvironment env, String backend){
+	private static boolean login(GricliEnvironment env, String backend){
 
 		try {
 			new InteractiveLoginCommand(backend).execute(env);
+			return true;
 		} catch (GricliException ex){
 			myLogger.error("login exception", ex);
-			System.err.println("Cannot login to " + backend);
+			Throwable t = ex;
+			while (t.getCause() != null) {
+				t = t.getCause();
+			}
+			System.err.println(t.getLocalizedMessage());
+			return false;
 		}
 	}
 
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
-
+		
+		Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
+		
 		try {
-
+			
 			// stop javaxws logging
 			java.util.logging.LogManager.getLogManager().reset();
 			java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);
@@ -142,8 +156,10 @@ public class Gricli {
 			}
 
 			env = new GricliEnvironment();
+			SigintHandler.install(env);
 
 			CommandLineParser parser = new PosixParser();
+			CommandLine cl = null;
 			Options options = new Options();
 			options
 			.addOption(OptionBuilder.withLongOpt("nologin")
@@ -156,11 +172,13 @@ public class Gricli {
 					.withArgName("file").withDescription("execute script")
 					.create('f'));
 			try {
-				CommandLine cl = parser.parse(options, args);
+				cl = parser.parse(options, args);
 				if (!cl.hasOption('n')) {
 					String backend = cl.getOptionValue('b');
 					backend = (backend != null) ? backend : "BeSTGRID";
-					login(env,backend);
+					if (!login(env, backend)) {
+						System.exit(LOGIN.getStatus());
+					}
 				}
 
 				if (cl.hasOption('f')) {
@@ -168,14 +186,23 @@ public class Gricli {
 				}
 			} catch (ParseException e) {
 				myLogger.error(e);
+				new HelpFormatter().printHelp("griclish ", options);
+				System.exit(SYNTAX.getStatus());
 			}
 
 			try {
-				run(new FileInputStream(CONFIG_FILE_PATH));
-			} catch (IOException ex) {
+				if (new File(SESSION_SETTINGS_PATH).exists()){
+					env = new RunCommand(SESSION_SETTINGS_PATH).execute(env);
+				}
+				if (new File(CONFIG_FILE_PATH).exists()){
+					env = new RunCommand(CONFIG_FILE_PATH).execute(env);
+				}
+			} catch (GricliRuntimeException ex) {
 				// config does not exist
+				env.printError(ex.getMessage());
 			}
 			executionLoop();
+			shutdown(env);
 			System.exit(exitStatus.getStatus());
 		} catch (Throwable th) {
 			System.err.println("Something went terribly wrong.  Please check if you have internet connection, and your firewall settings." +
@@ -197,7 +224,7 @@ public class Gricli {
 
 	private static void runCommand(String[] c, GricliCommandFactory f,
 			GricliEnvironment env) {
-		Exception error = null;
+		Throwable error = null;
 		try {
 			GricliCommand command = f.create(c);
 			command.execute(env);
@@ -214,7 +241,7 @@ public class Gricli {
 		} catch (SyntaxException ex) {
 			exitStatus = SYNTAX;
 			error = ex;
-			System.err.println("syntax error "+ ex.getMessage());
+			System.err.println("syntax error " + ex.getMessage());
 		} catch (LoginRequiredException ex) {
 			exitStatus = LOGIN;
 			error = ex;
@@ -227,8 +254,12 @@ public class Gricli {
 			System.err.println("reason: " + ex.getReason());
 		} catch (GricliRuntimeException ex) {
 			exitStatus = RUNTIME;
-			error = ex;
-			System.err.println(ex.getMessage());
+			Throwable exc = ex;
+			while (exc.getCause() != null) {
+				exc = exc.getCause();
+			}
+			error = exc;
+			System.err.println(exc.getMessage());
 		} catch (RuntimeException ex){
 			exitStatus = RUNTIME;
 			error = ex;
@@ -238,13 +269,40 @@ public class Gricli {
 		}
 		finally {
 			myLogger.error(error);
-			if ("true".equals(env.get("debug")) && (error != null)){
+			if (env.debug.get() && (error != null)){
 				error.printStackTrace();
 			}
 		}
 	}
+	
+	public static void shutdown(GricliEnvironment env){
+		try {
+			File f = new File(SESSION_SETTINGS_PATH);
+			String session = generateSession(env);	
+			FileUtils.writeStringToFile(f, session);
+		} catch (IOException ex){
+			myLogger.error(ex);
+			env.printError("warning: could not save session");
+		}
+	}
+	
+	private static String generateSession(GricliEnvironment env){
+		String result = "";
+		for (GricliVar<?> var: env.getVariables()){
+			if (var.isPersistent()){
+				Object value = var.get();
+				if (value == null){
+					result+="unset " + var.getName() + "\n";
+				} else {
+					result+= "set " + var.getName() + " " + GricliTokenizer.escape(var.marshall()) + "\n";
+				}
+			}
+		}
+		return result;
+	}
 
 }
+
 
 class SemicolonDelimiter extends ArgumentCompletor.AbstractArgumentDelimiter {
 

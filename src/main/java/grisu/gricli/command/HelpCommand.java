@@ -1,8 +1,8 @@
 package grisu.gricli.command;
 
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.command.help.HelpManager;
+import grisu.gricli.environment.GricliEnvironment;
 
 import java.util.Arrays;
 
@@ -58,13 +58,35 @@ public class HelpCommand implements GricliCommand {
 			break;
 		default:
 			if ("search".equals(keywords[0])) {
-				help = HelpManager.singleton.get(keywords[1]);
+				help = HelpManager.singleton.apropos(keywords[1]);
 
 			} else if ("command".equals(keywords[0])) {
 				String cmd = StringUtils.join(Arrays.copyOfRange(keywords, 1, keywords.length), " ");
 				help = HelpManager.singleton.getCommand(cmd);
 				if (StringUtils.isBlank(help)) {
 					help = "Command \"" + cmd + "\" not available.";
+				}
+			} else if ("topic".equals(keywords[0])
+					|| "topics".equals(keywords[0])) {
+				help = "";
+				for (int i = 1; i < keywords.length; i++) {
+					help = help + HelpManager.singleton.getTopic(keywords[i])
+							+ "\n\n";
+				}
+				help = help.trim();
+				if (StringUtils.isBlank(help)) {
+					help = "No topic found for keyword(s).";
+				}
+			} else if ("global".equals(keywords[0])
+					|| "globals".equals(keywords[0])) {
+				help = "";
+				for (int i = 1; i < keywords.length; i++) {
+					help = help + HelpManager.singleton.getGlobal(keywords[i])
+							+ "\n\n";
+				}
+				help = help.trim();
+				if (StringUtils.isBlank(help)) {
+					help = "No global found for keyword(s).";
 				}
 			} else {
 				String tmp = StringUtils.join(keywords, " ");

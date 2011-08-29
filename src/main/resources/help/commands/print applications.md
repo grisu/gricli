@@ -1,4 +1,8 @@
-Command:	print applications 
+Command: print packages 
 
-List all application names available on the grid.
+List all application package names available on the grid.
+
+Example usage:
+
+    print packages
 

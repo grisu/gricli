@@ -3,9 +3,9 @@ package grisu.gricli.command;
 import grisu.control.ServiceInterface;
 import grisu.control.exceptions.NoSuchJobException;
 import grisu.frontend.model.job.JobObject;
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobnameCompletor;
+import grisu.gricli.environment.GricliEnvironment;
 
 public class WaitJobCommand implements
 GricliCommand {

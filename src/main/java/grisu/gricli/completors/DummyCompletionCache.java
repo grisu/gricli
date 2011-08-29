@@ -1,6 +1,8 @@
 package grisu.gricli.completors;
 
-import grisu.gricli.GricliEnvironment;
+import grisu.gricli.environment.GricliEnvironment;
+import grisu.model.dto.DtoJob;
+import grisu.model.dto.GridFile;
 
 import java.util.Set;
 import java.util.SortedSet;
@@ -10,6 +12,12 @@ public class DummyCompletionCache implements CompletionCache {
 
 	private final String[] dummyArray = new String[] {};
 	private final SortedSet<String> dummySet = new TreeSet<String>();
+
+	private final GridFile dummyFile = new GridFile();
+
+	public void addFileListingToCache(String urlToList, GridFile list) {
+
+	}
 
 	public String[] getAllApplications() {
 		return dummyArray;
@@ -31,6 +39,10 @@ public class DummyCompletionCache implements CompletionCache {
 		return dummySet;
 	}
 
+	public SortedSet<DtoJob> getCurrentJobs(boolean forceRefresh) {
+		return new TreeSet<DtoJob>();
+	}
+
 	public GricliEnvironment getEnvironment() {
 		return null;
 	}
@@ -39,7 +51,14 @@ public class DummyCompletionCache implements CompletionCache {
 		return dummySet;
 	}
 
+	public GridFile ls(String url) {
+		return dummyFile;
+	}
+
 	public void refreshJobnames() {
+	}
+
+	public void removeFileListingFromCache(String url) {
 	}
 
 }

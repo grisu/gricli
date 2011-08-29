@@ -1,5 +1,20 @@
-Command:	cd [dir]
+Command: cd <dir>
 
-Changes the current directory.
+Changes the current job directory.
 
-    dir : the path to the new current directory
+Can be used in conjunction with the 'pwd' and 'ls' commands to explore the file system.
+The command also sets the job global 'dir' which determines where relative paths start from.
+Grid locations (starting with prefix grid://) are currently not supported.
+
+Parameters:
+
+    dir    : The path to the new current directory.
+
+Example usage:
+
+    cd /home/whoami/myfolder
+
+    attach ~/myfolder/myfile_1 ~/myfolder/myfile_2
+    cd ~/myfolder
+    attach myfile_1 myfile_2
+

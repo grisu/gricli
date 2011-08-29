@@ -2,6 +2,7 @@ package grisu.gricli;
 
 
 
+import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.parser.GricliTokenizer;
 
 import java.io.BufferedReader;

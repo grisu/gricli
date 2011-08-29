@@ -1,10 +1,17 @@
-Command:	exec "commandline"
+Command: exec <commandline>
 
-Executes a command from the underlying shell. 
+Executes a command from the underlying shell.
 
-Be aware, for now you have to escape the commandline with "'s. Also, you can't use commands with remote files (yet).
+Parameters:
 
-Example:
+    commandline        : The command string to execute. 
 
-    exec "ls -lah"
+Be aware, you can't use commands with remote files (yet).
+
+Example usage:
+
+    exec ls -lah
+    exec javac -version
+    exec cat myscript.gs
+
 

@@ -3,19 +3,23 @@ package grisu.gricli.command;
 import grisu.control.JobConstants;
 import grisu.control.ServiceInterface;
 import grisu.control.exceptions.NoSuchJobException;
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobPropertiesCompletor;
 import grisu.gricli.completors.JobnameCompletor;
+import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.util.ServiceInterfaceUtils;
+import grisu.jcommons.constants.Constants;
+import grisu.jcommons.constants.JobSubmissionProperty;
 import grisu.model.dto.DtoJob;
 import grisu.utils.WalltimeUtils;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.python.google.common.collect.Maps;
 
 public class PrintJobCommand implements
 GricliCommand {
@@ -43,10 +47,16 @@ GricliCommand {
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		ServiceInterface si = env.getServiceInterface();
-		for (String j : ServiceInterfaceUtils.filterJobNames(si, jobname)) {
+		List<String> jobNames = ServiceInterfaceUtils.filterJobNames(si,
+				jobname);
+		for (String j : jobNames) {
 			try {
 				if (attribute != null) {
-					printJobAttribute(env,si, j, attribute);
+					if (jobNames.size() > 1) {
+						printJobAttribute(env, si, j, attribute, true);
+					} else {
+						printJobAttribute(env, si, j, attribute, false);
+					}
 				} else {
 					printJob(env,si, j);
 				}
@@ -59,15 +69,16 @@ GricliCommand {
 	}
 
 	private String formatAttribute(String aName, String aVal){
-		if ("submissionTime".equals(aName)){
+
+		if (Constants.SUBMISSION_TIME_KEY.equals(aName)){
 			Date d = new Date(Long.parseLong(aVal));
 			return DateFormat.getInstance().format(d);
-		} else if ("memory".equals(aName)){
+		} else if (Constants.MEMORY_IN_B_KEY.equals(aName)) {
 			double memory = Long.parseLong(aVal);
 			memory = memory / 1024.0 / 1024.0 / 1024.0;
 			return String.format("%.2f GB", memory);
 
-		} else if ("walltime".equals(aName)) {
+		} else if (Constants.WALLTIME_IN_MINUTES_KEY.equals(aName)) {
 			String[] strings = WalltimeUtils
 					.convertSecondsInHumanReadableString(Integer.parseInt(aVal) * 60);
 			return StringUtils.join(strings, " ");
@@ -79,23 +90,67 @@ GricliCommand {
 	private void printJob(GricliEnvironment env, ServiceInterface si, String j)
 			throws NoSuchJobException {
 		DtoJob job = si.getJob(j);
-		env.printMessage("Printing details for job " + jobname);
-		env.printMessage("status: "
-				+ JobConstants.translateStatus(si.getJobStatus(jobname)));
+		env.printMessage("Printing details for job " + jobname + "/n");
+		// env.printMessage("status: "
+		// + JobConstants.translateStatus(si.getJobStatus(jobname)));
 		Map<String, String> props = job.propertiesAsMap();
+		Map<String, String> result = Maps.newTreeMap();
+
+		result.put(Constants.STATUS_STRING,
+				JobConstants.translateStatus(job.getStatus()));
+
 		for (String key : props.keySet()) {
-			env.printMessage(key + " : " + formatAttribute(key,props.get(key)));
+
+			String valName = JobSubmissionProperty.getPrettyName(key);
+
+			if (StringUtils.isBlank(valName)) {
+				if (Constants.FQAN_KEY.equals(key)) {
+					valName = "group";
+				} else {
+					valName = key;
+				}
+			}
+
+			result.put(valName, formatAttribute(key, props.get(key)));
+
 		}
+
+		for (String key : result.keySet()) {
+			env.printError(key + " : " + result.get(key));
+		}
+
+		// String table = OutputHelpers.getTable(result);
+		// env.printMessage(table);
+
 	}
 
 	private void printJobAttribute(GricliEnvironment env, ServiceInterface si, String j,
-			String attribute) throws NoSuchJobException {
+			String attribute, boolean displayJobName) throws NoSuchJobException {
 		DtoJob job = si.getJob(j);
-		if (("status".equals(attribute))) {
-			env.printMessage(j + " : "
-					+ JobConstants.translateStatus(si.getJobStatus(j)));
+
+		JobSubmissionProperty p = JobSubmissionProperty
+				.fromPrettyName(attribute);
+		String prop = null;
+		if (p != null) {
+			prop = p.toString();
+		}
+		if (StringUtils.isBlank(prop)) {
+			if ("group".equals(attribute)) {
+				prop = Constants.FQAN_KEY;
+			} else {
+				prop = attribute;
+			}
+		}
+		String msg = null;
+		if ((Constants.STATUS_STRING.equals(prop))) {
+			msg = JobConstants.translateStatus(si.getJobStatus(j));
 		} else {
-			env.printMessage(j + " : " + formatAttribute(attribute,job.jobProperty(attribute)));
+			msg = formatAttribute(prop, job.jobProperty(prop));
+		}
+		if (displayJobName){
+			env.printMessage(j + " : " + msg);
+		} else {
+			env.printMessage(msg);
 		}
 	}
 

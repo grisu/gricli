@@ -1,8 +1,8 @@
 package grisu.gricli.command;
 
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.command.exec.AsyncProcessStreamReader;
+import grisu.gricli.environment.GricliEnvironment;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,7 +73,7 @@ public class ExecCommand implements GricliCommand {
 
 		ProcessBuilder builder = new ProcessBuilder(cmdList);
 		Map<String, String> environ = builder.environment();
-		builder.directory(new File(System.getProperty("user.home")));
+		builder.directory(new File(System.getProperty("user.dir")));
 
 		Process process;
 		try {

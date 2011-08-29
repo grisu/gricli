@@ -5,8 +5,8 @@ import grisu.control.exceptions.BatchJobException;
 import grisu.control.exceptions.NoSuchJobException;
 import grisu.frontend.model.job.BatchJobObject;
 import grisu.frontend.model.job.JobObject;
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
+import grisu.gricli.environment.GricliEnvironment;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

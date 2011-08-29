@@ -1,9 +1,9 @@
 package grisu.gricli.command.help;
 
 import grisu.gricli.Gricli;
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.SyntaxDescription;
+import grisu.gricli.environment.GricliEnvironment;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +45,7 @@ public class HelpManager {
 	private static Logger myLogger = Logger.getLogger(HelpManager.class
 			.getName());
 
-	public static String[] TOPICS = new String[] { "Example" };
+	public static String[] TOPICS = new String[] { "Globals", "Jobs"};
 
 	public static String getHelpText(Type type, String s) throws Exception {
 		InputStream is = null;
@@ -163,7 +163,8 @@ public class HelpManager {
 				missingCommands.add(cmd);
 			}
 		}
-		for (String global : GricliEnvironment.getVariables()) {
+				
+		for (String global : GricliEnvironment.getVariableNames()) {
 			String temp;
 			try {
 				temp = getHelpText(Type.globals, global).trim();
@@ -446,7 +447,7 @@ public class HelpManager {
 		StringBuffer result = new StringBuffer();
 		Formatter formatter = new Formatter(result, Locale.US);
 
-		for (String c : getCommands()) {
+		for (String c : getGlobals()) {
 			String helpLine = getFirstLine(Type.globals, c);
 			formatter.format("%4s%" + -(max + 4) + "s%" + "s%n", "    ", c,
 					helpLine);

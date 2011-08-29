@@ -4,9 +4,9 @@ import grisu.control.ServiceInterface;
 import grisu.control.exceptions.BatchJobException;
 import grisu.control.exceptions.NoSuchJobException;
 import grisu.control.exceptions.RemoteFileSystemException;
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobnameCompletor;
+import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.util.ServiceInterfaceUtils;
 
 
@@ -19,6 +19,12 @@ GricliCommand {
 	@AutoComplete(completors={JobnameCompletor.class})
 	public KillJobCommand(String jobFilter){
 		this(jobFilter, false);
+	}
+	
+	@SyntaxDescription(command={"kill","jobs"})
+	@AutoComplete(completors={JobnameCompletor.class})
+	public KillJobCommand(){
+		this("*",true);
 	}
 
 	public KillJobCommand(String jobFilter, boolean clean) {

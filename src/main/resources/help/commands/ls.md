@@ -1,6 +1,16 @@
-Command:	ls [url]
+Command:	ls [path]
 
-Lists the current directory or the directory that is specified as an argument.
+Lists the current directory or the directory that is specified by the path.
 
-    path	: the directory to list (optional)
+Parameters:
+
+    path	: The directory to list.
+
+Example usage:
+
+    ls ~
+    ls /home/whoami
+    ls grid://groups/nz/nesi
+
+
 

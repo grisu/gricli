@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 public class CommandCreator{
@@ -111,8 +112,14 @@ public class CommandCreator{
 			pc.arguments.add(nextToken);
 			return this;
 		}
+		
+		String error = "";
+		for (String errToken: pc.arguments){
+			error +=  errToken + " ";
+		}
+		error += nextToken;
 
-		throw new UnknownCommandException("unknown command");
+		throw new UnknownCommandException("unknown command: " + error);
 	}
 
 

@@ -4,8 +4,8 @@ import grisu.control.exceptions.BatchJobException;
 import grisu.control.exceptions.JobSubmissionException;
 import grisu.control.exceptions.NoSuchJobException;
 import grisu.frontend.model.job.BatchJobObject;
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
+import grisu.gricli.environment.GricliEnvironment;
 
 public class SubmitBatchCommand implements
 GricliCommand {

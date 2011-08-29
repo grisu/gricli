@@ -1,7 +1,7 @@
 package grisu.gricli.command;
 
-import grisu.gricli.GricliEnvironment;
 import grisu.gricli.GricliRuntimeException;
+import grisu.gricli.environment.GricliEnvironment;
 
 /*
  * execute command based on environment

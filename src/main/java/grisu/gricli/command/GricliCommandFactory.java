@@ -12,6 +12,7 @@ import jline.MultiCompletor;
 import jline.NullCompletor;
 import jline.SimpleCompletor;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 public class GricliCommandFactory {
@@ -31,7 +32,6 @@ public class GricliCommandFactory {
 		GricliCommandFactory f = new GricliCommandFactory();
 		f.add(AddCommand.class);
 		f.add(AttachCommand.class);
-		f.add(ClearListCommand.class);
 		f.add(DownloadJobCommand.class);
 		f.add(FilemanagerCommand.class);
 		f.add(SetCommand.class);
@@ -41,6 +41,7 @@ public class GricliCommandFactory {
 
 		// print commands
 		f.add(PrintGlobalsCommand.class);
+		f.add(PrintQueueCommand.class);
 		f.add(PrintQueuesCommand.class);
 		f.add(PrintAppsCommand.class);
 		f.add(PrintHostsCommand.class);
@@ -55,6 +56,7 @@ public class GricliCommandFactory {
 		f.add(SubmitCommand.class);
 		f.add(DownloadAndCleanCommand.class);
 		f.add(WaitJobCommand.class);
+		f.add(StatusCommand.class);
 
 		f.add(QuitCommand.class);
 		f.add(LogoutCommand.class);
@@ -63,11 +65,12 @@ public class GricliCommandFactory {
 		f.add(AboutCommand.class);
 
 		// filesystem commands
-		f.add(GridLsCommand.class);
+		// f.add(GridLsCommand.class);
 		f.add(ClearCacheCommand.class);
 		f.add(PwdCommand.class);
 		f.add(ChdirCommand.class);
 		f.add(LsCommand.class);
+		//f.add(CpCommand.class);
 
 		//batch commands
 		f.add(CreateBatchCommand.class);
@@ -76,6 +79,8 @@ public class GricliCommandFactory {
 
 		// other commands
 		f.add(ExecCommand.class);
+
+		f.add(ViewCommand.class);
 
 		try {
 			f.init();
@@ -122,6 +127,8 @@ public class GricliCommandFactory {
 
 
 	public GricliCommand create(String[] args) throws SyntaxException {
+		myLogger.info("gricli-audit-command username=" + 
+				System.getProperty("user.name") + "command=" + StringUtils.join(args, " ") );
 		return creator.create(args);
 	}
 
