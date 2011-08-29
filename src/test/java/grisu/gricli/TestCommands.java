@@ -304,5 +304,11 @@ public class TestCommands {
 		unset.execute(env);
 		assertNull(env.queue.get());
 	}
+	
+	@Test(expected=GricliSetValueException.class)
+	public void UnsetMemory() throws Exception {
+		SetCommand unset = new SetCommand("memory");
+		unset.execute(env);
+	}
 
 }
