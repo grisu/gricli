@@ -80,7 +80,7 @@ public class GricliCommandFactory {
 		// other commands
 		f.add(ExecCommand.class);
 
-		f.add(ViewCommand.class);
+		// f.add(ViewCommand.class);
 
 		try {
 			f.init();
@@ -127,7 +127,7 @@ public class GricliCommandFactory {
 
 
 	public GricliCommand create(String[] args) throws SyntaxException {
-		myLogger.info("gricli-audit-command username=" + 
+		myLogger.info("gricli-audit-command username=" +
 				System.getProperty("user.name") + "command=" + StringUtils.join(args, " ") );
 		return creator.create(args);
 	}
