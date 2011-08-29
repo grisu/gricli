@@ -51,8 +51,8 @@ GricliCommand {
 
 		// load # of active and finished jobs
 		// CliHelpers.setIndeterminateProgress("Loading jobs...", true);
-		StatusCommand sc = new StatusCommand();
-		sc.execute(env);
+		// StatusCommand sc = new StatusCommand();
+		// sc.execute(env);
 		// CliHelpers.setIndeterminateProgress(false);
 
 		return env;

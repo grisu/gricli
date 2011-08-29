@@ -12,7 +12,7 @@ You may use the 'set' command to set any of the global properties.
 To view an individual property use the command 'print global <global>'.
 
 To view information and examples on each global use the command 'help <global>'.
-Note that you may use a Gricli script to automate the task of setting globals.
+Note that you may use a plain text script to automate the task of setting globals.
 For more information see use the command 'help run'.
 
 Example usage:
