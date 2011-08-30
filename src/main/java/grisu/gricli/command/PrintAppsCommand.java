@@ -24,18 +24,18 @@ GricliCommand {
 	private final String app;
 	private String version;
 
-	@SyntaxDescription(command={"print","packages"})
+	@SyntaxDescription(command={"print","applications"})
 	public PrintAppsCommand(){
 		this(null);
 	}
 
-	@SyntaxDescription(command={"print","package"},arguments={"package"})
+	@SyntaxDescription(command={"print","application"},arguments={"application"})
 	@AutoComplete(completors={ApplicationCompletor.class})
 	public PrintAppsCommand(String app){
 		this(app,"*");
 	}
 	
-	@SyntaxDescription(command={"print","package"},arguments={"package","version"})
+	@SyntaxDescription(command={"print","application"},arguments={"application","version"})
 	@AutoComplete(completors={ApplicationCompletor.class,ApplicationVersionCompletor.class})
 	public PrintAppsCommand(String app,String version){
 		this.app = app;
