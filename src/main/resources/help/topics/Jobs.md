@@ -20,7 +20,7 @@ Job Requirements
 A typical job requires that that a package be set and that the version be specific or 'any'.
 To view the available packages, use the command 'print packages'.
 
-Note that packages belong to a specific queues and to use applications in the package you must have access
+Note that packages belong to specific queues and to use applications in the package you must have access
 to the appropriate queue. To see the versions and queues for a package use the command 'print package <package>'.
 
 To set the queue, use the 'set' command. You can view all available queues with the 'print queues' command or 
@@ -63,7 +63,7 @@ An output file may also be specified to redirect messages from Gricli to a file.
 entry on 'outputfile'.
 
 The 'debug' property accepts a boolean and will display Gricli errors. This is useful if you are having problems and you
-need to report and error. The contact details in this case can be found using the 'about' command.
+need to report an error. The contact details in this case can be found using the 'about' command.
 
 Job Submission
 ---------------
