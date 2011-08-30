@@ -13,13 +13,11 @@ Walltime can be set with strings as follows:
 To view the walltime before a job has been submitted, use the command 'print global walltime'.
 To view the walltime after a job has been submitted, use the command 'print job <jobname> walltime'.
 
-You can also see the remaining walltime for a job that has started here:
-
-    http://cluster.ceres.auckland.ac.nz/cgi-bin/showq.cgi
-
 Example usage:
 
-    set walltime 1000
+    set walltime 240
+	set walltime 240m
+	set walltime 4h
     set walltime 30d4h12m
     print global walltime
     print job myjob walltime

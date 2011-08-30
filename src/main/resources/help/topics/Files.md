@@ -24,6 +24,12 @@ reference these files. For example, if your program requires input files then yo
     submit myprogram --input file.txt
 	
 Notice that now the file is in the working directory of the program and we do not need to specify the full path to the original file.
+
+Removing Files
+--------------
+
+After a job has been submitted, the 'files' global will remain unchanged. If you would like to clear the list of attached files use the 
+command 'unset files'. This will set the list to empty.
 	
 Shared Filesytems
 -----------------

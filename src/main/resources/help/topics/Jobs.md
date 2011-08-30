@@ -17,14 +17,14 @@ To see the value for a specific job property use the command 'print global <prop
 Job Requirements
 -----------------
 
-A typical job requires that that a package be set and that the version be specific or 'any'.
-To view the available packages, use the command 'print packages'.
+A typical job requires that that an application be set and that the version be specific or 'any'.
+To view the available applications, use the command 'print applications'.
 
-Note that packages belong to specific queues and to use applications in the package you must have access
-to the appropriate queue. To see the versions and queues for a package use the command 'print package <package>'.
+Note that application packages are bound to specific queues and to use applications in the package you must have access
+to the appropriate queue. To see the versions and queues for an application use the command 'print application <application_package>'.
 
 To set the queue, use the 'set' command. You can view all available queues with the 'print queues' command or 
-you can filter by package using the command 'print package <package>'. You may also filter by group using the 
+you can filter by package using the command 'print application <application_package>'. You may also filter by group using the 
 command 'print queues <group>'.
   
 If you do not mind which queue your job is submitted to, you can use 'set queue auto' to let the system determine
@@ -116,7 +116,7 @@ Here is an example of how you can setup, submit and download a job:
     > set group /nz/nesi
     > print queues /nz/nesi
     > set queue demo:gram5.ceres.auckland.ac.nz
-    > set package UnixCommands
+    > set application UnixCommands
     > set jobtype single
     > set cpus 1
     > set memory 100
