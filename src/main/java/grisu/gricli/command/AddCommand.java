@@ -15,7 +15,7 @@ public class AddCommand implements GricliCommand {
 		this.file = file;
 	}
 	
-	@SyntaxDescription(command={"add","environment"}, arguments={"var","value"})
+	@SyntaxDescription(command={"add","env"}, arguments={"var","value"})
 	public AddCommand(String var, String value){
 		this.var = var;
 		this.value = value;

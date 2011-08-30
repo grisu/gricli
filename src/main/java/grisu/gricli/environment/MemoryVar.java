@@ -8,11 +8,14 @@ import grisu.gricli.GricliSetValueException;
 public class MemoryVar extends ScalarVar<Integer> {
 	
 	public MemoryVar(String name, Integer value){
-		super(name,value);
+		super(name,value, false);
 	}
 
 	@Override
 	protected Integer fromString(String arg) throws GricliSetValueException {
+		if (arg == null){
+			throw new GricliSetValueException(getName(),"null","memory cannot be null");
+		}
 		int imem = 0;
 		try {
 			imem = Integer.parseInt(arg);
