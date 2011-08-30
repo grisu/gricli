@@ -306,9 +306,16 @@ public class TestCommands {
 	}
 	
 	@Test(expected=GricliSetValueException.class)
-	public void UnsetMemory() throws Exception {
+	public void testUnsetMemory() throws Exception {
 		SetCommand unset = new SetCommand("memory");
 		unset.execute(env);
+	}
+	
+	@Test
+	public void testUnsetFiles() throws Exception {
+		SetCommand unset = new SetCommand("files");
+		unset.execute(env);
+		assertEquals(env.files.get().size(),0);
 	}
 
 }
