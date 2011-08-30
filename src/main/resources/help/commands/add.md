@@ -12,7 +12,7 @@ Parameters:
 Currently available lists are:
 
     files       : The files attached for a job.
-	environment : The environmet variables in the job execution environment
+	environment : The environment variables in the job execution environment
 
 Example usage:
 

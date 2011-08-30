@@ -12,7 +12,7 @@ Parameters:
     &          : Specifies asynchronous execution.  
 
 
-If & is specificed the command will run in the background.     
+If & is specified the command will run in the background.     
     	
 Example usage:
 

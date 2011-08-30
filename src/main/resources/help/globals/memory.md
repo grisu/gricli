@@ -10,7 +10,7 @@ To set the memory for the job, use the 'set' command. The command accepts values
     set memory 1g        : sets memory to 1 GB (1024 MB)
     set memory 1g200m    : sets memory to 1224 MB
 
-To view the memory of a job before sumbmission use the command 'print global memory'.
+To view the memory of a job before submission use the command 'print global memory'.
 To view the memory of a job after submission use the command 'print job <jobname> memory.
 
 Example usage:

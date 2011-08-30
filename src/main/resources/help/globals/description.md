@@ -8,6 +8,6 @@ To view the description of a submitted job use the command 'print job <jobname> 
 
 Example usage:
 
-    set description "my job descritpion"
+    set description "my job description"
     print global description
     print job myjob description

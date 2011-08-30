@@ -8,7 +8,7 @@ Parameters:
 
     script	: The plain text file containing commands.
 
-A specific file extention (.txt, .xyz) is not required for the filename and you may use the '#' character 
+A specific file extension (.txt, .xyz) is not required for the filename and you may use the '#' character 
 to ignore lines in the script.
 
 Example script:

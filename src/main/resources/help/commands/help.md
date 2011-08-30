@@ -1,11 +1,17 @@
+The command syntax presented in the help files has the following format:
+
+	command_name <required_argument> [optional argument] 
+
+A command may have multiple required and optional arguments.
+
 Command:	help [keywords]
 
 Prints this help message or a help message for a certain command, topic or global variable.
 
 Parameters:
 
-    keywords	: A whitespace seperated list of keywords.
-
+    keywords	: A whitespace separated list of keywords.
+	
 Usage:
 
     help			

@@ -5,7 +5,7 @@ Sets a value for a variable.
     var		: The name of the variable.
     value	: The value.
 
-Currenltly only the global variables for a job can be set.
+Currently only the global variables for a job can be set.
 To reset a global to a default value use the 'unset <global>' command.
 
 Example usage:

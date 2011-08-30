@@ -1,6 +1,6 @@
 Command:	login <backend>
 
-Logs in to a grisu backend with existing certificate proxy. 
+Logs in to a Grisu backend with existing certificate proxy. 
 
 Reports an error if there is no proxy.
 
@@ -9,7 +9,7 @@ Reports an error if there is no proxy.
 The choice of backend is one of:
 
     BeSTGRID        : The default backend.
-    DEV    : The development backend.     
+    DEV    			: The development backend.     
 
 Example usage:
 

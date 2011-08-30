@@ -1,6 +1,6 @@
 Command: print application <application>
 
-Prints the availabe versions and queue locations for the specificed application package.
+Prints the available versions and queue locations for the specified application package.
 
 Parameters:
 
@@ -22,6 +22,6 @@ Example usage:
     print application BEAST
     print application UnixCommands
 	print application *
-	peint application B*
+	print application B*
 
 

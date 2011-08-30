@@ -4,7 +4,7 @@ Resets an optional variable to its default value.
 
     var		: The name of the optional variable.
 
-Currenltly only the non-essential global variables for a job can be unset. 
+Currently only the non-essential global variables for a job can be unset. 
 To set a global variable use the 'set <var> <value>' command.
 
 Example usage:
