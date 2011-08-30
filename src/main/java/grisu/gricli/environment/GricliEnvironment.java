@@ -135,6 +135,9 @@ public class GricliEnvironment {
 		this.jobname = new StringVar("jobname","gricli") {
 			@Override
 			public void set(String jobname) throws GricliSetValueException {
+				if (jobname == null){
+					throw new GricliSetValueException(getName(), jobname, "jobname cannot be unset");
+				}
 				if (jobname.contains(" ")){
 					throw new GricliSetValueException(getName(), jobname, "cannot contain spaces");
 				}

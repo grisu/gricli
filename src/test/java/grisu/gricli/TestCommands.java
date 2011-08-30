@@ -317,5 +317,23 @@ public class TestCommands {
 		unset.execute(env);
 		assertEquals(env.files.get().size(),0);
 	}
+	
+	@Test(expected=GricliSetValueException.class)
+	public void testUnsetWalltime() throws Exception {
+		SetCommand unset = new SetCommand("walltime");
+		unset.execute(env);
+	}
+	
+	@Test(expected=GricliSetValueException.class)
+	public void testUnsetJobname() throws Exception {
+		SetCommand unset = new SetCommand("jobname");
+		unset.execute(env);
+	}
+	
+	@Test(expected=GricliSetValueException.class)
+	public void testUnsetDir() throws Exception {
+		SetCommand unset = new SetCommand("dir");
+		unset.execute(env);
+	}
 
 }

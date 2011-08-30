@@ -17,7 +17,9 @@ public class WalltimeVar extends ScalarVar<Integer> {
 
 	@Override
 	protected Integer fromString(String arg) throws GricliSetValueException {
-		
+		if (arg == null){
+			throw new GricliSetValueException(getName(),"null","cannot be unset");
+		}
 		int ivalue = 0;
 		try {
 			ivalue = Integer.parseInt(arg);
