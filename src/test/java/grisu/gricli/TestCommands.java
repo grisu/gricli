@@ -283,6 +283,12 @@ public class TestCommands {
 		assertEquals("crazyquotes \"\\\"a\\\"\"", submit.getCommandline());
 	}
 	
+	@Test(expected=GricliRuntimeException.class)
+	public void testEmptySubmit() throws Exception {
+		SubmitCommand submit = new SubmitCommand();
+		submit.execute(env);
+	}
+	
 	// test set and unset commands
 	
 	@Test

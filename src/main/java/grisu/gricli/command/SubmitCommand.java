@@ -27,6 +27,10 @@ GricliCommand {
 
 	protected JobObject createJob(GricliEnvironment env)
 			throws GricliRuntimeException {
+		
+		if (args.length == 0){
+			throw new GricliRuntimeException("submit command requires at least one argument");
+		}
 		JobObject job = env.getJob();
 		
 		job.setCommandline(getCommandline());
