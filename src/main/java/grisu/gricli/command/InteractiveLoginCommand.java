@@ -35,8 +35,7 @@ GricliCommand {
 		new ChdirCommand(System.getProperty("user.dir")).execute(env);
 
 		// inititate env so all is set to use generic app as default
-		new SetCommand("application", Constants.GENERIC_APPLICATION_NAME)
-		.execute(env);
+		env.application.set(Constants.GENERIC_APPLICATION_NAME);
 
 		// setting last used values
 		String value = System
