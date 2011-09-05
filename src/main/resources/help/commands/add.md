@@ -19,7 +19,7 @@ Example usage:
     add files ~/myfile.txt
     add files "~/my file.txt"
     add files grid://groups/nz/nesi/myfile.txt
-	add environment MY_VAR MY_VALUE
+    add environment MY_VAR MY_VALUE
 	
     
 
