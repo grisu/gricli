@@ -2,7 +2,7 @@ Global: prompt
 
 The prompt message.
 
-This is set to 'gricli' by defualt but can changed using the 'set' command.
+This is can changed using the 'set' command.
 The command can accept macros, substituting the values of other globals into the prompt.
 
 Example usage:
