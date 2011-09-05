@@ -2,7 +2,8 @@ Command: print queues [queue properties]
 
 Lists all queues that are available for the current environment.
 
-The current environment is the group you set, the application package and package version you choose (if any), also walltime, number of cpus and memory.
+The current environment is the group you set, the application package and version you choose (if any),
+also walltime, number of CPUs and memory (RAM).
 
 Parameters:
 

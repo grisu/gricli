@@ -5,11 +5,12 @@ Sets a value for a variable.
     var		: The name of the variable.
     value	: The value.
 
-Currenltly only the global variables for a job can be set.
+Currently only the global variables for a job can be set.
+To reset a global to a default value use the 'unset <global>' command.
 
 Example usage:
 
-    set memory 1024
+    set memory 1g
     set set cpus 10
-    set walltime 500
+    set walltime 3d
 

@@ -1,6 +1,6 @@
 Global: debug
 
-Boolean to show debug output from Grilci exceptions.
+Boolean to show debug output from exceptions.
 
 This value can be set using the 'set' command.
 

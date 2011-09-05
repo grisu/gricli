@@ -17,6 +17,7 @@ Example usage:
     kill job myjob_2
     kill job myjob*
     kill job *
+	kill jobs
 
 
 
