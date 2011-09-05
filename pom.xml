@@ -55,7 +55,7 @@
 	<description>Grisu commandline client</description>
 
 	<properties>
-		<grisu.dependency.version>0.3.6-SNAPSHOT</grisu.dependency.version>
+		<grisu.dependency.version>0.3.7-SNAPSHOT</grisu.dependency.version>
 	</properties>
 
 
@@ -84,9 +84,7 @@
 		<dependency>
 			<groupId>grisu.frontend</groupId>
 			<artifactId>grisu-client</artifactId>
-			<version>0.3.6-SNAPSHOT</version>
-			<type>jar</type>
-			<scope>compile</scope>
+			<version>${grisu.dependency.version}</version>
 		</dependency>
 
 		<dependency>

@@ -9,7 +9,6 @@ import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.GricliCommandFactory;
 import grisu.gricli.command.InteractiveLoginCommand;
 import grisu.gricli.command.RunCommand;
-import grisu.gricli.command.help.HelpManager;
 import grisu.gricli.completors.CompletionCache;
 import grisu.gricli.completors.DummyCompletionCache;
 import grisu.gricli.environment.GricliEnvironment;
@@ -95,6 +94,21 @@ public class Gricli {
 		}
 	}
 
+	private static String generateSession(GricliEnvironment env){
+		String result = "";
+		for (GricliVar<?> var: env.getVariables()){
+			if (var.isPersistent()){
+				Object value = var.get();
+				if (value == null){
+					result+="unset " + var.getName() + "\n";
+				} else {
+					result+= "set " + var.getName() + " " + GricliTokenizer.escape(var.marshall()) + "\n";
+				}
+			}
+		}
+		return result;
+	}
+
 	private static  String getPrompt(){
 		String prompt = env.prompt.get(); /* will have to restore this function later
 		for (String var : env.getGlobalNames()) {
@@ -118,10 +132,12 @@ public class Gricli {
 		return reader;
 	}
 
-	private static boolean login(GricliEnvironment env, String backend){
+	private static boolean login(GricliEnvironment env, String backend,
+			boolean x509, String username, String idp) {
 
 		try {
-			new InteractiveLoginCommand(backend).execute(env);
+			new InteractiveLoginCommand(backend, x509, username, idp)
+					.execute(env);
 			return true;
 		} catch (GricliException ex){
 			myLogger.error("login exception", ex);
@@ -136,11 +152,11 @@ public class Gricli {
 
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
-		
+
 		Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
-		
+
 		try {
-			
+
 			// stop javaxws logging
 			java.util.logging.LogManager.getLogManager().reset();
 			java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);
@@ -171,12 +187,41 @@ public class Gricli {
 			options.addOption(OptionBuilder.withLongOpt("script").hasArg()
 					.withArgName("file").withDescription("execute script")
 					.create('f'));
+			options.addOption(OptionBuilder.withLongOpt("username").hasArg()
+					.withArgName("username")
+					.withDescription("institution or myproxy username").create("u"));
+			options.addOption(OptionBuilder.withLongOpt("institution").hasArg()
+					.withArgName("institution_name")
+					.withDescription("institution name").create("i"));
+			options.addOption(OptionBuilder.withLongOpt("x509").withDescription("x509 certificate login").create("x"));
 			try {
 				cl = parser.parse(options, args);
 				if (!cl.hasOption('n')) {
+
+					// checking whether login parameters make sense...
+					if (cl.hasOption("u")) {
+						// means myproxy or shib login
+						if (cl.hasOption("x")) {
+							throw new ParseException(
+									"X509 login and other login method specified. Please use only one.");
+						}
+					}
+					if (cl.hasOption("x")) {
+						if (cl.hasOption("i")) {
+							throw new ParseException(
+									"X509 login and idp login methods specified. Please use only one.");
+						}
+					}
+
+					String username = cl.getOptionValue("u");
+
+					String idp = cl.getOptionValue("i");
+
+					boolean x509 = cl.hasOption("x");
+
 					String backend = cl.getOptionValue('b');
 					backend = (backend != null) ? backend : "BeSTGRID";
-					if (!login(env, backend)) {
+					if (!login(env, backend, x509, username, idp)) {
 						System.exit(LOGIN.getStatus());
 					}
 				}
@@ -184,6 +229,7 @@ public class Gricli {
 				if (cl.hasOption('f')) {
 					scriptName = cl.getOptionValue('f');
 				}
+
 			} catch (ParseException e) {
 				myLogger.error(e);
 				new HelpFormatter().printHelp("griclish ", options);
@@ -274,31 +320,16 @@ public class Gricli {
 			}
 		}
 	}
-	
+
 	public static void shutdown(GricliEnvironment env){
 		try {
 			File f = new File(SESSION_SETTINGS_PATH);
-			String session = generateSession(env);	
+			String session = generateSession(env);
 			FileUtils.writeStringToFile(f, session);
 		} catch (IOException ex){
 			myLogger.error(ex);
 			env.printError("warning: could not save session");
 		}
-	}
-	
-	private static String generateSession(GricliEnvironment env){
-		String result = "";
-		for (GricliVar<?> var: env.getVariables()){
-			if (var.isPersistent()){
-				Object value = var.get();
-				if (value == null){
-					result+="unset " + var.getName() + "\n";
-				} else {
-					result+= "set " + var.getName() + " " + GricliTokenizer.escape(var.marshall()) + "\n";
-				}
-			}
-		}
-		return result;
 	}
 
 }
