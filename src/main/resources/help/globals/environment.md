@@ -11,7 +11,7 @@ To view the environment variables after submission use the command 'print job <j
 
 Example usage:
 
-	add environment MY_VAR MY_VALUE
+    add environment MY_VAR MY_VALUE
     print global environment
     print job myjob environmentVariables
 
