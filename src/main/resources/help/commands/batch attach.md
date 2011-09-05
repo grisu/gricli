@@ -7,7 +7,7 @@ Supports multiple arguments and glob regular expressions.
 Parameters
 
     bactchjob   : The name of the batchjob
-    files		: Whitespace separated list of files
+    files       : Whitespace separated list of files
 
 Example usage:
 
