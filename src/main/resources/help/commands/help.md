@@ -1,6 +1,6 @@
 The command syntax presented in the help files has the following format:
 
-	command_name <required_argument> [optional argument] 
+    command_name <required_argument> [optional_argument] 
 
 A command may have multiple required and optional arguments.
 
