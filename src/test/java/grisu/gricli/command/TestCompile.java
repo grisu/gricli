@@ -4,6 +4,8 @@ package grisu.gricli.command;
 import static org.junit.Assert.*;
 import static grisu.gricli.command.TestLanguage.*;
 import grisu.gricli.SyntaxException;
+import grisu.gricli.TooManyArgumentsException;
+import grisu.gricli.NotEnoughArgumentsException;
 import grisu.gricli.UnknownCommandException;
 
 import org.junit.Before;
@@ -23,7 +25,7 @@ public class TestCompile {
 		multi = GricliCommandFactory.getCustomFactory(MultiCommand.class);
 		
 		language1 = GricliCommandFactory.getCustomFactory(SimpleCommand.class, 
-				Args1Command.class, MultiCommand.class);
+				Args1Command.class, Args2Command.class, MultiCommand.class);
 		
 		args2 = GricliCommandFactory.getCustomFactory(Args2Command.class);
 	}
@@ -41,11 +43,6 @@ public class TestCompile {
 	@Test(expected=SyntaxException.class)
 	public void testSintaxError() throws Exception {
 		trivial.create(new String[] {"a","b"});
-	}
-	
-	@Test(expected=UnknownCommandException.class)	
-	public void testUnknownCommand() throws Exception {
-		trivial.create(new String[] {"b"});
 	}
 	
 	@Test(expected=UnknownCommandException.class)	
@@ -120,6 +117,34 @@ public class TestCompile {
 	public void testInconsistent() throws Exception {
 		GricliCommandFactory.getCustomFactory(InconsistentCommand.class);
 	}
+	
+	// test invalid commands
+	@Test(expected=UnknownCommandException.class)	
+	public void testUnknownCommand() throws Exception {
+		trivial.create(new String[] {"b"});
+	}
+	
+	@Test(expected=UnknownCommandException.class)
+	public void testNotEnoughKeywords() throws Exception {
+		language1.create(new String[] {"c1"});
+	}
+	
+	@Test(expected=TooManyArgumentsException.class)
+	public void test1ArgumentWhen0Expected() throws Exception{
+		language1.create(new String[] {"a","b"});
+	}
+	
+	
+	@Test(expected=TooManyArgumentsException.class)
+	public void test2ArgumentWhen1Expected() throws Exception{
+		language1.create(new String[] {"arg1","a","b"});
+	}
+	
+	@Test(expected=NotEnoughArgumentsException.class)
+	public void test0ArgumentsWhen1Excepted() throws Exception {
+		language1.create(new String[] {"arg1"});
+	}
+	
 
 	
 }

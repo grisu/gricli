@@ -32,12 +32,10 @@ public class GricliEnvironment {
 
 	static final Logger myLogger = Logger.getLogger(GricliEnvironment.class.getName());
 
-	public static List<String> getVariableNames(){
+	public List<String> getVariableNames(){
 		List<String> result = new LinkedList<String>();
-		for (Field f: GricliEnvironment.class.getFields()){
-			if (f.getType().isAssignableFrom(GricliVar.class)){
-				result.add(f.getName());
-			}
+		for (GricliVar<?> v: getVariables()){
+			result.add(v.getName());
 		}
 		return result;
 	}
@@ -160,7 +158,7 @@ public class GricliEnvironment {
 		this.hostCount = new PositiveIntVar("hostCount", null, true);
 
 		this.version = new StringVar("version", null, true);
-		this.application = new StringVar("application", null, true);
+		this.application = new StringVar("package", null, true);
 		this.application.addListener(new GricliVarListener<String>() {
 
 			public void valueChanged(String value) {
@@ -197,7 +195,7 @@ public class GricliEnvironment {
 		this.files = new FileListVar("files");
 		this.files.setPersistent(false);
 		
-		this.env = new EnvironmentVar("environment");
+		this.env = new EnvironmentVar("env");
 		this.env.setPersistent(false);
 	}
 
@@ -294,8 +292,18 @@ public class GricliEnvironment {
 
 	public GricliVar<?> getVariable(String var) throws GricliRuntimeException {
 		try {
-			Field f = this.getClass().getField(var);
-			return (GricliVar<?>)(f.get(this));
+			
+			for (Field f : this.getClass().getFields()){
+				if (f.get(this) instanceof GricliVar<?>){
+					GricliVar<?> result = (GricliVar<?>)f.get(this);
+					String name = result.getName();
+					if (var.equals(name)){
+						return result;
+					}
+				}
+			}
+			throw new GricliRuntimeException("global " + var + " does not exist");
+
 		} catch (Exception ex){
 			throw new GricliRuntimeException("global " + var + " does not exist");
 		}
