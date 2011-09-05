@@ -16,8 +16,8 @@ To view the walltime after a job has been submitted, use the command 'print job 
 Example usage:
 
     set walltime 240
-	set walltime 240m
-	set walltime 4h
+    set walltime 240m
+    set walltime 4h
     set walltime 30d4h12m
     print global walltime
     print job myjob walltime
