@@ -12,14 +12,14 @@ Parameters:
 Currently available lists are:
 
     files       : The files attached for a job.
-	environment : The environment variables in the job execution environment
+    environment : The environment variables in the job execution environment
 
 Example usage:
 
     add files ~/myfile.txt
     add files "~/my file.txt"
     add files grid://groups/nz/nesi/myfile.txt
-	add environment MY_VAR MY_VALUE
+    add environment MY_VAR MY_VALUE
 	
     
 

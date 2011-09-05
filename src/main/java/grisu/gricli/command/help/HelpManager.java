@@ -45,7 +45,7 @@ public class HelpManager {
 	private static Logger myLogger = Logger.getLogger(HelpManager.class
 			.getName());
 
-	public static String[] TOPICS = new String[] { "Globals", "Jobs"};
+	public static String[] TOPICS = new String[] { "Globals", "Jobs", "Files" };
 
 	public static String getHelpText(Type type, String s) throws Exception {
 		InputStream is = null;
@@ -163,8 +163,8 @@ public class HelpManager {
 				missingCommands.add(cmd);
 			}
 		}
-				
-		for (String global : Gricli.completionCache.getEnvironment().getVariableNames()) {
+
+		for (String global : GricliEnvironment.getVariableNames()) {
 			String temp;
 			try {
 				temp = getHelpText(Type.globals, global).trim();
