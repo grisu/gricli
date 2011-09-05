@@ -164,7 +164,7 @@ public class HelpManager {
 			}
 		}
 
-		for (String global : GricliEnvironment.getVariableNames()) {
+		for (String global : Gricli.completionCache.getEnvironment().getVariableNames()) {
 			String temp;
 			try {
 				temp = getHelpText(Type.globals, global).trim();
