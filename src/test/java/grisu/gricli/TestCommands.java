@@ -283,6 +283,12 @@ public class TestCommands {
 		assertEquals("crazyquotes \"\\\"a\\\"\"", submit.getCommandline());
 	}
 	
+	@Test(expected=GricliRuntimeException.class)
+	public void testEmptySubmit() throws Exception {
+		SubmitCommand submit = new SubmitCommand();
+		submit.execute(env);
+	}
+	
 	// test set and unset commands
 	
 	@Test
@@ -303,6 +309,32 @@ public class TestCommands {
 		SetCommand unset = new SetCommand("hostCount");
 		unset.execute(env);
 		assertNull(env.queue.get());
+	}
+	
+	@Test(expected=GricliSetValueException.class)
+	public void testUnsetMemory() throws Exception {
+		SetCommand unset = new SetCommand("memory");
+		unset.execute(env);
+	}
+	
+	@Test(expected=GricliSetValueException.class)
+	public void testUnsetCpus() throws Exception {
+		SetCommand unset = new SetCommand("cpus");
+		unset.execute(env);
+	}
+	
+	@Test
+	public void testUnsetFiles() throws Exception {
+		SetCommand unset = new SetCommand("files");
+		unset.execute(env);
+		assertEquals(env.files.get().size(),0);
+	}
+	
+	@Test
+	public void testUnsetEnv() throws Exception {
+		SetCommand unset = new SetCommand("env");
+		unset.execute(env);
+		assertEquals(env.env.get().size(),0);
 	}
 
 }

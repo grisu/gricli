@@ -30,7 +30,7 @@ public class VarValueCompletor implements Completor {
 			return qc.complete(s,  i, l);
 		} else if (previous.contains("group")) {
 			return fc.complete(s,  i, l);
-		} else if (previous.contains("application")) {
+		} else if (previous.contains("package")) {
 			return ac.complete(s, i, l);
 		} else if (previous.contains("debug") || previous.contains("email_on")) {
 			return tfc.complete(s, i, l);

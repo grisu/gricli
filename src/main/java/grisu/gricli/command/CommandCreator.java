@@ -1,6 +1,8 @@
 package grisu.gricli.command;
 
+import grisu.gricli.NotEnoughArgumentsException;
 import grisu.gricli.SyntaxException;
+import grisu.gricli.TooManyArgumentsException;
 import grisu.gricli.UnknownCommandException;
 
 import java.lang.reflect.Constructor;
@@ -14,6 +16,7 @@ import org.apache.log4j.Logger;
 public class CommandCreator{
 
 	class PartialCommand {
+		public ArrayList<String> keywords = new ArrayList<String>();
 		public ArrayList<String> arguments = new ArrayList<String>();
 		public Constructor<? extends GricliCommand> cons = null;
 
@@ -88,16 +91,21 @@ public class CommandCreator{
 		for (String token : tokens) {
 			c = c.nextToken(pc, token);
 		}
-		if (c.cons == null){
-			throw new SyntaxException("command does not exist");
+		if (c.cons == null && c.argCreator != null){
+			String command = StringUtils.join(pc.keywords.toArray()," ");
+			throw new NotEnoughArgumentsException("not enough arguments for \"" + command + "\"");
+		} else if (c.cons == null){
+			throw new UnknownCommandException("incomplete command");
 		}
 		pc.cons = c.cons;
 		return pc.create();
 	}
+	
 
 	private CommandCreator nextToken(PartialCommand pc, String nextToken) throws SyntaxException{
 		CommandCreator c = keywords.get(nextToken);
 		if (c != null){
+			pc.keywords.add(nextToken);
 			return c;
 		}
 
@@ -113,14 +121,13 @@ public class CommandCreator{
 			return this;
 		}
 		
-		String error = "";
-		for (String errToken: pc.arguments){
-			error +=  errToken + " ";
+		String command = StringUtils.join(pc.keywords.toArray(), " ");
+		
+		if ((pc.arguments.size() > 0 || this.cons != null) && command.length() > 0) {
+			throw new TooManyArgumentsException("too many arguments for \"" + command + "\"");
+		} else {
+			throw new UnknownCommandException("unknown command: \"" + command + " " + nextToken + "\"");
 		}
-		error += nextToken;
-
-		throw new UnknownCommandException("unknown command: " + error);
 	}
-
-
+	
 }
