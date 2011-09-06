@@ -1,7 +1,5 @@
 package grisu.gricli.command;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 import grisu.control.exceptions.JobPropertiesException;
 import grisu.control.exceptions.JobSubmissionException;
 import grisu.frontend.model.job.JobObject;
@@ -11,6 +9,8 @@ import grisu.gricli.completors.ExecutablesCompletor;
 import grisu.gricli.completors.InputFileCompletor;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
+
+import org.apache.commons.lang.StringEscapeUtils;
 
 
 public class SubmitCommand implements
@@ -45,27 +45,6 @@ GricliCommand {
 
 	}
 	
-	public String getCommandline(){
-		int length = this.args.length;
-		String last = this.args[this.args.length - 1];
-		if ("&".equals(last)){
-			length--;
-		}
-		String cmd = "";
-		for (int i =0; i< length; i++){
-			String escaped = StringEscapeUtils.escapeJava(this.args[i]);
-			if (!this.args[i].equals(escaped) || escaped.contains(" ")){
-				escaped = "\"" + escaped + "\"";
-			}
-			cmd += " " + escaped;
-		}
-		return cmd.trim();
-	}
-	
-	public boolean isAsync(){
-		return "&".equals(this.args[this.args.length - 1]);
-	}
-
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		final JobObject job = createJob(env);
@@ -85,6 +64,27 @@ GricliCommand {
 		}
 
 		return env;
+	}
+	
+	public String getCommandline(){
+		int length = this.args.length;
+		String last = this.args[this.args.length - 1];
+		if ("&".equals(last)){
+			length--;
+		}
+		String cmd = "";
+		for (int i =0; i< length; i++){
+			String escaped = StringEscapeUtils.escapeJava(this.args[i]);
+			if (!this.args[i].equals(escaped) || escaped.contains(" ")){
+				escaped = "\"" + escaped + "\"";
+			}
+			cmd += " " + escaped;
+		}
+		return cmd.trim();
+	}
+
+	public boolean isAsync(){
+		return "&".equals(this.args[this.args.length - 1]);
 	}
 
 	private void submit(JobObject job) throws GricliRuntimeException{
