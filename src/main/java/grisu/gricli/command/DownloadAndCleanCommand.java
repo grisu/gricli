@@ -1,5 +1,6 @@
 package grisu.gricli.command;
 
+import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.environment.GricliEnvironment;
@@ -17,7 +18,7 @@ GricliCommand {
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
+			throws GricliRuntimeException {
 
 		for (String jobname : ServiceInterfaceUtils.filterJobNames(env.getServiceInterface(),
 				this.jobFilter)) {
@@ -26,6 +27,8 @@ GricliCommand {
 				env = download.execute(env);
 				CleanJobCommand clean = new CleanJobCommand(jobname);
 				env = clean.execute(env);
+				Gricli.completionCache.refreshJobnames();
+
 			} catch (GricliRuntimeException ex){
 				env.printError(ex.getMessage());
 			}
