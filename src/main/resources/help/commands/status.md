@@ -8,7 +8,7 @@ Fields are defined as follows:
 	Finished			: The number of jobs that have stopped running.
 						  Successful jobs finished within their walltime limit.
 						  Failed jobs were killed.
-	Broken/Not found 	: These jobs have had an error before starting.
+	Broken/Not found 	        : These jobs have had an error before starting.
 
 Example usage:
 

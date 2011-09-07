@@ -21,7 +21,7 @@ Example usage:
     print application R
     print application BEAST
     print application UnixCommands
-	print application *
-	print application B*
+    print application *
+    print application B*
 
 

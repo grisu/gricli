@@ -2,7 +2,7 @@ Command: print job <jobname> [property]
 
 Prints either all or a specific property of a job.
 
-    jobname		: The name of the job. Supports glob regular expressions.
+    jobname     : The name of the job. Supports glob regular expressions.
     property	: The property.
 
 To see the available job properties use:
