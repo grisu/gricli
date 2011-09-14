@@ -25,10 +25,10 @@ g.:
 or
 .PP
 \f[CR]
-      \ gricli\ -b\ Local
+      gricli\ -b\ Local
 \f[]
 .PP
-The above command would connect to the default \f[I]BeSTGRID\f[]
+The above first would connect to the default \f[I]BeSTGRID\f[]
 backend that publishes the \f[I]Grisu\f[] API via SOAP.
 The latter would connect to a local \f[I]Grisu\f[] backend which
 sits on the same computer as \f[I]gricli\f[], as long as the local
@@ -37,348 +37,1504 @@ backend jar
 in the classpath (either in the same folder as gricli or in
 %$HOME/.grisu.beta/lib/).
 .SH OPTIONS
-.TP
-.B -b \f[I]BACKEND\f[], --backend=\f[I]BACKEND\f[]
-the Grisu backend to connect to, default is \f[I]BeSTGRID\f[],
-other possible backends are \f[I]BeSTGRID-TEST\f[],
-\f[I]BeSTGRID-DEV\f[], \f[I]Local\f[].
-.RS
-.RE
-.TP
-.B -f \f[I]SCRIPT\f[], --file=\f[I]SCRIPT\f[]
-Executes a gricli script
-.RS
-.RE
-.TP
-.B -n, --nologin
-Disables login at gricli startup
-.RS
-.RE
+.PP
+-b \f[I]BACKEND\f[] or --backend=\f[I]BACKEND\f[]
+.PP
+The Grisu backend to connect to.
+The default is \f[I]BeSTGRID\f[] and other possible backends are
+\f[I]BeSTGRID-TEST\f[],\f[I]BeSTGRID-DEV\f[] and \f[I]Local\f[].
+.PP
+Examples:
+.PP
+\f[CR]
+      gricli\ -b\ BeSTGRID
+      gricli\ --backend=BeSTGRID
+\f[]
+.PP
+-f \f[I]SCRIPT\f[] or --file=\f[I]SCRIPT\f[]
+.PP
+Executes a gricli script.
+.PP
+Examples:
+.PP
+\f[CR]
+      gricli\ -f\ myexp.gs
+      gricli\ --file=myexp.gs
+\f[]
+.PP
+-n or --nologin
+.PP
+Disables login at gricli startup.
+.PP
+Example:
+.PP
+\f[CR]
+      gricli\ -n
+\f[]
+.SH GLOBALS
+.PP
+Globals define the properties of a job.
+.SS Overview
+.PP
+Globals are the properties for a job.
+They let you determine how and where your job will be executed.
+To see the list of globals use the command `print globals'.
+You may use the `set' command to set any of the global properties.
+To view an individual property use the command `print global '.
+.PP
+To view information and examples on each global use the command
+`help '.
+Note that you may use a plain text script to automate the task of
+setting globals.
+For more information see use the command `help run'.
+.PP
+Example usage:
+.PP
+print globals print global memory set memory 1g help memory help
+global memory
+.SS List of globals:
+.SS application
+.PP
+The is the applicaiton package used by the job.
+.PP
+To set the package use the `set' command.
+To see a list of available packages use the `print packages'
+command.
+To see the which package is set for a job before it is submitted,
+use the command `print global package'.
+After a job has been submitted you can check the package with
+`print job  package'
+.PP
+Note that the package is not set by default and is required to
+submit a job.
+.PP
+Example usage:
+.PP
+\f[CR]
+      print\ packages
+      set\ package\ R
+      print\ global\ package
+      print\ job\ myjob\ package
+\f[]
+.SS cpus
+.PP
+The number of cpus to be used by a job.
+.PP
+To set the number of cpus use the `set' command.
+To view the number of cpus used in a job use the command
+`print global cpus'.
+After a job has been submitted you can check the cpus used with the
+command `print job  cpus'
+.PP
+Example usage:
+.PP
+\f[CR]
+      set\ cpus\ 10
+      print\ global\ cpus
+      print\ job\ myjob\ cpus
+\f[]
+.SS debug
+.PP
+Boolean to show debug output from Grilci exceptions.
+.PP
+This value can be set using the `set' command.
+.PP
+Example usage:
+.PP
+\f[CR]
+      set\ debug\ true
+      set\ debug\ false
+\f[]
+.SS description
+.PP
+The description of a job.
+.PP
+To set the job description use the `set' command.
+To view the description before the job has been submitted use the
+command `print global description'.
+To view the description of a submitted job use the command
+`print job  description'.
+.PP
+Example usage:
+.PP
+\f[CR]
+      set\ description\ "my\ job\ descritpion"
+      print\ global\ description
+      print\ job\ myjob\ description
+\f[]
+.SS dir
+.PP
+The job directory.
+.PP
+This is the directory the job will be downloaded to after a
+`download' or `downloadclean' command.
+.PP
+It is also used as the starting point where relative paths are
+applicable.
+For example if a file is located at /home/myfolder/myfile and the
+dir variable is /home then myfile can be attached with using the
+relative path: attach myfolder/myfile
+.PP
+To set the dir use the `set' command or the `cd' command.
+To view the dir before a job has been submitted use the command
+`print global dir'.
+To view the dir after a job as been submitted use the command
+`print job  jobDirectory'.
+.PP
+Grid locations (starting with prefix grid://) are currently not
+supported for this command.
+.PP
+Example usage:
+.PP
+\f[CR]
+      set\ dir\ ~
+      set\ dir\ /home/myfolder
+      cd\ ~/myfolder
+\f[]
+.SS email
+.PP
+The email address to send notificaitons to.
+.PP
+The email address can be set using the `set' command.
+To view the email address of a job before submission use the
+command `print global email'.
+To view the email address of a job after submission use the command
+`print job  email_address'.
+.PP
+Example usage:
+.PP
+\f[CR]
+      set\ email\ myemail\@myhost.x
+      print\ global\ email
+\f[]
+.SS email_on_finish
+.PP
+Boolean to send an email notification when a job has finished.
+.PP
+To set the variable use the `set' command.
+To view the setting before submission use the command
+`print global email_on_finish'.
+To view setting after submission use the command
+`print job  email_on_finish'.
+.PP
+Example usage:
+.PP
+\f[CR]
+      set\ email_on_finish\ true
+      set\ email_on_finish\ false
+\f[]
+.SS email_on_start
+.PP
+Boolean to send an email notification when a job has started
+executing.
+.PP
+To set the variable use the `set' command.
+To view the setting before submission use the command
+`print global email_on_start'.
+To view setting after submission use the command
+`print job  email_on_start'.
+.PP
+Example usage:
+.PP
+\f[CR]
+      set\ email_on_start\ true
+      set\ email_on_start\ false
+\f[]
+.SS gdir
+.PP
+The grid directory.
+.PP
+This is for use with the filemanager command which has yet to be
+implemented.
+.SS group
+.PP
+The group used to send jobs.
+.PP
+The group determines which queues you will have access to and
+consequently which application package you can use.
+.PP
+To set the group use the `set' command.
+Note that the group must be set before a job can be submitted.
+To view the group before a job has been submitted use the command
+`print global group'.
+To view the group after a job has been submitted use the command
+`print job  fqan'.
+.PP
+Example usage:
+.PP
+\f[CR]
+      set\ group\ /nz/nesi
+      print\ global\ group
+      print\ job\ myjob\ fqan
+\f[]
+.SS host
+.PP
+The hostname.
+.PP
+To set the hostname use the `set' command.
+The available hostnames can be seen using the command
+`print hosts'.
+To view the host before a job has been submitted use the command
+`print global host'.
+To view the host after a job has been sumitted ise the command
+`print job  submissionHost'.
+.PP
+Example usage:
+.PP
+\f[CR]
+      set\ host\ ng2.canterbury.ac.nz
+      print\ global\ host
+      print\ job\ myjob\ submissionHost
+\f[]
+.SS jobname
+.PP
+The job name.
+.PP
+This will be the name of the submitted job.
+If a job with this name already exists, an integer will be appended
+to make sure it is unique.
+.PP
+To set the job name use the `set' command.
+To view the job name before submission use the command
+`print global jobname'.
+To view the job name after a job has been submitted use the command
+`print jobs'.
+.PP
+Example usage:
+.PP
+\f[CR]
+      set\ jobname\ myjob
+      print\ global\ jobname
+\f[]
+.SS jobtype
+.PP
+The type of job to submit.
+.PP
+The job type determines how the job is configured for execution.
+.PP
+The current values are:
+.PP
+\f[CR]
+      smp\ \ \ \ \ \ \ \ \ \ :\ A\ job\ that\ will\ use\ one\ or\ more\ CPUs\ on\ a\ single\ host.
+      mpi\ \ \ \ \ \ \ \ \ \ :\ A\ job\ that\ will\ use\ one\ or\ more\ CPUs\ across\ one\ or\ more\ hosts\ using\ the\ Open\ MPI\ framework.
+      custom\ \ \ \ \ \ \ :\ A\ job\ that\ will\ use\ one\ or\ more\ CPUs\ across\ one\ or\ more\ hosts\ using\ a\ custom\ configuration.
+\f[]
+.PP
+The number of hosts used for an mpi job can be checked after
+submission using the command `print job  hostCount'.
+.PP
+Please note that a `host' is a compute node within a queue.
+Since the hardware specificaitons may vary between hosts in a
+queue, you are advised to check the properties of your queues to
+ensure you jobs run correctly.
+In particular, it is important that jobs do not request more
+resources than are available for a given job type.
+Some tips are provided below:
+.PP
+SMP
+.PP
+When you select a job of this type, please ensure that the at least
+one host in the queue can meet the job requirements.
+.PP
+MPI
+.PP
+When you select a job of this type, please ensure that the
+requested resources do not exceed the maximum capacity of the
+queue.
+.PP
+Custom
+.PP
+Please note that is is up to you to ensure your job is scheduled
+correctly as this job type implies you may not be relying on Open
+MPI to coordinate your processes.
+.PP
+Example usage:
+.PP
+\f[CR]
+      set\ jobtype\ mpi
+      print\ global\ jobtype
+      print\ job\ myjob\ hostCount
+\f[]
+.SS memory
+.PP
+The total memory (in MB) to be used by the job.
+.PP
+The total memory is the divided amongst the cpus.
+To set the memory for the job, use the `set' command.
+The command accepts values in the following formats:
+.PP
+\f[CR]
+      set\ memory\ 200\ \ \ \ \ \ \ :\ sets\ memory\ to\ 200\ MB
+      set\ memory\ 200m\ \ \ \ \ \ :\ sets\ memory\ to\ 200\ MB
+      set\ memory\ 1g\ \ \ \ \ \ \ \ :\ sets\ memory\ to\ 1\ GB\ (1024\ MB)
+      set\ memory\ 1g200m\ \ \ \ :\ sets\ memory\ to\ 1224\ MB
+\f[]
+.PP
+To view the memory of a job before sumbmission use the command
+`print global memory'.
+To view the memory of a job after submission use the command 'print
+job memory.
+.PP
+Example usage:
+.PP
+set memory 1224 set memory 1g200m print global memory print job
+myjob memory
+.SS outputfile
+.PP
+The path to a file where Gricli output is redirected to.
+.PP
+Some Gricli commands will print messages for the user.
+This output can be redirected to a file for processing.
+.PP
+Example usage:
+.PP
+\f[CR]
+      set\ outputfile\ /home/myfolder/gricli_output.txt
+\f[]
+.SS prompt
+.PP
+The prompt message.
+.PP
+This is set to `gricli' by defualt but can changed using the `set'
+command.
+The command can accept macros, substituting the values of other
+globals into the prompt.
+.PP
+Example usage:
+.PP
+set prompt \[lq]myprompt>\[rq] set prompt
+\[lq]\f[B]{dir}>\ "\ set\ prompt\ "\f[]{jobname}>\[rq]
+.SS queue
+.PP
+The job queue.
+.PP
+The job queue will determine which resources and application
+packages are available for your job.
+.PP
+To set the queue use the `set' command.
+To see a list of queues use the `print queues command'.
+.PP
+You can only submit jobs to queues assigned to your group.
+To view the available to groups use the `print groups' command.
+To view the queues available for a specific groups use the command
+`print queues '
+.PP
+To see which queues support a particular application package use
+the command `print package '.
+To see a list of applications use the command `print packages'.
+.PP
+If you have set the package, then the queue locaiton can be
+determined automatically.
+Use the command `set queue auto' to enable this option.
+.PP
+To see the queue before a job is submitted use the command
+`print global queue'.
+To see the queue after a job has been submitted use the command
+`print job  submissionLocation'.
+.PP
+Example usage:
+.PP
+\f[CR]
+      set\ queue\ auto
+      set\ queue\ gpu:gram5.ceres.auckland.ac.nz
+      print\ global\ queue
+      print\ job\ myjob\ submissionLocation
+\f[]
+.SS version
+.PP
+The application package version.
+.PP
+This is the package version to be used.
+By default the value is `any'.
+.PP
+If a package is specified and the queue is set to auto then the job
+will be submitted to valid queue locaiton that supports a version
+of the chosen package.
+.PP
+To ensure a specific version of the package is used, use the `set'
+command to choose the version.
+To see the list of versions available for a package use the command
+`print package '.
+.PP
+Example usage:
+.PP
+\f[CR]
+      set\ package\ R
+      set\ version\ any
+      
+      set\ package\ R
+      set\ version\ \ 2.11.1
+\f[]
+.SS walltime
+.PP
+The walltime for the job measured in minutes.
+.PP
+The walltime determines the upper limit on how long a job will
+execute for.
+If a job has not finished after the allocated walltime, the job
+will be killed.
+.PP
+Walltime can be set with strings as follows:
+.PP
+set walltime 120 : sets the walltime for 120 minutes.
+set walltime 1d2h3m : sets the walltime for 1 day 2 hours and 3
+minutes.
+.PP
+To view the walltime before a job has been submitted, use the
+command `print global walltime'.
+To view the walltime after a job has been submitted, use the
+command `print job  walltime'.
+.PP
+You can also see the remaining walltime for a job that has started
+here:
+.PP
+\f[CR]
+      http://cluster.ceres.auckland.ac.nz/cgi-bin/showq.cgi
+\f[]
+.PP
+Example usage:
+.PP
+\f[CR]
+      set\ walltime\ 1000
+      set\ walltime\ 30d4h12m
+      print\ global\ walltime
+      print\ job\ myjob\ walltime
+\f[]
 .SH COMMANDS
-.TP
-.B \f[B]about\f[]
-Prints out version information.
-.RS
-.RE
-.TP
-.B \f[B]add\f[]
-Adds a value to list.
-.RS
-.RE
-.TP
-.B \f[B]add\ list\f[]
-optional example text explains what kinds of lists are available
-.RS
-.RE
-.TP
-.B \f[B]add\ value\f[]
-the value
-.RS
-.RE
-.TP
-.B \f[B]apropos\f[]
-Lists command that are associated with a keyword
-.RS
-.RE
-.TP
-.B \f[B]apropos\ keyword\f[]
-the keyword
-.RS
-.RE
-.TP
-.B \f[B]archive\ job\f[]
-Archives a job to the default archive location (DataFabric).
-The job will be deleted from the job database and the original
-jobdirectory will be deleted if the archiving was successful.
-.RS
-.RE
-.TP
-.B \f[B]archive\ job\ jobname\f[]
-the name of the job to archive
-.RS
-.RE
-.TP
-.B \f[B]attach\f[]
-Sets attached file list.Supports multiple arguments and glob
-regular expressions.
-.RS
-.RE
-.TP
-.B \f[B]attach\ files\f[]
-the files to attach
-.RS
-.RE
-.TP
-.B \f[B]batch\ add\f[]
-Add job to batch job container.
-.RS
-.RE
-.TP
-.B \f[B]batch\ add\ name\f[]
-the name of the batch job
-.RS
-.RE
-.TP
-.B \f[B]batch\ add\ command\f[]
-the (new) command to add
-.RS
-.RE
-.TP
-.B \f[B]batch\ create\f[]
+.SS about
+.PP
+Displays the following information about the Gricli shell:
+.PP
+version: This is the version of Gricli you are using.
+grisu frontend version: The interface used to communicate with
+Grisu.
+grisu backend: They Grisu backend (BeSTGRID or BeSTGRID-DEV) grisu
+backend host: The Grisu host.
+grisu backend version: The version of Grisu used by Gricli.
+documentation: Where you may find further help and information.
+contact: Who to contact in case you have problems or questions.
+.PP
+Example usage:
+.PP
+\f[CR]
+      about
+\f[]
+.SS add
+.PP
+Adds an item to a list.
+.PP
+Currently only a single item can be added per call.
+To add multiple items, use this command once for each item.
+.PP
+Parameters:
+.PP
+\f[CR]
+      list\ \ \ \ :\ The\ name\ of\ the\ list.
+      item\ \ \ \ :\ The\ value\ to\ add.\ 
+\f[]
+.PP
+Currently available lists are:
+.PP
+\f[CR]
+      files\ \ \ \ \ \ \ :\ The\ files\ attached\ for\ a\ job.
+\f[]
+.PP
+Example usage:
+.PP
+\f[CR]
+      add\ files\ ~/myfile.txt
+      add\ files\ "~/my\ file.txt"
+      add\ files\ grid://groups/nz/nesi/myfile.txt
+\f[]
+.SS apropos
+.PP
+Lists help entries that are associated with a keyword.
+.PP
+The command displays the entry type (command, global or topic) and
+the entry name.
+To find out more use the help command on the command, global or
+topic of interest.
+.PP
+Parameters:
+.PP
+\f[CR]
+      keyword\ \ \ \ \ \ \ :\ The\ keyword\ to\ search\ for.
+\f[]
+.PP
+Example usage
+.PP
+apropos queues
+.SS archive job
+.PP
+Downloads the job to the default archive location and then cleans
+the job.
+.PP
+Supports glob regular expressions.
+Note that if a job is still running it will be stopped.
+.PP
+Parameters:
+.PP
+\f[CR]
+      jobname\ \ \ \ :\ The\ name\ of\ the\ job\ to\ archive.\ 
+\f[]
+.PP
+The default archive location is in the user's home directory on the
+Data Fabric:
+.PP
+\f[CR]
+      grid://groups/nz/nesi/archived-jobs/<jobname>
+\f[]
+.PP
+You can also access the Data Fabric via your browser at the
+following address:
+.PP
+\f[CR]
+      http://df.bestgrid.org/
+\f[]
+.PP
+Your files will be located in your home directory.
+.PP
+If the archiving was successful, the job will be deleted from the
+job database and the original job directory will be deleted.
+.PP
+Example usage:
+.PP
+\f[CR]
+      archive\ job\ myjob
+      archive\ job\ myjob_1
+      archive\ job\ myjob*
+\f[]
+.SS attach
+.PP
+Attaches a file to the file list of the current job.
+.PP
+Supports multiple arguments and glob regular expressions.
+.PP
+Parameters
+.PP
+\f[CR]
+      files\ \ \ :\ Whitespace\ seperated\ list\ of\ files
+\f[]
+.PP
+Example usage:
+.PP
+\f[CR]
+      attach\ ~/myfile.txt
+      attach\ "~/my\ file.txt"
+      attach\ ~/myfile_1.txt\ ~/myfile_2.txt
+      attach\ ~/*.txt
+\f[]
+.SS batch add
+.PP
+Add a new command to a batch job container.
+.PP
+Parameters:
+.PP
+\f[CR]
+      name\ \ \ \ :\ The\ name\ of\ the\ batchjob.
+      command\ :\ The\ new\ command\ string\ to\ add.
+\f[]
+.PP
+Example usage:
+.SS batch attach
+.PP
+Attach a list of files to a batchjob container
+.PP
+Supports multiple arguments and glob regular expressions.
+.PP
+Parameters
+.PP
+\f[CR]
+      bactchjob\ \ \ :\ The\ name\ of\ the\ batchjob
+      files\ \ \ :\ Whitespace\ seperated\ list\ of\ files
+\f[]
+.PP
+Example usage:
+.PP
+\f[CR]
+      batch\ attach\ ~/myfile.txt
+      batch\ attach\ "~/my\ file.txt"
+      batch\ attach\ ~/myfile_1.txt\ ~/myfile_2.txt
+      batch\ attach\ ~/*.txt
+      batch\ attach\ grid://groups/nz/nesi/myfile.txt
+\f[]
+.SS batch create
+.PP
 Creates a new batch job object.
+.PP
 Batch job objects act as containers for jobs.
-.RS
-.RE
-.TP
-.B \f[B]batch\ create\ name\f[]
-the name of the new batchjob.
-Choose a meaningful name and make sure it is unique within your
-jobnames if possible.
-.RS
-.RE
-.TP
-.B \f[B]batch\ submit\f[]
-Submits a batch job (which should be created beforehand with
-`batch create [name]' command.
-.RS
-.RE
-.TP
-.B \f[B]batch\ submit\ name\f[]
-the name of the batchjob to submit
-.RS
-.RE
-.TP
-.B \f[B]clean\ job\f[]
-Cleans a job from the database and deletes its job directory (also
-kills it beforehand if it is still running).
-.RS
-.RE
-.TP
-.B \f[B]clean\ job\ jobname\f[]
-the name of the job to clean
-.RS
-.RE
-.TP
-.B \f[B]clear\f[]
-Clears a list.
-.RS
-.RE
-.TP
-.B \f[B]clear\ list\f[]
-the list to clear (e.g.
-global)
-.RS
-.RE
-.TP
-.B \f[B]cd\f[]
-Change current directory.
-Used to change location of job downloads and as relative directory
-for attachments.
-.RS
-.RE
-.TP
-.B \f[B]cd\ dir\f[]
-Directory to change to
-.RS
-.RE
-.TP
-.B \f[B]destroy\ proxy\f[]
-Deletes the login information so you will have to enter it again on
-your next login.
-.RS
-.RE
-.TP
-.B \f[B]downloadClean\ job\f[]
-Downloads the whole jobdirectory.
-If successful, it then cleans the job from the jobdatabase and
-deletes the jobdirectory on the remote location.
-.RS
-.RE
-.TP
-.B \f[B]downloadClean\ job\ jobname\f[]
-the name of the job to download and clean
-.RS
-.RE
-.TP
-.B \f[B]download\ job\f[]
-Downloads the whole jobdirectory of the job.
-.RS
-.RE
-.TP
-.B \f[B]download\ job\ jobname\f[]
-the name of the job to download
-.RS
-.RE
-.TP
-.B \f[B]get\f[]
-experimental command
-.RS
-.RE
-.TP
-.B \f[B]filemanager\f[]
-experimental command
-.RS
-.RE
-.TP
-.B \f[B]gls\f[]
-Lists a directory in grid-space.
-.RS
-.RE
-.TP
-.B \f[B]gls\ path\f[]
-the url to list.
-Can be virtual (grid://\&...) or gridftp://\&...
-.RS
-.RE
-.TP
-.B \f[B]help\f[]
-Prints this help message.
-.RS
-.RE
-.TP
-.B \f[B]help\ keywords\f[]
-Optional keyword(s) to get more detailed information about a
-specific command
-.RS
-.RE
-.TP
-.B \f[B]ilogin\f[]
-Logs in to a grisu backend.
-If there is no certificate proxy, interactively asks user for
-details to create one.
-.RS
-.RE
-.TP
-.B \f[B]ilogin\ backend\f[]
-the grisu backend to log in
-.RS
-.RE
-.TP
-.B \f[B]kill\ job\f[]
-Kills a job.
+.PP
+Parameters:
+.PP
+\f[CR]
+      name\ \ \ \ :\ The\ name\ of\ the\ new\ batch\ job.\ 
+\f[]
+.PP
+Choose a meaningful name and make sure it is unique with respect to
+other job names.
+.PP
+Example usage:
+.PP
+\f[CR]
+      batch\ create\ mybatch
+\f[]
+.SS batch submit
+.PP
+Submits a batch job for execution.
+.PP
+The batch job should created beforehand using the `batch create'
+command.
+.PP
+Parameters:
+.PP
+\f[CR]
+      name\ \ \ \ :\ The\ name\ of\ the\ batch\ job\ to\ submit.
+\f[]
+.PP
+Example usage:
+.PP
+\f[CR]
+      batch\ submit\ mybatch
+\f[]
+.SS cd
+.PP
+Changes the current job directory.
+.PP
+Can be used in conjunction with the `pwd' and `ls' commands to
+explore the file system.
+The command also sets the job global `dir' which determines where
+relative paths start from.
+Grid locations (starting with prefix grid://) are currently not
+supported.
+.PP
+Parameters:
+.PP
+\f[CR]
+      dir\ \ \ \ :\ The\ path\ to\ the\ new\ current\ directory.
+\f[]
+.PP
+Example usage:
+.PP
+\f[CR]
+      cd\ /home/whoami/myfolder
+      
+      attach\ ~/myfolder/myfile_1\ ~/myfolder/myfile_2
+      cd\ ~/myfolder
+      attach\ myfile_1\ myfile_2
+\f[]
+.SS clean job
+.PP
+Kills a job if it still running and then removes it from the
+database and deletes the job directory.
+.PP
+Supports glob regular expressions.
+.PP
+Parameters:
+.PP
+\f[CR]
+      jobname\ :\ The\ name\ of\ the\ job\ to\ clean
+\f[]
+.PP
+Example usage:
+.PP
+\f[CR]
+      clean\ myjob
+      clean\ myjob_1
+      clean\ myjob_2
+      clean\ myjob*
+      clean\ *
+\f[]
+.SS clear
+.PP
+Clears the selected list.
+.PP
+Parameters:
+.PP
+\f[CR]
+      list\ \ \ \ :\ The\ list\ to\ clear
+\f[]
+.PP
+Currently available lists in gricli are:
+.PP
+\f[CR]
+      files\ \ \ \ \ \ \ :\ The\ files\ associated\ with\ a\ job.
+\f[]
+.PP
+Example usage:
+.SS destroy proxy
+.PP
+Deletes your login information.
+.PP
+You will have to enter your login information again on your next
+login.
+.PP
+This can be used if you would like to login with another profile.
+.PP
+Example usage:
+.PP
+\f[CR]
+      destroy\ proxy
+\f[]
+.SS downloadclean job
+.PP
+Downloads the job and cleans the job upon success.
+.PP
+Parameters:
+.PP
+\f[CR]
+      jobname\ \ \ \ :\ The\ name\ of\ the\ job\ to\ download\ and\ clean.
+\f[]
+.PP
+If the download is not successful the job will not be cleaned.
+.PP
+Note that once a job has been cleaned it is no longer accessible
+via job related commands.
+.PP
+Example usage:
+.SS download job
+.PP
+Downloads the whole job directory to the location specified in the
+global `dir'.
+.PP
+Parameters:
+.PP
+\f[CR]
+      jobname\ :\ The\ name\ of\ the\ job\ to\ download.
+\f[]
+.PP
+Example usage:
+.PP
+\f[CR]
+      download\ job\ myjob
+\f[]
+.SS exec
+.PP
+Executes a command from the underlying shell.
+.PP
+Parameters:
+.PP
+\f[CR]
+      commandline\ \ \ \ \ \ \ \ :\ The\ command\ string\ to\ execute.\ 
+\f[]
+.PP
+Be aware, you can't use commands with remote files (yet).
+.PP
+Example usage:
+.PP
+\f[CR]
+      exec\ ls\ -lah
+      exec\ javac\ -version
+      exec\ cat\ myscript.gs
+\f[]
+.SS filemanager
+.PP
+Not yet implemented.
+.SS help
+.PP
+Prints this help message or a help message for a certain command,
+topic or global variable.
+.PP
+Parameters:
+.PP
+\f[CR]
+      keywords\ \ \ \ :\ A\ whitespace\ seperated\ list\ of\ keywords.
+\f[]
+.PP
+Usage:
+.PP
+\f[CR]
+      help\ \ \ \ \ \ \ \ \ \ \ \ 
+      
+      \ \ \ \ Prints\ this\ message.
+      
+      help\ <keyword>\ \ \ \ \ \ 
+      
+      \ \ \ \ Prints\ a\ help\ message\ for\ a\ command,\ topic\ or\ global\ variable\ with\ this\ exact\ name\ or,\ if\ no\ such\ command,\ topic
+      \ \ \ \ or\ global\ variable\ exists\ it\ lists\ all\ commands,\ topics\ or\ global\ variables\ that\ contain\ the\ keyword\ in\ the\ name
+      \ \ \ \ or\ help\ message.
+      
+      help\ commands\ \ \ \ \ \ \ 
+      
+      \ \ \ \ Lists\ all\ available\ commands.
+      
+      help\ globals\ \ \ \ 
+      
+      Lists\ all\ available\ globals.
+      
+      help\ topics\ \ \ \ \ \ \ \ \ 
+      
+      \ \ \ \ Lists\ all\ available\ topics.
+      
+      help\ all\ \ \ \ \ \ \ \ \ \ \ \ 
+      
+      \ \ \ \ Lists\ all\ available\ commands,\ globals\ and\ topics.
+      
+      help\ command\ <command>\ \ 
+      
+      \ \ \ \ Prints\ the\ help\ message\ for\ the\ specified\ command.
+      
+      help\ global\ <global>\ \ \ \ 
+      
+      \ \ \ \ Prints\ the\ help\ message\ for\ the\ specified\ global\ variable.
+      
+      help\ topic\ <topic>\ \ \ \ \ \ 
+      
+      \ \ \ \ Prints\ the\ help\ message\ for\ the\ specified\ topic.
+      
+      help\ <keywords>\ \ \ \ \ 
+      
+      \ \ \ \ Prints\ the\ help\ message\ for\ the\ command\ that\ is\ called\ by\ this\ combination\ of\ keywords\ (if\ it\ exists)
+      
+      help\ search\ <keyword>\ \ \ 
+      
+      \ \ \ Prints\ a\ list\ of\ all\ commands,\ topics\ or\ global\ variables\ that\ contain\ the\ keyword\ in\ the\ name\ or\ help\ message
+\f[]
+.PP
+Example usage:
+.PP
+\f[CR]
+      help
+      help\ all
+      
+      help\ commands
+      help\ command\ print\ jobs
+      help\ print\ jobs
+      help\ jobs
+      
+      help\ globals
+      help\ global\ memory
+      help\ memory
+      
+      help\ topics
+      help\ topic\ Jobs
+      help\ Jobs
+      
+      help\ search\ batch
+\f[]
+.SS ilogin
+.PP
+Logs in to a Grisu backend.
+.PP
+Parameters:
+.PP
+\f[CR]
+      backend\ \ \ \ \ :\ The\ Grisu\ backend.\ 
+\f[]
+.PP
+The choice of backend is one of:
+.PP
+\f[CR]
+      BeSTGRID\ \ \ \ \ \ \ \ :\ The\ default\ backend.
+      BeSTGRID-DEV\ \ \ \ :\ The\ development\ backend.\ \ \ \ \ 
+\f[]
+.PP
+If there is no certificate proxy the user is asked details to
+create one.
+.PP
+Example usage:
+.PP
+\f[CR]
+      ilogin\ BeSTGRID
+      ilogin\ BeSTGRID-DEV\ 
+\f[]
+.SS kill job
+.PP
+Kills a job by stopping its execution.
+.PP
 This stops the remote execution of the job but leaves the job in
 the job database and also the job directory intact.
 To delete the job directory you need to clean the job.
-.RS
-.RE
-.TP
-.B \f[B]kill\ job\ jobname\f[]
-the name of the job to kill
-.RS
-.RE
-.TP
-.B \f[B]login\f[]
+.PP
+Note that a job cannot be resumed once it has been killed.
+.PP
+Parameters:
+.PP
+\f[CR]
+      jobname\ :\ The\ name\ of\ the\ job\ to\ kill.\ Supports\ glob\ regular\ expressions.
+\f[]
+.PP
+Example usage:
+.PP
+\f[CR]
+      kill\ job\ myjob
+      kill\ job\ myjob_1
+      kill\ job\ myjob_2
+      kill\ job\ myjob*
+      kill\ job\ *
+\f[]
+.SS login
+.PP
 Logs in to a grisu backend with existing certificate proxy.
+.PP
 Reports an error if there is no proxy.
-.RS
-.RE
-.TP
-.B \f[B]login\ backend\f[]
-the grisu backend to log in
-.RS
-.RE
-.TP
-.B \f[B]print\ applications\f[]
-List all application names available on the grid.
-.RS
-.RE
-.TP
-.B \f[B]print\ globals\f[]
+.PP
+\f[CR]
+      backend\ :\ The\ Grisu\ backend\ to\ login\ to.
+\f[]
+.PP
+The choice of backend is one of:
+.PP
+\f[CR]
+      BeSTGRID\ \ \ \ \ \ \ \ :\ The\ default\ backend.
+      BeSTGRID-DEV\ \ \ \ :\ The\ development\ backend.\ \ \ \ \ 
+\f[]
+.PP
+Example usage:
+.PP
+\f[CR]
+      login\ BeSTGRID
+      login\ BeSTGRID-DEV\ 
+\f[]
+.SS ls
+.PP
+Lists the current directory or the directory that is specified by
+the path.
+.PP
+Parameters:
+.PP
+\f[CR]
+      path\ \ \ \ :\ The\ directory\ to\ list.
+\f[]
+.PP
+Example usage:
+.PP
+\f[CR]
+      ls\ ~
+      ls\ /home/whoami
+      ls\ grid://groups/nz/nesi
+\f[]
+.SS print application
+.PP
+Prints the availabe versions and queue locations for the specificed
+application package.
+.PP
+Parameters:
+.PP
+\f[CR]
+      package\ \ \ \ :\ The\ application\ package.
+\f[]
+.PP
+To see a list of available packages use:
+.PP
+\f[CR]
+      print\ packages
+\f[]
+.PP
+Example usage:
+.PP
+\f[CR]
+      print\ package\ R
+      print\ package\ BEAST
+      print\ package\ UnixCommands
+\f[]
+.SS print applications
+.PP
+List all application package names available on the grid.
+.PP
+Example usage:
+.PP
+\f[CR]
+      print\ packages
+\f[]
+.SS print global
+.PP
+Prints the value of the specified global variable.
+.PP
+\f[CR]
+      varname\ :\ The\ name\ of\ the\ global\ variable.
+\f[]
+.PP
+Use `print globals' to see the list of global variables.
+.PP
+Example usage:
+.PP
+\f[CR]
+      print\ global\ memory
+      print\ global\ walltime
+      print\ global\ cpus
+\f[]
+.SS print globals
+.PP
 Lists all global variables.
-.RS
-.RE
-.TP
-.B \f[B]print\ hosts\f[]
-Lists all submission gateways.
-.RS
-.RE
-.TP
-.B \f[B]print\ jobs\f[]
-Lists all currently active (running or finished but not cleaned or
-archived) jobs.
-.RS
-.RE
-.TP
-.B \f[B]print\ queues\f[]
-Lists all queues that are available to you.
-.RS
-.RE
-.TP
-.B \f[B]print\ groups\f[]
+.PP
+Example usage:
+.SS print groups
+.PP
 Lists all groups that are available to you.
-.RS
-.RE
-.TP
-.B \f[B]pwd\f[]
-Prints current directory.
-.RS
-.RE
-.TP
-.B \f[B]quit\f[]
-Logs out of this session but leaves your login information intact
-so you don't need to enter those on your next login (if still valid
-that is).
-.RS
-.RE
-.TP
-.B \f[B]run\f[]
-Runs a gricli script.
-.RS
-.RE
-.TP
-.B \f[B]run\ script\f[]
-path to the script file.
-.RS
-.RE
-.TP
-.B \f[B]set\f[]
+.PP
+Example usage:
+.PP
+\f[CR]
+      print\ groups
+\f[]
+.SS print hosts
+.PP
+Lists all submission gateways.
+.PP
+Example usage:
+.SS print job
+.PP
+Prints either all or a specific property of a job.
+.PP
+\f[CR]
+      jobname\ :\ The\ name\ of\ the\ job.\ Supports\ glob\ regular\ expressions.
+      property\ \ \ \ :\ The\ property.
+\f[]
+.PP
+To see the avaible job properties use:
+.PP
+\f[CR]
+      print\ job\ <jobname>
+\f[]
+.PP
+Example usage:
+.PP
+\f[CR]
+      print\ job\ myjob
+      print\ job\ myjob\ memory
+      print\ job\ myjob\ jobDirectory
+      print\ job\ *\ jobDirectory
+\f[]
+.SS print jobs
+.PP
+Lists all jobs in the job database.
+.PP
+The job database will store information on jobs that are currently
+running or have finished / stopped.
+Once a job has been cleaned or archived, the job will be removed
+from the database and can no longer be queried.
+.PP
+Example usage:
+.PP
+\f[CR]
+      print\ jobs
+\f[]
+.SS print queue
+.PP
+Displays all details about a queue.
+.PP
+Beware that the queue you are querying about needs to be available
+for your currently setup environment (package, group,\&...).
+.PP
+Parameters:
+.PP
+\f[CR]
+      queue:\ the\ name\ of\ the\ queue
+\f[]
+.PP
+Example usage:
+.PP
+\f[CR]
+      print\ queue\ default:gram5.ceres.auckland.ac.nz
+\f[]
+.SS print queues
+.PP
+Lists all queues that are available for the current environment.
+.PP
+The current environment is the group you set, the application
+package and package version you choose (if any), also walltime,
+number of cpus and memory.
+.PP
+Parameters:
+.PP
+\f[CR]
+      queue\ properties\ :\ (optional)\ properties\ you\ want\ to\ have\ displayed,\ per\ queue.\ 
+\f[]
+.PP
+Allowed values:
+.PP
+free_job_slots, gram_version, job_manager, queue_name, ramsize,
+rank, running_jobs, site, smp_size, total_jobs, virtualramsize,
+waiting_jobs
+.PP
+Example usage:
+.PP
+\f[CR]
+      print\ queues\ 
+      print\ queues\ site\ job_manager\ total_jobs\ rank
+\f[]
+.SS pwd
+.PP
+Prints the current working directory.
+.PP
+Used in conjunction with `ls' and `cd' to navigate the filesystem.
+.PP
+Example usage:
+.PP
+\f[CR]
+      pwd
+\f[]
+.SS quit
+.PP
+Logs out of this Gricli session.
+.PP
+Login information is left intact so you don't need to enter those
+on your next login.
+.PP
+If the information is no longer valid you will need to provide the
+information again.
+.PP
+Example usage:
+.PP
+\f[CR]
+      quit
+\f[]
+.SS run
+.PP
+Runs a Gricli script.
+.PP
+Parameters:
+.PP
+\f[CR]
+      script\ \ :\ The\ script\ to\ run.
+\f[]
+.PP
+A Gricli script can be of any file extension.
+.PP
+Example usage:
+.PP
+\f[CR]
+      run\ myscript
+      run\ myscript.txt
+      run\ myscript.xyz
+\f[]
+.SS set
+.PP
 Sets a value for a variable.
-.RS
-.RE
-.TP
-.B \f[B]set\ var\f[]
-the name of the variable
-.RS
-.RE
-.TP
-.B \f[B]set\ value\f[]
-the value
-.RS
-.RE
-.TP
-.B \f[B]submit\f[]
-Submits a new job using the currently set environment and the
-specified commandline.
-.RS
-.RE
-.TP
-.B \f[B]submit\ commandline\f[]
-the commandline
-.RS
-.RE
-.TP
-.B \f[B]user\ clearCache\f[]
-Clears the Grisu filesystem cache.
+.PP
+\f[CR]
+      var\ \ \ \ \ :\ The\ name\ of\ the\ variable.
+      value\ \ \ :\ The\ value.
+\f[]
+.PP
+Currenltly only the global variables for a job can be set.
+.PP
+Example usage:
+.PP
+\f[CR]
+      set\ memory\ 1024
+      set\ set\ cpus\ 10
+      set\ walltime\ 500
+\f[]
+.SS submit
+.PP
+Submits a new job.
+.PP
+The job parameters are set using the global variables and the
+command returns the name of the job on success.
+.PP
+Parameters:
+.PP
+\f[CR]
+      command\ \ \ \ :\ The\ command\ to\ be\ executed.
+      &\ \ \ \ \ \ \ \ \ \ :\ Specifies\ asynchronous\ execution.\ \ 
+\f[]
+.PP
+If & is specificed the command will run in the background.
+.PP
+Example usage:
+.PP
+\f[CR]
+      submit\ echo\ "hello\ world"
+      submit\ "echo\ "hello\ world""
+      submit\ "sleep\ 100"\ &
+\f[]
+.SS user clearCache
+.PP
+Clears the Grisu file system cache.
+.PP
 You need to logout and login again to see the effects of this
 command.
 Be aware that the next login will take longer than usual because
 the filesystem cache is rebuilt at that stage.
-.RS
-.RE
-.TP
-.B \f[B]wait\ job\f[]
+.SS wait job
+.PP
 Waits for a job to finish on the remote compute resource.
-Useful for use within scripts where you want to automatically
-submit and download/archive jobs.
-At the moment allows to wait for single job only.
-.RS
-.RE
-.TP
-.B \f[B]wait\ job\ jobname\f[]
-the name of the job on which to wait.
-Regular expressions are not supported.
-.RS
-.RE
+.PP
+This is useful in Grilci scripts where the execution will block
+until the job has finished.
+It allows for actions to be taken automatically when a job has
+finished.
+.PP
+Parameters:
+.PP
+\f[CR]
+      jobname\ :\ the\ name\ of\ the\ job\ on\ which\ to\ wait.\ Regular\ expressions\ are\ not\ supported.
+\f[]
+.PP
+Currently only a single job can be waited on.
+.PP
+Example usage:
+.SH Files
+.PP
+The local and remote file resources used by jobs
+.SS Overview
+.PP
+A job may request access to files, either as input or output
+parameters or as executable binaries.
+To reference a file, you may specify the full path or URL in your
+application or you may simply `attach' the file to the job.
+.SS Attaching Files
+.PP
+To attach a file use the `attach <file_path>' command.
+This will add the file to the global property `files'.
+The global `files' is a list of all additional files to be used by
+the job.
+An example of attaching a local file is shown below:
+.PP
+\f[CR]
+      attach\ /path/to/my/local/file.txt
+\f[]
+.PP
+The attached file will be uploaded to the job's working directory.
+This is a temporary directory that exists until the job is removed
+with the `clean' command.
+The advantage of attaching files to the job is that the application
+you invoke may use a relative path to reference these files.
+For example, if your program requires input files then you may
+reference the file attached in the above example as follows:
+.PP
+\f[CR]
+      submit\ myprogram\ --input\ file.txt
+\f[]
+.PP
+Notice that now the file is in the working directory of the program
+and we do not need to specify the full path to the original file.
+.SS Shared Filesytems
+.PP
+On shared filesystems, you may safely avoid attaching files as all
+hosts will be able to access your files.
+The equivalent command in this case is:
+.PP
+\f[CR]
+      submit\ myprogram\ --input\ /path/to/my/local/file.txt
+\f[]
+.PP
+This will behave in the same way as attaching the file and using a
+local reference (as shown above) except that some time is saved on
+file transfers.
+This becomes significant if you are dealing with large files.
+.SS Remote Files
+.PP
+You may attach files from your cluster's GridFTP server by using
+grid:// prefix :
+.PP
+\f[CR]
+      attach\ grid://path/to/my/remote/file.txt
+      submit\ myprogram\ --input\ file.txt
+\f[]
+.PP
+For other locations supporting GridFTP transfers use the gsiftp://
+prefix :
+.PP
+\f[CR]
+      attach\ gsiftp://path/to/my/remote/file.txt
+      submit\ myprogram\ --input\ file.txt
+\f[]
+.SS Listing Files
+.PP
+To see files in a directory use the `ls' command.
+You can also navigate through a filesystem using the `cd' (change
+directory) command.
+If you need to know the directory you are currently in, use the
+`pwd' (print working directory) command.
+The `ls' command will show you files in either local or remote
+locations:
+.PP
+\f[CR]
+      ls\ /my/local/directory
+      ls\ grid://my/remote/directory
+\f[]
+.PP
+Note that the TAB key can be used to suggest names and values at
+each level in the file path.
+This makes typing long paths much more convenient
+.SS Viewing Files
+.PP
+Currently you may view local files using the command
+`exec cat /path/to/local/file' \&.
+Upcoming releases will include a command to let you view local as
+well as remote files easily.
+.SS Further Information
+.PP
+For more information on any of the commands, globals or concepts
+presented here, please make use of the `help' command.
+.SH Jobs
+.PP
+An executable command and the environment properties.
+.SS Overview
+.PP
+A job is the configuration for the program you would like to
+execute on the cluster.
+Job properties are set through `globals'.
+These allow you to set the application package and version to run
+as well as the resources that the application needs such as the
+memory (RAM) and the number of CPUs.
+.PP
+To see a list of available job properties use the command
+`print globals'.
+To set a job property use the command `set '.
+To see the value for a specific job property use the command
+`print global '.
+.SS Job Requirements
+.PP
+A typical job requires that that a package be set and that the
+version be specific or `any'.
+To view the available packages, use the command `print packages'.
+.PP
+Note that packages belong to specific queues and to use
+applications in the package you must have access to the appropriate
+queue.
+To see the versions and queues for a package use the command
+`print package '.
+.PP
+To set the queue, use the `set' command.
+You can view all available queues with the `print queues' command
+or you can filter by package using the command `print package '.
+You may also filter by group using the command `print queues '.
+.PP
+If you do not mind which queue your job is submitted to, you can
+use `set queue auto' to let the system determine the appropriate
+queue.
+.PP
+Note that regardless of your queue choice, you must choose a group.
+You can view the available groups using the command `print groups'.
+To set the group use the command `set group '.
+.PP
+Job memory and CPU count will depend on your application.
+By default a job has 2 GB of memory and 1 CPU.
+This is the default configuration for a `single' jobtype.
+To use multiple CPUs you will need to set the jobtype to `smp' or
+`mpi' and increase the number of cpus.
+You may also use the `custom' jobtype but here it is up to you to
+ensure correct parallelism.
+For more information on these job types use the command
+`help jobtype'.
+.PP
+If your job requires any files to run you can use the `attach'
+command to set them.
+The files can include input files and compiled binaries.
+They are stored as a list called `files'.
+Use `help attach' for more information on attaching files.
+To view the files attached for a job, use the command
+`print global files'.
+.PP
+A job also requires that the walltime be set.
+This is length of time in minutes that the job will run for.
+For more information on walltimes use the command `help walltime'.
+.PP
+Finally a job must have a job name.
+If you do not specify the job name, one is created for you.
+Job names must be unique with respect to existing jobs.
+If you submit two or more jobs with the same name, they will have a
+number appended to distinguish them.
+To set the job name use the command `set' command.
+To view the job name use the command `print global jobname'.
+.SS Optional Properties
+.PP
+Jobs may have optional properties to inform you of changes or to
+help manage your jobs.
+You may request email notification when a job has started and when
+it has finished.
+Use the command `set email ' to set the email address.
+To receive emails you must set the globals `email_on_start' and
+`email_on_finish'.
+These take the values `true' or `false'.
+.PP
+Jobs may also have a description.
+This helps identify the job after it has been submitted.
+For more information, use the command `help description'.
+.PP
+An output file may also be specified to redirect messages from
+Gricli to a file.
+For more information see the help entry on `outputfile'.
+.PP
+The `debug' property accepts a boolean (true or false) and will
+display errors in full.
+This is useful if you are having problems and you need to report an
+error.
+The contact details in this case can be found using the `about'
+command.
+.SS Job Submission
+.PP
+Once you have set the properties for a job you can submit using the
+`submit' command.
+The command takes a string in which is the command to be executed
+by the remote hosts.
+See `help submit' for more information.
+.PP
+While a job is running, a directory with the job name is created in
+your home directory, under the directory `active-jobs'
+(~/active-jobs).
+The job directory is temporary and is removed when the job is
+cleaned.
+.SS Checking Job Progress
+.PP
+You can check the details of your job using the `print job '
+command.
+To see the job status use the command `print job  status'.
+If you do not know the name of your job, you can check all current
+jobs using the command `print jobs'.
+See the associated help for each of these commands for more
+information.
+.PP
+To see the output of a job at any time, use the `view' command.
+This will let you monitor your job progression if it is writing to
+output files.
+For examples, type `help view'.
+.SS Downloading Job Results
+.PP
+When a job is complete you can download the job to the location
+defined in the global `dir'.
+To ensure your job is downloaded to an appropriate directory,
+please check that the `dir' global is correct.
+.PP
+You can set the dir global with the command `set dir ' and view it
+with the command `print global dir'.
+Alternatively, you may use the `cd' and `ls' commands to navigate
+to the appropriate directory and the global `dir' will match the
+current working directory.
+To see the current working directory use the `pwd' command.
+.PP
+The job files can also be archived to your home directory on the
+Data Fabric.
+This will be grid://groups/nz/nesi You can do this using the
+`archive job' command.
+Note that this command cleans the job upon success.
+.PP
+When you are finished with a job you can use the `clean job'
+command.
+This will remove the job directory in ~/active-jobs and remove the
+job entry from the job database.
+.SS Stopping a Job
+.PP
+If you need to stop a job for any reason, use the `kill job'
+command.
+Note that once a job has been stopped it cannot be resumed.
+.SS Example
+.PP
+Here is an example of how you can setup, submit and download a job:
+.PP
+\f[CR]
+      >\ set\ group\ /nz/nesi
+      >\ print\ queues\ /nz/nesi
+      >\ set\ queue\ demo:gram5.ceres.auckland.ac.nz
+      >\ set\ package\ UnixCommands
+      >\ set\ jobtype\ single
+      >\ set\ cpus\ 1
+      >\ set\ memory\ 100
+      >\ set\ walltime\ 10
+      >\ set\ jobname\ echoJob
+      >\ set\ description\ "Job\ to\ test\ echo\ command"
+      >\ submit\ echo\ "Hello\ World"
+      >\ print\ job\ echoJob\ status
+      >\ download\ job\ echoJob
+      >\ clean\ job\ echoJob\ 
+\f[]
+.SS Further Information
+.PP
+For more information use the `help' command to learn more about the
+commands, globals and topics mentioned here.
 .PP
 The Gricli source code and all documentation may be downloaded from
 <http://github.com/grisu/gricli>.
