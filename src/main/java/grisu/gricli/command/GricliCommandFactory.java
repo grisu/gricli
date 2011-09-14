@@ -80,7 +80,7 @@ public class GricliCommandFactory {
 		// other commands
 		f.add(ExecCommand.class);
 
-		// f.add(ViewCommand.class);
+		f.add(ViewCommand.class);
 
 		try {
 			f.init();
