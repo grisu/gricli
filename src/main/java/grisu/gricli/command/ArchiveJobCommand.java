@@ -40,7 +40,7 @@ GricliCommand {
 		} catch (JobPropertiesException ex) {
 			throw new GricliRuntimeException(ex);
 		}
-		env.printMessage("The archive process will run in the backgorund. This may take several minutes depending on the size of your files.");
+		env.printMessage("The archive process will run in the background. This may take several minutes depending on the size of your files.");
 		return env;
 	}
 
