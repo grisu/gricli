@@ -22,7 +22,7 @@ GricliCommand {
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
+			throws GricliRuntimeException {
 		ServiceInterface si = env.getServiceInterface();
 		si.setUserProperty(Constants.DEFAULT_JOB_ARCHIVE_LOCATION, null);
 		String jobname = null;
@@ -40,7 +40,7 @@ GricliCommand {
 		} catch (JobPropertiesException ex) {
 			throw new GricliRuntimeException(ex);
 		}
-		env.printMessage("The archive process will run in the backgorund. This may take several minutes depending on the size of your files.")
+		env.printMessage("The archive process will run in the backgorund. This may take several minutes depending on the size of your files.");
 		return env;
 	}
 
