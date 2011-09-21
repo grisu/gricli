@@ -15,3 +15,4 @@ Example usage:
     clean myjob_2
     clean myjob*
     clean *
+    clean jobs
