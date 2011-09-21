@@ -7,6 +7,7 @@ import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.FileCompletor;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.util.OutputHelpers;
+import grisu.jcommons.utils.FileAndUrlHelpers;
 import grisu.model.FileManager;
 import grisu.model.GrisuRegistryManager;
 import grisu.model.dto.GridFile;
@@ -87,8 +88,7 @@ public class LsCommand implements GricliCommand {
 					// .toString();
 					// }
 					child.add(filename);
-					child.add(FileManager.calculateSizeString(c
-							.getSize()));
+					child.add(FileAndUrlHelpers.calculateSizeString(c.getSize()));
 				}
 				try {
 					if (c.getLastModified() <= 0) {
