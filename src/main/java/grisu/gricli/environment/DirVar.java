@@ -19,6 +19,9 @@ public class DirVar extends ScalarVar<File> {
 
 	@Override
 	protected File fromString(String arg) throws GricliSetValueException {
+		if (arg == null){
+			throw new GricliSetValueException(getName(), "null","dir cannot be unset");
+		}
 		try {
 			//expand path for checking
 			String resultValue = StringUtils.replace(
@@ -42,12 +45,23 @@ public class DirVar extends ScalarVar<File> {
 
 	@Override
 	public String toString(){
+		boolean windows = System.getProperty("file.separator").equals("\\");
 		try {
 			String value = get().getCanonicalPath();
-			if (value.startsWith(System.getProperty("user.home"))){
-				return value.replaceFirst(System.getProperty("user.home"), "~");
+			if (windows){
+				value = value.replace("\\", "/");
+				String winhome = System.getProperty("user.home").replace("\\", "/"); 
+				if (value.startsWith(winhome)){
+					return value.replaceFirst(winhome, "~");			
+				} else {
+					return value.replace("\\", "/");
+				}
 			} else {
-				return value;
+				if (value.startsWith(System.getProperty("user.home"))){
+					return value.replaceFirst(System.getProperty("user.home"), "~");				
+				} else {
+					return value;
+				}
 			}
 		} catch (IOException e) {
 			return null;
