@@ -7,12 +7,9 @@ import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.GricliSetValueException;
 import grisu.gricli.LoginRequiredException;
 import grisu.jcommons.constants.Constants;
-import grisu.jcommons.constants.JobSubmissionProperty;
 import grisu.model.GrisuRegistry;
 import grisu.model.GrisuRegistryManager;
 import grisu.model.dto.GridFile;
-import grisu.settings.ClientPropertiesManager;
-import grisu.utils.StringHelpers;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -60,7 +57,7 @@ public class GricliEnvironment {
 		this.email_on_start = new BoolVar("email_on_start", false);
 		this.email_on_finish = new BoolVar("email_on_finish", false);
 
-		this.prompt = new StringVar("prompt","gricli> ");
+		this.prompt = new StringVar("prompt", "jobs> ");
 
 		this.gdir = new StringVar("gdir","");
 		this.dir = new DirVar("dir", new File(System.getProperty("user.dir")));
@@ -115,8 +112,8 @@ public class GricliEnvironment {
 									GrisuRegistry reg = getGrisuRegistry();
 									myLogger.debug("Pre-loading cache for "+fqan+" / "+app);
 									reg.getApplicationInformation(app).getAllAvailableVersionsForFqan(fqan);
-								// reg.getApplicationInformation(app)
-								// .getExecutablesForVo(fqan);
+									// reg.getApplicationInformation(app)
+									// .getExecutablesForVo(fqan);
 									myLogger.debug("Pre-loading finished.");
 								} catch (Throwable th){
 									myLogger.error(th);
@@ -170,7 +167,7 @@ public class GricliEnvironment {
 						new Thread() {
 							@Override
 							public void run() {
-								
+
 								try {
 									GrisuRegistry reg = getGrisuRegistry();
 									myLogger.debug("Pre-loading cache for " + a + " / "
@@ -194,7 +191,6 @@ public class GricliEnvironment {
 
 		this.files = new FileListVar("files");
 		this.files.setPersistent(false);
-		
 		this.env = new EnvironmentVar("env");
 		this.env.setPersistent(false);
 	}
@@ -242,7 +238,7 @@ public class GricliEnvironment {
 
 		job.setWalltimeInSeconds(walltime.get() * 60);
 		job.setMemory(((long)memory.get()) * 1024 * 1024);
-		
+
 		if (queue.get() != null){
 			job.setSubmissionLocation(queue.get());
 		} else {
@@ -252,16 +248,16 @@ public class GricliEnvironment {
 		if ("mpi".equals(jobtype.get())){
 			job.setForce_mpi(true);
 		}
-		
+
 		if (hostCount.get()!= null){
 			job.setHostCount(hostCount.get());
 		}
-		
+
 		if ("smp".equals(jobtype.get())){
 			job.setForce_single(true);
 			job.setHostCount(1);
 		}
-		
+
 		// add environment variables
 		for (String var: env.get().keySet()){
 			job.addEnvironmentVariable(var, env.get().get(var));

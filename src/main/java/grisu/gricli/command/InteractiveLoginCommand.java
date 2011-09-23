@@ -58,11 +58,22 @@ GricliCommand {
 	}
 
 	private final String backend;
+	private final String username;
+	private final String idp;
+	private final boolean x509;
 
 	@SyntaxDescription(command={"ilogin"},arguments={"backend"})
 	@AutoComplete(completors={BackendCompletor.class})
 	public InteractiveLoginCommand(String backend) {
+		this(backend, false, null, null);
+	}
+
+	public InteractiveLoginCommand(String backend, boolean x509,
+			String username, String idp) {
 		this.backend = backend;
+		this.username = username;
+		this.idp = idp;
+		this.x509 = x509;
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
@@ -70,7 +81,25 @@ GricliCommand {
 
 		ServiceInterface si;
 		try {
-			si = LoginManager.loginCommandline(backend);
+			if (StringUtils.isBlank(username) && !x509) {
+				si = LoginManager.loginCommandline(backend);
+			} else {
+				if (x509) {
+					si = LoginManager.loginCommandlineX509cert(backend);
+				} else if (StringUtils.isBlank(idp)
+						&& StringUtils.isNotBlank(username)) {
+					si = LoginManager
+							.loginCommandlineMyProxy(backend, username);
+
+				} else if (StringUtils.isNotBlank(username)) {
+					si = LoginManager.loginCommandlineShibboleth(backend,
+							username,
+							idp);
+				} else {
+					throw new GricliRuntimeException(
+							"Could not determine which login method to use.");
+				}
+			}
 		} catch (LoginException ex) {
 			throw new GricliRuntimeException(ex);
 		}

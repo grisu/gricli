@@ -59,6 +59,3 @@ The above first would connect to the default *BeSTGRID* backend that publishes t
 
     gricli -n
 
-# COMMANDS
-
-
