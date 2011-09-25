@@ -2,7 +2,8 @@ Command: archive job <jobname>
 
 Downloads the job to the default archive location and then cleans the job.
 
-Supports glob regular expressions. Note that if a job is still running it will be stopped.
+Supports glob regular expressions. Note that if a job is still running it will be stopped. 
+The archive process may take a while depending on how large the files are. 
 
 Parameters:
 
