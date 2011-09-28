@@ -55,7 +55,7 @@
 	<description>Grisu commandline client</description>
 
 	<properties>
-		<grisu.dependency.version>0.3.7-SNAPSHOT</grisu.dependency.version>
+		<grisu.dependency.version>0.3.7-rc1</grisu.dependency.version>
 	</properties>
 
 
