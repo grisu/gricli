@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import jline.ArgumentCompletor;
@@ -36,6 +37,7 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
+import org.apache.log4j.MDC;
 import org.apache.log4j.xml.DOMConfigurator;
 
 public class Gricli {
@@ -137,7 +139,13 @@ public class Gricli {
 
 		try {
 			new InteractiveLoginCommand(backend, x509, username, idp)
-					.execute(env);
+			.execute(env);
+			try {
+				String dn = env.getServiceInterface().getDN();
+				MDC.put("dn", dn);
+			} catch (Exception e) {
+				myLogger.error(e);
+			}
 			return true;
 		} catch (GricliException ex){
 			myLogger.error("login exception", ex);
@@ -330,6 +338,11 @@ public class Gricli {
 			myLogger.error(ex);
 			env.printError("warning: could not save session");
 		}
+	}
+
+	{
+		MDC.put("session", UUID.randomUUID().toString());
+		MDC.put("local_user", System.getProperty("user.name"));
 	}
 
 }

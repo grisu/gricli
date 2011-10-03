@@ -34,7 +34,7 @@
 		<param name="SyslogHost" value="localhost" />
 		<param name="Threshold" value="all"/>
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%5p %d{ISO8601} [%t][%x] %c - %m%n" />
+			<param name="ConversionPattern" value="%X{local_user}: (sid: %X{session}) %5p %d{ISO8601} [%t][%x] %c - %m%n" />
 		</layout>
 	</appender> 
 	
