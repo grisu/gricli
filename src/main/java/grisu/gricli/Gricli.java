@@ -9,7 +9,6 @@ import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.GricliCommandFactory;
 import grisu.gricli.command.InteractiveLoginCommand;
 import grisu.gricli.command.RunCommand;
-import grisu.gricli.command.help.HelpManager;
 import grisu.gricli.completors.CompletionCache;
 import grisu.gricli.completors.DummyCompletionCache;
 import grisu.gricli.environment.GricliEnvironment;
@@ -21,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import jline.ArgumentCompletor;
@@ -37,6 +37,7 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
+import org.apache.log4j.MDC;
 import org.apache.log4j.xml.DOMConfigurator;
 
 public class Gricli {
@@ -95,6 +96,21 @@ public class Gricli {
 		}
 	}
 
+	private static String generateSession(GricliEnvironment env){
+		String result = "";
+		for (GricliVar<?> var: env.getVariables()){
+			if (var.isPersistent()){
+				Object value = var.get();
+				if (value == null){
+					result+="unset " + var.getName() + "\n";
+				} else {
+					result+= "set " + var.getName() + " " + GricliTokenizer.escape(var.marshall()) + "\n";
+				}
+			}
+		}
+		return result;
+	}
+
 	private static  String getPrompt(){
 		String prompt = env.prompt.get(); /* will have to restore this function later
 		for (String var : env.getGlobalNames()) {
@@ -122,6 +138,14 @@ public class Gricli {
 
 		try {
 			new InteractiveLoginCommand(backend).execute(env);
+
+			try {
+				String dn = env.getServiceInterface().getDN();
+				MDC.put("dn", dn);
+			} catch (Exception e) {
+				myLogger.error(e);
+			}
+
 			return true;
 		} catch (GricliException ex){
 			myLogger.error("login exception", ex);
@@ -136,11 +160,15 @@ public class Gricli {
 
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
-		
+
 		Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
-		
+
+		MDC.put("session", UUID.randomUUID().toString());
+		MDC.put("local_user", System.getProperty("user.name"));
+
+
 		try {
-			
+
 			// stop javaxws logging
 			java.util.logging.LogManager.getLogManager().reset();
 			java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);
@@ -274,32 +302,18 @@ public class Gricli {
 			}
 		}
 	}
-	
+
 	public static void shutdown(GricliEnvironment env){
 		try {
 			File f = new File(SESSION_SETTINGS_PATH);
-			String session = generateSession(env);	
+			String session = generateSession(env);
 			FileUtils.writeStringToFile(f, session);
 		} catch (IOException ex){
 			myLogger.error(ex);
 			env.printError("warning: could not save session");
 		}
 	}
-	
-	private static String generateSession(GricliEnvironment env){
-		String result = "";
-		for (GricliVar<?> var: env.getVariables()){
-			if (var.isPersistent()){
-				Object value = var.get();
-				if (value == null){
-					result+="unset " + var.getName() + "\n";
-				} else {
-					result+= "set " + var.getName() + " " + GricliTokenizer.escape(var.marshall()) + "\n";
-				}
-			}
-		}
-		return result;
-	}
+
 
 }
 
