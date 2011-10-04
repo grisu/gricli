@@ -4,6 +4,7 @@ import static grisu.gricli.GricliExitStatus.LOGIN;
 import static grisu.gricli.GricliExitStatus.RUNTIME;
 import static grisu.gricli.GricliExitStatus.SUCCESS;
 import static grisu.gricli.GricliExitStatus.SYNTAX;
+import grisu.frontend.control.login.SlcsLoginWrapper;
 import grisu.frontend.view.cli.CliHelpers;
 import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.GricliCommandFactory;
@@ -15,6 +16,7 @@ import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.environment.GricliVar;
 import grisu.gricli.parser.GricliTokenizer;
 import grisu.settings.Environment;
+import grith.jgrith.plainProxy.LocalProxy;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -162,6 +164,22 @@ public class Gricli {
 	public static void main(String[] args) {
 
 		Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
+
+		if (!LocalProxy.validGridProxyExists()) {
+			Thread t = new Thread() {
+				@Override
+				public void run() {
+					try {
+						myLogger.debug("Preloading idps...");
+						SlcsLoginWrapper.getAllIdps();
+					} catch (Throwable e) {
+						myLogger.error(e);
+					}
+				}
+			};
+			t.setName("preloadIdpsThread");
+			t.start();
+		}
 
 		try {
 

@@ -32,6 +32,10 @@ public class CompletionCacheImpl implements CompletionCache {
 	private final GricliEnvironment env;
 	private final GrisuRegistry reg;
 
+	private String[] fqans = new String[] { "*** Loading...", "...try again***" };
+	private String[] applications = new String[] { "*** Loading...",
+			"...try again***" };
+
 	private static Cache cache = CacheManager.getInstance().getCache("short");
 
 	public CompletionCacheImpl(GricliEnvironment env) throws LoginRequiredException {
@@ -49,7 +53,9 @@ public class CompletionCacheImpl implements CompletionCache {
 		new Thread() {
 			@Override
 			public void run() {
-				String[] fqans = getAllFqans();
+				String[] fqans = CompletionCacheImpl.this.reg
+						.getUserEnvironmentManager().getAllAvailableFqans(true);
+				CompletionCacheImpl.this.fqans = fqans;
 				myLogger.debug("All vos loaded for completion");
 				for (String fqan : fqans) {
 					getAllQueuesForFqan(fqan);
@@ -60,8 +66,16 @@ public class CompletionCacheImpl implements CompletionCache {
 		new Thread() {
 			@Override
 			public void run() {
-				getAllSites();
-				myLogger.debug("All sites loaded for completion");
+				ArrayList<String> results = new ArrayList<String>();
+				Collections.addAll(results, CompletionCacheImpl.this.reg.getUserEnvironmentManager()
+						.getAllAvailableApplications());
+				results.add(0, Constants.GENERIC_APPLICATION_NAME);
+
+				String[] apps = results.toArray(new String[] {});
+
+
+				CompletionCacheImpl.this.applications = apps;
+				myLogger.debug("All applications loaded for completion");
 			}
 		}.start();
 
@@ -75,8 +89,8 @@ public class CompletionCacheImpl implements CompletionCache {
 		new Thread() {
 			@Override
 			public void run() {
-				getAllApplications();
-				myLogger.debug("All applications loaded for completion");
+				getAllSites();
+				myLogger.debug("All sites loaded for completion");
 			}
 		}.start();
 	}
@@ -88,19 +102,14 @@ public class CompletionCacheImpl implements CompletionCache {
 	}
 
 	public String[] getAllApplications() {
-		ArrayList<String> results = new ArrayList<String>();
-		Collections.addAll(results, this.reg.getUserEnvironmentManager()
-				.getAllAvailableApplications());
-		results.add(0, Constants.GENERIC_APPLICATION_NAME);
-
-		return results.toArray(new String[] {});
+		return applications;
 	}
 
 	/* (non-Javadoc)
 	 * @see grisu.gricli.completors.CompletionCache#getAllFqans()
 	 */
 	public String[] getAllFqans() {
-		return this.reg.getUserEnvironmentManager().getAllAvailableFqans(true);
+		return fqans;
 	}
 
 	/* (non-Javadoc)
