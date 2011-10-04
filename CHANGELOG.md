@@ -1,6 +1,16 @@
 Changelog
 =========
 
+0.5.2
+-----
+
+* updated Grisu dependency with shib login fix
+
+0.5.1
+-----
+
+* updated Grisu dependency with more logging statements
+
 0.5
 ---
 
