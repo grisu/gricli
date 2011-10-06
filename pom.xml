@@ -51,11 +51,11 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	<version>0.7-SNAPSHOT</version>
+	<version>0.6-rc3-SNAPSHOT</version>
 	<description>Grisu commandline client</description>
 
 	<properties>
-		<grisu.dependency.version>0.3.7-SNAPSHOT</grisu.dependency.version>
+		<grisu.dependency.version>0.3.7-rc3</grisu.dependency.version>
 	</properties>
 
 
@@ -125,7 +125,7 @@
 		<dependency>
 			<groupId>grisu.backend</groupId>
 			<artifactId>grisu-core</artifactId>
-			<version>0.3.7-SNAPSHOT</version>
+			<version>${grisu.dependency.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
