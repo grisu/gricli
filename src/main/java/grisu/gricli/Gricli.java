@@ -15,6 +15,7 @@ import grisu.gricli.completors.DummyCompletionCache;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.environment.GricliVar;
 import grisu.gricli.parser.GricliTokenizer;
+import grisu.jcommons.utils.Version;
 import grisu.settings.Environment;
 import grith.jgrith.plainProxy.LocalProxy;
 
@@ -164,6 +165,10 @@ public class Gricli {
 	public static void main(String[] args) {
 
 		Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
+
+		MDC.put("session", UUID.randomUUID().toString());
+		MDC.put("local_user", System.getProperty("user.name"));
+		MDC.put("gricli-version", Version.get("gricli"));
 
 		if (!LocalProxy.validGridProxyExists()) {
 			Thread t = new Thread() {
@@ -356,11 +361,6 @@ public class Gricli {
 			myLogger.error(ex);
 			env.printError("warning: could not save session");
 		}
-	}
-
-	{
-		MDC.put("session", UUID.randomUUID().toString());
-		MDC.put("local_user", System.getProperty("user.name"));
 	}
 
 }
