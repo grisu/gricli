@@ -33,6 +33,7 @@ public class GricliTokenizer {
 		st.wordChars('a', 'z');
 		st.wordChars('A', 'Z');
 		st.wordChars('0', '9');
+		st.wordChars('=', '=');
 		st.wordChars('-', '-');
 		st.wordChars('/', '/');
 		st.wordChars(':', ':');

@@ -93,6 +93,13 @@ public class TestParsing {
 		assertArrayEquals(tokenize("attach ~/test"),new String[] {"attach", "~/test"});
 	}
 	
+	@Test
+	public void testEquals() throws Exception{
+		tokenizer = str2Tokenizer("a x=y\n");
+		String[] ts = tokenizer.nextCommand();
+		assertArrayEquals(ts, new String[] {"a","x=y"});
+	}
+	
 	// test line numbers
 	@Test
 	public void testFirstLine() throws Exception{
@@ -137,6 +144,5 @@ public class TestParsing {
 	public void testEmptyLineEscape(){
 		assertEquals("\"\"",GricliTokenizer.escape(""));
 	}
-	
 
 }
