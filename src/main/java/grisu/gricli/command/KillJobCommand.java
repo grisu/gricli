@@ -3,7 +3,6 @@ package grisu.gricli.command;
 import grisu.control.ServiceInterface;
 import grisu.control.exceptions.BatchJobException;
 import grisu.control.exceptions.NoSuchJobException;
-import grisu.control.exceptions.RemoteFileSystemException;
 import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobnameCompletor;
@@ -46,12 +45,12 @@ GricliCommand {
 			}
 			try {
 				si.kill(j, clean);
-			} catch (RemoteFileSystemException ex) {
-				env.printError("job "+ j + ":" + ex.getMessage());
 			} catch (NoSuchJobException ex) {
 				env.printError("job " + j + " does not exist");
 			} catch (BatchJobException ex) {
 				env.printError("job "+ j + ": "+ ex.getMessage());
+			} catch (Exception ex) {
+				env.printError("job " + j + ":" + ex.getMessage());
 			} finally {
 				if (refreshJobnameList) {
 					Gricli.completionCache.refreshJobnames();
