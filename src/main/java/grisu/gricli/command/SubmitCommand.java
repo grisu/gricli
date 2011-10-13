@@ -75,6 +75,8 @@ GricliCommand {
 		String cmd = "";
 		for (int i =0; i< length; i++){
 			String escaped = StringEscapeUtils.escapeJava(this.args[i]);
+			// unscape forward slashes - bug in escapeJava
+			escaped = escaped.replaceAll("\\\\\\/","\\/");
 			if (!this.args[i].equals(escaped) || escaped.contains(" ")){
 				escaped = "\"" + escaped + "\"";
 			}
