@@ -8,6 +8,7 @@ import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.util.ServiceInterfaceUtils;
+import grisu.model.status.StatusObject;
 
 
 public class KillJobCommand implements
@@ -44,13 +45,22 @@ GricliCommand {
 				env.printMessage("killing job " + j);
 			}
 			try {
-				si.kill(j, clean);
+				String handle = si.kill(j, clean);
+				StatusObject so = null;
+				try {
+					so = StatusObject.waitForActionToFinish(si, handle, 2,
+							true, false);
+				} catch (Exception e) {
+					throw new GricliRuntimeException(e.getLocalizedMessage());
+				}
+				if (so.getStatus().isFailed()) {
+					env.printError("Killing of job(s) failed: "
+							+ so.getStatus().getErrorCause());
+				}
 			} catch (NoSuchJobException ex) {
 				env.printError("job " + j + " does not exist");
-			} catch (BatchJobException ex) {
-				env.printError("job "+ j + ": "+ ex.getMessage());
-			} catch (Exception ex) {
-				env.printError("job " + j + ":" + ex.getMessage());
+			} catch (BatchJobException e) {
+				env.printError("Error: " + e.getLocalizedMessage());
 			} finally {
 				if (refreshJobnameList) {
 					Gricli.completionCache.refreshJobnames();
