@@ -4,11 +4,16 @@ import grisu.control.ServiceInterface;
 import grisu.control.exceptions.JobPropertiesException;
 import grisu.control.exceptions.NoSuchJobException;
 import grisu.control.exceptions.RemoteFileSystemException;
+import grisu.frontend.view.cli.CliHelpers;
+import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.util.ServiceInterfaceUtils;
 import grisu.jcommons.constants.Constants;
+import grisu.model.status.StatusObject;
+
+import java.util.List;
 
 
 public class ArchiveJobCommand implements
@@ -27,20 +32,51 @@ GricliCommand {
 		si.setUserProperty(Constants.DEFAULT_JOB_ARCHIVE_LOCATION, null);
 		String jobname = null;
 		try {
-			for (String j : ServiceInterfaceUtils.filterJobNames(si, jobFilter)) {
-				env.printMessage("archiving job " + j);
+			List<String> jobnames = ServiceInterfaceUtils.filterJobNames(si,
+					jobFilter);
+			if (jobnames.size() == 0) {
+				env.printError("No valid jobname specified.");
+				return env;
+			}
+			for (String j : jobnames) {
+
+				CliHelpers.setIndeterminateProgress("Archiving job " + j
+						+ "...", true);
 				jobname = j;
-				si.archiveJob(j, null);
+				String handle = si.archiveJob(j, null);
+				StatusObject so = null;
+				try {
+					so = StatusObject.waitForActionToFinish(si, handle, 2,
+							true, true);
+					CliHelpers.setIndeterminateProgress("Job archived to: "
+							+ handle, false);
+				} catch (Exception e) {
+					CliHelpers.setIndeterminateProgress("Archiving failed; "
+							+ e.getLocalizedMessage(), false);
+					throw new GricliRuntimeException(e.getLocalizedMessage());
+				}
+				if (so.getStatus().isFailed()) {
+					env.printError("Archiving of job failed: "
+							+ so.getStatus().getErrorCause());
+				}
 			}
 		} catch (RemoteFileSystemException ex) {
+			CliHelpers.setIndeterminateProgress(
+					"Archiving failed; " + ex.getLocalizedMessage(), false);
 			throw new GricliRuntimeException(ex);
 		} catch (NoSuchJobException ex) {
+			CliHelpers.setIndeterminateProgress(
+					"Archiving failed; " + ex.getLocalizedMessage(), false);
 			throw new GricliRuntimeException("job " + jobname
 					+ " does not exist");
 		} catch (JobPropertiesException ex) {
+			CliHelpers.setIndeterminateProgress(
+					"Archiving failed; " + ex.getLocalizedMessage(), false);
 			throw new GricliRuntimeException(ex);
+		} finally {
+			Gricli.completionCache.refreshJobnames();
 		}
-		env.printMessage("The archive process will run in the background. This may take several minutes depending on the size of your files.");
+
 		return env;
 	}
 
