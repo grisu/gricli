@@ -94,9 +94,9 @@ StatusObject.Listener {
 				env.printError("Killing of job(s) failed: "
 						+ so.getStatus().getErrorCause());
 			}
+			CliHelpers.writeToTerminal("");
 		}
 
-		CliHelpers.writeToTerminal("");
 
 		if (clean) {
 			Gricli.completionCache.refreshJobnames();
