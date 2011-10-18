@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.6
+----
+
+* renamed global "application" to "package"
+* fixed job download where directories within job directories weren't downloaded
+* updated Grisu dependency which brings lots of improvements to scalability and stability
+
+
 0.5.2
 -----
 
