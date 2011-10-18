@@ -11,8 +11,8 @@ You can only submit jobs to queues assigned to your group.
 To view the available to groups use the 'print groups' command.
 To view the queues available for a specific groups use the command 'print queues <group>'
 
-To see which queues support a particular application package use the command 'print application <application_package>'.
-To see a list of applications use the command 'print applications'.
+To see which queues support a particular application package use the command 'print package <application_package>'.
+To see a list of application packages use the command 'print packages'.
 
 If you have set the application package, then the queue location can be determined automatically.
 Use the command 'set queue auto' to enable this option.
