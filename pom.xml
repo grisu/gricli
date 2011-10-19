@@ -55,7 +55,7 @@
 	<description>Grisu commandline client</description>
 
 	<properties>
-		<grisu.dependency.version>0.3.7-rc5</grisu.dependency.version>
+		<grisu.dependency.version>0.3.7</grisu.dependency.version>
 	</properties>
 
 
@@ -146,7 +146,6 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.16</version>
-			<type>bundle</type>
 		</dependency>
 	</dependencies>
 
