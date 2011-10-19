@@ -21,10 +21,10 @@ GricliCommand {
 
 
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
+			throws GricliRuntimeException {
 		ServiceInterface si = env.getServiceInterface();
 		try {
-			JobObject job = new JobObject(si,si.getJob(this.jobname));
+			JobObject job = new JobObject(si, this.jobname);
 			job.waitForJobToFinish(5);
 		} catch (NoSuchJobException e) {
 			env.printError("job " + jobname + " not found");
