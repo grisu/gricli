@@ -51,7 +51,7 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	<version>0.6-rc8</version>
+	<version>0.6-rc9-SNAPSHOT</version>
 	<description>Grisu commandline client</description>
 
 	<properties>
