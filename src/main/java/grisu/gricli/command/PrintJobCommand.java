@@ -52,7 +52,7 @@ GricliCommand {
 		for (String j : jobNames) {
 			try {
 				if (attribute != null) {
-					if (jobNames.size() > 1) {
+					if ((jobNames.size() > 1) || "*".equals(this.jobname)) {
 						printJobAttribute(env, si, j, attribute, true);
 					} else {
 						printJobAttribute(env, si, j, attribute, false);

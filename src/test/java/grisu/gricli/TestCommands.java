@@ -283,6 +283,11 @@ public class TestCommands {
 		assertEquals("crazyquotes \"\\\"a\\\"\"", submit.getCommandline());
 	}
 	
+	@Test public void testSubmitWithSlashes(){ SubmitCommand submit =
+		new SubmitCommand("/bin/bash","-c","pwd");
+		assertEquals(submit.getCommandline(),"/bin/bash -c pwd");
+	}
+	
 	@Test(expected=GricliRuntimeException.class)
 	public void testEmptySubmit() throws Exception {
 		SubmitCommand submit = new SubmitCommand();
