@@ -2,23 +2,17 @@ package grisu.gricli.command;
 
 import grisu.control.ServiceInterface;
 import grisu.control.exceptions.NoSuchJobException;
-import grisu.control.exceptions.RemoteFileSystemException;
+import grisu.frontend.control.clientexceptions.FileTransactionException;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.util.ServiceInterfaceUtils;
-import grisu.model.dto.DtoJob;
-import grisu.model.dto.GridFile;
+import grisu.jcommons.constants.Constants;
+import grisu.model.FileManager;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Set;
 
-import javax.activation.DataHandler;
-
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
 @SuppressWarnings("restriction")
@@ -32,63 +26,33 @@ GricliCommand {
 		this.jobFilter = jobFilter;
 	}
 
-	private void download(ServiceInterface si, GridFile df, File dst)
-	throws RemoteFileSystemException, IOException {
-		Set<GridFile> files = df.getChildren();
-		for (GridFile file : files) {
-			DataHandler dh = si.download(file.getUrl());
-			InputStream in = dh.getInputStream();
-			FileOutputStream fout = new FileOutputStream(FilenameUtils.concat(
-					dst.getCanonicalPath(), file.getName()));
-			byte buf[] = new byte[1024];
-			int len;
-			while ((len = in.read(buf)) > 0) {
-				fout.write(buf, 0, len);
-			}
-			fout.close();
-			in.close();
-		}
-
-		Set<GridFile> folders = df.getChildren();
-		for (GridFile folder : folders) {
-			File dst2 = new File(FilenameUtils.concat(dst.getCanonicalPath(),
-					folder.getName()));
-			dst2.mkdir();
-			download(si, folder, dst2);
-		}
-	}
-
-	private void downloadDir(String src, String dst, ServiceInterface si)
-	throws GricliRuntimeException {
-		try {
-			File dir = new File(dst);
-			dir.mkdir();
-
-			download(si, si.ls(src, 1), dir);
-		} catch (RemoteFileSystemException ex) {
-			throw new GricliRuntimeException(
-					" cannot access remote file system: " + ex.getMessage());
-		} catch (IOException ex) {
-			throw new GricliRuntimeException(
-					"cannot access local file system: " + ex.getMessage());
-		}
-
-	}
-
 	private void downloadJob(GricliEnvironment env, ServiceInterface si, String jobname, String dst)
-	throws GricliRuntimeException {
+			throws GricliRuntimeException {
+
 		try {
-			env.printMessage("downloading job " + jobname);
-			DtoJob job = si.getJob(jobname);
-			downloadDir(job.jobProperty("jobDirectory"), dst, si);
-		} catch (NoSuchJobException ex) {
-			throw new GricliRuntimeException("job " + jobname
+			String jobdir = si.getJobProperty(jobname,
+					Constants.JOBDIRECTORY_KEY);
+
+			FileManager fm = env.getGrisuRegistry().getFileManager();
+
+			env.printMessage("Downloading job " + jobname + " to " + dst
+					+ File.separator + jobname);
+
+			fm.downloadUrl(jobdir, new File(dst), false);
+
+		} catch (NoSuchJobException nsje) {
+			throw new GricliRuntimeException("Job " + jobname
 					+ " does not exist");
+		} catch (IOException e) {
+			throw new GricliRuntimeException(e.getLocalizedMessage());
+		} catch (FileTransactionException e) {
+			throw new GricliRuntimeException(e.getLocalizedMessage());
 		}
+
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
+			throws GricliRuntimeException {
 
 		boolean hasError = false;
 
@@ -99,17 +63,14 @@ GricliCommand {
 				jobFilter)) {
 
 			try {
-				downloadJob(env,si, jobname,
-						FilenameUtils.concat(normalDirName, jobname));
+				downloadJob(env, si, jobname, normalDirName);
 			}
 			catch (GricliRuntimeException ex){
 				hasError = true;
 				env.printError(ex.getMessage());
 			}
 		}
-		if (hasError){
-			throw new GricliRuntimeException("download command was unsuccessful");
-		}
+
 		return env;
 
 	}

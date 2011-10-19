@@ -16,7 +16,7 @@ Example script:
 #Name: myscript
 #Script to setup and run a job
 set group /my/group
-set application UnixCommands
+set package UnixCommands
 set jobname myjob
 set jobtype single
 set memory 1g

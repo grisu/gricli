@@ -1,6 +1,26 @@
 Changelog
 =========
 
+0.6
+----
+
+* renamed global "application" to "package"
+* fixed job download where directories within job directories weren't downloaded
+* updated Grisu dependency which brings lots of improvements to scalability and stability
+* "archive job" blocks now until archiving is finished
+* progress bar for killing of multiple jobs
+* basic "view" command to pre-view files. mostly useful for viewing stdout/stderr while job is running
+
+0.5.2
+-----
+
+* updated Grisu dependency with shib login fix
+
+0.5.1
+-----
+
+* updated Grisu dependency with more logging statements
+
 0.5
 ---
 

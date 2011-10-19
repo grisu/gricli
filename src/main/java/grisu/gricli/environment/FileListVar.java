@@ -24,7 +24,9 @@ public class FileListVar extends GricliVar<List<String>> {
 		}
 		ArrayList<String> result = new ArrayList<String>();
 		for (String arg: args){
-			result.add(arg);
+			if (arg!=null){
+				result.add(arg);
+			}
 		}
 		return result;
 	}

@@ -51,11 +51,11 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	<version>0.5.2</version>
+	<version>0.6</version>
 	<description>Grisu commandline client</description>
 
 	<properties>
-		<grisu.dependency.version>0.3.6.3</grisu.dependency.version>
+		<grisu.dependency.version>0.3.7</grisu.dependency.version>
 	</properties>
 
 
@@ -85,8 +85,6 @@
 			<groupId>grisu.frontend</groupId>
 			<artifactId>grisu-client</artifactId>
 			<version>${grisu.dependency.version}</version>
-			<type>jar</type>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
@@ -144,6 +142,11 @@
 			</exclusions>
 		</dependency>
 
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
 	</dependencies>
 
 	<issueManagement>

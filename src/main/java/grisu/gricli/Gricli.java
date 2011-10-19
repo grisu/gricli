@@ -4,6 +4,7 @@ import static grisu.gricli.GricliExitStatus.LOGIN;
 import static grisu.gricli.GricliExitStatus.RUNTIME;
 import static grisu.gricli.GricliExitStatus.SUCCESS;
 import static grisu.gricli.GricliExitStatus.SYNTAX;
+import grisu.frontend.control.login.SlcsLoginWrapper;
 import grisu.frontend.view.cli.CliHelpers;
 import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.GricliCommandFactory;
@@ -14,7 +15,9 @@ import grisu.gricli.completors.DummyCompletionCache;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.environment.GricliVar;
 import grisu.gricli.parser.GricliTokenizer;
+import grisu.jcommons.utils.Version;
 import grisu.settings.Environment;
+import grith.jgrith.plainProxy.LocalProxy;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -134,11 +137,12 @@ public class Gricli {
 		return reader;
 	}
 
-	private static boolean login(GricliEnvironment env, String backend){
+	private static boolean login(GricliEnvironment env, String backend,
+			boolean x509, String username, String idp) {
 
 		try {
-			new InteractiveLoginCommand(backend).execute(env);
-
+			new InteractiveLoginCommand(backend, x509, username, idp)
+			.execute(env);
 			try {
 				String dn = env.getServiceInterface().getDN();
 				MDC.put("dn", dn);
@@ -165,7 +169,23 @@ public class Gricli {
 
 		MDC.put("session", UUID.randomUUID().toString());
 		MDC.put("local_user", System.getProperty("user.name"));
+		MDC.put("gricli-version", Version.get("gricli"));
 
+		if (!LocalProxy.validGridProxyExists()) {
+			Thread t = new Thread() {
+				@Override
+				public void run() {
+					try {
+						myLogger.debug("Preloading idps...");
+						SlcsLoginWrapper.getAllIdps();
+					} catch (Throwable e) {
+						myLogger.error(e);
+					}
+				}
+			};
+			t.setName("preloadIdpsThread");
+			t.start();
+		}
 
 		try {
 
@@ -199,12 +219,41 @@ public class Gricli {
 			options.addOption(OptionBuilder.withLongOpt("script").hasArg()
 					.withArgName("file").withDescription("execute script")
 					.create('f'));
+			options.addOption(OptionBuilder.withLongOpt("username").hasArg()
+					.withArgName("username")
+					.withDescription("institution or myproxy username").create("u"));
+			options.addOption(OptionBuilder.withLongOpt("institution").hasArg()
+					.withArgName("institution_name")
+					.withDescription("institution name").create("i"));
+			options.addOption(OptionBuilder.withLongOpt("x509").withDescription("x509 certificate login").create("x"));
 			try {
 				cl = parser.parse(options, args);
 				if (!cl.hasOption('n')) {
+
+					// checking whether login parameters make sense...
+					if (cl.hasOption("u")) {
+						// means myproxy or shib login
+						if (cl.hasOption("x")) {
+							throw new ParseException(
+									"X509 login and other login method specified. Please use only one.");
+						}
+					}
+					if (cl.hasOption("x")) {
+						if (cl.hasOption("i")) {
+							throw new ParseException(
+									"X509 login and idp login methods specified. Please use only one.");
+						}
+					}
+
+					String username = cl.getOptionValue("u");
+
+					String idp = cl.getOptionValue("i");
+
+					boolean x509 = cl.hasOption("x");
+
 					String backend = cl.getOptionValue('b');
 					backend = (backend != null) ? backend : "BeSTGRID";
-					if (!login(env, backend)) {
+					if (!login(env, backend, x509, username, idp)) {
 						System.exit(LOGIN.getStatus());
 					}
 				}
@@ -212,6 +261,7 @@ public class Gricli {
 				if (cl.hasOption('f')) {
 					scriptName = cl.getOptionValue('f');
 				}
+
 			} catch (ParseException e) {
 				myLogger.error(e);
 				new HelpFormatter().printHelp("griclish ", options);
@@ -313,7 +363,10 @@ public class Gricli {
 			env.printError("warning: could not save session");
 		}
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0.6
 
 }
 

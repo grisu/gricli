@@ -283,6 +283,17 @@ public class TestCommands {
 		assertEquals("crazyquotes \"\\\"a\\\"\"", submit.getCommandline());
 	}
 	
+	@Test public void testSubmitWithSlashes(){ SubmitCommand submit =
+		new SubmitCommand("/bin/bash","-c","pwd");
+		assertEquals(submit.getCommandline(),"/bin/bash -c pwd");
+	}
+	
+	@Test(expected=GricliRuntimeException.class)
+	public void testEmptySubmit() throws Exception {
+		SubmitCommand submit = new SubmitCommand();
+		submit.execute(env);
+	}
+	
 	// test set and unset commands
 	
 	@Test
@@ -311,6 +322,13 @@ public class TestCommands {
 		unset.execute(env);
 	}
 	
+	@Test(expected=GricliSetValueException.class)
+	public void testUnsetCpus() throws Exception {
+		SetCommand unset = new SetCommand("cpus");
+		unset.execute(env);
+	}
+	
+
 	@Test
 	public void testUnsetFiles() throws Exception {
 		SetCommand unset = new SetCommand("files");
@@ -318,6 +336,13 @@ public class TestCommands {
 		assertEquals(env.files.get().size(),0);
 	}
 	
+	@Test
+	public void testUnsetEnv() throws Exception {
+		SetCommand unset = new SetCommand("env");
+		unset.execute(env);
+		assertEquals(env.env.get().size(),0);
+	}
+
 	@Test(expected=GricliSetValueException.class)
 	public void testUnsetWalltime() throws Exception {
 		SetCommand unset = new SetCommand("walltime");

@@ -52,7 +52,7 @@ GricliCommand {
 		for (String j : jobNames) {
 			try {
 				if (attribute != null) {
-					if (jobNames.size() > 1) {
+					if ((jobNames.size() > 1) || "*".equals(this.jobname)) {
 						printJobAttribute(env, si, j, attribute, true);
 					} else {
 						printJobAttribute(env, si, j, attribute, false);
@@ -126,7 +126,14 @@ GricliCommand {
 
 	private void printJobAttribute(GricliEnvironment env, ServiceInterface si, String j,
 			String attribute, boolean displayJobName) throws NoSuchJobException {
-		DtoJob job = si.getJob(j);
+		DtoJob job = null;
+		try {
+			job = si.getJob(j);
+		} catch (Exception e) {
+			env.printError("Can't get job " + j + ": "
+					+ e.getLocalizedMessage());
+			return;
+		}
 
 		JobSubmissionProperty p = JobSubmissionProperty
 				.fromPrettyName(attribute);
@@ -143,7 +150,12 @@ GricliCommand {
 		}
 		String msg = null;
 		if ((Constants.STATUS_STRING.equals(prop))) {
-			msg = JobConstants.translateStatus(si.getJobStatus(j));
+			try {
+				msg = JobConstants.translateStatus(si.getJobStatus(j));
+			} catch (Exception e) {
+				msg = "n/a";
+			}
+
 		} else {
 			msg = formatAttribute(prop, job.jobProperty(prop));
 		}

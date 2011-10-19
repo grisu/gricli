@@ -21,21 +21,21 @@ import org.apache.commons.io.IOCase;
 public class PrintAppsCommand implements
 GricliCommand {
 
-	private final String app;
+	private final String app; // the application package
 	private String version;
 
-	@SyntaxDescription(command={"print","applications"})
+	@SyntaxDescription(command={"print","packages"})
 	public PrintAppsCommand(){
 		this(null);
 	}
 
-	@SyntaxDescription(command={"print","application"},arguments={"application"})
+	@SyntaxDescription(command={"print","package"},arguments={"package"})
 	@AutoComplete(completors={ApplicationCompletor.class})
 	public PrintAppsCommand(String app){
 		this(app,"*");
 	}
 	
-	@SyntaxDescription(command={"print","application"},arguments={"application","version"})
+	@SyntaxDescription(command={"print","package"},arguments={"package","version"})
 	@AutoComplete(completors={ApplicationCompletor.class,ApplicationVersionCompletor.class})
 	public PrintAppsCommand(String app,String version){
 		this.app = app;
