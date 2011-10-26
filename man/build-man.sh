@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 # builds the gricli manpage, uses the help.properties 
 # file to get descriptions for all commands
