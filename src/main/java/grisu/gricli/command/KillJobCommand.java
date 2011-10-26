@@ -15,21 +15,19 @@ import grisu.model.status.StatusObject;
 
 import java.util.List;
 
-public class KillJobCommand implements
-GricliCommand,
-StatusObject.Listener {
+public class KillJobCommand implements GricliCommand, StatusObject.Listener {
 	private final String jobFilter;
 	private final boolean clean;
 
-	@SyntaxDescription(command={"kill","jobs"})
-	@AutoComplete(completors={JobnameCompletor.class})
-	public KillJobCommand(){
-		this("*",true);
+	@SyntaxDescription(command = { "kill", "jobs" })
+	@AutoComplete(completors = { JobnameCompletor.class })
+	public KillJobCommand() {
+		this("*", true);
 	}
 
-	@SyntaxDescription(command={"kill","job"}, arguments={"jobname"})
-	@AutoComplete(completors={JobnameCompletor.class})
-	public KillJobCommand(String jobFilter){
+	@SyntaxDescription(command = { "kill", "job" }, arguments = { "jobname" })
+	@AutoComplete(completors = { JobnameCompletor.class })
+	public KillJobCommand(String jobFilter) {
 		this(jobFilter, false);
 	}
 
@@ -40,54 +38,53 @@ StatusObject.Listener {
 
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
-		ServiceInterface si = env.getServiceInterface();
+		final ServiceInterface si = env.getServiceInterface();
 
-		List<String> jobnames = ServiceInterfaceUtils.filterJobNames(si,
+		final List<String> jobnames = ServiceInterfaceUtils.filterJobNames(si,
 				jobFilter);
 
 		if (jobnames.size() == 1) {
-			String j = jobnames.get(0);
+			final String j = jobnames.get(0);
 			try {
 				if (clean) {
 					env.printMessage("cleaning job " + j);
 				} else {
 					env.printMessage("killing job " + j);
 				}
-				String handle = si.kill(j, clean);
+				final String handle = si.kill(j, clean);
 				StatusObject so = null;
 				try {
 					so = StatusObject.waitForActionToFinish(si, handle, 2,
 							true, true);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					throw new GricliRuntimeException(e.getLocalizedMessage());
 				}
 				if (so.getStatus().isFailed()) {
 					env.printError("Killing of job failed: "
 							+ so.getStatus().getErrorCause());
 				}
-			} catch (NoSuchJobException ex) {
+			} catch (final NoSuchJobException ex) {
 				env.printError("job " + j + " does not exist");
-			} catch (BatchJobException e) {
+			} catch (final BatchJobException e) {
 				env.printError("Error: " + e.getLocalizedMessage());
 			}
 
 		} else {
-			int no = jobnames.size();
+			final int no = jobnames.size();
 			if (clean) {
 				env.printMessage("Cleaning " + no + " jobs...");
 			} else {
 				env.printMessage("Killing " + no + " jobs...");
 			}
-			String handle = si.killJobs(
+			final String handle = si.killJobs(
 					DtoStringList.fromStringColletion(jobnames), clean);
-			StatusObject so = new StatusObject(si, handle);
+			final StatusObject so = new StatusObject(si, handle);
 			try {
 				so.addListener(this);
-				so.waitForActionToFinish(2, false,
-						true);
+				so.waitForActionToFinish(2, false, true);
 				so.removeListener(this);
 				CliHelpers.setProgress(no, no);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				throw new GricliRuntimeException(e.getLocalizedMessage());
 			}
 			if (so.getStatus().isFailed()) {
@@ -97,7 +94,6 @@ StatusObject.Listener {
 			CliHelpers.writeToTerminal("");
 		}
 
-
 		if (clean) {
 			Gricli.completionCache.refreshJobnames();
 			env.printMessage("Job(s) cleaned...                                 ");
@@ -105,18 +101,15 @@ StatusObject.Listener {
 			env.printMessage("Job(s) killed...                                  ");
 		}
 
-
 		return env;
 	}
 
 	public void statusMessage(ActionStatusEvent event) {
 
-		int current = event.getActionStatus().getCurrentElements() / 2;
-		int total = event.getActionStatus().getTotalElements() / 2;
+		final int current = event.getActionStatus().getCurrentElements() / 2;
+		final int total = event.getActionStatus().getTotalElements() / 2;
 
 		CliHelpers.setProgress(current, total);
 	}
-
-
 
 }

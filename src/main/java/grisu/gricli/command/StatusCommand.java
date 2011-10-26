@@ -21,7 +21,8 @@ public class StatusCommand implements GricliCommand {
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
-		SortedSet<DtoJob> jobs = Gricli.completionCache.getCurrentJobs(true);
+		final SortedSet<DtoJob> jobs = Gricli.completionCache
+				.getCurrentJobs(true);
 
 		Integer active = 0;
 		Integer finished = 0;
@@ -29,7 +30,7 @@ public class StatusCommand implements GricliCommand {
 		Integer success = 0;
 		Integer unknown = 0;
 
-		for (DtoJob j : jobs) {
+		for (final DtoJob j : jobs) {
 			if (j.getStatus() >= JobConstants.FINISHED_EITHER_WAY) {
 				finished = finished + 1;
 				if (j.getStatus() != JobConstants.DONE) {
@@ -48,7 +49,7 @@ public class StatusCommand implements GricliCommand {
 		}
 
 		env.printMessage("Your jobs:\n");
-		Map<String, String> table = Maps.newLinkedHashMap();
+		final Map<String, String> table = Maps.newLinkedHashMap();
 		table.put("Active", active.toString());
 		table.put("Finished", finished.toString());
 		// if (failed > 0) {
@@ -57,7 +58,7 @@ public class StatusCommand implements GricliCommand {
 		// }
 		table.put("Broken/Not found:", unknown.toString());
 
-		String msg = OutputHelpers.getTable(table);
+		final String msg = OutputHelpers.getTable(table);
 
 		env.printMessage(msg);
 

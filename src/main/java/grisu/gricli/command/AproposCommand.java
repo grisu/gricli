@@ -17,8 +17,8 @@ public class AproposCommand implements GricliCommand {
 	class SyntaxComparator implements Comparator<SyntaxDescription> {
 
 		public int compare(SyntaxDescription s1, SyntaxDescription s2) {
-			String str1 = StringUtils.join(s1.command(), " ");
-			String str2 = StringUtils.join(s2.command(), " ");
+			final String str1 = StringUtils.join(s1.command(), " ");
+			final String str2 = StringUtils.join(s2.command(), " ");
 			return str1.compareTo(str2);
 		}
 
@@ -34,38 +34,38 @@ public class AproposCommand implements GricliCommand {
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
-		Map<String, String> result = getAllCommands(env);
+		final Map<String, String> result = getAllCommands(env);
 
-		for (String key : result.keySet()) {
+		for (final String key : result.keySet()) {
 			env.printMessage(key + "\t- " + result.get(key));
 		}
-
 
 		return env;
 	}
 
 	private Map<String, String> getAllCommands(GricliEnvironment env) {
 
-		Map<String, String> result = new TreeMap<String, String>();
+		final Map<String, String> result = new TreeMap<String, String>();
 
-		List<Class<? extends GricliCommand>> cs = Gricli.SINGLETON_COMMANDFACTORY
+		final List<Class<? extends GricliCommand>> cs = Gricli.SINGLETON_COMMANDFACTORY
 				.getCommands();
-		for (Class<? extends GricliCommand> c : cs) {
-			Constructor<? extends GricliCommand>[] conss = (Constructor<? extends GricliCommand>[]) c
+		for (final Class<? extends GricliCommand> c : cs) {
+			final Constructor<? extends GricliCommand>[] conss = (Constructor<? extends GricliCommand>[]) c
 					.getDeclaredConstructors();
-			for (Constructor<? extends GricliCommand> cons : conss) {
+			for (final Constructor<? extends GricliCommand> cons : conss) {
 				if (cons.isAnnotationPresent(SyntaxDescription.class)) {
 
-					SyntaxDescription sd = cons
+					final SyntaxDescription sd = cons
 							.getAnnotation(SyntaxDescription.class);
-					String command = StringUtils.join(sd.command(), " ");
-					String arguments = StringUtils.join(sd.arguments(), " ");
+					final String command = StringUtils.join(sd.command(), " ");
+					final String arguments = StringUtils.join(sd.arguments(),
+							" ");
 
-					String helpKey = StringUtils.join(sd.command(), ".");
-					String desc = "";
+					final String helpKey = StringUtils.join(sd.command(), ".");
+					final String desc = "";
 					try {
 						// desc = HelpCommand.help.getString(helpKey);
-					} catch (Exception e) {
+					} catch (final Exception e) {
 					}
 
 					if (command.contains(keyword) || desc.contains(keyword)) {

@@ -25,7 +25,7 @@ public class LsCommand implements GricliCommand {
 
 	final private String url;
 
-	@SyntaxDescription(command = { "ls" }, arguments = { })
+	@SyntaxDescription(command = { "ls" }, arguments = {})
 	@AutoComplete(completors = { FileCompletor.class })
 	public LsCommand() {
 		this.url = null;
@@ -40,23 +40,23 @@ public class LsCommand implements GricliCommand {
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
-		ServiceInterface si = env.getServiceInterface();
-		FileManager fm = GrisuRegistryManager.getDefault(si).getFileManager();
+		final ServiceInterface si = env.getServiceInterface();
+		final FileManager fm = GrisuRegistryManager.getDefault(si)
+				.getFileManager();
 
 		String urlToList = url;
 		if (StringUtils.isBlank(urlToList)) {
 			urlToList = env.dir.toString();
 		}
 
-
 		try {
-			GridFile list = fm.ls(urlToList);
+			final GridFile list = fm.ls(urlToList);
 
 			// so we don't need to call that again for completion
 			Gricli.completionCache.addFileListingToCache(urlToList, list);
 
-			List<List<String>> listlist = Lists.newLinkedList();
-			List<String> title = Lists.newLinkedList();
+			final List<List<String>> listlist = Lists.newLinkedList();
+			final List<String> title = Lists.newLinkedList();
 			title.add("Filename");
 			title.add("Size");
 			title.add("Last modified");
@@ -70,8 +70,8 @@ public class LsCommand implements GricliCommand {
 				filesToList.add(list);
 			}
 
-			for (GridFile c : filesToList) {
-				List<String> child = Lists.newLinkedList();
+			for (final GridFile c : filesToList) {
+				final List<String> child = Lists.newLinkedList();
 				String filename = null;
 				if (c.isFolder()) {
 					filename = c.getName() + "/";
@@ -94,21 +94,20 @@ public class LsCommand implements GricliCommand {
 					if (c.getLastModified() <= 0) {
 						child.add("n/a");
 					} else {
-						Date d = new Date(c.getLastModified());
+						final Date d = new Date(c.getLastModified());
 						child.add(DateFormat.getInstance().format(d));
 					}
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					child.add("n/a");
 				}
 				listlist.add(child);
 			}
 
-			String table = OutputHelpers.getTable(listlist, true, 20,
+			final String table = OutputHelpers.getTable(listlist, true, 20,
 					new Integer[] { 1, 2 });
 			env.printMessage(table);
 
-
-		} catch (RemoteFileSystemException e) {
+		} catch (final RemoteFileSystemException e) {
 			throw new GricliRuntimeException(e);
 		}
 

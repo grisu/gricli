@@ -16,36 +16,35 @@ import java.io.IOException;
 import org.apache.commons.lang.StringUtils;
 
 @SuppressWarnings("restriction")
-public class DownloadJobCommand implements
-GricliCommand {
+public class DownloadJobCommand implements GricliCommand {
 	private final String jobFilter;
 
-	@SyntaxDescription(command={"download","job"}, arguments={"jobname"})
-	@AutoComplete(completors={JobnameCompletor.class})
+	@SyntaxDescription(command = { "download", "job" }, arguments = { "jobname" })
+	@AutoComplete(completors = { JobnameCompletor.class })
 	public DownloadJobCommand(String jobFilter) {
 		this.jobFilter = jobFilter;
 	}
 
-	private void downloadJob(GricliEnvironment env, ServiceInterface si, String jobname, String dst)
-			throws GricliRuntimeException {
+	private void downloadJob(GricliEnvironment env, ServiceInterface si,
+			String jobname, String dst) throws GricliRuntimeException {
 
 		try {
-			String jobdir = si.getJobProperty(jobname,
+			final String jobdir = si.getJobProperty(jobname,
 					Constants.JOBDIRECTORY_KEY);
 
-			FileManager fm = env.getGrisuRegistry().getFileManager();
+			final FileManager fm = env.getGrisuRegistry().getFileManager();
 
 			env.printMessage("Downloading job " + jobname + " to " + dst
 					+ File.separator + jobname);
 
 			fm.downloadUrl(jobdir, new File(dst), false);
 
-		} catch (NoSuchJobException nsje) {
+		} catch (final NoSuchJobException nsje) {
 			throw new GricliRuntimeException("Job " + jobname
 					+ " does not exist");
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new GricliRuntimeException(e.getLocalizedMessage());
-		} catch (FileTransactionException e) {
+		} catch (final FileTransactionException e) {
 			throw new GricliRuntimeException(e.getLocalizedMessage());
 		}
 
@@ -56,16 +55,15 @@ GricliCommand {
 
 		boolean hasError = false;
 
-		ServiceInterface si = env.getServiceInterface();
-		String normalDirName = StringUtils.replace(env.dir.get().toString(), "~",
-				System.getProperty("user.home"));
-		for (String jobname : ServiceInterfaceUtils.filterJobNames(si,
+		final ServiceInterface si = env.getServiceInterface();
+		final String normalDirName = StringUtils.replace(env.dir.get()
+				.toString(), "~", System.getProperty("user.home"));
+		for (final String jobname : ServiceInterfaceUtils.filterJobNames(si,
 				jobFilter)) {
 
 			try {
 				downloadJob(env, si, jobname, normalDirName);
-			}
-			catch (GricliRuntimeException ex){
+			} catch (final GricliRuntimeException ex) {
 				hasError = true;
 				env.printError(ex.getMessage());
 			}

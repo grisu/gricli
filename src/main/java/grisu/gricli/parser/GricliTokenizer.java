@@ -11,11 +11,17 @@ import java.util.ArrayList;
 import org.apache.commons.lang.StringEscapeUtils;
 
 public class GricliTokenizer {
-	
-	private int lineNumber = 0;
-	
-	public int getLineNumber(){
-		return this.lineNumber;
+
+	public static String escape(String s) {
+		if (s == null) {
+			return null;
+		} else {
+			if (s.contains(" ") || s.length() == 0) {
+				return "\"" + StringEscapeUtils.escapeJava(s) + "\"";
+			} else {
+				return s;
+			}
+		}
 	}
 
 	public static String[] tokenize(String str) {
@@ -24,7 +30,7 @@ public class GricliTokenizer {
 			return null;
 		}
 
-		StreamTokenizer st = new StreamTokenizer(
+		final StreamTokenizer st = new StreamTokenizer(
 				new BufferedReader(new InputStreamReader(
 						new ByteArrayInputStream(str.getBytes()))));
 		st.resetSyntax();
@@ -48,40 +54,34 @@ public class GricliTokenizer {
 		st.wordChars('~', '~');
 		st.whitespaceChars(' ', ' ');
 
-		ArrayList<String> argumentList = new ArrayList<String>();
+		final ArrayList<String> argumentList = new ArrayList<String>();
 		try {
 			while (st.nextToken() != StreamTokenizer.TT_EOF) {
-				String arg = (st.sval == null) ? st.nval + " " : st.sval;
+				final String arg = (st.sval == null) ? st.nval + " " : st.sval;
 				argumentList.add(st.sval);
 			}
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 			throw new RuntimeException(ex);
 		}
 		return argumentList.toArray(new String[] {});
 
 	}
 
+	private int lineNumber = 0;
+
 	private final InputStream in;
 
 	public GricliTokenizer(InputStream in) {
 		this.in = in;
 	}
-	
-	public static String escape(String s){
-		if (s == null){
-			return null;
-		} else {
-			if (s.contains(" ") || s.length() == 0){
-				return "\"" + StringEscapeUtils.escapeJava(s) + "\"";
-			} else {
-				return s;
-			}
-		}
+
+	public int getLineNumber() {
+		return this.lineNumber;
 	}
 
 	public String[] nextCommand() throws IOException {
 
-		StringBuffer command = new StringBuffer();
+		final StringBuffer command = new StringBuffer();
 		int c;
 		c = in.read();
 		if (c == -1) {
@@ -91,7 +91,7 @@ public class GricliTokenizer {
 			if ((c != '\r') && (c != '\n') && (c != ';')) {
 				command.append((char) c);
 			} else {
-				if (c != ';'){
+				if (c != ';') {
 					this.lineNumber++;
 				}
 				return tokenize(command.toString());

@@ -1,6 +1,5 @@
 package grisu.gricli.command;
 
-
 import grisu.control.ServiceInterface;
 import grisu.frontend.control.login.LoginException;
 import grisu.frontend.control.login.LoginManager;
@@ -17,8 +16,7 @@ import java.io.File;
 
 import org.apache.commons.lang.StringUtils;
 
-public class InteractiveLoginCommand implements
-GricliCommand {
+public class InteractiveLoginCommand implements GricliCommand {
 	public static GricliEnvironment login(GricliEnvironment env,
 			ServiceInterface si) throws GricliRuntimeException {
 
@@ -26,7 +24,7 @@ GricliCommand {
 
 		// setting up completion cache, loads some stuff in the background
 		// too...
-		CompletionCache cc = new CompletionCacheImpl(env);
+		final CompletionCache cc = new CompletionCacheImpl(env);
 		GrisuRegistryManager.getDefault(si).set(
 				Gricli.COMPLETION_CACHE_REGISTRY_KEY, cc);
 		Gricli.completionCache = cc;
@@ -38,11 +36,10 @@ GricliCommand {
 		env.application.set(Constants.GENERIC_APPLICATION_NAME);
 
 		// setting last used values
-		String value = System
+		final String value = System
 				.getenv(LocalLoginCommand.GRICLI_LOGIN_SCRIPT_ENV_NAME);
-		if (StringUtils
-				.isNotBlank(value)) {
-			File script = new File(value);
+		if (StringUtils.isNotBlank(value)) {
+			final File script = new File(value);
 			if (script.canExecute()) {
 				new ExecCommand(script.getPath()).execute(env);
 			}
@@ -62,8 +59,8 @@ GricliCommand {
 	private final String idp;
 	private final boolean x509;
 
-	@SyntaxDescription(command={"ilogin"},arguments={"backend"})
-	@AutoComplete(completors={BackendCompletor.class})
+	@SyntaxDescription(command = { "ilogin" }, arguments = { "backend" })
+	@AutoComplete(completors = { BackendCompletor.class })
 	public InteractiveLoginCommand(String backend) {
 		this(backend, false, null, null);
 	}
@@ -93,14 +90,13 @@ GricliCommand {
 
 				} else if (StringUtils.isNotBlank(username)) {
 					si = LoginManager.loginCommandlineShibboleth(backend,
-							username,
-							idp);
+							username, idp);
 				} else {
 					throw new GricliRuntimeException(
 							"Could not determine which login method to use.");
 				}
 			}
-		} catch (LoginException ex) {
+		} catch (final LoginException ex) {
 			throw new GricliRuntimeException(ex);
 		}
 

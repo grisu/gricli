@@ -7,28 +7,24 @@ import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 
-public class CreateBatchCommand implements
-GricliCommand {
-
+public class CreateBatchCommand implements GricliCommand {
 
 	private final String name;
 
-
-	@SyntaxDescription(command={"batch","create"},
- arguments = { "name" })
-			public CreateBatchCommand(String name){
+	@SyntaxDescription(command = { "batch", "create" }, arguments = { "name" })
+	public CreateBatchCommand(String name) {
 		this.name = name;
 	}
 
-
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
+			throws GricliRuntimeException {
 
-		ServiceInterface si = env.getServiceInterface();
+		final ServiceInterface si = env.getServiceInterface();
 		try {
-			BatchJobObject obj = new BatchJobObject(si, this.name, env.group.get(),
-					env.application.get(), Constants.NO_VERSION_INDICATOR_STRING);
-		} catch (BatchJobException e) {
+			final BatchJobObject obj = new BatchJobObject(si, this.name,
+					env.group.get(), env.application.get(),
+					Constants.NO_VERSION_INDICATOR_STRING);
+		} catch (final BatchJobException e) {
 			throw new GricliRuntimeException(e);
 		}
 		return env;

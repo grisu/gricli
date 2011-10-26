@@ -16,14 +16,15 @@ public class CpCommand implements GricliCommand {
 
 	private static String getAbsolutePath(GricliEnvironment env, String input) {
 
-		if ( input.startsWith(ServiceInterface.VIRTUAL_GRID_PROTOCOL_NAME) || input.startsWith(File.separator)) {
+		if (input.startsWith(ServiceInterface.VIRTUAL_GRID_PROTOCOL_NAME)
+				|| input.startsWith(File.separator)) {
 			return input;
 		} else {
 			if (input.startsWith("~")) {
-				String home = System.getProperty("user.home");
+				final String home = System.getProperty("user.home");
 				return input.replaceFirst("~", home);
 			}
-			return env.getCurrentAbsoluteDirectory()+File.separator+input;
+			return env.getCurrentAbsoluteDirectory() + File.separator + input;
 		}
 
 	}
@@ -48,7 +49,7 @@ public class CpCommand implements GricliCommand {
 		}
 
 		String target = null;
-		Set<String> sources = Sets.newHashSet();
+		final Set<String> sources = Sets.newHashSet();
 		boolean inBackground = false;
 		if ("&".equals(this.files[this.files.length - 1])) {
 			if (this.files.length == 2) {
@@ -66,7 +67,7 @@ public class CpCommand implements GricliCommand {
 			}
 		}
 
-		FileManager fm = env.getGrisuRegistry().getFileManager();
+		final FileManager fm = env.getGrisuRegistry().getFileManager();
 
 		if (!fm.isFolder(target)) {
 			throw new GricliRuntimeException("Target not a folder: " + target);
@@ -74,7 +75,7 @@ public class CpCommand implements GricliCommand {
 
 		try {
 			fm.cp(sources, target, true);
-		} catch (FileTransactionException e) {
+		} catch (final FileTransactionException e) {
 			throw new GricliRuntimeException(e);
 		}
 

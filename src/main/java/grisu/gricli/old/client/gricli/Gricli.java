@@ -24,13 +24,13 @@ import javax.activation.FileDataSource;
 import jline.ConsoleReader;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Gricli {
 
-	private static Logger myLogger = Logger.getLogger(Gricli.class.getName());
-
+	private static Logger myLogger = LoggerFactory.getLogger(Gricli.class
+			.getName());
 
 	public static final int DEFAULT_SLEEP_TIME_IN_SECONDS = 600;
 	public static final String JOBNAME_PLACEHOLDER = "XXX_JOBNAME_XXX";
@@ -110,7 +110,6 @@ public class Gricli {
 		this.jobProperties = jobProperties;
 
 		verbose = clientProperties.verbose();
-		enableDebug(clientProperties.debug());
 
 	}
 
@@ -129,7 +128,6 @@ public class Gricli {
 		clientProperties = new GrisuClientCommandlineProperties(args);
 
 		verbose = clientProperties.verbose();
-		enableDebug(clientProperties.debug());
 
 		jobProperties = new CommandlineProperties(serviceInterface,
 				((GrisuClientCommandlineProperties) clientProperties)
@@ -158,7 +156,6 @@ public class Gricli {
 		clientProperties = new GrisuClientCommandlineProperties(args);
 
 		verbose = clientProperties.verbose();
-		enableDebug(clientProperties.debug());
 
 		if (clientProperties.useLocalProxy()) {
 			login();
@@ -200,7 +197,7 @@ public class Gricli {
 						try {
 							stageoutdir = new File(".").getCanonicalPath();
 						} catch (final IOException e) {
-							myLogger.error(e);
+							myLogger.error(e.getLocalizedMessage(), e);
 						}
 					}
 					System.out.println("Trying to stageout job directory to "
@@ -238,14 +235,6 @@ public class Gricli {
 		return status;
 	}
 
-	private void enableDebug(boolean debug) {
-
-		if (debug) {
-			final Level lvl = Level.toLevel("debug");
-			Logger.getRootLogger().setLevel(lvl);
-		}
-
-	}
 
 	private void executeSubmission() throws NoSuchJobException,
 	JobStagingException {
@@ -434,7 +423,7 @@ public class Gricli {
 				try {
 					Thread.sleep(sleepTime * 1000);
 				} catch (final InterruptedException e) {
-					myLogger.error(e);
+					myLogger.error(e.getLocalizedMessage(), e);
 				}
 			}
 

@@ -11,16 +11,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExecCommand implements GricliCommand {
 
-	private static Logger myLogger = Logger.getLogger(ExecCommand.class
-			.getName());
+	private static Logger myLogger = LoggerFactory.getLogger(ExecCommand.class);
 
 	public static void main(String[] args) throws Exception {
 
-		ExecCommand c = new ExecCommand("ls -lah", "");
+		final ExecCommand c = new ExecCommand("ls -lah", "");
 		c.execute(new GricliEnvironment());
 	}
 
@@ -68,37 +68,36 @@ public class ExecCommand implements GricliCommand {
 		// }
 		// }
 
-		List<String> cmdList = new LinkedList<String>(args);
+		final List<String> cmdList = new LinkedList<String>(args);
 		cmdList.add(0, cmd);
 
-		ProcessBuilder builder = new ProcessBuilder(cmdList);
-		Map<String, String> environ = builder.environment();
+		final ProcessBuilder builder = new ProcessBuilder(cmdList);
+		final Map<String, String> environ = builder.environment();
 		builder.directory(new File(System.getProperty("user.dir")));
 
 		Process process;
 		try {
 			process = builder.start();
-		} catch (IOException e) {
-			myLogger.error(e);
+		} catch (final IOException e) {
+			myLogger.error(e.getLocalizedMessage(), e);
 			env.printError(e.getLocalizedMessage());
 
 			return env;
 		}
 
-		AsyncProcessStreamReader reader = new AsyncProcessStreamReader(
+		final AsyncProcessStreamReader reader = new AsyncProcessStreamReader(
 				new GricliEnvironment(), process);
 
 		if (!isAsync) {
 			try {
-				int exitValue = reader.waitForProcessToFinish();
+				final int exitValue = reader.waitForProcessToFinish();
 				// maybe put exit value in env?
 				// env.printMessage("Process finished with value: " +
 				// exitValue);
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				env.printError(e.getLocalizedMessage());
 			}
 		}
-
 
 		return env;
 	}

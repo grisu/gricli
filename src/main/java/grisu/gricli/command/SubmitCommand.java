@@ -12,13 +12,11 @@ import grisu.jcommons.constants.Constants;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
-
-public class SubmitCommand implements
-GricliCommand {
+public class SubmitCommand implements GricliCommand {
 
 	private final String[] args;
 
-	@SyntaxDescription(command={"submit"}, arguments={"commandline"})
+	@SyntaxDescription(command = { "submit" }, arguments = { "commandline" })
 	@AutoComplete(completors = { ExecutablesCompletor.class,
 			InputFileCompletor.class })
 	public SubmitCommand(String... args) {
@@ -27,57 +25,61 @@ GricliCommand {
 
 	protected JobObject createJob(GricliEnvironment env)
 			throws GricliRuntimeException {
-		
-		if (args.length == 0){
-			throw new GricliRuntimeException("submit command requires at least one argument");
+
+		if (args.length == 0) {
+			throw new GricliRuntimeException(
+					"submit command requires at least one argument");
 		}
-		JobObject job = env.getJob();
-		
+		final JobObject job = env.getJob();
+
 		job.setCommandline(getCommandline());
 
 		try {
 			job.createJob(env.group.get(), Constants.UNIQUE_NUMBER_METHOD);
 			return job;
-		} catch (JobPropertiesException ex) {
+		} catch (final JobPropertiesException ex) {
 			throw new GricliRuntimeException("job property not valid: "
 					+ ex.getMessage(), ex);
 		}
 
 	}
-	
+
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		final JobObject job = createJob(env);
-		String jobname = job.getJobname();
+		final String jobname = job.getJobname();
 		System.out.println(" job name is " + jobname);
 		Gricli.completionCache.refreshJobnames();
 
-		if (isAsync()){
+		if (isAsync()) {
 			new Thread() {
 				@Override
 				public void run() {
-					try {submit(job);}
-					catch (GricliRuntimeException ex) {/* do nothing */} }}.start();
-		}
-		else {
+					try {
+						submit(job);
+					} catch (final GricliRuntimeException ex) {/* do nothing */
+					}
+				}
+			}.start();
+		} else {
 			submit(job);
 		}
 
 		return env;
 	}
-	
-	public String getCommandline(){
+
+	public String getCommandline() {
 		int length = this.args.length;
-		String last = this.args[this.args.length - 1];
-		if ("&".equals(last)){
+		final String last = this.args[this.args.length - 1];
+		if ("&".equals(last)) {
 			length--;
 		}
 		String cmd = "";
-		for (int i =0; i< length; i++){
+		for (int i = 0; i < length; i++) {
 			String escaped = StringEscapeUtils.escapeJava(this.args[i]);
 			// unscape forward slashes - bug in escapeJava
-			escaped = escaped.replaceAll("\\\\\\/","\\/");
-			if (!this.args[i].equals(escaped) || escaped.contains(" ")){
+			escaped = escaped.replaceAll("\\\\\\/", "\\/");
+			if (!this.args[i].equals(escaped) || escaped.contains(" ")) {
 				escaped = "\"" + escaped + "\"";
 			}
 			cmd += " " + escaped;
@@ -85,19 +87,19 @@ GricliCommand {
 		return cmd.trim();
 	}
 
-	public boolean isAsync(){
+	public boolean isAsync() {
 		return "&".equals(this.args[this.args.length - 1]);
 	}
 
-	private void submit(JobObject job) throws GricliRuntimeException{
-		try{
+	private void submit(JobObject job) throws GricliRuntimeException {
+		try {
 			job.submitJob();
-		} catch (JobSubmissionException e) {
+		} catch (final JobSubmissionException e) {
 			throw new GricliRuntimeException("fail to submit job: "
-					+ e.getMessage(),e);
-		} catch (InterruptedException e) {
+					+ e.getMessage(), e);
+		} catch (final InterruptedException e) {
 			throw new GricliRuntimeException("jobmission was interrupted: "
-					+ e.getMessage(),e);
+					+ e.getMessage(), e);
 		}
 	}
 

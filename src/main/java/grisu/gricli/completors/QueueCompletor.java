@@ -19,10 +19,10 @@ public class QueueCompletor implements Completor {
 
 	public int complete(String s, int i, List l) {
 
-		GricliEnvironment env = Gricli.completionCache.getEnvironment();
-		String app = env.application.get();
+		final GricliEnvironment env = Gricli.completionCache.getEnvironment();
+		final String app = env.application.get();
 		// String queue = env.get("queue");
-		String fqan = env.group.get();
+		final String fqan = env.group.get();
 
 		if (StringUtils.isBlank(fqan)) {
 			return new SimpleCompletor(Gricli.completionCache.getAllQueues()
@@ -37,16 +37,15 @@ public class QueueCompletor implements Completor {
 					s, i, l);
 
 		} else {
-			ApplicationInformation ai = env.getGrisuRegistry()
+			final ApplicationInformation ai = env.getGrisuRegistry()
 					.getApplicationInformation(app);
 
-			Set<String> queues = ai
+			final Set<String> queues = ai
 					.getAvailableSubmissionLocationsForFqan(fqan);
-			List<String> q = new LinkedList<String>(queues);
+			final List<String> q = new LinkedList<String>(queues);
 			Collections.sort(q);
 			q.add(0, Constants.NO_SUBMISSION_LOCATION_INDICATOR_STRING);
-			return new SimpleCompletor(q.toArray(new String[] {})).complete(
-					s,
+			return new SimpleCompletor(q.toArray(new String[] {})).complete(s,
 					i, l);
 
 		}

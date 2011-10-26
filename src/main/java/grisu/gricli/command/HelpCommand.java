@@ -12,16 +12,15 @@ public class HelpCommand implements GricliCommand {
 
 	public static void main(String[] args) throws GricliRuntimeException {
 
-		HelpCommand hc = new HelpCommand("example");
+		final HelpCommand hc = new HelpCommand("example");
 
 		hc.execute(new GricliEnvironment());
 	}
 
 	private final String[] keywords;
 
-	@SyntaxDescription(command={"help"},
-			arguments={"keywords"}, help="prints this help message")
-	public HelpCommand(String... keywords){
+	@SyntaxDescription(command = { "help" }, arguments = { "keywords" }, help = "prints this help message")
+	public HelpCommand(String... keywords) {
 		this.keywords = keywords;
 	}
 
@@ -36,7 +35,7 @@ public class HelpCommand implements GricliCommand {
 			env.printMessage(help);
 			break;
 		case 1:
-			String keyword = keywords[0];
+			final String keyword = keywords[0];
 
 			if ("commands".equals(keyword) || "command".equals(keyword)) {
 				help = HelpManager.singleton.getCommandList();
@@ -61,7 +60,8 @@ public class HelpCommand implements GricliCommand {
 				help = HelpManager.singleton.apropos(keywords[1]);
 
 			} else if ("command".equals(keywords[0])) {
-				String cmd = StringUtils.join(Arrays.copyOfRange(keywords, 1, keywords.length), " ");
+				final String cmd = StringUtils.join(
+						Arrays.copyOfRange(keywords, 1, keywords.length), " ");
 				help = HelpManager.singleton.getCommand(cmd);
 				if (StringUtils.isBlank(help)) {
 					help = "Command \"" + cmd + "\" not available.";
@@ -89,7 +89,7 @@ public class HelpCommand implements GricliCommand {
 					help = "No global found for keyword(s).";
 				}
 			} else {
-				String tmp = StringUtils.join(keywords, " ");
+				final String tmp = StringUtils.join(keywords, " ");
 				help = HelpManager.singleton.getCommand(tmp);
 				if (StringUtils.isBlank(help)) {
 					help = "Command \"" + tmp + "\" not available.";

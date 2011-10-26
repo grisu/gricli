@@ -39,24 +39,31 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
-import org.apache.log4j.MDC;
-import org.apache.log4j.xml.DOMConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
 
 public class Gricli {
 
-	static final Logger myLogger = Logger.getLogger(Gricli.class.getName());
+	static final Logger myLogger = LoggerFactory.getLogger(Gricli.class
+			.getName());
 
 	static final String CONFIG_FILE_PATH = FilenameUtils.concat(Environment
 			.getGrisuClientDirectory().getPath(), "gricli.profile");
-	static final String SESSION_SETTINGS_PATH = FilenameUtils.concat(Environment
-			.getGrisuClientDirectory().getPath(), "gricli-session.profile");
+	static final String SESSION_SETTINGS_PATH = FilenameUtils.concat(
+			Environment.getGrisuClientDirectory().getPath(),
+			"gricli-session.profile");
 
-	static final String HISTORY_FILE_PATH = FilenameUtils.concat(Environment.getGrisuClientDirectory().getPath() ,
-			"gricli.hist");
+	static final String HISTORY_FILE_PATH = FilenameUtils.concat(Environment
+			.getGrisuClientDirectory().getPath(), "gricli.hist");
 
-	static final String DEBUG_FILE_PATH = FilenameUtils.concat(Environment.getGrisuClientDirectory().getPath() ,
-			"gricli.debug");
+	static final String DEBUG_FILE_PATH = FilenameUtils.concat(Environment
+			.getGrisuClientDirectory().getPath(), "gricli.debug");
 
 	public static final String COMPLETION_CACHE_REGISTRY_KEY = "CompletionCache";
 
@@ -70,66 +77,72 @@ public class Gricli {
 
 	static private GricliExitStatus exitStatus = SUCCESS;
 
-	private static void executionLoop() throws IOException{
+	private static void executionLoop() throws IOException {
 
-		if (System.console() == null){
+		if (System.console() == null) {
 			run(System.in);
 			return;
 		}
 
-		if (scriptName != null){
+		if (scriptName != null) {
 			run(new FileInputStream(scriptName));
 			return;
 		}
 
-		ConsoleReader reader = getReader();
+		final ConsoleReader reader = getReader();
 		while (true) {
 
-			String prompt = getPrompt();
-			String line = reader.readLine(prompt);
+			final String prompt = getPrompt();
+			final String line = reader.readLine(prompt);
 
-			if (line==null){
+			if (line == null) {
 				break;
 			}
-			String[] commandsOnOneLine = line.split(";");
-			for (String c: commandsOnOneLine){
+			final String[] commandsOnOneLine = line.split(";");
+			for (final String c : commandsOnOneLine) {
 				runCommand(GricliTokenizer.tokenize(c),
 						SINGLETON_COMMANDFACTORY, env);
 			}
 		}
 	}
 
-	private static String generateSession(GricliEnvironment env){
+	private static String generateSession(GricliEnvironment env) {
 		String result = "";
-		for (GricliVar<?> var: env.getVariables()){
-			if (var.isPersistent()){
-				Object value = var.get();
-				if (value == null){
-					result+="unset " + var.getName() + "\n";
+		for (final GricliVar<?> var : env.getVariables()) {
+			if (var.isPersistent()) {
+				final Object value = var.get();
+				if (value == null) {
+					result += "unset " + var.getName() + "\n";
 				} else {
-					result+= "set " + var.getName() + " " + GricliTokenizer.escape(var.marshall()) + "\n";
+					result += "set " + var.getName() + " "
+							+ GricliTokenizer.escape(var.marshall()) + "\n";
 				}
 			}
 		}
 		return result;
 	}
 
-	private static  String getPrompt(){
-		String prompt = env.prompt.get(); /* will have to restore this function later
-		for (String var : env.getGlobalNames()) {
-			prompt = StringUtils.replace(prompt, "${" + var + "}",
-					env.get(var));
-
-		} */
+	private static String getPrompt() {
+		final String prompt = env.prompt.get(); /*
+		 * will have to restore this
+		 * function later for (String
+		 * var : env.getGlobalNames()) {
+		 * prompt =
+		 * StringUtils.replace(prompt,
+		 * "${" + var + "}",
+		 * env.get(var));
+		 * 
+		 * }
+		 */
 		return prompt;
 	}
 
 	private static ConsoleReader getReader() throws IOException {
-		//		ConsoleReader reader = new ConsoleReader();
-		ConsoleReader reader = CliHelpers.getConsoleReader();
+		// ConsoleReader reader = new ConsoleReader();
+		final ConsoleReader reader = CliHelpers.getConsoleReader();
 		reader.setHistory(new History(new File(HISTORY_FILE_PATH)));
 
-		ArgumentCompletor completor = new ArgumentCompletor(
+		final ArgumentCompletor completor = new ArgumentCompletor(
 				SINGLETON_COMMANDFACTORY.createCompletor(),
 				new SemicolonDelimiter());
 		completor.setStrict(false);
@@ -144,13 +157,13 @@ public class Gricli {
 			new InteractiveLoginCommand(backend, x509, username, idp)
 			.execute(env);
 			try {
-				String dn = env.getServiceInterface().getDN();
+				final String dn = env.getServiceInterface().getDN();
 				MDC.put("dn", dn);
-			} catch (Exception e) {
-				myLogger.error(e);
+			} catch (final Exception e) {
+				myLogger.error(e.getLocalizedMessage(), e);
 			}
 			return true;
-		} catch (GricliException ex){
+		} catch (final GricliException ex) {
 			myLogger.error("login exception", ex);
 			Throwable t = ex;
 			while (t.getCause() != null) {
@@ -171,14 +184,14 @@ public class Gricli {
 		MDC.put("gricli-version", Version.get("gricli"));
 
 		if (!LocalProxy.validGridProxyExists()) {
-			Thread t = new Thread() {
+			final Thread t = new Thread() {
 				@Override
 				public void run() {
 					try {
 						myLogger.debug("Preloading idps...");
 						SlcsLoginWrapper.getAllIdps();
-					} catch (Throwable e) {
-						myLogger.error(e);
+					} catch (final Throwable e) {
+						myLogger.error(e.getLocalizedMessage(), e);
 					}
 				}
 			};
@@ -192,26 +205,36 @@ public class Gricli {
 			java.util.logging.LogManager.getLogManager().reset();
 			java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);
 
-			String log4jPath = "/etc/gricli/gricli-log4j.xml";
-			if (new File(log4jPath).exists()
-					&& (new File(log4jPath).length() > 0)) {
+			final String logback = "/etc/gricli/gricli-logback.xml";
+			if (new File(logback).exists()
+					&& (new File(logback).length() > 0)) {
+
+				LoggerContext lc = (LoggerContext) LoggerFactory
+						.getILoggerFactory();
+
 				try {
-					DOMConfigurator.configure(log4jPath);
-				} catch (Exception e) {
-					myLogger.error(e);
+					JoranConfigurator configurator = new JoranConfigurator();
+					configurator.setContext(lc);
+					// the context was probably already configured by default
+					// configuration
+					// rules
+					lc.reset();
+					configurator.doConfigure(logback);
+				} catch (JoranException je) {
+					je.printStackTrace();
 				}
+				StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
+
 			}
 
 			env = new GricliEnvironment();
 			SigintHandler.install(env);
 
-			CommandLineParser parser = new PosixParser();
+			final CommandLineParser parser = new PosixParser();
 			CommandLine cl = null;
-			Options options = new Options();
-			options
-			.addOption(OptionBuilder.withLongOpt("nologin")
-					.withDescription("disables login at the start")
-					.create('n'));
+			final Options options = new Options();
+			options.addOption(OptionBuilder.withLongOpt("nologin")
+					.withDescription("disables login at the start").create('n'));
 			options.addOption(OptionBuilder.withLongOpt("backend").hasArg()
 					.withArgName("backend").withDescription("change backend")
 					.create('b'));
@@ -220,11 +243,13 @@ public class Gricli {
 					.create('f'));
 			options.addOption(OptionBuilder.withLongOpt("username").hasArg()
 					.withArgName("username")
-					.withDescription("institution or myproxy username").create("u"));
+					.withDescription("institution or myproxy username")
+					.create("u"));
 			options.addOption(OptionBuilder.withLongOpt("institution").hasArg()
 					.withArgName("institution_name")
 					.withDescription("institution name").create("i"));
-			options.addOption(OptionBuilder.withLongOpt("x509").withDescription("x509 certificate login").create("x"));
+			options.addOption(OptionBuilder.withLongOpt("x509")
+					.withDescription("x509 certificate login").create("x"));
 			try {
 				cl = parser.parse(options, args);
 				if (!cl.hasOption('n')) {
@@ -244,11 +269,11 @@ public class Gricli {
 						}
 					}
 
-					String username = cl.getOptionValue("u");
+					final String username = cl.getOptionValue("u");
 
-					String idp = cl.getOptionValue("i");
+					final String idp = cl.getOptionValue("i");
 
-					boolean x509 = cl.hasOption("x");
+					final boolean x509 = cl.hasOption("x");
 
 					String backend = cl.getOptionValue('b');
 					backend = (backend != null) ? backend : "BeSTGRID";
@@ -261,40 +286,42 @@ public class Gricli {
 					scriptName = cl.getOptionValue('f');
 				}
 
-			} catch (ParseException e) {
-				myLogger.error(e);
+			} catch (final ParseException e) {
+				myLogger.error(e.getLocalizedMessage(), e);
 				new HelpFormatter().printHelp("griclish ", options);
 				System.exit(SYNTAX.getStatus());
 			}
 
 			try {
-				if (new File(SESSION_SETTINGS_PATH).exists()){
+				if (new File(SESSION_SETTINGS_PATH).exists()) {
 					env = new RunCommand(SESSION_SETTINGS_PATH).execute(env);
 				}
-				if (new File(CONFIG_FILE_PATH).exists()){
+				if (new File(CONFIG_FILE_PATH).exists()) {
 					env = new RunCommand(CONFIG_FILE_PATH).execute(env);
 				}
-			} catch (GricliRuntimeException ex) {
+			} catch (final GricliRuntimeException ex) {
 				// config does not exist
 				env.printError(ex.getMessage());
 			}
 			executionLoop();
 			shutdown(env);
 			System.exit(exitStatus.getStatus());
-		} catch (Throwable th) {
-			System.err.println("Something went terribly wrong.  Please check if you have internet connection, and your firewall settings." +
-					" If you think there is nothing wrong with your connection, send " + DEBUG_FILE_PATH +
-					" to eresearch-admin@auckland.ac.nz together with description of what you are trying to do.");
-			myLogger.error("something went terribly wrong ",th);
+		} catch (final Throwable th) {
+			System.err
+			.println("Something went terribly wrong.  Please check if you have internet connection, and your firewall settings."
+					+ " If you think there is nothing wrong with your connection, send "
+					+ DEBUG_FILE_PATH
+					+ " to eresearch-admin@auckland.ac.nz together with description of what you are trying to do.");
+			myLogger.error("something went terribly wrong ", th);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void run(InputStream in) throws IOException{
+	private static void run(InputStream in) throws IOException {
 
-		GricliTokenizer t = new GricliTokenizer(in);
+		final GricliTokenizer t = new GricliTokenizer(in);
 		String[] tokens;
-		while ((tokens = t.nextCommand()) != null){
+		while ((tokens = t.nextCommand()) != null) {
 			runCommand(tokens, SINGLETON_COMMANDFACTORY, env);
 		}
 	}
@@ -303,33 +330,33 @@ public class Gricli {
 			GricliEnvironment env) {
 		Throwable error = null;
 		try {
-			GricliCommand command = f.create(c);
+			final GricliCommand command = f.create(c);
 			command.execute(env);
 			exitStatus = SUCCESS;
 
-		} catch (InvalidCommandException ex) {
+		} catch (final InvalidCommandException ex) {
 			exitStatus = SYNTAX;
 			error = ex;
 			System.out.println(ex.getMessage());
-		} catch (UnknownCommandException ex) {
+		} catch (final UnknownCommandException ex) {
 			exitStatus = SYNTAX;
 			error = ex;
 			System.err.println(ex.getMessage());
-		} catch (SyntaxException ex) {
+		} catch (final SyntaxException ex) {
 			exitStatus = SYNTAX;
 			error = ex;
 			System.err.println("syntax error " + ex.getMessage());
-		} catch (LoginRequiredException ex) {
+		} catch (final LoginRequiredException ex) {
 			exitStatus = LOGIN;
 			error = ex;
 			System.err.println("this command requires you to login first");
-		} catch (GricliSetValueException ex) {
+		} catch (final GricliSetValueException ex) {
 			exitStatus = RUNTIME;
 			error = ex;
 			System.err.println("variable " + ex.getVar() + " cannot be set to "
 					+ ex.getValue());
 			System.err.println("reason: " + ex.getReason());
-		} catch (GricliRuntimeException ex) {
+		} catch (final GricliRuntimeException ex) {
 			exitStatus = RUNTIME;
 			Throwable exc = ex;
 			while (exc.getCause() != null) {
@@ -337,40 +364,42 @@ public class Gricli {
 			}
 			error = exc;
 			System.err.println(exc.getMessage());
-		} catch (RuntimeException ex){
+		} catch (final RuntimeException ex) {
 			exitStatus = RUNTIME;
 			error = ex;
-			System.err.println("command failed. Either connection to server failed, or this is gricli bug. " +
-					"Please send " + DEBUG_FILE_PATH +
-					" to eresearch-admin@auckland.ac.nz together with description of what triggered the problem");
-		}
-		finally {
-			myLogger.error(error);
-			if (env.debug.get() && (error != null)){
-				error.printStackTrace();
+			System.err
+			.println("command failed. Either connection to server failed, or this is gricli bug. "
+					+ "Please send "
+					+ DEBUG_FILE_PATH
+					+ " to eresearch-admin@auckland.ac.nz together with description of what triggered the problem");
+		} finally {
+			if (error != null) {
+				myLogger.error(error.getLocalizedMessage(), error);
+				if (env.debug.get() && (error != null)) {
+					error.printStackTrace();
+				}
 			}
 		}
 	}
 
-	public static void shutdown(GricliEnvironment env){
+	public static void shutdown(GricliEnvironment env) {
 		try {
-			File f = new File(SESSION_SETTINGS_PATH);
-			String session = generateSession(env);
+			final File f = new File(SESSION_SETTINGS_PATH);
+			final String session = generateSession(env);
 			FileUtils.writeStringToFile(f, session);
-		} catch (IOException ex){
-			myLogger.error(ex);
+		} catch (final IOException ex) {
+			myLogger.error(ex.getLocalizedMessage(), ex);
 			env.printError("warning: could not save session");
 		}
 	}
 
 }
 
-
 class SemicolonDelimiter extends ArgumentCompletor.AbstractArgumentDelimiter {
 
 	@Override
 	public boolean isDelimiterChar(String s, int i) {
-		return ((s!=null) && (s.length() > i) && (s.charAt(i) == ';'));
+		return ((s != null) && (s.length() > i) && (s.charAt(i) == ';'));
 	}
 
 }

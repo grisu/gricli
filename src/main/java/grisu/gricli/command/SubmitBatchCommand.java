@@ -7,37 +7,38 @@ import grisu.frontend.model.job.BatchJobObject;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.environment.GricliEnvironment;
 
-public class SubmitBatchCommand implements
-GricliCommand {
+public class SubmitBatchCommand implements GricliCommand {
 
 	private final String batchname;
 
-	@SyntaxDescription(command={"batch","submit"},
-			arguments={"name"},
-			help="submits batch job (which should be created beforehand with 'batch create [name]' command")
-			public SubmitBatchCommand(String batchname){
+	@SyntaxDescription(command = { "batch", "submit" }, arguments = { "name" }, help = "submits batch job (which should be created beforehand with 'batch create [name]' command")
+	public SubmitBatchCommand(String batchname) {
 		this.batchname = batchname;
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
+			throws GricliRuntimeException {
 
 		BatchJobObject obj;
 		try {
-			obj = new BatchJobObject(env.getServiceInterface(),this.batchname,false);
-		} catch (BatchJobException e) {
+			obj = new BatchJobObject(env.getServiceInterface(), this.batchname,
+					false);
+		} catch (final BatchJobException e) {
 			throw new GricliRuntimeException(e);
-		} catch (NoSuchJobException e) {
-			throw new GricliRuntimeException("batch job container " + this.batchname +
-			" does not exist. Use 'create batch [containername]' command");
+		} catch (final NoSuchJobException e) {
+			throw new GricliRuntimeException(
+					"batch job container "
+							+ this.batchname
+							+ " does not exist. Use 'create batch [containername]' command");
 		}
 		try {
 			obj.submit();
-		} catch (JobSubmissionException e) {
+		} catch (final JobSubmissionException e) {
 			throw new GricliRuntimeException(e);
-		} catch (NoSuchJobException e) {
-			throw new GricliRuntimeException("one of the subjobs cannot be created: " + e.getMessage());
-		} catch (InterruptedException e) {
+		} catch (final NoSuchJobException e) {
+			throw new GricliRuntimeException(
+					"one of the subjobs cannot be created: " + e.getMessage());
+		} catch (final InterruptedException e) {
 			throw new GricliRuntimeException(e);
 		}
 		return env;

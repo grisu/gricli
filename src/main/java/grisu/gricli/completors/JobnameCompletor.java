@@ -7,7 +7,6 @@ import java.util.List;
 import jline.Completor;
 import jline.SimpleCompletor;
 
-
 public class JobnameCompletor implements Completor {
 
 	@SuppressWarnings("unchecked")

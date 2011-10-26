@@ -12,29 +12,32 @@ import java.util.Set;
 import jline.Completor;
 import jline.SimpleCompletor;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InputFileCompletor implements Completor {
 
-	private static Logger myLogger = Logger.getLogger(InputFileCompletor.class
+	private static Logger myLogger = LoggerFactory
+			.getLogger(InputFileCompletor.class
 			.getName());
 
 	public int complete(String arg0, int arg1, List arg2) {
 
-		GricliEnvironment env = Gricli.completionCache.getEnvironment();
+		final GricliEnvironment env = Gricli.completionCache.getEnvironment();
 
 		try {
-			List<String> files = (List<String>) env.getVariable("files").get();
-			Set<String> names = new HashSet<String>();
-			for (String file : files) {
-				String filename = FileManager.getFilename(file);
+			final List<String> files = (List<String>) env.getVariable("files")
+					.get();
+			final Set<String> names = new HashSet<String>();
+			for (final String file : files) {
+				final String filename = FileManager.getFilename(file);
 				names.add(filename);
 			}
 
 			return new SimpleCompletor(names.toArray(new String[] {}))
-					.complete(arg0, arg1, arg2);
-		} catch (GricliRuntimeException e) {
-			myLogger.error(e);
+			.complete(arg0, arg1, arg2);
+		} catch (final GricliRuntimeException e) {
+			myLogger.error(e.getLocalizedMessage(), e);
 			return -1;
 		}
 	}

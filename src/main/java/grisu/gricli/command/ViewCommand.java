@@ -1,4 +1,3 @@
-
 package grisu.gricli.command;
 
 import grisu.frontend.control.clientexceptions.FileTransactionException;
@@ -18,7 +17,7 @@ public class ViewCommand implements GricliCommand {
 
 	private final String filename;
 
-	@SyntaxDescription(command = { "view" },arguments={"filename"})
+	@SyntaxDescription(command = { "view" }, arguments = { "filename" })
 	@AutoComplete(completors = { FileCompletor.class })
 	public ViewCommand(String filename) {
 		this.filename = filename;
@@ -27,12 +26,13 @@ public class ViewCommand implements GricliCommand {
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
-		FileManager fm = env.getGrisuRegistry().getFileManager();
+		final FileManager fm = env.getGrisuRegistry().getFileManager();
 
 		File cacheFile = null;
 		try {
 			cacheFile = fm.downloadFile(this.filename, false);
-		} catch (FileTransactionException e) {
+			System.out.println("Cache: " + cacheFile.getAbsolutePath());
+		} catch (final FileTransactionException e) {
 			if (e.getCause() == null) {
 				// means threshold bigger
 				env.printError("File bigger than configured download threshold. Not downloading.");
@@ -40,10 +40,10 @@ public class ViewCommand implements GricliCommand {
 		}
 
 		try {
-			for (String line : Files.readLines(cacheFile, Charsets.UTF_8)) {
+			for (final String line : Files.readLines(cacheFile, Charsets.UTF_8)) {
 				env.printMessage(line);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			env.printError("Can't read file: " + e.getLocalizedMessage());
 		}
 

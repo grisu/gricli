@@ -5,12 +5,14 @@ import grisu.gricli.environment.GricliEnvironment;
 
 public class AboutCommand implements GricliCommand {
 
-	@SyntaxDescription(command={"about"})
-	public AboutCommand(){}
+	@SyntaxDescription(command = { "about" })
+	public AboutCommand() {
+	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
-		env.printMessage("version: " + grisu.jcommons.utils.Version.get("gricli"));
+			throws GricliRuntimeException {
+		env.printMessage("version: "
+				+ grisu.jcommons.utils.Version.get("gricli"));
 		env.printMessage("grisu frontend version: "
 				+ grisu.jcommons.utils.Version.get("grisu-client"));
 		env.printMessage("grisu backend: "

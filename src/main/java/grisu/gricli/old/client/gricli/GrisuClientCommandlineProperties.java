@@ -14,11 +14,13 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 
-	static final Logger myLogger = Logger.getLogger(Gricli.class.getName());
+	static final Logger myLogger = LoggerFactory.getLogger(Gricli.class
+			.getName());
 
 	// common options
 	public final static String CONFIG_FILE_PATH_OPTION = "config";
@@ -60,23 +62,29 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 	// option with long name, short name, no arguments
 	private static Option createOption(String longName, String shortName,
 			String description) {
-		OptionBuilder.withLongOpt(longName).withDescription(description);
+		OptionBuilder.withLongOpt(longName);
+		OptionBuilder.withDescription(description);
 		return OptionBuilder.create(shortName);
 	}
 
 	// option with long name, has arguments
 	private static Option createOptionWithArg(String longName,
 			String description) {
-		return OptionBuilder.withArgName(longName).hasArg()
-				.withLongOpt(longName).withDescription(description).create();
+		OptionBuilder.withArgName(longName);
+		OptionBuilder.hasArg();
+		OptionBuilder.withLongOpt(longName);
+		OptionBuilder.withDescription(description);
+		return OptionBuilder.create();
 	}
 
 	// option with long name,short name and argument
 	private static Option createOptionWithArg(String longName,
 			String shortName, String description) {
-		return OptionBuilder.withArgName(longName).hasArg()
-				.withLongOpt(longName).withDescription(description)
-				.create(shortName);
+		OptionBuilder.withArgName(longName);
+		OptionBuilder.hasArg();
+		OptionBuilder.withLongOpt(longName);
+		OptionBuilder.withDescription(description);
+		return OptionBuilder.create(shortName);
 	}
 
 	private static Options getOptions() {
@@ -455,7 +463,7 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 			this.configuration = GrisuClientFileConfiguration
 					.getConfiguration(line
 							.getOptionValue(CONFIG_FILE_PATH_OPTION));
-			myLogger.debug(configuration);
+			// myLogger.debug(configuration.);
 		} catch (final ConfigurationException ex) {
 			throw new RuntimeException(ex);
 		}
@@ -516,7 +524,7 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 			this.configuration = GrisuClientFileConfiguration
 					.getConfiguration(line
 							.getOptionValue(CONFIG_FILE_PATH_OPTION));
-			myLogger.debug(configuration);
+			// myLogger.debug(configuration);
 		} catch (final ConfigurationException ex) {
 			throw new RuntimeException(ex);
 		}
@@ -538,7 +546,7 @@ public class GrisuClientCommandlineProperties implements GrisuClientProperties {
 
 		} catch (final NumberFormatException e) {
 			System.err
-					.println("Please use an integer for the recheck interval time");
+			.println("Please use an integer for the recheck interval time");
 			formatter.printHelp("grisu-client", this.options);
 			System.exit(1);
 		}

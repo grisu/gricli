@@ -5,22 +5,19 @@ import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 
 /**
- * add value to  list
+ * add value to list
  */
-public class ClearCacheCommand implements
-GricliCommand {
+public class ClearCacheCommand implements GricliCommand {
 
-
-
-	@SyntaxDescription(command={"user","clearCache"},
- arguments = {})
-			public ClearCacheCommand() {
+	@SyntaxDescription(command = { "user", "clearCache" }, arguments = {})
+	public ClearCacheCommand() {
 
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
-		env.getServiceInterface().setUserProperty(Constants.CLEAR_MOUNTPOINT_CACHE, null);
+			throws GricliRuntimeException {
+		env.getServiceInterface().setUserProperty(
+				Constants.CLEAR_MOUNTPOINT_CACHE, null);
 		return env;
 	}
 
