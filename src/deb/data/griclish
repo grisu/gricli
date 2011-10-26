@@ -1,0 +1,6 @@
+#!/bin/bash
+
+unset DISPLAY
+JAVA_OPTS="-Djava.awt.headless=true -Xms64m -Xmx64m"
+java ${JAVA_OPTS} -jar /usr/local/gricli/gricli-binary.jar $@
+
