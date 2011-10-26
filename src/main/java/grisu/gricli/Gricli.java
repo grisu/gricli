@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.UUID;
+import java.util.Date;
 import java.util.logging.Level;
 
 import jline.ArgumentCompletor;
@@ -179,8 +179,10 @@ public class Gricli {
 
 		Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
 
-		MDC.put("session", UUID.randomUUID().toString());
-		MDC.put("local_user", System.getProperty("user.name"));
+		MDC.put("session",
+				System.getProperty("user.name") + "_" + new Date().getTime());
+
+		// MDC.put("local_user", System.getProperty("user.name"));
 		MDC.put("gricli-version", Version.get("gricli"));
 
 		if (!LocalProxy.validGridProxyExists()) {

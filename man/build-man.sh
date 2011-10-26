@@ -101,3 +101,6 @@ echo 'The Gricli source code and all documentation may be downloaded from
 <http://github.com/grisu/gricli>.' >> $USAGE_FILE
 
 pandoc -s -w man $USAGE_FILE -o $GRICLI_DIR/man/gricli.1
+
+mkdir -p $GRICLI_DIR/target
+cp $GRICLI_DIR/man/gricli.1 $GRICLI_DIR/target/gricli.1

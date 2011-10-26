@@ -310,7 +310,7 @@
 
 		<!-- This profile creates/updates man and USAGE.md page, needs pandoc installed -->
 		<profile>
-			<id>doc</id>
+			<id>man</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -319,6 +319,8 @@
 						<version>1.1</version>
 						<executions>
 							<execution>
+								<id>Man page generation</id>
+								<phase>compile</phase>
 								<goals>
 									<goal>exec</goal>
 								</goals>
@@ -340,6 +342,84 @@
 
 		</profile>
 
+
+		<profile>
+			<id>deb</id>
+			<!-- <activation> -->
+			<!-- <property> -->
+			<!-- <name>BUILD_NUMBER</name> -->
+			<!-- </property> -->
+			<!-- </activation> -->
+
+			<build>
+				<plugins>
+
+					<plugin>
+						<artifactId>jdeb</artifactId>
+						<groupId>org.vafer</groupId>
+						<version>0.9-nz</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>jdeb</goal>
+								</goals>
+								<configuration>
+									<changesIn>CHANGES.txt</changesIn>
+									<deb>[[buildDir]]/gricli.deb</deb>
+									<!-- <installDir>/opt/grisu</installDir> -->
+									<dataSet>
+										<data>
+											<src>${project.build.directory}/gricli-binary.jar</src>
+											<type>file</type>
+											<mapper>
+												<type>perm</type>
+												<prefix>/usr/local/gricli/</prefix>
+												<user>root</user>
+												<group>root</group>
+											</mapper>
+										</data>
+										<data>
+											<src>${project.basedir}/src/deb/data/griclish</src>
+											<type>file</type>
+											<mapper>
+												<type>perm</type>
+												<prefix>/usr/bin/</prefix>
+												<user>root</user>
+												<group>root</group>
+												<filemode>755</filemode>
+											</mapper>
+										</data>
+										<data>
+											<src>${project.basedir}/src/deb/data/bcprov.jar</src>
+											<type>file</type>
+											<mapper>
+												<type>perm</type>
+												<prefix>/usr/local/gricli/</prefix>
+												<user>root</user>
+												<group>root</group>
+											</mapper>
+										</data>
+										<data>
+											<src>${project.basedir}/target/gricli.1</src>
+											<type>file</type>
+											<mapper>
+												<type>perm</type>
+												<prefix>/usr/share/man/man1/</prefix>
+												<user>root</user>
+												<group>root</group>
+											</mapper>
+										</data>
+									</dataSet>
+
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+
+		</profile>
 	</profiles>
 
 </project>
