@@ -37,6 +37,25 @@
 		</repository>
 	</repositories>
 
+	<pluginRepositories>
+		<pluginRepository>
+			<id>bestgrid plugin</id>
+			<url>http://code.ceres.auckland.ac.nz/nexus/content/groups/public/</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>bestgrid plugin Snapshots</id>
+			<url>http://code.ceres.auckland.ac.nz/nexus/content/groups/public-snapshots/</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
 	<distributionManagement>
 		<repository>
 			<name>BeSTGRID Releases Repository</name>
