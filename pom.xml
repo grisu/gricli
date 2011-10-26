@@ -450,7 +450,7 @@
 							<mappings>
 								<mapping>
 									<directory>/usr/local/gricli</directory>
-									<filemode>440</filemode>
+									<filemode>744</filemode>
 									<username>root</username>
 									<groupname>root</groupname>
 									<sources>
