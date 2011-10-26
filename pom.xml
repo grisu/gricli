@@ -393,7 +393,7 @@
 											<type>file</type>
 											<mapper>
 												<type>perm</type>
-												<prefix>/usr/local/gricli/</prefix>
+												<prefix>/usr/local/grisu/</prefix>
 												<user>root</user>
 												<group>root</group>
 											</mapper>
@@ -414,7 +414,7 @@
 											<type>file</type>
 											<mapper>
 												<type>perm</type>
-												<prefix>/usr/local/gricli/</prefix>
+												<prefix>/usr/local/grisu/</prefix>
 												<user>root</user>
 												<group>root</group>
 											</mapper>
@@ -468,7 +468,7 @@
 							<!-- </defineStatements> -->
 							<mappings>
 								<mapping>
-									<directory>/usr/local/gricli</directory>
+									<directory>/usr/local/grisu</directory>
 									<filemode>755</filemode>
 									<username>root</username>
 									<groupname>root</groupname>
