@@ -14,6 +14,7 @@ TOPICS_DIR=$GRICLI_DIR/src/main/resources/help/topics
 
 USAGE_FILE=$GRICLI_DIR/USAGE.md
 
+rm $USAGE_FILE
 cat $GRICLI_DIR/man/manpage-template.md > $USAGE_FILE
 
 echo "# GLOBALS" >> $USAGE_FILE
