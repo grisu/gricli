@@ -420,6 +420,90 @@
 			</build>
 
 		</profile>
+		<profile>
+			<id>rpm</id>
+		   <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>rpm-maven-plugin</artifactId>
+                <version>2.1-alpha-1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>rpm</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <copyright>2011, University of Auckland</copyright>
+                    <distribution>Grisu</distribution>
+                    <group>Application/Other</group>
+<!--                     <icon>src/main/resources/icon.gif</icon> -->
+                    <packager>Markus Binsteiner</packager>
+                    <prefix>/usr/local</prefix>
+<!--                     <version>0.7-SNAPSHOT</version> -->
+<!--                     <changelogFile>src/changelog</changelogFile> -->
+<!--                     <defineStatements> -->
+<!--                        <defineStatement>_unpackaged_files_terminate_build 0</defineStatement> -->
+<!--                     </defineStatements> -->
+                    <mappings>
+                        <mapping>
+                            <directory>/usr/local/gricli</directory>
+                            <filemode>440</filemode>
+                            <username>root</username>
+                            <groupname>root</groupname>
+                            <sources>
+                                <source>
+                                    <location>target/gricli-binary.jar</location>
+                                </source>
+                                <source>
+                                    <location>src/deb/data/bcprov.jar</location>
+                                </source>
+                            </sources>
+                        </mapping>
+                        <mapping>
+                            <directory>/usr/bin</directory>
+                            <documentation>true</documentation>
+                            <filemode>755</filemode>
+                            <username>root</username>
+                            <groupname>root</groupname>
+                            <sources>
+                                <source>
+                                    <location>src/deb/data/griclish</location>
+                                </source>
+                            </sources>
+                        </mapping>
+<!--                         <mapping>
+                            <directory>/usr/share/man/man1</directory>
+                            <filemode>744</filemode>
+                            <username>root</username>
+                            <groupname>root</groupname>
+                            <sources>
+                                <source>
+                                    <location>target/gricli.1</location>
+                                </source>
+                            </sources>
+                        </mapping> -->
+                    </mappings>
+                    <preinstallScriptlet>
+                        <script>echo "Installing Gricli..."</script>
+                    </preinstallScriptlet>
+<!--                     <postinstallScriptlet>
+                        <scriptFile>src/main/scripts/postinstall</scriptFile>
+                        <fileEncoding>utf-8</fileEncoding>
+                    </postinstallScriptlet>
+                    <preremoveScriptlet>
+                        <scriptFile>src/main/scripts/preremove</scriptFile>
+                        <fileEncoding>utf-8</fileEncoding>
+                    </preremoveScriptlet>-->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+ 
+		
+		</profile>
 	</profiles>
 
 </project>
