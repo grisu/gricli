@@ -10,6 +10,7 @@ import grisu.model.dto.DtoJob;
 import grisu.model.dto.GridFile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,7 +34,10 @@ public class CompletionCacheImpl implements CompletionCache {
 	private final GricliEnvironment env;
 	private final GrisuRegistry reg;
 
-	private String[] fqans = new String[] { "*** Loading...", "...try again***" };
+	private static final String[] LOADING_VOS = new String[] {
+		"*** Loading...", "...try again***" };
+
+	private String[] fqans = LOADING_VOS;
 	private String[] applications = new String[] { "*** Loading...",
 	"...try again***" };
 
@@ -57,9 +61,7 @@ public class CompletionCacheImpl implements CompletionCache {
 		Thread t2 = new Thread() {
 			@Override
 			public void run() {
-				final String[] fqans = CompletionCacheImpl.this.reg
-						.getUserEnvironmentManager().getAllAvailableFqans(true);
-				CompletionCacheImpl.this.fqans = fqans;
+				final String[] fqans = getAllFqans();
 				myLogger.debug("All vos loaded for completion");
 				for (final String fqan : fqans) {
 					getAllQueuesForFqan(fqan);
@@ -122,7 +124,12 @@ public class CompletionCacheImpl implements CompletionCache {
 	 * 
 	 * @see grisu.gricli.completors.CompletionCache#getAllFqans()
 	 */
-	public String[] getAllFqans() {
+	public synchronized String[] getAllFqans() {
+		if ((fqans == null) || Arrays.equals(fqans, LOADING_VOS)) {
+			fqans = CompletionCacheImpl.this.reg.getUserEnvironmentManager()
+					.getAllAvailableFqans(true);
+
+		}
 		return fqans;
 	}
 

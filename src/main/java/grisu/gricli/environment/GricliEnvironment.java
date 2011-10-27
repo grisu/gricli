@@ -74,6 +74,10 @@ public class GricliEnvironment {
 			@Override
 			public void set(String group) throws GricliSetValueException {
 				if (validate) {
+					// this is a bit hairy since you shouldn't actually rely on
+					// completion cache
+					// to be populated. I changed implementation for now, so it
+					// blocks if list of fqans is not loaded yet...
 					if (Gricli.completionCache.getAllFqans().length == 0) {
 						super.set(group);
 						return;
