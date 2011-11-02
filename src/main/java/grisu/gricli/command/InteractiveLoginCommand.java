@@ -51,6 +51,11 @@ public class InteractiveLoginCommand implements GricliCommand {
 		// sc.execute(env);
 		// CliHelpers.setIndeterminateProgress(false);
 
+		String[] fqans = cc.getAllFqans();
+		if (fqans.length == 0) {
+			env.printMessage("You don't seem to be a member of any supported groups so you probably won't be able to access any resources. Please contact support.");
+		}
+
 		return env;
 	}
 

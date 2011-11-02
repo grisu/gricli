@@ -52,8 +52,12 @@ public class CompletionCacheImpl implements CompletionCache {
 		Thread t = new Thread() {
 			@Override
 			public void run() {
-				getAllQueues();
-				myLogger.debug("All queues loaded for completion");
+				try {
+					getAllQueues();
+					myLogger.debug("All queues loaded for completion");
+				} catch (Exception e) {
+					myLogger.error("Can't load queues.", e);
+				}
 			}
 		};
 		t.setName("getAllQueuesBackgroundThread");
