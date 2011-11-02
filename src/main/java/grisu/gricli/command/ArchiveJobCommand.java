@@ -45,7 +45,7 @@ public class ArchiveJobCommand implements GricliCommand {
 				StatusObject so = null;
 				try {
 					so = StatusObject.waitForActionToFinish(si, handle, 2,
-							true, true);
+ true);
 					CliHelpers.setIndeterminateProgress("Job archived to: "
 							+ handle, false);
 				} catch (final Exception e) {

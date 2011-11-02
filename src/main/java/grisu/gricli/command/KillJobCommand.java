@@ -55,7 +55,7 @@ public class KillJobCommand implements GricliCommand, StatusObject.Listener {
 				StatusObject so = null;
 				try {
 					so = StatusObject.waitForActionToFinish(si, handle, 2,
-							true, true);
+ true);
 				} catch (final Exception e) {
 					throw new GricliRuntimeException(e.getLocalizedMessage());
 				}
@@ -81,7 +81,7 @@ public class KillJobCommand implements GricliCommand, StatusObject.Listener {
 			final StatusObject so = new StatusObject(si, handle);
 			try {
 				so.addListener(this);
-				so.waitForActionToFinish(2, false, true);
+				so.waitForActionToFinish(2, false);
 				so.removeListener(this);
 				CliHelpers.setProgress(no, no);
 			} catch (final Exception e) {
