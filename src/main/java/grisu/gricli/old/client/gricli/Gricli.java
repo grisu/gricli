@@ -8,8 +8,10 @@ import grisu.control.exceptions.NoValidCredentialException;
 import grisu.control.exceptions.ServiceInterfaceException;
 import grisu.frontend.control.login.LoginException;
 import grisu.frontend.control.login.LoginManager;
-import grisu.frontend.control.login.LoginParams;
 import grisu.utils.SeveralStringHelpers;
+import grith.jgrith.Credential;
+import grith.jgrith.CredentialFactory;
+import grith.jgrith.control.LoginParams;
 
 import java.io.File;
 import java.io.IOException;
@@ -167,7 +169,7 @@ public class Gricli {
 			final char[] password = consoleReader.readLine(
 					"Please enter your myproxy password: ", new Character('*'))
 					.toCharArray();
-			login(clientProperties.getMyProxyUsername(), password);
+			myproxyLogin(clientProperties.getMyProxyUsername(), password);
 		}
 
 		jobProperties = new CommandlineProperties(serviceInterface,
@@ -474,7 +476,28 @@ public class Gricli {
 		}
 	}
 
-	private void login(String username, char[] password)
+	private void loginWithShibboleth(String username, String idp) {
+		try {
+			final ConsoleReader consoleReader = new ConsoleReader();
+			System.out.println(clientProperties.getServiceInterfaceUrl());
+			final char[] password = consoleReader.readLine(
+					"Please enter shibboleth password: ", new Character('*'))
+					.toCharArray();
+
+			Credential c = CredentialFactory.createFromSlcs(null, idp,
+					username, password);
+
+			serviceInterface = LoginManager.login(c,
+					clientProperties.getServiceInterfaceUrl());
+
+		} catch (final IOException ie) {
+			throw new RuntimeException(ie);
+		} catch (final LoginException le) {
+			throw new RuntimeException(le);
+		}
+	}
+
+	private void myproxyLogin(String username, char[] password)
 			throws ServiceInterfaceException, LoginException {
 
 		if (verbose) {
@@ -485,30 +508,13 @@ public class Gricli {
 		final LoginParams loginParams = new LoginParams(
 				clientProperties.getServiceInterfaceUrl(), username, password,
 				DEFAULT_MYPROXY_SERVER, DEFAULT_MYPROXY_PORT);
-		serviceInterface = LoginManager.login(null, null, null, null,
-				loginParams, false);
+
+		serviceInterface = LoginManager.myProxyLogin(username, password, clientProperties.getServiceInterfaceUrl());
 
 		if (verbose) {
 			System.out.println("Login successful.");
 		}
 
-	}
-
-	private void loginWithShibboleth(String username, String idp) {
-		try {
-			final ConsoleReader consoleReader = new ConsoleReader();
-			System.out.println(clientProperties.getServiceInterfaceUrl());
-			final char[] password = consoleReader.readLine(
-					"Please enter shibboleth password: ", new Character('*'))
-					.toCharArray();
-			System.out.println(username);
-			LoginManager.shiblogin(username, password, idp,
-					clientProperties.getServiceInterfaceUrl(), true);
-		} catch (final IOException ie) {
-			throw new RuntimeException(ie);
-		} catch (final LoginException le) {
-			throw new RuntimeException(le);
-		}
 	}
 
 	/**

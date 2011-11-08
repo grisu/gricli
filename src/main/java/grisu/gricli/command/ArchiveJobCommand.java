@@ -4,13 +4,13 @@ import grisu.control.ServiceInterface;
 import grisu.control.exceptions.JobPropertiesException;
 import grisu.control.exceptions.NoSuchJobException;
 import grisu.control.exceptions.RemoteFileSystemException;
-import grisu.frontend.view.cli.CliHelpers;
 import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.util.ServiceInterfaceUtils;
 import grisu.jcommons.constants.Constants;
+import grisu.jcommons.utils.CliHelpers;
 import grisu.model.status.StatusObject;
 
 import java.util.List;

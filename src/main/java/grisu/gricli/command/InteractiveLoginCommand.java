@@ -84,18 +84,18 @@ public class InteractiveLoginCommand implements GricliCommand {
 		ServiceInterface si;
 		try {
 			if (StringUtils.isBlank(username) && !x509) {
-				si = LoginManager.loginCommandline(backend);
+				si = LoginManager.loginCommandline(backend, true);
 			} else {
 				if (x509) {
-					si = LoginManager.loginCommandlineX509cert(backend);
+					si = LoginManager.loginCommandlineX509cert(backend, true);
 				} else if (StringUtils.isBlank(idp)
 						&& StringUtils.isNotBlank(username)) {
-					si = LoginManager
-							.loginCommandlineMyProxy(backend, username);
+					si = LoginManager.loginCommandlineMyProxy(backend,
+							username, true);
 
 				} else if (StringUtils.isNotBlank(username)) {
 					si = LoginManager.loginCommandlineShibboleth(backend,
-							username, idp);
+							username, idp, true);
 				} else {
 					throw new GricliRuntimeException(
 							"Could not determine which login method to use.");
