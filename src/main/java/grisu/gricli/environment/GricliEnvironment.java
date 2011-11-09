@@ -10,6 +10,8 @@ import grisu.jcommons.constants.Constants;
 import grisu.model.GrisuRegistry;
 import grisu.model.GrisuRegistryManager;
 import grisu.model.dto.GridFile;
+import grith.jgrith.Credential;
+import grith.jgrith.CredentialListener;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -26,7 +28,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GricliEnvironment {
+public class GricliEnvironment implements CredentialListener {
 
 	static final Logger myLogger = LoggerFactory
 			.getLogger(GricliEnvironment.class);
@@ -42,6 +44,8 @@ public class GricliEnvironment {
 	private ServiceInterface si;
 
 	private GrisuRegistry reg;
+
+	private boolean credentialAboutToExpire = false;
 
 	private String siUrl;
 
@@ -203,6 +207,12 @@ public class GricliEnvironment {
 		this.files.setPersistent(false);
 		this.env = new EnvironmentVar("env");
 		this.env.setPersistent(false);
+	}
+
+	public void credentialAboutToExpire(Credential cred) {
+
+		this.credentialAboutToExpire = true;
+
 	}
 
 	public String getCurrentAbsoluteDirectory() {
@@ -378,6 +388,7 @@ public class GricliEnvironment {
 	public void setServiceInterface(ServiceInterface si) {
 		this.si = si;
 		this.reg = GrisuRegistryManager.getDefault(si);
+		this.reg.getCredential().fireCredentialExpiryReminder(this, 3600 * 12);
 	}
 
 	public void setServiceInterfaceUrl(String siUrl) {
