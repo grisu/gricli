@@ -25,6 +25,7 @@ public class InteractiveLoginCommand implements GricliCommand {
 				true);
 		env.setServiceInterface(si);
 
+		String[] fqans = null;
 		try {
 			// setting up completion cache, loads some stuff in the background
 			// too...
@@ -54,16 +55,17 @@ public class InteractiveLoginCommand implements GricliCommand {
 			// StatusCommand sc = new StatusCommand();
 			// sc.execute(env);
 			// CliHelpers.setIndeterminateProgress(false);
+			CliHelpers.setIndeterminateProgress(
+					"Checking group memberships...", true);
+			fqans = cc.getAllFqans();
 
-			String[] fqans = cc.getAllFqans();
-			if (fqans.length == 0) {
-				env.printMessage("You don't seem to be a member of any supported groups so you probably won't be able to access any resources. Please contact support.");
-			}
 		} finally {
 			CliHelpers.setIndeterminateProgress(false);
 			env.printMessage("Logged in.\n");
 		}
-
+		if ((fqans != null) && (fqans.length == 0)) {
+			env.printMessage("You don't seem to be a member of any supported groups so you probably won't be able to access any resources. Please contact support.");
+		}
 		return env;
 	}
 
@@ -112,6 +114,7 @@ public class InteractiveLoginCommand implements GricliCommand {
 		} catch (final LoginException ex) {
 			throw new GricliRuntimeException(ex);
 		}
+
 
 		return login(env, si);
 

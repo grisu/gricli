@@ -1,6 +1,7 @@
 <configuration>
 
  <logger name="grisu" level="debug"/>
+ <logger name="grith" level="debug"/>
 
 
   <appender name="FILE" class="ch.qos.logback.core.FileAppender">

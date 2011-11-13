@@ -82,7 +82,7 @@ public class GricliCommandFactory {
 
 		// other commands
 		f.add(ExecCommand.class);
-
+		f.add(RefreshProxyCommand.class);
 		f.add(ViewCommand.class);
 
 		try {
