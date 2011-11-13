@@ -8,7 +8,7 @@ import java.io.File;
 
 public class LogoutCommand implements GricliCommand {
 
-	@SyntaxDescription(command = { "destroy", "proxy" })
+	@SyntaxDescription(command = { "close", "session" })
 	public LogoutCommand() {
 		super();
 	}
