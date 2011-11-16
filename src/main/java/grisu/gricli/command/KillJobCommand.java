@@ -39,11 +39,13 @@ public class KillJobCommand implements GricliCommand, StatusObject.Listener {
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
+		String cmd = "kill";
+		if (clean) {
+			cmd = "clean";
+		}
+
 		if (deprecated) {
-			String cmd = "kill";
-			if (clean) {
-				cmd = "clean";
-			}
+
 			env.printMessage("\""
 					+ cmd
 					+ " jobs\" command is depreacted. Please use \""
@@ -53,6 +55,13 @@ public class KillJobCommand implements GricliCommand, StatusObject.Listener {
 					" \"help "
 					+ cmd + "\" job");
 			return env;
+		}
+
+		if ((jobnames == null) || (jobnames.length == 0)) {
+			env.printError("Can't execute " + cmd
+					+ " command. Please provide at least one jobname.");
+			return env;
+
 		}
 
 		final ServiceInterface si = env.getServiceInterface();
@@ -67,7 +76,11 @@ public class KillJobCommand implements GricliCommand, StatusObject.Listener {
 		String jobsString = "jobs";
 		if (no == 1) {
 			jobsString = "job";
+		} else if (no == 0) {
+			env.printMessage("No jobname matched provided argument(s). Nothing to do...");
+			return env;
 		}
+
 		if (clean) {
 			env.printMessage("Cleaning " + no + " " + jobsString + "...");
 		} else {
