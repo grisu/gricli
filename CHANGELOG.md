@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.7
+---
+
+* "kill/clean jobs" commands now deprecated. "kill/clean job [list of jobnames/globs]" is used insted. Supports globs completion.
+
+
 0.6
 ----
 
