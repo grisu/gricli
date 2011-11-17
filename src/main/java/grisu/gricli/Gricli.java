@@ -8,6 +8,7 @@ import grisu.frontend.control.login.LoginManager;
 import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.GricliCommandFactory;
 import grisu.gricli.command.InteractiveLoginCommand;
+import grisu.gricli.command.LocalLoginCommand;
 import grisu.gricli.command.RefreshProxyCommand;
 import grisu.gricli.command.RunCommand;
 import grisu.gricli.completors.CompletionCache;
@@ -173,8 +174,13 @@ public class Gricli {
 			boolean x509, String username, String idp) {
 
 		try {
-			new InteractiveLoginCommand(backend, x509, username, idp)
-			.execute(env);
+			GricliCommand login = null;
+			if (System.console() != null){
+				login =  new InteractiveLoginCommand(backend, x509, username, idp);
+			} else {
+				login = new LocalLoginCommand(backend);
+			}
+			login.execute(env);
 			try {
 				final String dn = env.getServiceInterface().getDN();
 				MDC.put("dn", dn);
