@@ -94,7 +94,9 @@ public class InteractiveLoginCommand implements GricliCommand {
 		ServiceInterface si;
 		try {
 			if (StringUtils.isBlank(username) && !x509) {
-				si = LoginManager.loginCommandline(backend, true);
+				si = LoginManager.loginCommandline(backend, true,
+						Gricli.MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST);
+
 			} else {
 				if (x509) {
 					si = LoginManager.loginCommandlineX509cert(backend, true);

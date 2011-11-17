@@ -4,9 +4,11 @@ import static grisu.gricli.GricliExitStatus.LOGIN;
 import static grisu.gricli.GricliExitStatus.RUNTIME;
 import static grisu.gricli.GricliExitStatus.SUCCESS;
 import static grisu.gricli.GricliExitStatus.SYNTAX;
+import grisu.frontend.control.login.LoginManager;
 import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.GricliCommandFactory;
 import grisu.gricli.command.InteractiveLoginCommand;
+import grisu.gricli.command.RefreshProxyCommand;
 import grisu.gricli.command.RunCommand;
 import grisu.gricli.completors.CompletionCache;
 import grisu.gricli.completors.DummyCompletionCache;
@@ -77,6 +79,8 @@ public class Gricli {
 
 	static private GricliExitStatus exitStatus = SUCCESS;
 
+	public static final int MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST = 3600 * 24 * 3;
+
 	private static void executionLoop() throws IOException {
 
 		if (System.console() == null) {
@@ -102,6 +106,21 @@ public class Gricli {
 			for (final String c : commandsOnOneLine) {
 				runCommand(GricliTokenizer.tokenize(c),
 						SINGLETON_COMMANDFACTORY, env);
+			}
+
+			// check whether proxy needs renewal
+			if (System.console() != null) {
+				if (env.credentialAboutToExpire()) {
+
+					env.printMessage("Your session lifetime is below the configured threshold. Plese enter your login details below in order to renew it.");
+
+					try {
+						new RefreshProxyCommand().execute(env);
+					} catch (GricliRuntimeException e) {
+						env.printError(e.getLocalizedMessage());
+					}
+
+				}
 			}
 		}
 	}
@@ -185,7 +204,10 @@ public class Gricli {
 		// MDC.put("local_user", System.getProperty("user.name"));
 		MDC.put("gricli-version", Version.get("gricli"));
 
-		if (!LocalProxy.validGridProxyExists()) {
+		LoginManager.initEnvironment();
+
+		if (!LocalProxy
+				.validGridProxyExists(MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST / 60)) {
 			final Thread t = new Thread() {
 				@Override
 				public void run() {
@@ -197,6 +219,7 @@ public class Gricli {
 					}
 				}
 			};
+			t.setDaemon(true);
 			t.setName("preloadIdpsThread");
 			t.start();
 		}
@@ -207,7 +230,12 @@ public class Gricli {
 			java.util.logging.LogManager.getLogManager().reset();
 			java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);
 
-			final String logback = "/etc/gricli/gricli-logback.xml";
+			String logback = "/etc/gricli/logback.xml";
+
+			if (!new File(logback).exists() && (new File(logback).length() > 0)) {
+				logback = Environment.getGrisuClientDirectory()
+						+ File.separator + "logback.xml";
+			}
 			if (new File(logback).exists()
 					&& (new File(logback).length() > 0)) {
 
@@ -325,6 +353,7 @@ public class Gricli {
 		String[] tokens;
 		while ((tokens = t.nextCommand()) != null) {
 			runCommand(tokens, SINGLETON_COMMANDFACTORY, env);
+
 		}
 	}
 

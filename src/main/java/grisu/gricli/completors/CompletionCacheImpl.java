@@ -61,6 +61,7 @@ public class CompletionCacheImpl implements CompletionCache {
 			}
 		};
 		t.setName("getAllQueuesBackgroundThread");
+		// t.setDaemon(true);
 		t.start();
 		Thread t2 = new Thread() {
 			@Override
@@ -74,6 +75,7 @@ public class CompletionCacheImpl implements CompletionCache {
 			}
 		};
 		t2.setName("groupsAndSublocLoadBackgroundThread");
+		// t2.setDaemon(true);
 		t2.start();
 		Thread t3 = new Thread() {
 			@Override
@@ -91,6 +93,7 @@ public class CompletionCacheImpl implements CompletionCache {
 			}
 		};
 		t3.setName("appInfoLoadBackgroundThread");
+		// t3.setDaemon(true);
 		t3.start();
 
 		Thread t4 = new Thread() {
@@ -101,6 +104,7 @@ public class CompletionCacheImpl implements CompletionCache {
 			}
 		};
 		t4.setName("jobnameLoadBackgroundThread");
+		// t4.setDaemon(true);
 		t4.start();
 		Thread t5 = new Thread() {
 			@Override
@@ -110,6 +114,7 @@ public class CompletionCacheImpl implements CompletionCache {
 			}
 		};
 		t5.setName("siteLoadBackgroundThread");
+		// t5.setDaemon(true);
 		t5.start();
 	}
 

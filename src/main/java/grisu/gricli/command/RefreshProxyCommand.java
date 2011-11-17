@@ -27,6 +27,8 @@ public class RefreshProxyCommand implements GricliCommand {
 			remaining = WalltimeUtils.convertSecondsInHumanReadableString(cred.getRemainingLifetime());
 			env.printMessage("New session lifetime: " + remaining[0] + " "
 					+ remaining[1]);
+
+			env.resetCredentialExpiry();
 		} else {
 			// not renewed
 		}

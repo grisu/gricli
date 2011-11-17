@@ -209,6 +209,10 @@ public class GricliEnvironment implements CredentialListener {
 		this.env.setPersistent(false);
 	}
 
+	public boolean credentialAboutToExpire() {
+		return credentialAboutToExpire;
+	}
+
 	public void credentialAboutToExpire(Credential cred) {
 
 		this.credentialAboutToExpire = true;
@@ -385,10 +389,15 @@ public class GricliEnvironment implements CredentialListener {
 		this.quiet = q;
 	}
 
+	public void resetCredentialExpiry() {
+		this.credentialAboutToExpire = false;
+	}
+
 	public void setServiceInterface(ServiceInterface si) {
 		this.si = si;
 		this.reg = GrisuRegistryManager.getDefault(si);
-		this.reg.getCredential().fireCredentialExpiryReminder(this, 3600 * 12);
+		this.reg.getCredential().fireCredentialExpiryReminder(this,
+				Gricli.MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST);
 	}
 
 	public void setServiceInterfaceUrl(String siUrl) {
