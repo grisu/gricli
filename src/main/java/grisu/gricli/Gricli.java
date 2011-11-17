@@ -206,23 +206,27 @@ public class Gricli {
 
 		LoginManager.initEnvironment();
 
-		if (!LocalProxy
-				.validGridProxyExists(MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST / 60)) {
-			final Thread t = new Thread() {
-				@Override
-				public void run() {
-					try {
-						myLogger.debug("Preloading idps...");
-						SlcsLoginWrapper.getAllIdps();
-					} catch (final Throwable e) {
-						myLogger.error(e.getLocalizedMessage(), e);
-					}
+		final Thread t = new Thread() {
+			@Override
+			public void run() {
+				try {
+					myLogger.debug("Preloading idps...");
+					SlcsLoginWrapper.getAllIdps();
+				} catch (final Throwable e) {
+					myLogger.error(e.getLocalizedMessage(), e);
 				}
-			};
-			t.setDaemon(true);
-			t.setName("preloadIdpsThread");
-			t.start();
+			}
+		};
+		t.setDaemon(true);
+		t.setName("preloadIdpsThread");
+
+		if (LocalProxy
+				.validGridProxyExists(MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST / 60)) {
+			// not that important, still, we want it to load in case of renew
+			// session
+			t.setPriority(Thread.MIN_PRIORITY);
 		}
+		t.start();
 
 		try {
 
