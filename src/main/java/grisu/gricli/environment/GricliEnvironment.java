@@ -355,6 +355,11 @@ public class GricliEnvironment implements CredentialListener {
 		return result;
 	}
 
+	public boolean isTerminalSession() {
+
+		return System.console() != null;
+	}
+
 	public void printError(String message) {
 		myLogger.info("gricli-audit-error username="
 				+ System.getProperty("user.name") + "command=" + message);
