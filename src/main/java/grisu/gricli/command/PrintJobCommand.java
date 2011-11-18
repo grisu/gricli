@@ -7,10 +7,10 @@ import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobPropertiesCompletor;
 import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.environment.GricliEnvironment;
-import grisu.gricli.util.ServiceInterfaceUtils;
 import grisu.jcommons.constants.Constants;
 import grisu.jcommons.constants.JobSubmissionProperty;
 import grisu.model.dto.DtoJob;
+import grisu.utils.ServiceInterfaceUtils;
 import grisu.utils.WalltimeUtils;
 
 import java.text.DateFormat;

@@ -6,9 +6,9 @@ import grisu.frontend.control.clientexceptions.FileTransactionException;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.environment.GricliEnvironment;
-import grisu.gricli.util.ServiceInterfaceUtils;
 import grisu.jcommons.constants.Constants;
 import grisu.model.FileManager;
+import grisu.utils.ServiceInterfaceUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,11 +18,21 @@ import org.apache.commons.lang.StringUtils;
 @SuppressWarnings("restriction")
 public class DownloadJobCommand implements GricliCommand {
 	private final String jobFilter;
-
+	private final String target;
 	@SyntaxDescription(command = { "download", "job" }, arguments = { "jobname" })
 	@AutoComplete(completors = { JobnameCompletor.class })
 	public DownloadJobCommand(String jobFilter) {
 		this.jobFilter = jobFilter;
+		this.target = null;
+	}
+
+	@SyntaxDescription(command = { "download", "job" }, arguments = {
+			"jobname", "target" })
+	@AutoComplete(completors = { JobnameCompletor.class,
+			LocalFolderCompletor.class })
+	public DownloadJobCommand(String jobFilter, String targetDir){
+		this.jobFilter = jobFilter;
+		this.target = targetDir;
 	}
 
 	private void downloadJob(GricliEnvironment env, ServiceInterface si,
@@ -56,8 +66,34 @@ public class DownloadJobCommand implements GricliCommand {
 		boolean hasError = false;
 
 		final ServiceInterface si = env.getServiceInterface();
-		final String normalDirName = StringUtils.replace(env.dir.get()
-				.toString(), "~", System.getProperty("user.home"));
+		String normalDirName = null;
+		if (StringUtils.isBlank(target)) {
+			normalDirName = StringUtils.replace(env.dir.get()
+					.toString(), "~", System.getProperty("user.home"));
+		} else {
+			File targetDir = new File(target);
+			if (targetDir.exists()) {
+				targetDir.mkdirs();
+				if (!targetDir.exists()) {
+					throw new GricliRuntimeException("Can't create target dir "
+							+ target);
+				}
+			}
+			normalDirName = targetDir.getAbsolutePath();
+
+		}
+
+		// check whether one of the target dirs already exits..
+		for (final String jobname : ServiceInterfaceUtils.filterJobNames(si,
+				jobFilter)) {
+			File targetTemp = new File(target, jobname);
+			if (targetTemp.exists()) {
+				throw new GricliRuntimeException("Can't download job '"
+						+ jobname + "': target dir '"
+						+ targetTemp.getAbsolutePath() + "' already exists.");
+			}
+		}
+
 		for (final String jobname : ServiceInterfaceUtils.filterJobNames(si,
 				jobFilter)) {
 
