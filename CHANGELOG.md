@@ -5,7 +5,12 @@ Changelog
 ---
 
 * "kill/clean jobs" commands now deprecated. "kill/clean job [list of jobnames/globs]" is used insted. Supports globs completion.
-
+* "download" and "downloadclean" commands now support optional target directory.
+* "view" command can now list jobdirectories directly ("view job <jobname> <file_relative_to_jobdir>").
+* Changes to login-component, makes renewal of proxy within gricli possible.
+* Notification when user proxy reaches configured minimum
+* man & markdown USAGE.md pages are created automatically via maven
+* Debian and RedHat packages
 
 0.6
 ----
