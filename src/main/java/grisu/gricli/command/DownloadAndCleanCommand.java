@@ -17,7 +17,7 @@ public class DownloadAndCleanCommand implements GricliCommand {
 		this.target = null;
 	}
 
-	@SyntaxDescription(command = { "downloadandclean", "job" }, arguments = {
+	@SyntaxDescription(command = { "downloadclean", "job" }, arguments = {
 			"jobname", "target" })
 	@AutoComplete(completors = { JobnameCompletor.class,
 			LocalFolderCompletor.class })
