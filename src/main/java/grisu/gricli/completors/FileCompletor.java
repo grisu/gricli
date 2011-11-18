@@ -32,17 +32,21 @@ public class FileCompletor implements Completor {
 	public int complete(String s, int i, List l) {
 
 		if ((displayLocalFiles && Strings.isNullOrEmpty(s))
-				|| ((s != null) && FileManager.isLocal(s))) {
+				|| ((displayLocalFiles) && (s != null) && FileManager
+						.isLocal(s))) {
 			return completeLocalFile(s, i, l);
 		}
 
-		if (s == null) {
+		if ((s == null)
+				|| (ServiceInterface.VIRTUAL_GRID_PROTOCOL_NAME + ":/")
+				.startsWith(s)) {
 			final String temp = ServiceInterface.VIRTUAL_GRID_PROTOCOL_NAME
 					+ "://";
 
 			l.add(temp);
 			return 0;
 		}
+
 
 		final String urlTemp = FileManager.calculateParentUrl(s);
 
