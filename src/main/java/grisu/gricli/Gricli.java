@@ -347,6 +347,7 @@ public class Gricli {
 			shutdown(env);
 			System.exit(exitStatus.getStatus());
 		} catch (final Throwable th) {
+			th.printStackTrace();
 			System.err
 			.println("Something went terribly wrong.  Please check if you have internet connection, and your firewall settings."
 					+ " If you think there is nothing wrong with your connection, send "

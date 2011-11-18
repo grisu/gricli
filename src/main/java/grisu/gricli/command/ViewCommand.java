@@ -4,9 +4,8 @@ import grisu.control.exceptions.NoSuchJobException;
 import grisu.frontend.control.clientexceptions.FileTransactionException;
 import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
-import grisu.gricli.completors.FileCompletor;
 import grisu.gricli.completors.JobDirFileCompletor;
-import grisu.gricli.completors.JobnameCompletor;
+import grisu.gricli.completors.ViewCompletor;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 import grisu.model.FileManager;
@@ -15,36 +14,39 @@ import grisu.model.dto.DtoJob;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.lang.StringUtils;
-import org.python.google.common.io.Files;
-
 import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 
 public class ViewCommand implements GricliCommand {
 
-	private final String filename;
-	private final String jobname;
+	private final String[] job_or_filenames;
 
-	@SyntaxDescription(command = { "view" }, arguments = { "filename" })
-	@AutoComplete(completors = { FileCompletor.class })
-	public ViewCommand(String filename) {
-		this.filename = filename;
-		this.jobname = null;
+	// private final String jobname;
+
+	@SyntaxDescription(command = { "view" }, arguments = { "args" })
+	@AutoComplete(completors = { ViewCompletor.class, JobDirFileCompletor.class })
+	public ViewCommand(String... job_or_filenames) {
+		this.job_or_filenames = job_or_filenames;
+		// this.jobname = null;
 	}
 
-	@SyntaxDescription(command = { "view", "job" }, arguments = { "jobname", "filename" })
-	@AutoComplete(completors = { JobnameCompletor.class,
-			JobDirFileCompletor.class })
-	public ViewCommand(String jobname, String file) {
-		this.jobname = jobname;
-		this.filename = file;
-	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
-		if (StringUtils.isBlank(filename)) {
-			throw new GricliRuntimeException("No file provided.");
+		if ((job_or_filenames == null) || (job_or_filenames.length == 0)) {
+			throw new GricliRuntimeException("No jobname and/or file provided.");
+		}
+
+		String filename = null;
+		String jobname = null;
+		if (job_or_filenames.length == 1) {
+			filename = job_or_filenames[0];
+		} else if (job_or_filenames.length == 2) {
+			filename = job_or_filenames[1];
+			jobname = job_or_filenames[0];
+		} else {
+			throw new GricliRuntimeException("Too many arguments.");
 		}
 
 		String fileToView = null;
@@ -70,10 +72,10 @@ public class ViewCommand implements GricliCommand {
 			String jobdir = DtoJob.getProperty(job, Constants.JOBDIRECTORY_KEY);
 			jobdir = FileManager.ensureTrailingSlash(jobdir);
 
-			fileToView = jobdir + this.filename;
+			fileToView = jobdir + filename;
 
 		} else {
-			fileToView = this.filename;
+			fileToView = filename;
 		}
 
 		final FileManager fm = env.getGrisuRegistry().getFileManager();

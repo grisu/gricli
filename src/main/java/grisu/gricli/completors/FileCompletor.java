@@ -19,10 +19,29 @@ import com.google.common.base.Strings;
 
 public class FileCompletor implements Completor {
 
+	private boolean displayLocalFiles = true;
+
+	public FileCompletor() {
+	}
+
+	// public FileCompletor(boolean displayLocalFiles) {
+	// // prevents the display of local files for empty completion strings
+	// this.displayLocalFiles = displayLocalFiles;
+	// }
+
 	public int complete(String s, int i, List l) {
 
-		if (Strings.isNullOrEmpty(s) || FileManager.isLocal(s)) {
+		if ((displayLocalFiles && Strings.isNullOrEmpty(s))
+				|| ((s != null) && FileManager.isLocal(s))) {
 			return completeLocalFile(s, i, l);
+		}
+
+		if (s == null) {
+			final String temp = ServiceInterface.VIRTUAL_GRID_PROTOCOL_NAME
+					+ "://";
+
+			l.add(temp);
+			return 0;
 		}
 
 		final String urlTemp = FileManager.calculateParentUrl(s);
@@ -65,7 +84,7 @@ public class FileCompletor implements Completor {
 					+ translated.substring(1);
 		} else if (translated.startsWith("~")) {
 			translated = new File(System.getProperty("user.home"))
-					.getParentFile().getAbsolutePath();
+			.getParentFile().getAbsolutePath();
 		} else if (!(translated.startsWith(File.separator))) {
 			translated = new File("").getAbsolutePath() + File.separator
 					+ translated;
@@ -229,6 +248,11 @@ public class FileCompletor implements Completor {
 		final int index = buffer.lastIndexOf("/");
 
 		return index + 1;
+	}
+
+	public void setDisplayLocalFile(boolean display) {
+		this.displayLocalFiles = display;
+
 	}
 
 }
