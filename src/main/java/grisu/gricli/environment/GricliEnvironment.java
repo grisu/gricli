@@ -1,6 +1,7 @@
 package grisu.gricli.environment;
 
 import grisu.control.ServiceInterface;
+import grisu.control.exceptions.StatusException;
 import grisu.frontend.model.job.JobObject;
 import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
@@ -10,6 +11,7 @@ import grisu.jcommons.constants.Constants;
 import grisu.model.GrisuRegistry;
 import grisu.model.GrisuRegistryManager;
 import grisu.model.dto.GridFile;
+import grisu.model.status.StatusObject;
 import grith.jgrith.Credential;
 import grith.jgrith.CredentialListener;
 
@@ -19,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -50,6 +53,12 @@ public class GricliEnvironment implements CredentialListener {
 	private String siUrl;
 
 	private boolean quiet;
+
+	private final List<String> notificationQueue = Collections
+			.synchronizedList(new ArrayList<String>());
+
+
+	public static final int STATUS_RECHECK_INTERVALL = 8;
 
 	public GricliEnvironment() {
 		this.email = new StringVar("email", "");
@@ -209,6 +218,54 @@ public class GricliEnvironment implements CredentialListener {
 		this.env.setPersistent(false);
 	}
 
+	public void addNotification(String msg) {
+		notificationQueue.add(msg);
+	}
+
+	public synchronized void addTaskToMonitor(final String taskDesc,
+			final StatusObject status) {
+
+		Thread t = new Thread() {
+			@Override
+			public void run() {
+				try {
+					status.waitForActionToFinish(STATUS_RECHECK_INTERVALL,
+							false);
+
+					boolean failed = status.getStatus().isFailed();
+					if (!failed) {
+						addNotification(taskDesc + " finished successfully.");
+					} else {
+						String cause = status.getStatus().getErrorCause();
+						if (StringUtils.isBlank(cause)) {
+							cause = "Unknown error.";
+						}
+						addNotification(taskDesc + " failed: " + cause);
+					}
+
+				} catch (StatusException e) {
+					addNotification("Can't find task handle for " + taskDesc);
+				}
+			}
+		};
+
+		t.setDaemon(true);
+		t.setName("client task monitor: " + status.getHandle());
+		t.start();
+
+	}
+
+	public void addTaskToMonitor(String taskDesk, String taskHandle)
+			throws GricliRuntimeException {
+		StatusObject so;
+		try {
+			so = new StatusObject(getServiceInterface(), taskHandle);
+		} catch (LoginRequiredException e) {
+			throw new GricliRuntimeException(e);
+		}
+		addTaskToMonitor(taskDesk, so);
+	}
+
 	public boolean credentialAboutToExpire() {
 		return credentialAboutToExpire;
 	}
@@ -295,6 +352,10 @@ public class GricliEnvironment implements CredentialListener {
 		}
 
 		return job;
+	}
+
+	public List<String> getNotifications() {
+		return notificationQueue;
 	}
 
 	public ServiceInterface getServiceInterface() throws LoginRequiredException {

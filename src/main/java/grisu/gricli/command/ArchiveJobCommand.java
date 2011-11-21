@@ -14,15 +14,22 @@ import grisu.model.status.StatusObject;
 import grisu.utils.ServiceInterfaceUtils;
 
 import java.util.List;
+import java.util.Map;
+
+import org.python.google.common.collect.Lists;
+import org.python.google.common.collect.Maps;
 
 public class ArchiveJobCommand implements GricliCommand {
-	private final String jobFilter;
+	private final String[] jobFilters;
 
-	@SyntaxDescription(command = { "archive", "job" }, arguments = { "jobname" })
+	private boolean async = false;
+
+	@SyntaxDescription(command = { "archive", "job" }, arguments = { "jobnames" })
 	@AutoComplete(completors = { JobnameCompletor.class })
-	public ArchiveJobCommand(String jobFilter) {
-		this.jobFilter = jobFilter;
+	public ArchiveJobCommand(String... jobFilters) {
+		this.jobFilters = jobFilters;
 	}
+
 
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
@@ -30,33 +37,73 @@ public class ArchiveJobCommand implements GricliCommand {
 		si.setUserProperty(Constants.DEFAULT_JOB_ARCHIVE_LOCATION, null);
 		String jobname = null;
 		try {
-			final List<String> jobnames = ServiceInterfaceUtils.filterJobNames(
-					si, jobFilter);
+
+			if ((jobFilters.length > 0)
+					&& jobFilters[jobFilters.length - 1].equals("&")) {
+				async = true;
+			}
+
+			List<String> jobnames = Lists.newArrayList();
+
+			for (String jobFilter : jobFilters) {
+
+				if (!jobFilter.equals("&")) {
+					final List<String> jobnamesTemp = ServiceInterfaceUtils
+							.filterJobNames(si, jobFilter);
+					jobnames.addAll(jobnamesTemp);
+				}
+			}
 			if (jobnames.size() == 0) {
 				env.printError("No valid jobname specified.");
 				return env;
 			}
-			for (final String j : jobnames) {
 
-				CliHelpers.setIndeterminateProgress("Archiving job " + j
-						+ "...", true);
-				jobname = j;
-				final String handle = si.archiveJob(j, null);
-				StatusObject so = null;
-				try {
-					so = StatusObject.waitForActionToFinish(si, handle, 2,
- true);
-					CliHelpers.setIndeterminateProgress("Job archived to: "
-							+ handle, false);
-				} catch (final Exception e) {
-					CliHelpers.setIndeterminateProgress("Archiving failed; "
-							+ e.getLocalizedMessage(), false);
-					throw new GricliRuntimeException(e.getLocalizedMessage());
+			Map<String, String> handles = Maps.newLinkedHashMap();
+
+			try {
+				for (final String j : jobnames) {
+
+					CliHelpers.setIndeterminateProgress("Start archiving job "
+							+ j
+							+ "...", true);
+					jobname = j;
+					final String handle = si.archiveJob(j, null);
+					handles.put(handle, jobname);
+
 				}
-				if (so.getStatus().isFailed()) {
-					env.printError("Archiving of job failed: "
-							+ so.getStatus().getErrorCause());
+			} finally {
+				CliHelpers.setIndeterminateProgress(false);
+			}
+
+			for (String handle : handles.keySet()) {
+				if (async) {
+					env.addTaskToMonitor(
+							"Archiving of job " + handles.get(handle), handle);
+				} else {
+					CliHelpers.setIndeterminateProgress(
+							"Waiting for archiving of job "
+									+ handles.get(handle) + "...", true);
+
+					StatusObject so = null;
+					try {
+						so = StatusObject
+								.waitForActionToFinish(si, handle, GricliEnvironment.STATUS_RECHECK_INTERVALL, true);
+						CliHelpers.setIndeterminateProgress("Job archived to: "
+								+ handle, false);
+					} catch (final Exception e) {
+						CliHelpers.setIndeterminateProgress("Archiving failed; "
+								+ e.getLocalizedMessage(), false);
+						throw new GricliRuntimeException(e.getLocalizedMessage());
+					}
+					if (so.getStatus().isFailed()) {
+						env.printError("Archiving of job failed: "
+								+ so.getStatus().getErrorCause());
+					}
 				}
+			}
+
+			if (async) {
+				env.printMessage("Archiving tasks submitted, running in background...");
 			}
 		} catch (final RemoteFileSystemException ex) {
 			CliHelpers.setIndeterminateProgress(

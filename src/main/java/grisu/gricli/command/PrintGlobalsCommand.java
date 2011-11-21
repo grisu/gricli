@@ -25,7 +25,7 @@ public class PrintGlobalsCommand implements GricliCommand {
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		for (final GricliVar<?> var : env.getVariables()) {
-			if (this.global == null
+			if ((this.global == null)
 					|| FilenameUtils.wildcardMatch(var.getName(), this.global)) {
 				printGlobal(var, env);
 			}

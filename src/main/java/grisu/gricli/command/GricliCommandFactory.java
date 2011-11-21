@@ -84,6 +84,7 @@ public class GricliCommandFactory {
 		f.add(ExecCommand.class);
 		f.add(RefreshProxyCommand.class);
 		f.add(ViewCommand.class);
+		f.add(PrintMessagesCommand.class);
 
 		try {
 			f.init();

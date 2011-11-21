@@ -16,6 +16,8 @@ public class SubmitCommand implements GricliCommand {
 
 	private final String[] args;
 
+	private String submitHandle;
+
 	@SyntaxDescription(command = { "submit" }, arguments = { "commandline" })
 	@AutoComplete(completors = { ExecutablesCompletor.class,
 			InputFileCompletor.class })
@@ -44,11 +46,11 @@ public class SubmitCommand implements GricliCommand {
 
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public GricliEnvironment execute(final GricliEnvironment env)
 			throws GricliRuntimeException {
 		final JobObject job = createJob(env);
 		final String jobname = job.getJobname();
-		System.out.println(" job name is " + jobname);
+		env.printMessage(" job name is " + jobname);
 		Gricli.completionCache.refreshJobnames();
 
 		if (isAsync()) {
@@ -56,13 +58,16 @@ public class SubmitCommand implements GricliCommand {
 				@Override
 				public void run() {
 					try {
-						submit(job);
+						submit(job, false);
+
+						env.addTaskToMonitor("Job submission for job "
+								+ jobname, submitHandle);
 					} catch (final GricliRuntimeException ex) {/* do nothing */
 					}
 				}
 			}.start();
 		} else {
-			submit(job);
+			submit(job, true);
 		}
 
 		return env;
@@ -91,9 +96,10 @@ public class SubmitCommand implements GricliCommand {
 		return "&".equals(this.args[this.args.length - 1]);
 	}
 
-	private void submit(JobObject job) throws GricliRuntimeException {
+	private void submit(JobObject job, boolean wait)
+			throws GricliRuntimeException {
 		try {
-			job.submitJob();
+			submitHandle = job.submitJob(null, wait);
 		} catch (final JobSubmissionException e) {
 			throw new GricliRuntimeException("fail to submit job: "
 					+ e.getMessage(), e);

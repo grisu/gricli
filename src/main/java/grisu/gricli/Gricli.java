@@ -97,7 +97,11 @@ public class Gricli {
 		final ConsoleReader reader = getReader();
 		while (true) {
 
-			final String prompt = getPrompt();
+			String prompt = getPrompt();
+			// check whether there are new notifications for users.
+			if (env.getNotifications().size() > 0) {
+				prompt = "(*" + env.getNotifications().size() + ") " + prompt;
+			}
 			final String line = reader.readLine(prompt);
 
 			if (line == null) {
