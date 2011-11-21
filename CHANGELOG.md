@@ -11,6 +11,7 @@ Changelog
 * Notification when user proxy reaches configured minimum
 * man & markdown USAGE.md pages are created automatically via maven
 * Debian and RedHat packages
+* "kill/clean", "archive" and "submit" commands can now be executed in background using "&" operator
 
 0.6
 ----
