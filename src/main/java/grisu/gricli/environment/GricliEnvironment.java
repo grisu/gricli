@@ -80,7 +80,7 @@ public class GricliEnvironment implements CredentialListener {
 		});
 
 		this.description = new StringVar("description", "gricli job");
-		this.group = new StringVar("group", "/nz") {
+		this.group = new StringVar("group", "/nz/nesi") {
 
 			private boolean validate = false;
 
