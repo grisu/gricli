@@ -25,7 +25,8 @@ public class LocalLoginCommand implements GricliCommand {
 			if (siUrl == null) {
 				siUrl = env.getServiceInterfaceUrl();
 			}
-			final ServiceInterface serviceInterface = LoginManager.login(siUrl);
+			final ServiceInterface serviceInterface = LoginManager
+					.loginCommandline(siUrl);
 
 			return InteractiveLoginCommand.login(env, serviceInterface);
 
