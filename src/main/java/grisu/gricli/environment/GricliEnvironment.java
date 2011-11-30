@@ -346,8 +346,8 @@ public class GricliEnvironment implements CredentialListener {
 		// attach input files
 		final List<String> fs = files.get();
 		for (final String file : fs) {
-			System.out.println("adding input file "
-					+ new GridFile(file).getUrl());
+			// System.out.println("adding input file "
+			// + new GridFile(file).getUrl());
 			job.addInputFileUrl(new GridFile(file).getUrl());
 		}
 
