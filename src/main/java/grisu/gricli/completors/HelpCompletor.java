@@ -13,19 +13,18 @@ import org.python.google.common.collect.Sets;
 import com.google.common.collect.ImmutableSet;
 
 public class HelpCompletor implements Completor {
-	private final Set<String> all = Sets.newTreeSet();
 
 	public static final Set<String> other = ImmutableSet.of("topic", "topics",
 			"command", "commands", "global", "globals", "search");
 
-	public HelpCompletor() {
+	public int complete(String arg0, int arg1, List arg2) {
+
+		Set<String> all = Sets.newTreeSet();
+
 		all.addAll(HelpManager.singleton.getCommands());
 		all.addAll(HelpManager.singleton.getTopics());
 		all.addAll(HelpManager.singleton.getGlobals());
 		all.addAll(other);
-	}
-
-	public int complete(String arg0, int arg1, List arg2) {
 
 		return new SimpleCompletor(all.toArray(new String[] {})).complete(arg0,
 				arg1, arg2);
