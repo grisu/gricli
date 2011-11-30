@@ -2,6 +2,7 @@ package grisu.gricli.command;
 
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.command.help.HelpManager;
+import grisu.gricli.completors.HelpCompletor;
 import grisu.gricli.environment.GricliEnvironment;
 
 import java.util.Arrays;
@@ -21,6 +22,7 @@ public class HelpCommand implements GricliCommand {
 
 	@SyntaxDescription(command={"help"},
 			arguments={"keywords"}, help="prints this help message")
+	@AutoComplete(completors = { HelpCompletor.class })
 	public HelpCommand(String... keywords){
 		this.keywords = keywords;
 	}

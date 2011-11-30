@@ -363,10 +363,7 @@ public class Gricli {
 			env.printError("warning: could not save session");
 		}
 	}
-<<<<<<< HEAD
 
-=======
->>>>>>> 0.6
 
 }
 
