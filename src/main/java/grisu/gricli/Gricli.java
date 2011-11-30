@@ -191,6 +191,7 @@ public class Gricli {
 			} catch (final Exception e) {
 				myLogger.error(e.getLocalizedMessage(), e);
 			}
+
 			return true;
 		} catch (final GricliException ex) {
 			myLogger.error("login exception", ex);
@@ -438,6 +439,7 @@ public class Gricli {
 			env.printError("warning: could not save session");
 		}
 	}
+
 
 }
 
