@@ -61,6 +61,11 @@ public class InteractiveLoginCommand implements GricliCommand {
 
 		} finally {
 			CliHelpers.setIndeterminateProgress(false);
+			try {
+				Thread.sleep(300);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			env.printMessage("Logged in.\n");
 		}
 		if ((fqans != null) && (fqans.length == 0)) {
