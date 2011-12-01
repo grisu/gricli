@@ -190,17 +190,24 @@ public class SubmitCommand implements GricliCommand, PropertyChangeListener {
 
 		try {
 			submitHandle = job.submitJob(null, wait);
-		} catch (final JobSubmissionException e) {
-			throw new GricliRuntimeException("fail to submit job: "
-					+ e.getMessage(), e);
-		} catch (final InterruptedException e) {
-			throw new GricliRuntimeException("jobmission was interrupted: "
-					+ e.getMessage(), e);
-		} finally {
 			if (wait) {
 				job.removePropertyChangeListener(this);
 				CliHelpers.setIndeterminateProgress(false);
 			}
+		} catch (final JobSubmissionException e) {
+			if (wait) {
+				job.removePropertyChangeListener(this);
+				CliHelpers.setIndeterminateProgress(false);
+			}
+			throw new GricliRuntimeException("fail to submit job: "
+					+ e.getMessage(), e);
+		} catch (final InterruptedException e) {
+			if (wait) {
+				job.removePropertyChangeListener(this);
+				CliHelpers.setIndeterminateProgress(false);
+			}
+			throw new GricliRuntimeException("jobmission was interrupted: "
+					+ e.getMessage(), e);
 		}
 	}
 
