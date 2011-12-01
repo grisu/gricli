@@ -488,7 +488,7 @@ public class Gricli {
 					username, password);
 
 			serviceInterface = LoginManager.login(c,
-					clientProperties.getServiceInterfaceUrl());
+					clientProperties.getServiceInterfaceUrl(), true);
 
 		} catch (final IOException ie) {
 			throw new RuntimeException(ie);
@@ -509,7 +509,8 @@ public class Gricli {
 				clientProperties.getServiceInterfaceUrl(), username, password,
 				DEFAULT_MYPROXY_SERVER, DEFAULT_MYPROXY_PORT);
 
-		serviceInterface = LoginManager.myProxyLogin(username, password, clientProperties.getServiceInterfaceUrl());
+		serviceInterface = LoginManager.myProxyLogin(username, password,
+				clientProperties.getServiceInterfaceUrl(), true);
 
 		if (verbose) {
 			System.out.println("Login successful.");
