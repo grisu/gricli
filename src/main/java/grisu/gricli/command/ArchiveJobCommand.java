@@ -9,7 +9,7 @@ import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
-import grisu.jcommons.utils.CliHelpers;
+import grisu.jcommons.view.cli.CliHelpers;
 import grisu.model.status.StatusObject;
 import grisu.utils.ServiceInterfaceUtils;
 

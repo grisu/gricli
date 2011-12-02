@@ -1,6 +1,6 @@
 package grisu.gricli.completors;
 
-import grisu.jcommons.utils.CliHelpers;
+import grisu.jcommons.view.cli.CliHelpers;
 
 import java.util.List;
 

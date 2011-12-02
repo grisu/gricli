@@ -3,7 +3,7 @@ package grisu.gricli.completors;
 import grisu.gricli.Gricli;
 import grisu.gricli.completors.file.StillLoadingException;
 import grisu.jcommons.constants.Constants;
-import grisu.jcommons.utils.CliHelpers;
+import grisu.jcommons.view.cli.CliHelpers;
 import grisu.model.FileManager;
 import grisu.model.dto.DtoJob;
 import grisu.model.dto.GridFile;

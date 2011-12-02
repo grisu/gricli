@@ -16,8 +16,9 @@ import grisu.gricli.completors.DummyCompletionCache;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.environment.GricliVar;
 import grisu.gricli.parser.GricliTokenizer;
-import grisu.jcommons.utils.CliHelpers;
 import grisu.jcommons.utils.Version;
+import grisu.jcommons.view.cli.CliHelpers;
+import grisu.jcommons.view.cli.LineByLineProgressDisplay;
 import grisu.settings.Environment;
 import grith.jgrith.control.SlcsLoginWrapper;
 import grith.jgrith.plainProxy.LocalProxy;
@@ -208,6 +209,8 @@ public class Gricli {
 	public static void main(String[] args) {
 
 		Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
+
+		CliHelpers.setProgressDisplay(new LineByLineProgressDisplay());
 
 		MDC.put("session",
 				System.getProperty("user.name") + "_" + new Date().getTime());

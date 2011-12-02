@@ -10,7 +10,7 @@ import grisu.gricli.completors.CompletionCache;
 import grisu.gricli.completors.CompletionCacheImpl;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
-import grisu.jcommons.utils.CliHelpers;
+import grisu.jcommons.view.cli.CliHelpers;
 import grisu.model.GrisuRegistryManager;
 
 import java.io.File;

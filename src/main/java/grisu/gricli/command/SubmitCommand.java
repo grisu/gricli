@@ -9,7 +9,7 @@ import grisu.gricli.completors.ExecutablesCompletor;
 import grisu.gricli.completors.InputFileCompletor;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
-import grisu.jcommons.utils.CliHelpers;
+import grisu.jcommons.view.cli.CliHelpers;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
