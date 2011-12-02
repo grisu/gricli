@@ -89,7 +89,7 @@ public class SubmitCommand implements GricliCommand, PropertyChangeListener {
 					+ jobname);
 		} else {
 			submit(job, true);
-			env.printMessage("Job submitted, jobname " + jobname);
+			env.printMessage("Job submitted, jobname: " + jobname);
 		}
 
 
