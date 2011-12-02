@@ -89,8 +89,7 @@ public class SubmitCommand implements GricliCommand, PropertyChangeListener {
 			env.printMessage("\tjob name is " + jobname);
 		} else {
 			submit(job, true);
-			env.printMessage("Job submitted.");
-			env.printMessage("\tjob name is " + jobname);
+			env.printMessage("Job submitted, jobname " + jobname);
 		}
 
 
