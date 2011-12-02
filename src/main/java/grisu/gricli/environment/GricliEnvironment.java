@@ -219,7 +219,7 @@ public class GricliEnvironment implements CredentialListener {
 	}
 
 	public void addNotification(String msg) {
-		notificationQueue.add(msg);
+		getNotifications().add(msg);
 	}
 
 	public synchronized void addTaskToMonitor(final String taskDesc,
@@ -354,7 +354,7 @@ public class GricliEnvironment implements CredentialListener {
 		return job;
 	}
 
-	public List<String> getNotifications() {
+	public synchronized List<String> getNotifications() {
 		return notificationQueue;
 	}
 

@@ -99,10 +99,7 @@ public class Gricli {
 		while (true) {
 
 			String prompt = getPrompt();
-			// check whether there are new notifications for users.
-			if (env.getNotifications().size() > 0) {
-				prompt = "(*" + env.getNotifications().size() + ") " + prompt;
-			}
+
 			final String line = reader.readLine(prompt);
 
 			if (line == null) {
@@ -148,14 +145,17 @@ public class Gricli {
 	}
 
 	private static String getPrompt() {
-		final String prompt = env.prompt.get(); /*
-		 * will have to restore this
-		 * function later for (String
-		 * var : env.getGlobalNames()) {
-		 * prompt =
-		 * StringUtils.replace(prompt,
-		 * "${" + var + "}",
-		 * env.get(var));
+		String prompt = env.prompt.get();
+
+		// check whether there are new notifications for users.
+		if (env.getNotifications().size() > 0) {
+			prompt = "(*" + env.getNotifications().size() + ") " + prompt;
+		}
+
+		/*
+		 * will have to restore this function later for (String var :
+		 * env.getGlobalNames()) { prompt = StringUtils.replace(prompt, "${" +
+		 * var + "}", env.get(var));
 		 * 
 		 * }
 		 */
