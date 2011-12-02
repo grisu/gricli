@@ -125,14 +125,13 @@ public class KillJobCommand implements GricliCommand, StatusObject.Listener {
 				env.printError("Killing of job(s) failed: "
 						+ so.getStatus().getErrorCause());
 			}
-			CliHelpers.writeToTerminal("");
 
 
 			if (clean) {
 				Gricli.completionCache.refreshJobnames();
-				env.printMessage("Job(s) cleaned...                                 ");
+				env.printMessage("Job(s) cleaned...");
 			} else {
-				env.printMessage("Job(s) killed...                                  ");
+				env.printMessage("Job(s) killed...");
 			}
 
 		}
