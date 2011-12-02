@@ -85,8 +85,8 @@ public class SubmitCommand implements GricliCommand, PropertyChangeListener {
 					}
 				}
 			}.start();
-			env.printMessage("Submitting job in background...");
-			env.printMessage("\tjob name is " + jobname);
+			env.printMessage("Submitting job in background, jobname: "
+					+ jobname);
 		} else {
 			submit(job, true);
 			env.printMessage("Job submitted, jobname " + jobname);
