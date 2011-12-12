@@ -16,6 +16,7 @@ import grisu.gricli.completors.DummyCompletionCache;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.environment.GricliVar;
 import grisu.gricli.parser.GricliTokenizer;
+import grisu.jcommons.utils.EnvironmentVariableHelpers;
 import grisu.jcommons.utils.Version;
 import grisu.jcommons.view.cli.CliHelpers;
 import grisu.jcommons.view.cli.LineByLineProgressDisplay;
@@ -207,6 +208,8 @@ public class Gricli {
 
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
+
+		EnvironmentVariableHelpers.loadEnvironmentVariablesToSystemProperties();
 
 		Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
 
