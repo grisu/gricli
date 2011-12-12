@@ -116,7 +116,7 @@ public class Gricli {
 			if (System.console() != null) {
 				if (env.credentialAboutToExpire()) {
 
-					env.printMessage("Your session lifetime is below the configured threshold. Plese enter your login details below in order to renew it.");
+					// env.printMessage("Your session lifetime is below the configured threshold. Plese enter your login details below in order to renew it.");
 
 					try {
 						new RefreshProxyCommand().execute(env);

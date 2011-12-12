@@ -2,7 +2,6 @@ package grisu.gricli.command;
 
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.environment.GricliEnvironment;
-import grisu.utils.WalltimeUtils;
 import grith.jgrith.Credential;
 
 public class RefreshProxyCommand implements GricliCommand {
@@ -17,18 +16,18 @@ public class RefreshProxyCommand implements GricliCommand {
 
 		Credential cred = env.getGrisuRegistry().getCredential();
 
-		String[] remaining = WalltimeUtils
-				.convertSecondsInHumanReadableString(cred
-						.getRemainingLifetime());
-		env.printMessage("Old session lifetime: " + remaining[0] + " "
-				+ remaining[1]);
+		// String[] remaining = WalltimeUtils
+		// .convertSecondsInHumanReadableString(cred
+		// .getRemainingLifetime());
+		// env.printMessage("Old session lifetime: " + remaining[0] + " "
+		// + remaining[1]);
 
 		cred.refresh();
 
-		remaining = WalltimeUtils.convertSecondsInHumanReadableString(cred
-				.getRemainingLifetime());
-		env.printMessage("New session lifetime: " + remaining[0] + " "
-				+ remaining[1]);
+		// remaining = WalltimeUtils.convertSecondsInHumanReadableString(cred
+		// .getRemainingLifetime());
+		// env.printMessage("New session lifetime: " + remaining[0] + " "
+		// + remaining[1]);
 
 		env.resetCredentialExpiry();
 
