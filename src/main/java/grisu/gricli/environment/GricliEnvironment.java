@@ -462,7 +462,7 @@ public class GricliEnvironment implements CredentialListener {
 	public void setServiceInterface(ServiceInterface si) {
 		this.si = si;
 		this.reg = GrisuRegistryManager.getDefault(si);
-		this.reg.getCredential().fireCredentialExpiryReminder(this,
+		this.reg.getCredential().addRemainingLifetimeReminder(this,
 				Gricli.MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST);
 	}
 
