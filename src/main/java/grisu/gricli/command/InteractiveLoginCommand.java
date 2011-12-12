@@ -104,11 +104,13 @@ public class InteractiveLoginCommand implements GricliCommand {
 
 			} else {
 				if (x509) {
-					si = LoginManager.loginCommandlineX509cert(backend, true);
+					si = LoginManager.loginCommandlineX509cert(backend,
+							LoginManager.DEFAULT_PROXY_LIFETIME_IN_HOURS, true);
 				} else if (StringUtils.isBlank(idp)
 						&& StringUtils.isNotBlank(username)) {
 					si = LoginManager.loginCommandlineMyProxy(backend,
-							username, true);
+							username,
+							LoginManager.DEFAULT_PROXY_LIFETIME_IN_HOURS, true);
 
 				} else if (StringUtils.isNotBlank(username)) {
 					si = LoginManager.loginCommandlineShibboleth(backend,
