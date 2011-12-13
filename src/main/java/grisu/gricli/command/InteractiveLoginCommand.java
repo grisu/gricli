@@ -100,6 +100,7 @@ public class InteractiveLoginCommand implements GricliCommand {
 		try {
 			if (StringUtils.isBlank(username) && !x509) {
 				si = LoginManager.loginCommandline(backend, true,
+						LoginManager.DEFAULT_PROXY_LIFETIME_IN_HOURS,
 						Gricli.MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST);
 
 			} else {
