@@ -9,9 +9,9 @@ import grisu.control.exceptions.ServiceInterfaceException;
 import grisu.frontend.control.login.LoginException;
 import grisu.frontend.control.login.LoginManager;
 import grisu.utils.SeveralStringHelpers;
-import grith.jgrith.Credential;
-import grith.jgrith.CredentialFactory;
 import grith.jgrith.control.LoginParams;
+import grith.jgrith.credential.Credential;
+import grith.jgrith.credential.CredentialFactory;
 
 import java.io.File;
 import java.io.IOException;

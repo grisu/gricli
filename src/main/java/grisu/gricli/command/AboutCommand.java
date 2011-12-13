@@ -3,7 +3,7 @@ package grisu.gricli.command;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.utils.WalltimeUtils;
-import grith.jgrith.Credential;
+import grith.jgrith.credential.Credential;
 
 public class AboutCommand implements GricliCommand {
 

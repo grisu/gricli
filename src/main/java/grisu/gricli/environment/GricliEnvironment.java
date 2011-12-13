@@ -12,8 +12,8 @@ import grisu.model.GrisuRegistry;
 import grisu.model.GrisuRegistryManager;
 import grisu.model.dto.GridFile;
 import grisu.model.status.StatusObject;
-import grith.jgrith.Credential;
-import grith.jgrith.CredentialListener;
+import grith.jgrith.credential.Credential;
+import grith.jgrith.credential.CredentialListener;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
