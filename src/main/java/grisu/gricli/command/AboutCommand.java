@@ -2,6 +2,8 @@ package grisu.gricli.command;
 
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.environment.GricliEnvironment;
+import grisu.utils.WalltimeUtils;
+import grith.jgrith.Credential;
 
 public class AboutCommand implements GricliCommand {
 
@@ -11,6 +13,20 @@ public class AboutCommand implements GricliCommand {
 
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
+
+		Credential c = env.getGrisuRegistry().getCredential();
+
+		try {
+			int remainingLifetime = c.getRemainingLifetime();
+			String[] remainingString = WalltimeUtils
+					.convertSecondsInHumanReadableString(remainingLifetime);
+			env.printMessage("remaining session lifetime: "
+					+ remainingString[0] + " " + remainingString[1]);
+		} catch (Exception e) {
+			env.printMessage("remaining session lifetime: can't determine ("
+					+ e.getLocalizedMessage() + ")");
+		}
+
 		env.printMessage("version: "
 				+ grisu.jcommons.utils.Version.get("gricli"));
 		env.printMessage("grisu frontend version: "
