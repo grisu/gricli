@@ -12,8 +12,6 @@ import grisu.model.GrisuRegistry;
 import grisu.model.GrisuRegistryManager;
 import grisu.model.dto.GridFile;
 import grisu.model.status.StatusObject;
-import grith.jgrith.credential.Credential;
-import grith.jgrith.credential.CredentialListener;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -31,7 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GricliEnvironment implements CredentialListener {
+public class GricliEnvironment {
 
 	static final Logger myLogger = LoggerFactory
 			.getLogger(GricliEnvironment.class);
@@ -47,8 +45,6 @@ public class GricliEnvironment implements CredentialListener {
 	private ServiceInterface si;
 
 	private GrisuRegistry reg;
-
-	private boolean credentialAboutToExpire = false;
 
 	private String siUrl;
 
@@ -266,16 +262,6 @@ public class GricliEnvironment implements CredentialListener {
 		addTaskToMonitor(taskDesk, so);
 	}
 
-	public boolean credentialAboutToExpire() {
-		return credentialAboutToExpire;
-	}
-
-	public void credentialAboutToExpire(Credential cred) {
-
-		this.credentialAboutToExpire = true;
-
-	}
-
 	public String getCurrentAbsoluteDirectory() {
 		try {
 			final File dir = (File) getVariable("dir").get();
@@ -455,15 +441,10 @@ public class GricliEnvironment implements CredentialListener {
 		this.quiet = q;
 	}
 
-	public void resetCredentialExpiry() {
-		this.credentialAboutToExpire = false;
-	}
 
 	public void setServiceInterface(ServiceInterface si) {
 		this.si = si;
 		this.reg = GrisuRegistryManager.getDefault(si);
-		this.reg.getCredential().addRemainingLifetimeReminder(this,
-				Gricli.MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST);
 	}
 
 	public void setServiceInterfaceUrl(String siUrl) {

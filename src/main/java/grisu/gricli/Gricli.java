@@ -22,6 +22,7 @@ import grisu.jcommons.view.cli.CliHelpers;
 import grisu.jcommons.view.cli.LineByLineProgressDisplay;
 import grisu.settings.Environment;
 import grith.jgrith.control.SlcsLoginWrapper;
+import grith.jgrith.credential.Credential;
 import grith.jgrith.plainProxy.LocalProxy;
 
 import java.io.File;
@@ -114,14 +115,25 @@ public class Gricli {
 
 			// check whether proxy needs renewal
 			if (System.console() != null) {
-				if (env.credentialAboutToExpire()) {
 
-					// env.printMessage("Your session lifetime is below the configured threshold. Plese enter your login details below in order to renew it.");
+				Credential c = env.getGrisuRegistry().getCredential();
 
-					try {
-						new RefreshProxyCommand().execute(env);
-					} catch (GricliRuntimeException e) {
-						env.printError(e.getLocalizedMessage());
+				int remaining = c.getRemainingLifetime();
+
+				if (remaining < MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST) {
+
+					c.autorefresh();
+					remaining = c.getRemainingLifetime();
+
+					if (remaining < MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST) {
+
+						// env.printMessage("Your session lifetime is below the configured threshold. Plese enter your login details below in order to renew it.");
+
+						try {
+							new RefreshProxyCommand().execute(env);
+						} catch (GricliRuntimeException e) {
+							env.printError(e.getLocalizedMessage());
+						}
 					}
 
 				}
