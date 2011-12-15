@@ -485,7 +485,8 @@ public class Gricli {
 					.toCharArray();
 
 			Credential c = CredentialFactory.createFromSlcs(null, idp,
-					username, password);
+					username, password,
+					LoginManager.DEFAULT_PROXY_LIFETIME_IN_HOURS * 3600);
 
 			serviceInterface = LoginManager.login(c,
 					clientProperties.getServiceInterfaceUrl(), true);

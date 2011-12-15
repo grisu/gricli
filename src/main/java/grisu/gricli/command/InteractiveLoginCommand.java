@@ -12,6 +12,7 @@ import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 import grisu.jcommons.view.cli.CliHelpers;
 import grisu.model.GrisuRegistryManager;
+import grith.jgrith.credential.refreshers.CliCredentialRefresher;
 
 import java.io.File;
 
@@ -27,6 +28,12 @@ public class InteractiveLoginCommand implements GricliCommand {
 
 		String[] fqans = null;
 		try {
+			// adding cli credential refresher
+			env.getGrisuRegistry().getCredential()
+			.addCredentialRefreshIUI(new CliCredentialRefresher());
+			env.getGrisuRegistry().getCredential()
+					.setMinimumLifetime(3600 * 24 * 9);
+
 			// setting up completion cache, loads some stuff in the background
 			// too...
 			final CompletionCache cc = new CompletionCacheImpl(env);
