@@ -31,8 +31,11 @@ public class InteractiveLoginCommand implements GricliCommand {
 			// adding cli credential refresher
 			env.getGrisuRegistry().getCredential()
 			.addCredentialRefreshIUI(new CliCredentialRefresher());
+			env.getGrisuRegistry().getCredential().saveCredential();
+
 			env.getGrisuRegistry().getCredential()
-					.setMinimumLifetime(3600 * 24 * 9);
+					.setMinimumLifetime(
+							Gricli.MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST);
 
 			// setting up completion cache, loads some stuff in the background
 			// too...
