@@ -51,11 +51,11 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	<version>0.6-rc5-SNAPSHOT</version>
+	<version>0.7-rc5</version>
 	<description>Grisu commandline client</description>
 
 	<properties>
-		<grisu.dependency.version>0.3.7-rc5-SNAPSHOT</grisu.dependency.version>
+		<grisu.dependency.version>0.3.7-rc5</grisu.dependency.version>
 	</properties>
 
 
