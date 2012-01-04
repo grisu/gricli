@@ -12,6 +12,7 @@ Changelog
 * man & markdown USAGE.md pages are created automatically via maven
 * Debian and RedHat packages
 * "kill/clean", "archive" and "submit" commands can now be executed in background using "&" operator
+* Custom job type removed from docs and replaced by single
 
 0.6
 ----
