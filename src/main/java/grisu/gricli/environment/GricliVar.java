@@ -12,8 +12,7 @@ public abstract class GricliVar<T> implements Comparable<GricliVar> {
 	private final List<GricliVarListener<T>> listeners;
 	private boolean persistent = true;
 
-
-	public GricliVar(String name){
+	public GricliVar(String name) {
 		this.name = name;
 		this.listeners = new ArrayList<GricliVarListener<T>>();
 	}
@@ -29,55 +28,55 @@ public abstract class GricliVar<T> implements Comparable<GricliVar> {
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof GricliVar) {
-			GricliVar other = (GricliVar)o;
+			final GricliVar other = (GricliVar) o;
 			return getName().equals(other.getName());
 		} else {
 			return false;
 		}
 	}
 
-	protected abstract T fromStrings(String[] args) throws GricliSetValueException;
+	protected abstract T fromStrings(String[] args)
+			throws GricliSetValueException;
 
-	public T get(){
+	public T get() {
 		return this.value;
 	}
 
-	public String getName(){
+	public String getName() {
 		return this.name;
 	}
 
 	@Override
-	public int hashCode(){
+	public int hashCode() {
 		return getName().hashCode();
 	}
 
-	public void set(String[] args) throws GricliSetValueException{
+	public boolean isPersistent() {
+		return this.persistent;
+	}
+
+	public String marshall() {
+		return toString();
+	}
+
+	public void set(String[] args) throws GricliSetValueException {
 		set(fromStrings(args));
 	}
 
 	public void set(T value) throws GricliSetValueException {
 		this.value = value;
-		for (GricliVarListener<T> listener: listeners){
+		for (final GricliVarListener<T> listener : listeners) {
 			listener.valueChanged(this.value);
 		}
 	}
 
-	@Override
-	public String toString(){
-		return value.toString();
-	}
-	
-	protected void setPersistent(boolean persistent){
+	protected void setPersistent(boolean persistent) {
 		this.persistent = persistent;
 	}
-	
-	public String marshall(){
-		return toString();
-	}
-	
-	public boolean isPersistent(){
-		return this.persistent;
-	}
 
+	@Override
+	public String toString() {
+		return value.toString();
+	}
 
 }

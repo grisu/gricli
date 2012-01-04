@@ -12,7 +12,7 @@ public class ApplicationCompletor implements Completor {
 	public int complete(String s, int i, List l) {
 
 		return new SimpleCompletor(Gricli.completionCache.getAllApplications())
-		.complete(s, i, l);
+				.complete(s, i, l);
 
 	}
 

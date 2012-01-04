@@ -42,9 +42,9 @@ public class PrintQueuesCommand implements GricliCommand {
 	private static String[] PROPERTY_NAMES = null;
 
 	public static String[] getGridResourcePropertyNames() {
-		if ( PROPERTY_NAMES == null ) {
+		if (PROPERTY_NAMES == null) {
 			PROPERTY_NAMES = new String[PROPERTY.values().length];
-			for ( int i=0; i<PROPERTY.values().length; i++ ) {
+			for (int i = 0; i < PROPERTY.values().length; i++) {
 				PROPERTY_NAMES[i] = PROPERTY.values()[i].toString();
 			}
 			Arrays.sort(PROPERTY_NAMES);
@@ -56,7 +56,7 @@ public class PrintQueuesCommand implements GricliCommand {
 			throws GricliRuntimeException {
 
 		try {
-			PROPERTY p = PROPERTY.valueOf(property);
+			final PROPERTY p = PROPERTY.valueOf(property);
 
 			switch (p) {
 			case rank:
@@ -86,15 +86,13 @@ public class PrintQueuesCommand implements GricliCommand {
 			}
 
 			return p.prettyName;
-		} catch (IllegalArgumentException e) {
+		} catch (final IllegalArgumentException e) {
 			throw new GricliRuntimeException("Property \"" + property
 					+ "\" not valid. Allowed values: "
 					+ StringUtils.join(getGridResourcePropertyNames(), ", "));
 		}
 
-
 	}
-
 
 	private final String[] propertiesToDisplay;
 
@@ -116,23 +114,24 @@ public class PrintQueuesCommand implements GricliCommand {
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
-		String fqan = (String) env.getVariable("group").get();
+		final String fqan = (String) env.getVariable("group").get();
 
-		JobSubmissionObjectImpl job = env.getJob();
+		final JobSubmissionObjectImpl job = env.getJob();
 
 		// UserEnvironmentManager uem =
 		// env.getGrisuRegistry().getUserEnvironmentManager();
-		ApplicationInformation ai = env.getGrisuRegistry()
+		final ApplicationInformation ai = env.getGrisuRegistry()
 				.getApplicationInformation(job.getApplication());
-		Set<GridResource> grs = ai.getAllSubmissionLocationsAsGridResources(
-				job.getJobSubmissionPropertyMap(), fqan);
+		final Set<GridResource> grs = ai
+				.getAllSubmissionLocationsAsGridResources(
+						job.getJobSubmissionPropertyMap(), fqan);
 
 		if (grs.size() == 0) {
 			env.printMessage("No queues available for your currently setup environment. Maybe try to set another group/application?");
 			return env;
 		}
 
-		String output = formatOutput(grs);
+		final String output = formatOutput(grs);
 		env.printMessage("\n" + output);
 
 		return env;
@@ -141,17 +140,17 @@ public class PrintQueuesCommand implements GricliCommand {
 	private String formatOutput(Set<GridResource> grs)
 			throws GricliRuntimeException {
 
-		List<List<String>> grListList = new LinkedList<List<String>>();
+		final List<List<String>> grListList = new LinkedList<List<String>>();
 
-		List<String> titleList = new LinkedList<String>();
+		final List<String> titleList = new LinkedList<String>();
 		grListList.add(titleList);
 
 		titleList.add("Queue");
 
-		for (String property : propertiesToDisplay) {
+		for (final String property : propertiesToDisplay) {
 			try {
 				titleList.add(PROPERTY.valueOf(property).prettyName);
-			} catch (IllegalArgumentException e) {
+			} catch (final IllegalArgumentException e) {
 				throw new GricliRuntimeException(
 						"Property \""
 								+ property
@@ -161,22 +160,22 @@ public class PrintQueuesCommand implements GricliCommand {
 			}
 		}
 
-		for (GridResource gr : grs) {
-			List<String> grList = new LinkedList<String>();
+		for (final GridResource gr : grs) {
+			final List<String> grList = new LinkedList<String>();
 			grListList.add(grList);
 
-			String subLoc = SubmissionLocationHelpers
+			final String subLoc = SubmissionLocationHelpers
 					.createSubmissionLocationString(gr);
 			grList.add(subLoc);
 
-			for (String property : propertiesToDisplay) {
-				String value = getGridResourceValue(gr, property);
+			for (final String property : propertiesToDisplay) {
+				final String value = getGridResourceValue(gr, property);
 				grList.add(value);
 			}
 
 		}
 
-		String output = OutputHelpers.getTable(grListList, true, 0,
+		final String output = OutputHelpers.getTable(grListList, true, 0,
 				new Integer[] {});
 
 		return output;

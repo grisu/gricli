@@ -1,122 +1,149 @@
 package grisu.gricli.command;
 
 import grisu.control.ServiceInterface;
-import grisu.control.exceptions.BatchJobException;
-import grisu.control.exceptions.NoSuchJobException;
-import grisu.frontend.view.cli.CliHelpers;
 import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.environment.GricliEnvironment;
-import grisu.gricli.util.ServiceInterfaceUtils;
+import grisu.jcommons.view.cli.CliHelpers;
 import grisu.model.dto.DtoStringList;
 import grisu.model.status.ActionStatusEvent;
 import grisu.model.status.StatusObject;
 
-import java.util.List;
+import java.util.Arrays;
 
-public class KillJobCommand implements
-GricliCommand,
-StatusObject.Listener {
-	private final String jobFilter;
+public class KillJobCommand implements GricliCommand, StatusObject.Listener {
+
+	private final String[] jobnames;
 	private final boolean clean;
 
-	@SyntaxDescription(command={"kill","jobs"})
-	@AutoComplete(completors={JobnameCompletor.class})
-	public KillJobCommand(){
-		this("*",true);
+	private boolean deprecated = false;
+
+	private final boolean async;
+
+	// @SyntaxDescription(command = { "kill", "jobs" })
+	// @AutoComplete(completors = { JobnameCompletor.class })
+	public KillJobCommand() {
+		this.deprecated = true;
+		this.jobnames = null;
+		this.async = false;
+		this.clean = false;
 	}
 
-	@SyntaxDescription(command={"kill","job"}, arguments={"jobname"})
-	@AutoComplete(completors={JobnameCompletor.class})
-	public KillJobCommand(String jobFilter){
-		this(jobFilter, false);
-	}
+	public KillJobCommand(boolean clean, String... jobs) {
 
-	public KillJobCommand(String jobFilter, boolean clean) {
-		this.jobFilter = jobFilter;
+		if ((jobs != null) && (jobs.length > 0)
+				&& jobs[jobs.length - 1].equals("&")) {
+			this.jobnames = Arrays.copyOfRange(jobs, 0, jobs.length - 1);
+			this.async = true;
+		} else {
+			this.jobnames = jobs;
+			this.async = false;
+		}
 		this.clean = clean;
+	}
+
+	@SyntaxDescription(command = { "kill", "job" }, arguments = { "jobnames" })
+	@AutoComplete(completors = { JobnameCompletor.class })
+	public KillJobCommand(String... jobnames) {
+		this(false, jobnames);
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
-		ServiceInterface si = env.getServiceInterface();
 
-		List<String> jobnames = ServiceInterfaceUtils.filterJobNames(si,
-				jobFilter);
+		String cmd = "kill";
+		if (clean) {
+			cmd = "clean";
+		}
 
-		if (jobnames.size() == 1) {
-			String j = jobnames.get(0);
-			try {
-				if (clean) {
-					env.printMessage("cleaning job " + j);
-				} else {
-					env.printMessage("killing job " + j);
-				}
-				String handle = si.kill(j, clean);
-				StatusObject so = null;
-				try {
-					so = StatusObject.waitForActionToFinish(si, handle, 2,
-							true, true);
-				} catch (Exception e) {
-					throw new GricliRuntimeException(e.getLocalizedMessage());
-				}
-				if (so.getStatus().isFailed()) {
-					env.printError("Killing of job failed: "
-							+ so.getStatus().getErrorCause());
-				}
-			} catch (NoSuchJobException ex) {
-				env.printError("job " + j + " does not exist");
-			} catch (BatchJobException e) {
-				env.printError("Error: " + e.getLocalizedMessage());
-			}
+		if (deprecated) {
 
-		} else {
-			int no = jobnames.size();
+			env.printMessage("\""
+					+ cmd
+					+ " jobs\" command is depreacted. Please use \""
+					+ cmd
+					+ " job [arg]\" instead. For more information on usage please type"
+					+
+					" \"help "
+					+ cmd + "\" job");
+			return env;
+		}
+
+		if ((jobnames == null) || (jobnames.length == 0)) {
+			env.printError("Can't execute " + cmd
+					+ " command. Please provide at least one jobname.");
+			return env;
+
+		}
+
+		final ServiceInterface si = env.getServiceInterface();
+
+		String handle = si.killJobs(DtoStringList.fromStringArray(jobnames),
+				clean);
+
+
+		final StatusObject so = new StatusObject(si, handle);
+
+		final int no = so.getStatus().getTotalElements() / 2;
+
+		String jobsString = "jobs";
+		if (no == 1) {
+			jobsString = "job";
+		} else if (no == 0) {
+			env.printMessage("No jobname matched provided argument(s). Nothing to do...");
+			return env;
+		}
+
+		if (async) {
 			if (clean) {
-				env.printMessage("Cleaning " + no + " jobs...");
+				env.addTaskToMonitor("Cleaning of " + no + " " + jobsString, so);
+				env.printMessage("Cleaning of " + no + " " + jobsString
+						+ " kicked off. Running in background...");
 			} else {
-				env.printMessage("Killing " + no + " jobs...");
+				env.addTaskToMonitor("Killing of " + no + " " + jobsString, so);
+				env.printMessage("Killing of " + no + " " + jobsString
+						+ " kicked off. Running in background...");
 			}
-			String handle = si.killJobs(
-					DtoStringList.fromStringColletion(jobnames), clean);
-			StatusObject so = new StatusObject(si, handle);
+		} else {
+
+			if (clean) {
+				env.printMessage("Cleaning " + no + " " + jobsString + "...");
+			} else {
+				env.printMessage("Killing " + no + " " + jobsString + "...");
+			}
+
 			try {
 				so.addListener(this);
-				so.waitForActionToFinish(2, false,
-						true);
+				so.waitForActionToFinish(2, false);
 				so.removeListener(this);
 				CliHelpers.setProgress(no, no);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				throw new GricliRuntimeException(e.getLocalizedMessage());
 			}
 			if (so.getStatus().isFailed()) {
 				env.printError("Killing of job(s) failed: "
 						+ so.getStatus().getErrorCause());
 			}
-			CliHelpers.writeToTerminal("");
+
+
+			if (clean) {
+				Gricli.completionCache.refreshJobnames();
+				env.printMessage("Job(s) cleaned...");
+			} else {
+				env.printMessage("Job(s) killed...");
+			}
+
 		}
-
-
-		if (clean) {
-			Gricli.completionCache.refreshJobnames();
-			env.printMessage("Job(s) cleaned...                                 ");
-		} else {
-			env.printMessage("Job(s) killed...                                  ");
-		}
-
-
 		return env;
 	}
 
 	public void statusMessage(ActionStatusEvent event) {
 
-		int current = event.getActionStatus().getCurrentElements() / 2;
-		int total = event.getActionStatus().getTotalElements() / 2;
+		final int current = event.getActionStatus().getCurrentElements() / 2;
+		final int total = event.getActionStatus().getTotalElements() / 2;
 
 		CliHelpers.setProgress(current, total);
 	}
-
-
 
 }

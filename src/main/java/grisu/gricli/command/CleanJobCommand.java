@@ -4,15 +4,15 @@ import grisu.gricli.completors.JobnameCompletor;
 
 public class CleanJobCommand extends KillJobCommand {
 
-	@SyntaxDescription(command={"clean","job"},arguments={"jobname"})
-	@AutoComplete(completors={JobnameCompletor.class})
-	public CleanJobCommand(String jobFilter){
-		super(jobFilter, true);
+	// @SyntaxDescription(command = { "clean", "jobs" })
+	// @AutoComplete(completors = { JobnameCompletor.class })
+	public CleanJobCommand() {
+		super();
 	}
-	
-	@SyntaxDescription(command={"clean","jobs"})
-	@AutoComplete(completors={JobnameCompletor.class})
-	public CleanJobCommand(){
-		super("*",true);
+
+	@SyntaxDescription(command = { "clean", "job" }, arguments = { "jobnames" })
+	@AutoComplete(completors = { JobnameCompletor.class })
+	public CleanJobCommand(String... jobnames) {
+		super(true, jobnames);
 	}
 }

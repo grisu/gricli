@@ -3,7 +3,6 @@ package grisu.gricli.command.help;
 import grisu.gricli.Gricli;
 import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.SyntaxDescription;
-import grisu.gricli.environment.GricliEnvironment;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,15 +21,16 @@ import java.util.TreeSet;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HelpManager {
 
 	class SyntaxComparator implements Comparator<SyntaxDescription> {
 
 		public int compare(SyntaxDescription s1, SyntaxDescription s2) {
-			String str1 = StringUtils.join(s1.command(), " ");
-			String str2 = StringUtils.join(s2.command(), " ");
+			final String str1 = StringUtils.join(s1.command(), " ");
+			final String str2 = StringUtils.join(s2.command(), " ");
 			return str1.compareTo(str2);
 		}
 
@@ -42,8 +42,7 @@ public class HelpManager {
 		commands;
 	}
 
-	private static Logger myLogger = Logger.getLogger(HelpManager.class
-			.getName());
+	private static Logger myLogger = LoggerFactory.getLogger(HelpManager.class);
 
 	public static String[] TOPICS = new String[] { "Globals", "Jobs", "Files" };
 
@@ -55,7 +54,7 @@ public class HelpManager {
 			is = FileUtils.class.getResourceAsStream("/help/" + type.toString()
 					+ "/" + s + ".md");
 			list = IOUtils.readLines(is);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new Exception("Can't get get text for " + type.toString()
 					+ " " + s + ": " + e.getLocalizedMessage());
 		} finally {
@@ -63,17 +62,17 @@ public class HelpManager {
 				if (is != null) {
 					is.close();
 				}
-			} catch (IOException e) {
-				myLogger.error(e);
+			} catch (final IOException e) {
+				myLogger.error(e.getLocalizedMessage(), e);
 			}
 		}
 		return StringUtils.join(list, "\n");
 	}
 
 	public static void main(String[] args) throws Exception {
-		HelpManager t = new HelpManager();
+		final HelpManager t = new HelpManager();
 
-		for (String topic : t.getTopics()) {
+		for (final String topic : t.getTopics()) {
 			System.out.println(topic);
 			System.out.println("====================================");
 			System.out.println(t.getTopic(topic));
@@ -81,7 +80,7 @@ public class HelpManager {
 			System.out.println("\n\n");
 		}
 
-		for (String command : t.getCommands()) {
+		for (final String command : t.getCommands()) {
 			System.out.println("Command:\t" + command + " "
 					+ t.getCommandArguments(command));
 
@@ -139,38 +138,39 @@ public class HelpManager {
 
 	public HelpManager() {
 
-		for (String topic : TOPICS) {
+		for (final String topic : TOPICS) {
 			String temp;
 			try {
 				temp = getHelpText(Type.topics, topic).trim();
 				topics.put(topic, temp);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				missingTopics.add(topic);
 			}
 		}
-		for (SyntaxDescription command : getAllCommands()) {
-			String cmd = StringUtils.join(command.command(), " ");
+		for (final SyntaxDescription command : getAllCommands()) {
+			final String cmd = StringUtils.join(command.command(), " ");
 			String temp;
 			try {
 				temp = getHelpText(Type.commands, cmd).trim();
 				commands.put(cmd, temp);
-				StringBuffer args = new StringBuffer();
-				for (String arg : command.arguments()) {
+				final StringBuffer args = new StringBuffer();
+				for (final String arg : command.arguments()) {
 					args.append("[" + arg + "] ");
 				}
 				commandArguments.put(cmd, args.toString().trim());
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				missingCommands.add(cmd);
 			}
 		}
-				
-		for (String global : Gricli.completionCache.getEnvironment().getVariableNames()) {
+
+		for (final String global : Gricli.completionCache.getEnvironment()
+				.getVariableNames()) {
 
 			String temp;
 			try {
 				temp = getHelpText(Type.globals, global).trim();
 				globals.put(global, temp);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				missingGlobals.add(global);
 			}
 		}
@@ -179,10 +179,10 @@ public class HelpManager {
 
 	public String apropos(String keyword) {
 
-		StringBuffer result = new StringBuffer();
-		Formatter formatter = new Formatter(result, Locale.US);
+		final StringBuffer result = new StringBuffer();
+		final Formatter formatter = new Formatter(result, Locale.US);
 		Map<String, String> temp = new TreeMap<String, String>();
-		for (String command : commands.keySet()) {
+		for (final String command : commands.keySet()) {
 			if (command.toLowerCase().contains(keyword.toLowerCase())
 					|| commands.get(command).toLowerCase()
 					.contains(keyword.toLowerCase())) {
@@ -193,7 +193,7 @@ public class HelpManager {
 		int max2 = 0;
 		if (temp.size() > 0) {
 			result.append("Commands:\n");
-			for (String c : temp.keySet()) {
+			for (final String c : temp.keySet()) {
 				if (c.length() > max) {
 					max = c.length();
 				}
@@ -201,7 +201,7 @@ public class HelpManager {
 					max2 = temp.get(c).length();
 				}
 			}
-			for (String c : temp.keySet()) {
+			for (final String c : temp.keySet()) {
 
 				formatter.format("%4s%" + -(max + 4) + "s%" + "s%n", "    ", c,
 						temp.get(c));
@@ -209,7 +209,7 @@ public class HelpManager {
 			result.append("\n");
 		}
 		temp = new TreeMap<String, String>();
-		for (String global : globals.keySet()) {
+		for (final String global : globals.keySet()) {
 			if (global.toLowerCase().contains(keyword.toLowerCase())
 					|| globals.get(global).toLowerCase()
 					.contains(keyword.toLowerCase())) {
@@ -220,7 +220,7 @@ public class HelpManager {
 			result.append("Globals:\n");
 			max = 0;
 			max2 = 0;
-			for (String c : temp.keySet()) {
+			for (final String c : temp.keySet()) {
 				if (c.length() > max) {
 					max = c.length();
 				}
@@ -228,7 +228,7 @@ public class HelpManager {
 					max2 = temp.get(c).length();
 				}
 			}
-			for (String c : temp.keySet()) {
+			for (final String c : temp.keySet()) {
 
 				formatter.format("%4s%" + -(max + 4) + "s%" + "s%n", "    ", c,
 						temp.get(c));
@@ -236,7 +236,7 @@ public class HelpManager {
 			result.append("\n");
 		}
 		temp = new TreeMap<String, String>();
-		for (String topic : topics.keySet()) {
+		for (final String topic : topics.keySet()) {
 			if (topic.toLowerCase().contains(keyword.toLowerCase())
 					|| topics.get(topic).toLowerCase()
 					.contains(keyword.toLowerCase())) {
@@ -247,7 +247,7 @@ public class HelpManager {
 			result.append("Topics:\n");
 			max = 0;
 			max2 = 0;
-			for (String c : temp.keySet()) {
+			for (final String c : temp.keySet()) {
 				if (c.length() > max) {
 					max = c.length();
 				}
@@ -255,7 +255,7 @@ public class HelpManager {
 					max2 = temp.get(c).length();
 				}
 			}
-			for (String c : temp.keySet()) {
+			for (final String c : temp.keySet()) {
 
 				formatter.format("%4s%" + -(max + 4) + "s%" + "s%n", "    ", c,
 						temp.get(c));
@@ -301,14 +301,14 @@ public class HelpManager {
 
 	private ArrayList<SyntaxDescription> getAllCommands() {
 
-		ArrayList<SyntaxDescription> result = new ArrayList<SyntaxDescription>();
+		final ArrayList<SyntaxDescription> result = new ArrayList<SyntaxDescription>();
 
-		List<Class<? extends GricliCommand>> cs = Gricli.SINGLETON_COMMANDFACTORY
+		final List<Class<? extends GricliCommand>> cs = Gricli.SINGLETON_COMMANDFACTORY
 				.getCommands();
-		for (Class<? extends GricliCommand> c : cs) {
-			Constructor<? extends GricliCommand>[] conss = (Constructor<? extends GricliCommand>[]) c
+		for (final Class<? extends GricliCommand> c : cs) {
+			final Constructor<? extends GricliCommand>[] conss = (Constructor<? extends GricliCommand>[]) c
 					.getDeclaredConstructors();
-			for (Constructor<? extends GricliCommand> cons : conss) {
+			for (final Constructor<? extends GricliCommand> cons : conss) {
 				if (cons.isAnnotationPresent(SyntaxDescription.class)) {
 					result.add(cons.getAnnotation(SyntaxDescription.class));
 				}
@@ -319,7 +319,7 @@ public class HelpManager {
 	}
 
 	public String getCommand(String command) {
-		String result = commands.get(command);
+		final String result = commands.get(command);
 		if (StringUtils.isNotBlank(result)) {
 			return result;
 		} else {
@@ -335,7 +335,7 @@ public class HelpManager {
 
 		int max = 0;
 		int max2 = 0;
-		for (String c : commands.keySet()) {
+		for (final String c : commands.keySet()) {
 			if (c.length() > max) {
 				max = c.length();
 			}
@@ -343,11 +343,11 @@ public class HelpManager {
 				max2 = commands.get(c).length();
 			}
 		}
-		StringBuffer result = new StringBuffer();
-		Formatter formatter = new Formatter(result, Locale.US);
+		final StringBuffer result = new StringBuffer();
+		final Formatter formatter = new Formatter(result, Locale.US);
 
-		for (String c : getCommands()) {
-			String helpLine = getFirstLine(Type.commands, c);
+		for (final String c : getCommands()) {
+			final String helpLine = getFirstLine(Type.commands, c);
 			formatter.format("%4s%" + -(max + 4) + "s%" + "s%n", "    ", c,
 					helpLine);
 		}
@@ -371,7 +371,7 @@ public class HelpManager {
 				return "n/a";
 			}
 
-			for (String line : desc.split("\n")) {
+			for (final String line : desc.split("\n")) {
 				if (line.toLowerCase().trim().startsWith("command")) {
 					continue;
 				} else if (StringUtils.isEmpty(line.trim())) {
@@ -389,7 +389,7 @@ public class HelpManager {
 				return "n/a";
 			}
 
-			for (String line : desc.split("\n")) {
+			for (final String line : desc.split("\n")) {
 				if (line.toLowerCase().trim().startsWith("global")
 						|| line.toLowerCase().trim().startsWith(word)) {
 					continue;
@@ -407,7 +407,7 @@ public class HelpManager {
 				return "n/a";
 			}
 
-			for (String line : desc.split("\n")) {
+			for (final String line : desc.split("\n")) {
 				if (line.toLowerCase().trim().startsWith("topic")
 						|| line.toLowerCase().trim().startsWith(word)) {
 					continue;
@@ -425,7 +425,7 @@ public class HelpManager {
 	}
 
 	public String getGlobal(String global) {
-		String result = globals.get(global);
+		final String result = globals.get(global);
 		return result;
 	}
 
@@ -437,7 +437,7 @@ public class HelpManager {
 
 		int max = 0;
 		int max2 = 0;
-		for (String c : globals.keySet()) {
+		for (final String c : globals.keySet()) {
 			if (c.length() > max) {
 				max = c.length();
 			}
@@ -445,11 +445,11 @@ public class HelpManager {
 				max2 = globals.get(c).length();
 			}
 		}
-		StringBuffer result = new StringBuffer();
-		Formatter formatter = new Formatter(result, Locale.US);
+		final StringBuffer result = new StringBuffer();
+		final Formatter formatter = new Formatter(result, Locale.US);
 
-		for (String c : getGlobals()) {
-			String helpLine = getFirstLine(Type.globals, c);
+		for (final String c : getGlobals()) {
+			final String helpLine = getFirstLine(Type.globals, c);
 			formatter.format("%4s%" + -(max + 4) + "s%" + "s%n", "    ", c,
 					helpLine);
 		}
@@ -458,8 +458,8 @@ public class HelpManager {
 	}
 
 	public Map<String, String> getHelpTextsContainingKeyword(String keyword) {
-		Map<String, String> result = new TreeMap<String, String>();
-		for (String topic : topics.keySet()) {
+		final Map<String, String> result = new TreeMap<String, String>();
+		for (final String topic : topics.keySet()) {
 			if (topic.toLowerCase().contains(keyword.toLowerCase())
 					|| topics.get(topic).toLowerCase()
 					.contains(keyword.toLowerCase())) {
@@ -482,7 +482,7 @@ public class HelpManager {
 	}
 
 	public String getTopic(String topic) {
-		String result = topics.get(topic);
+		final String result = topics.get(topic);
 		if (result == null) {
 			return topics.get(StringUtils.capitalize(topic));
 		} else {
@@ -494,7 +494,7 @@ public class HelpManager {
 
 		int max = 0;
 		int max2 = 0;
-		for (String c : topics.keySet()) {
+		for (final String c : topics.keySet()) {
 			if (c.length() > max) {
 				max = c.length();
 			}
@@ -502,13 +502,13 @@ public class HelpManager {
 				max2 = topics.get(c).length();
 			}
 		}
-		StringBuffer result = new StringBuffer();
-		Formatter formatter = new Formatter(result, Locale.US);
+		final StringBuffer result = new StringBuffer();
+		final Formatter formatter = new Formatter(result, Locale.US);
 
-		for (String c : getTopics()) {
-			String helpLine = getFirstLine(Type.topics, c);
-			formatter.format("%4s%" + -(max + 4) + "s%"
-					+ "s%n", "    ", c, helpLine);
+		for (final String c : getTopics()) {
+			final String helpLine = getFirstLine(Type.topics, c);
+			formatter.format("%4s%" + -(max + 4) + "s%" + "s%n", "    ", c,
+					helpLine);
 		}
 
 		return result.toString();

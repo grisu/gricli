@@ -6,12 +6,12 @@ import grisu.gricli.environment.GricliEnvironment;
 
 public class QuitCommand implements GricliCommand {
 
-	@SyntaxDescription(command={"quit"})
-	public QuitCommand(){
+	@SyntaxDescription(command = { "quit" })
+	public QuitCommand() {
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
+			throws GricliRuntimeException {
 		Gricli.shutdown(env);
 		System.exit(0);
 		return env;

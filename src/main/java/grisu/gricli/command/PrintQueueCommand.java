@@ -14,8 +14,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
-public class PrintQueueCommand implements
-GricliCommand {
+public class PrintQueueCommand implements GricliCommand {
 
 	private final String queue;
 
@@ -28,33 +27,34 @@ GricliCommand {
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
+		final String fqan = (String) env.getVariable("group").get();
 
-		String fqan = (String) env.getVariable("group").get();
-
-		JobSubmissionObjectImpl job = env.getJob();
+		final JobSubmissionObjectImpl job = env.getJob();
 
 		// UserEnvironmentManager uem =
 		// env.getGrisuRegistry().getUserEnvironmentManager();
-		ApplicationInformation ai = env.getGrisuRegistry()
+		final ApplicationInformation ai = env.getGrisuRegistry()
 				.getApplicationInformation(job.getApplication());
-		Set<GridResource> grs = ai.getAllSubmissionLocationsAsGridResources(
-				job.getJobSubmissionPropertyMap(), fqan);
+		final Set<GridResource> grs = ai
+				.getAllSubmissionLocationsAsGridResources(
+						job.getJobSubmissionPropertyMap(), fqan);
 
 		GridResource match = null;
-		for ( GridResource gr : grs ) {
-			String subLoc = SubmissionLocationHelpers.createSubmissionLocationString(gr);
+		for (final GridResource gr : grs) {
+			final String subLoc = SubmissionLocationHelpers
+					.createSubmissionLocationString(gr);
 			if (StringUtils.equals(subLoc, queue)) {
 				match = gr;
 				break;
 			}
 		}
 
-		if ( match == null  ) {
+		if (match == null) {
 			env.printError("Queue not available for current job setup.");
 			return env;
 		}
 
-		String output = formatOutput(match);
+		final String output = formatOutput(match);
 		env.printMessage(output);
 
 		return env;
@@ -62,26 +62,26 @@ GricliCommand {
 
 	private String formatOutput(GridResource gr) {
 
-		StringBuffer result = new StringBuffer("\n");
-		Formatter formatter = new Formatter(result, Locale.US);
+		final StringBuffer result = new StringBuffer("\n");
+		final Formatter formatter = new Formatter(result, Locale.US);
 
-		String subLoc = SubmissionLocationHelpers
+		final String subLoc = SubmissionLocationHelpers
 				.createSubmissionLocationString(gr);
 
 		result.append("Queue: " + subLoc + "\n\n");
 
-		int freeJobSlots = gr.getFreeJobSlots();
-		String gramVersion = gr.getGRAMVersion();
-		int mainMemoryRAMSize = gr.getMainMemoryRAMSize();
-		String jobManager = gr.getJobManager();
-		int mainMemoryVirtualSize = gr.getMainMemoryVirtualSize();
-		int rank = gr.getRank();
-		int runningJobs = gr.getRunningJobs();
-		String siteName = gr.getSiteName();
-		String queueName = gr.getQueueName();
-		int smpSize = gr.getSmpSize();
-		int totalJobs = gr.getTotalJobs();
-		int waitingJobs = gr.getWaitingJobs();
+		final int freeJobSlots = gr.getFreeJobSlots();
+		final String gramVersion = gr.getGRAMVersion();
+		final int mainMemoryRAMSize = gr.getMainMemoryRAMSize();
+		final String jobManager = gr.getJobManager();
+		final int mainMemoryVirtualSize = gr.getMainMemoryVirtualSize();
+		final int rank = gr.getRank();
+		final int runningJobs = gr.getRunningJobs();
+		final String siteName = gr.getSiteName();
+		final String queueName = gr.getQueueName();
+		final int smpSize = gr.getSmpSize();
+		final int totalJobs = gr.getTotalJobs();
+		final int waitingJobs = gr.getWaitingJobs();
 
 		formatter.format("%-25s%s%n", "Site", siteName);
 		formatter.format("%-25s%s%n", "Queue name", queueName);
@@ -100,6 +100,5 @@ GricliCommand {
 
 		return result.toString();
 	}
-
 
 }

@@ -88,26 +88,6 @@ help global memory
 ## List of globals:
 
 
-### application
-
-
-The is the applicaiton package used by the job.
-
-To set the package use the 'set' command.
-To see a list of available packages use the 'print packages' command.
-To see the which package is set for a job before it is submitted, use the command 'print global package'.
-After a job has been submitted you can check the package with 'print job <jobname> package'
-
-Note that the package is not set by default and is required to submit a job.
-
-Example usage:
-
-    print packages
-    set package R
-    print global package
-    print job myjob package
-    
-
 ### cpus
 
 
@@ -128,7 +108,7 @@ Example usage:
 ### debug
 
 
-Boolean to show debug output from Grilci exceptions.
+Boolean to show debug output from exceptions.
 
 This value can be set using the 'set' command.
 
@@ -148,7 +128,7 @@ To view the description of a submitted job use the command 'print job <jobname> 
 
 Example usage:
 
-    set description "my job descritpion"
+    set description "my job description"
     print global description
     print job myjob description
 
@@ -178,7 +158,7 @@ Example usage:
 ### email
 
 
-The email address to send notificaitons to.
+The email address to send notifications to.
 
 The email address can be set using the 'set' command.
 To view the email address of a job before submission use the command 'print global email'.
@@ -217,6 +197,25 @@ Example usage:
     set email_on_start true
     set email_on_start false
 
+### environment
+
+
+The execution evironment variables of a job.
+
+To add an environment variable and value use the 'add env <var> <value>' command.
+
+Note that you do not need '$' as part of the variable name.
+
+To view the environment variables and their values before submission use the command 'print global environment'.
+To view the environment variables after submission use the command 'print job <jobname> environmentVariables'.
+
+Example usage:
+
+    add environment MY_VAR MY_VALUE
+    print global environment
+    print job myjob environmentVariables
+
+
 ### gdir
 
 
@@ -233,13 +232,13 @@ The group determines which queues you will have access to and consequently which
 
 To set the group use the 'set' command. Note that the group must be set before a job can be submitted.
 To view the group before a job has been submitted use the command 'print global group'.
-To view the group after a job has been submitted use the command 'print job <jobname> fqan'.
+To view the group after a job has been submitted use the command 'print job <jobname> group'.
 
 Example usage:
 
     set group /nz/nesi
     print global group
-    print job myjob fqan
+    print job myjob group
 
 
 
@@ -292,7 +291,7 @@ The current values are:
 
 The number of hosts used for an mpi job can be checked after submission using the command 'print job <jobname> hostCount'.
 
-Please note that a 'host' is a compute node within a queue. Since the hardware specificaitons may vary between hosts in a queue, you are advised to check the properties of your queues to ensure you jobs run correctly. In particular, it is important that jobs do not request more resources than are available for a given job type. Some tips are provided below:
+Please note that a 'host' is a compute node within a queue. Since the hardware specifications may vary between hosts in a queue, you are advised to check the properties of your queues to ensure you jobs run correctly. In particular, it is important that jobs do not request more resources than are available for a given job type. Some tips are provided below:
 
 SMP
 
@@ -304,7 +303,7 @@ When you select a job of this type, please ensure that the requested resources d
 
 Custom
 
-Please note that is is up to you to ensure your job is scheduled correctly as this job type implies you may not be relying on Open MPI to coordinate your processes.
+Please note that is up to you to ensure your job is scheduled correctly as this job type implies you may not be relying on Open MPI to coordinate your processes.
     
 
 Example usage:
@@ -326,7 +325,7 @@ To set the memory for the job, use the 'set' command. The command accepts values
     set memory 1g        : sets memory to 1 GB (1024 MB)
     set memory 1g200m    : sets memory to 1224 MB
 
-To view the memory of a job before sumbmission use the command 'print global memory'.
+To view the memory of a job before submission use the command 'print global memory'.
 To view the memory of a job after submission use the command 'print job <jobname> memory.
 
 Example usage:
@@ -349,12 +348,32 @@ Example usage:
 
     set outputfile /home/myfolder/gricli_output.txt
 
+### package
+
+
+This is the application package used by the job.
+
+To set the package use the 'set' command.
+To see a list of available packages use the 'print packages' command.
+To see which package is set for a job before it is submitted, use the command 'print global package'.
+After a job has been submitted you can check the package with 'print job <jobname> package'
+
+Note that the package is not set by default and is required to submit a job.
+
+Example usage:
+
+    print package
+    set package R
+    print global package
+    print job myjob package
+    
+
 ### prompt
 
 
 The prompt message.
 
-This is set to 'gricli' by defualt but can changed using the 'set' command.
+This is can changed using the 'set' command.
 The command can accept macros, substituting the values of other globals into the prompt.
 
 Example usage:
@@ -378,10 +397,10 @@ You can only submit jobs to queues assigned to your group.
 To view the available to groups use the 'print groups' command.
 To view the queues available for a specific groups use the command 'print queues <group>'
 
-To see which queues support a particular application package use the command 'print package <package>'.
-To see a list of applications use the command 'print packages'.
+To see which queues support a particular application package use the command 'print package <application_package>'.
+To see a list of application packages use the command 'print packages'.
 
-If you have set the package, then the queue locaiton can be determined automatically.
+If you have set the application package, then the queue location can be determined automatically.
 Use the command 'set queue auto' to enable this option.
 
 To see the queue before a job is submitted use the command 'print global queue'.
@@ -402,14 +421,14 @@ Example usage:
 
 The application package version.
 
-This is the package version to be used. 
+This is the application package version to be used. 
 By default the value is 'any'.
 
-If a package is specified and the queue is set to auto then the job will be submitted
-to valid queue locaiton that supports a version of the chosen package.
+If a package is specified and the queue is set to auto, the job will be submitted
+to a queue location that supports a version of the chosen application package.
 
 To ensure a specific version of the package is used, use the 'set' command to choose the version.
-To see the list of versions available for a package use the command 'print package <package>'.
+To see the list of versions available for an application package use the command 'print package <application_package>'.
 
 Example usage:
 
@@ -436,13 +455,11 @@ Walltime can be set with strings as follows:
 To view the walltime before a job has been submitted, use the command 'print global walltime'.
 To view the walltime after a job has been submitted, use the command 'print job <jobname> walltime'.
 
-You can also see the remaining walltime for a job that has started here:
-
-    http://cluster.ceres.auckland.ac.nz/cgi-bin/showq.cgi
-
 Example usage:
 
-    set walltime 1000
+    set walltime 240
+    set walltime 240m
+    set walltime 4h
     set walltime 30d4h12m
     print global walltime
     print job myjob walltime
@@ -455,11 +472,11 @@ Example usage:
 
 Displays the following information about the Gricli shell:
 
-version:                     This is the version of Gricli you are using.
+version:                     This is the software version you are using.
 grisu frontend version:      The interface used to communicate with Grisu.
-grisu backend:               They Grisu backend (BeSTGRID or BeSTGRID-DEV) 
+grisu backend:               The Grisu backend (BeSTGRID or DEV) 
 grisu backend host:          The Grisu host.
-grisu backend version:       The version of Grisu used by Gricli.
+grisu backend version:       The version of Grisu used.
 documentation:               Where you may find further help and information.
 contact:                     Who to contact in case you have problems or questions.
 
@@ -484,12 +501,15 @@ Parameters:
 Currently available lists are:
 
     files       : The files attached for a job.
+    environment : The environment variables in the job execution environment
 
 Example usage:
 
     add files ~/myfile.txt
     add files "~/my file.txt"
     add files grid://groups/nz/nesi/myfile.txt
+    add environment MY_VAR MY_VALUE
+	
     
 
 
@@ -516,7 +536,8 @@ Example usage
 
 Downloads the job to the default archive location and then cleans the job.
 
-Supports glob regular expressions. Note that if a job is still running it will be stopped.
+Supports glob regular expressions. Note that if a job is still running it will be stopped. 
+The archive process may take a while depending on how large the files are. 
 
 Parameters:
 
@@ -551,7 +572,7 @@ Supports multiple arguments and glob regular expressions.
 
 Parameters
 
-    files	: Whitespace seperated list of files
+    files	: Whitespace separated list of files
 
 Example usage:
 
@@ -583,7 +604,7 @@ Supports multiple arguments and glob regular expressions.
 Parameters
 
     bactchjob   : The name of the batchjob
-    files	: Whitespace seperated list of files
+    files       : Whitespace separated list of files
 
 Example usage:
 
@@ -668,22 +689,7 @@ Example usage:
     clean myjob_2
     clean myjob*
     clean *
-
-## clear
-
-
-Clears the selected list.
-
-Parameters:
-
-    list	: The list to clear
-
-Currently available lists in gricli are:
-
-    files       : The files associated with a job.
-
-Example usage:
-
+    clean jobs
 
 ## destroy proxy
 
@@ -758,13 +764,19 @@ Not yet implemented.
 
 ## help
 
+The command syntax presented in the help files has the following format:
+
+    command_name <required_argument> [optional_argument] 
+
+A command may have multiple required and optional arguments.
+
 
 Prints this help message or a help message for a certain command, topic or global variable.
 
 Parameters:
 
-    keywords	: A whitespace seperated list of keywords.
-
+    keywords	: A whitespace separated list of keywords.
+	
 Usage:
 
     help			
@@ -849,14 +861,14 @@ Parameters:
 The choice of backend is one of:
 
     BeSTGRID        : The default backend.
-    BeSTGRID-DEV    : The development backend.     
+    DEV    : The development backend.     
 
 If there is no certificate proxy the user is asked details to create one.
 
 Example usage:
 
     ilogin BeSTGRID
-    ilogin BeSTGRID-DEV 
+    ilogin DEV 
 
 ## kill job
 
@@ -878,6 +890,7 @@ Example usage:
     kill job myjob_2
     kill job myjob*
     kill job *
+    kill jobs
 
 
 
@@ -885,7 +898,7 @@ Example usage:
 ## login
 
 
-Logs in to a grisu backend with existing certificate proxy. 
+Logs in to a Grisu backend with existing certificate proxy. 
 
 Reports an error if there is no proxy.
 
@@ -894,12 +907,12 @@ Reports an error if there is no proxy.
 The choice of backend is one of:
 
     BeSTGRID        : The default backend.
-    BeSTGRID-DEV    : The development backend.     
+    DEV    			: The development backend.     
 
 Example usage:
 
     login BeSTGRID
-    login BeSTGRID-DEV 
+    login DEV 
 
 ## ls
 
@@ -917,37 +930,6 @@ Example usage:
     ls grid://groups/nz/nesi
 
 
-
-
-## print application
-
-
-Prints the availabe versions and queue locations for the specificed application package.
-
-Parameters:
-
-    package    : The application package.
-
-To see a list of available packages use:
-
-    print packages
-
-Example usage:
-
-    print package R
-    print package BEAST
-    print package UnixCommands
-
-
-
-## print applications
-
-
-List all application package names available on the grid.
-
-Example usage:
-
-    print packages
 
 
 ## print global
@@ -999,10 +981,10 @@ Example usage:
 
 Prints either all or a specific property of a job.
 
-    jobname	: The name of the job. Supports glob regular expressions.
+    jobname     : The name of the job. Supports glob regular expressions.
     property	: The property.
 
-To see the avaible job properties use:
+To see the available job properties use:
 
     print job <jobname>
 
@@ -1026,6 +1008,51 @@ Example usage:
 
 
 
+## print package
+
+
+Prints the available versions and queue locations for the specified application package.
+
+Parameters:
+
+    application_package    : The application package. Supports glob regular expressions.
+
+To see a list of available applications use:
+
+    print packages
+	
+Note that application packages are bound to queues so you must ensure the queue you submit to can support the
+application you would like to use. This will be taken care of when you set the queue to 'auto'.
+
+If you set the queue manually, use the this command to check that the application and the version you would
+like to use is supported by the queue.	
+
+Example usage:
+
+    print package R
+    print package BEAST
+    print package UnixCommands
+    print package *
+    print package B*
+
+
+
+## print packages
+
+
+List all application packages available to you.
+
+Note that application packages are bound to queues so you must ensure the queue you submit to can support the
+package you would like to use. This will be taken care of when you set the queue to 'auto'.
+
+If you set the queue manually, use the 'print package <application_package>' command to check that the application and the version you would
+like to use is supported by the queue.
+
+Example usage:
+
+    print packages
+
+
 ## print queue
 
 
@@ -1036,6 +1063,18 @@ Beware that the queue you are querying about needs to be available for your curr
 Parameters:
 
 	queue: the name of the queue
+	
+Fields:
+
+	Site			: The location of the hosts represented by the queue.
+	Queue name		: The name of the queue.
+	Job manager		: The type of job scheduler used.
+	GRAM version	: GRAM is a submission system. More recent versions provide better performance.
+	
+	Total jobs		: The total number of jobs in the queue.
+	Running jobs	: The number of active jobs in the queue.
+	Waiting jobs	: The number of jobs waiting to run.
+	
     
 Example usage:
 
@@ -1046,7 +1085,8 @@ Example usage:
 
 Lists all queues that are available for the current environment.
 
-The current environment is the group you set, the application package and package version you choose (if any), also walltime, number of cpus and memory.
+The current environment is the group you set, the application package and version you choose (if any),
+also walltime, number of CPUs and memory (RAM).
 
 Parameters:
 
@@ -1093,13 +1133,30 @@ Example usage:
 ## run
 
 
-Runs a Gricli script.
+Runs a set of commands from a plain text file.
+
+Using a script can automate common tasks such as configuring your job environment.
 
 Parameters:
 
-    script	: The script to run.
+    script	: The plain text file containing commands.
 
-A Gricli script can be of any file extension.
+A specific file extension (.txt, .xyz) is not required for the filename and you may use the '#' character 
+to ignore lines in the script.
+
+Example script:
+
+#Name: myscript
+#Script to setup and run a job
+set group /my/group
+set package UnixCommands
+set jobname myjob
+set jobtype single
+set memory 1g
+set cpus 1
+set walltime 10m
+set description "a test job"
+submit echo "Hello World"
 
 Example usage:
 
@@ -1117,21 +1174,43 @@ Sets a value for a variable.
     var		: The name of the variable.
     value	: The value.
 
-Currenltly only the global variables for a job can be set.
+Currently only the global variables for a job can be set.
+To reset a global to a default value use the 'unset <global>' command.
 
 Example usage:
 
-    set memory 1024
+    set memory 1g
     set set cpus 10
-    set walltime 500
+    set walltime 3d
+
+
+## status
+
+
+Displays a summary of current jobs.
+
+Fields are defined as follows:
+
+	Active				: The number of jobs that are running or waiting to run.
+	Finished			: The number of jobs that have stopped running.
+						  Successful jobs finished within their walltime limit.
+						  Failed jobs were killed.
+	Broken/Not found 	        : These jobs have had an error before starting.
+
+Example usage:
+
+    status
+
 
 
 ## submit
 
 
-Submits a new job.
+Submits a new job to execute the provided command
 
-The job parameters are set using the global variables and the command returns the name of the job on success.
+The job will be created on will wait on the queue until it is executed. If the submission is successful, the name of the job will be displayed.
+The job parameters are set using the global variables. For more information on job properties type 'help globals'. To learn more about jobs in
+general, see the help topic entry for Jobs: 'help topic Jobs'.
 
 Parameters:
 
@@ -1139,13 +1218,29 @@ Parameters:
     &          : Specifies asynchronous execution.  
 
 
-If & is specificed the command will run in the background.     
+If & is specified the command will run in the background.     
     	
 Example usage:
 
     submit echo "hello world"
-    submit "echo "hello world""
-    submit "sleep 100" &
+    submit sleep 100 &
+
+## unset
+
+
+Resets an optional variable to its default value.
+
+    var		: The name of the optional variable.
+
+Currently only the non-essential global variables for a job can be unset. 
+To set a global variable use the 'set <var> <value>' command.
+
+Example usage:
+
+	unset files
+	unset email
+	
+
 
 ## user clearCache
 
@@ -1188,7 +1283,7 @@ Attaching Files
 To attach a file use the 'attach <file_path>' command. This will add the file to the global property 'files'. The global 'files' is a list of all
 additional files to be used by the job. An example of attaching a local file is shown below:
 
-	attach /path/to/my/local/file.txt
+    attach /path/to/my/local/file.txt
 
 The attached file will be uploaded to the job's working directory. This is a temporary directory that exists until the job is removed 
 with the 'clean' command. The advantage of attaching files to the job is that the application you invoke may use a relative path to 
@@ -1197,13 +1292,19 @@ reference these files. For example, if your program requires input files then yo
     submit myprogram --input file.txt
 	
 Notice that now the file is in the working directory of the program and we do not need to specify the full path to the original file.
+
+Removing Files
+--------------
+
+After a job has been submitted, the 'files' global will remain unchanged. If you would like to clear the list of attached files use the 
+command 'unset files'. This will set the list to empty.
 	
 Shared Filesytems
 -----------------
 	
 On shared filesystems, you may safely avoid attaching files as all hosts will be able to access your files. The equivalent command in this case is:
 	
-	submit myprogram --input /path/to/my/local/file.txt
+    submit myprogram --input /path/to/my/local/file.txt
 	
 This will behave in the same way as attaching the file and using a local reference (as shown above) except that some time is saved on 
 file transfers. This becomes significant if you are dealing with large files.
@@ -1213,13 +1314,13 @@ Remote Files
 
 You may attach files from your cluster's GridFTP server by using grid:// prefix :
 
-	attach grid://path/to/my/remote/file.txt
-	submit myprogram --input file.txt
+    attach grid://path/to/my/remote/file.txt
+    submit myprogram --input file.txt
 	
 For other locations supporting GridFTP transfers use the gsiftp:// prefix :
 
-	attach gsiftp://path/to/my/remote/file.txt
-	submit myprogram --input file.txt
+    attach gsiftp://path/to/my/remote/file.txt
+    submit myprogram --input file.txt
 	
 Listing Files
 -------------
@@ -1228,8 +1329,8 @@ To see files in a directory use the 'ls' command. You can also navigate through 
 If you need to know the directory you are currently in, use the 'pwd' (print working directory) command. The 'ls' command will show you files
 in either local or remote locations:
 
-	ls /my/local/directory
-	ls grid://my/remote/directory
+    ls /my/local/directory
+    ls grid://my/remote/directory
 
 Note that the TAB key can be used to suggest names and values at each level in the file path. This makes typing long paths much more convenient
 	
@@ -1271,14 +1372,14 @@ To see the value for a specific job property use the command 'print global <prop
 Job Requirements
 -----------------
 
-A typical job requires that that a package be set and that the version be specific or 'any'.
+A typical job requires that that an application package be set and that the version be specific or 'any'.
 To view the available packages, use the command 'print packages'.
 
-Note that packages belong to specific queues and to use applications in the package you must have access
-to the appropriate queue. To see the versions and queues for a package use the command 'print package <package>'.
+Note that application packages are bound to specific queues and to use applications in the package you must have access
+to the appropriate queue. To see the versions and queues for an application package use the command 'print package <application_package>'.
 
 To set the queue, use the 'set' command. You can view all available queues with the 'print queues' command or 
-you can filter by package using the command 'print package <package>'. You may also filter by group using the 
+you can filter by package using the command 'print package <application_package>'. You may also filter by group using the 
 command 'print queues <group>'.
   
 If you do not mind which queue your job is submitted to, you can use 'set queue auto' to let the system determine

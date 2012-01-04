@@ -1,6 +1,28 @@
 Changelog
 =========
 
+0.7
+---
+
+* "kill/clean jobs" commands now deprecated. "kill/clean job [list of jobnames/globs]" is used insted. Supports globs completion.
+* "download" and "downloadclean" commands now support optional target directory.
+* "view" command can now list jobdirectories directly ("view job <jobname> <file_relative_to_jobdir>").
+* Changes to login-component, makes renewal of proxy within gricli possible.
+* Notification when user proxy reaches configured minimum
+* man & markdown USAGE.md pages are created automatically via maven
+* Debian and RedHat packages
+* "kill/clean", "archive" and "submit" commands can now be executed in background using "&" operator
+
+0.6
+----
+
+* renamed global "application" to "package"
+* fixed job download where directories within job directories weren't downloaded
+* updated Grisu dependency which brings lots of improvements to scalability and stability
+* "archive job" blocks now until archiving is finished
+* progress bar for killing of multiple jobs
+* basic "view" command to pre-view files. mostly useful for viewing stdout/stderr while job is running
+
 0.5.2
 -----
 

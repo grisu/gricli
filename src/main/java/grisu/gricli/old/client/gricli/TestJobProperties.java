@@ -4,7 +4,6 @@ import grisu.control.ServiceInterface;
 
 import java.io.File;
 
-
 public class TestJobProperties extends AbstractJobProperties implements
 		JobProperties {
 

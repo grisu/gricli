@@ -19,55 +19,58 @@ public class DirVar extends ScalarVar<File> {
 
 	@Override
 	protected File fromString(String arg) throws GricliSetValueException {
-		if (arg == null){
-			throw new GricliSetValueException(getName(), "null","dir cannot be unset");
+		if (arg == null) {
+			throw new GricliSetValueException(getName(), "null",
+					"dir cannot be unset");
 		}
 		try {
-			//expand path for checking
-			String resultValue = StringUtils.replace(
-					arg, "~", System.getProperty("user.home"));
+			// expand path for checking
+			final String resultValue = StringUtils.replace(arg, "~",
+					System.getProperty("user.home"));
 			File dir = new File(resultValue);
 
 			if (!dir.isAbsolute()) {
 				dir = new File(System.getProperty("user.dir"), arg);
 			}
-			//check path
+			// check path
 			if (!dir.exists()) {
 				throw new GricliSetValueException(getName(),
 						dir.getCanonicalPath(), "directory does not exist");
 			}
 
 			return dir;
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 			throw new GricliSetValueException(getName(), arg, ex.getMessage());
 		}
 	}
 
 	@Override
-	public String toString(){
-		boolean windows = System.getProperty("file.separator").equals("\\");
+	public String toString() {
+		final boolean windows = System.getProperty("file.separator").equals(
+				"\\");
 		try {
 			String value = get().getCanonicalPath();
-			if (windows){
+			if (windows) {
 				value = value.replace("\\", "/");
-				String winhome = System.getProperty("user.home").replace("\\", "/"); 
-				if (value.startsWith(winhome)){
-					return value.replaceFirst(winhome, "~");			
+				final String winhome = System.getProperty("user.home").replace(
+						"\\", "/");
+				if (value.startsWith(winhome)) {
+					return value.replaceFirst(winhome, "~");
 				} else {
 					return value.replace("\\", "/");
 				}
 			} else {
-				if (value.startsWith(System.getProperty("user.home"))){
-					return value.replaceFirst(System.getProperty("user.home"), "~");				
+				if (value.startsWith(System.getProperty("user.home"))) {
+					return value.replaceFirst(System.getProperty("user.home"),
+							"~");
 				} else {
 					return value;
 				}
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			return null;
 		}
 
 	}
-
 
 }

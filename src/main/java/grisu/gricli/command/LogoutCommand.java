@@ -6,23 +6,22 @@ import grisu.gricli.environment.GricliEnvironment;
 
 import java.io.File;
 
-public class LogoutCommand implements
-GricliCommand {
+public class LogoutCommand implements GricliCommand {
 
-
-	@SyntaxDescription(command={"destroy","proxy"})
+	@SyntaxDescription(command = { "close", "session" })
 	public LogoutCommand() {
 		super();
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
+			throws GricliRuntimeException {
 		try {
 			env.getServiceInterface().logout();
-		} catch (LoginRequiredException l){
+		} catch (final LoginRequiredException l) {
 			// do nothing as login session does not exist.
 		}
-		String proxy = org.globus.common.CoGProperties.getDefault().getProxyFile();
+		final String proxy = org.globus.common.CoGProperties.getDefault()
+				.getProxyFile();
 		new File(proxy).delete();
 		return env;
 	}

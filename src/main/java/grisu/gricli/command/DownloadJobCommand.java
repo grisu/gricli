@@ -2,114 +2,109 @@ package grisu.gricli.command;
 
 import grisu.control.ServiceInterface;
 import grisu.control.exceptions.NoSuchJobException;
-import grisu.control.exceptions.RemoteFileSystemException;
+import grisu.frontend.control.clientexceptions.FileTransactionException;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.environment.GricliEnvironment;
-import grisu.gricli.util.ServiceInterfaceUtils;
-import grisu.model.dto.DtoJob;
-import grisu.model.dto.GridFile;
+import grisu.jcommons.constants.Constants;
+import grisu.model.FileManager;
+import grisu.utils.ServiceInterfaceUtils;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Set;
 
-import javax.activation.DataHandler;
-
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
 @SuppressWarnings("restriction")
-public class DownloadJobCommand implements
-GricliCommand {
+public class DownloadJobCommand implements GricliCommand {
 	private final String jobFilter;
-
-	@SyntaxDescription(command={"download","job"}, arguments={"jobname"})
-	@AutoComplete(completors={JobnameCompletor.class})
+	private final String target;
+	@SyntaxDescription(command = { "download", "job" }, arguments = { "jobname" })
+	@AutoComplete(completors = { JobnameCompletor.class })
 	public DownloadJobCommand(String jobFilter) {
 		this.jobFilter = jobFilter;
+		this.target = null;
 	}
 
-	private void download(ServiceInterface si, GridFile df, File dst)
-	throws RemoteFileSystemException, IOException {
-		Set<GridFile> files = df.getChildren();
-		for (GridFile file : files) {
-			DataHandler dh = si.download(file.getUrl());
-			InputStream in = dh.getInputStream();
-			FileOutputStream fout = new FileOutputStream(FilenameUtils.concat(
-					dst.getCanonicalPath(), file.getName()));
-			byte buf[] = new byte[1024];
-			int len;
-			while ((len = in.read(buf)) > 0) {
-				fout.write(buf, 0, len);
-			}
-			fout.close();
-			in.close();
-		}
-
-		Set<GridFile> folders = df.getChildren();
-		for (GridFile folder : folders) {
-			File dst2 = new File(FilenameUtils.concat(dst.getCanonicalPath(),
-					folder.getName()));
-			dst2.mkdir();
-			download(si, folder, dst2);
-		}
+	@SyntaxDescription(command = { "download", "job" }, arguments = {
+			"jobname", "target" })
+	@AutoComplete(completors = { JobnameCompletor.class,
+			LocalFolderCompletor.class })
+	public DownloadJobCommand(String jobFilter, String targetDir){
+		this.jobFilter = jobFilter;
+		this.target = targetDir;
 	}
 
-	private void downloadDir(String src, String dst, ServiceInterface si)
-	throws GricliRuntimeException {
+	private void downloadJob(GricliEnvironment env, ServiceInterface si,
+			String jobname, String dst) throws GricliRuntimeException {
+
 		try {
-			File dir = new File(dst);
-			dir.mkdir();
+			final String jobdir = si.getJobProperty(jobname,
+					Constants.JOBDIRECTORY_KEY);
 
-			download(si, si.ls(src, 1), dir);
-		} catch (RemoteFileSystemException ex) {
-			throw new GricliRuntimeException(
-					" cannot access remote file system: " + ex.getMessage());
-		} catch (IOException ex) {
-			throw new GricliRuntimeException(
-					"cannot access local file system: " + ex.getMessage());
-		}
+			final FileManager fm = env.getGrisuRegistry().getFileManager();
 
-	}
+			env.printMessage("Downloading job " + jobname + " to " + dst
+					+ File.separator + jobname);
 
-	private void downloadJob(GricliEnvironment env, ServiceInterface si, String jobname, String dst)
-	throws GricliRuntimeException {
-		try {
-			env.printMessage("downloading job " + jobname);
-			DtoJob job = si.getJob(jobname);
-			downloadDir(job.jobProperty("jobDirectory"), dst, si);
-		} catch (NoSuchJobException ex) {
-			throw new GricliRuntimeException("job " + jobname
+			fm.downloadUrl(jobdir, new File(dst), false);
+
+		} catch (final NoSuchJobException nsje) {
+			throw new GricliRuntimeException("Job " + jobname
 					+ " does not exist");
+		} catch (final IOException e) {
+			throw new GricliRuntimeException(e.getLocalizedMessage());
+		} catch (final FileTransactionException e) {
+			throw new GricliRuntimeException(e.getLocalizedMessage());
 		}
+
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
+			throws GricliRuntimeException {
 
 		boolean hasError = false;
 
-		ServiceInterface si = env.getServiceInterface();
-		String normalDirName = StringUtils.replace(env.dir.get().toString(), "~",
-				System.getProperty("user.home"));
-		for (String jobname : ServiceInterfaceUtils.filterJobNames(si,
+		final ServiceInterface si = env.getServiceInterface();
+		String normalDirName = null;
+		if (StringUtils.isBlank(target)) {
+			normalDirName = StringUtils.replace(env.dir.get()
+					.toString(), "~", System.getProperty("user.home"));
+		} else {
+			File targetDir = new File(target);
+			if (targetDir.exists()) {
+				targetDir.mkdirs();
+				if (!targetDir.exists()) {
+					throw new GricliRuntimeException("Can't create target dir "
+							+ target);
+				}
+			}
+			normalDirName = targetDir.getAbsolutePath();
+
+		}
+
+		// check whether one of the target dirs already exits..
+		for (final String jobname : ServiceInterfaceUtils.filterJobNames(si,
+				jobFilter)) {
+			File targetTemp = new File(target, jobname);
+			if (targetTemp.exists()) {
+				throw new GricliRuntimeException("Can't download job '"
+						+ jobname + "': target dir '"
+						+ targetTemp.getAbsolutePath() + "' already exists.");
+			}
+		}
+
+		for (final String jobname : ServiceInterfaceUtils.filterJobNames(si,
 				jobFilter)) {
 
 			try {
-				downloadJob(env,si, jobname,
-						FilenameUtils.concat(normalDirName, jobname));
-			}
-			catch (GricliRuntimeException ex){
+				downloadJob(env, si, jobname, normalDirName);
+			} catch (final GricliRuntimeException ex) {
 				hasError = true;
 				env.printError(ex.getMessage());
 			}
 		}
-		if (hasError){
-			throw new GricliRuntimeException("download command was unsuccessful");
-		}
+
 		return env;
 
 	}

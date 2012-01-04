@@ -13,27 +13,28 @@ import jline.Completor;
 import jline.SimpleCompletor;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExecutablesCompletor implements Completor {
 
-	private static Logger myLogger = Logger
-			.getLogger(ExecutablesCompletor.class.getName());
+	private static Logger myLogger = LoggerFactory
+			.getLogger(ExecutablesCompletor.class);
 
 	public int complete(String s, int i, List list) {
 
-		GricliEnvironment env = Gricli.completionCache.getEnvironment();
+		final GricliEnvironment env = Gricli.completionCache.getEnvironment();
 		String version;
 		try {
 			version = (String) env.getVariable("version").get();
-		} catch (GricliRuntimeException e1) {
+		} catch (final GricliRuntimeException e1) {
 			e1.printStackTrace();
 			return -1;
 		}
 		String fqan;
 		try {
 			fqan = (String) env.getVariable("group").get();
-		} catch (GricliRuntimeException e1) {
+		} catch (final GricliRuntimeException e1) {
 			e1.printStackTrace();
 			return -1;
 		}
@@ -43,23 +44,20 @@ public class ExecutablesCompletor implements Completor {
 		}
 
 		try {
-			ApplicationInformation ai = env.getGrisuRegistry()
+			final ApplicationInformation ai = env.getGrisuRegistry()
 					.getApplicationInformation(
 							(String) env.getVariable("application").get());
 
-
-
-			Set<String> exes = ai.getExecutablesForVo(fqan, version);
+			final Set<String> exes = ai.getExecutablesForVo(fqan, version);
 
 			if (exes.size() == 0) {
 				return -1;
 			}
 
-
 			return new SimpleCompletor(exes.toArray(new String[] {})).complete(
 					s, i, list);
-		} catch (Exception e) {
-			myLogger.error(e);
+		} catch (final Exception e) {
+			myLogger.error(e.getLocalizedMessage(), e);
 			return -1;
 		}
 

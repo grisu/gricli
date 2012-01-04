@@ -8,8 +8,10 @@ import grisu.control.exceptions.NoValidCredentialException;
 import grisu.control.exceptions.ServiceInterfaceException;
 import grisu.frontend.control.login.LoginException;
 import grisu.frontend.control.login.LoginManager;
-import grisu.frontend.control.login.LoginParams;
 import grisu.utils.SeveralStringHelpers;
+import grith.jgrith.control.LoginParams;
+import grith.jgrith.credential.Credential;
+import grith.jgrith.credential.CredentialFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,13 +26,13 @@ import javax.activation.FileDataSource;
 import jline.ConsoleReader;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Gricli {
 
-	private static Logger myLogger = Logger.getLogger(Gricli.class.getName());
-
+	private static Logger myLogger = LoggerFactory.getLogger(Gricli.class
+			.getName());
 
 	public static final int DEFAULT_SLEEP_TIME_IN_SECONDS = 600;
 	public static final String JOBNAME_PLACEHOLDER = "XXX_JOBNAME_XXX";
@@ -110,7 +112,6 @@ public class Gricli {
 		this.jobProperties = jobProperties;
 
 		verbose = clientProperties.verbose();
-		enableDebug(clientProperties.debug());
 
 	}
 
@@ -129,7 +130,6 @@ public class Gricli {
 		clientProperties = new GrisuClientCommandlineProperties(args);
 
 		verbose = clientProperties.verbose();
-		enableDebug(clientProperties.debug());
 
 		jobProperties = new CommandlineProperties(serviceInterface,
 				((GrisuClientCommandlineProperties) clientProperties)
@@ -158,7 +158,6 @@ public class Gricli {
 		clientProperties = new GrisuClientCommandlineProperties(args);
 
 		verbose = clientProperties.verbose();
-		enableDebug(clientProperties.debug());
 
 		if (clientProperties.useLocalProxy()) {
 			login();
@@ -170,7 +169,7 @@ public class Gricli {
 			final char[] password = consoleReader.readLine(
 					"Please enter your myproxy password: ", new Character('*'))
 					.toCharArray();
-			login(clientProperties.getMyProxyUsername(), password);
+			myproxyLogin(clientProperties.getMyProxyUsername(), password);
 		}
 
 		jobProperties = new CommandlineProperties(serviceInterface,
@@ -200,7 +199,7 @@ public class Gricli {
 						try {
 							stageoutdir = new File(".").getCanonicalPath();
 						} catch (final IOException e) {
-							myLogger.error(e);
+							myLogger.error(e.getLocalizedMessage(), e);
 						}
 					}
 					System.out.println("Trying to stageout job directory to "
@@ -238,14 +237,6 @@ public class Gricli {
 		return status;
 	}
 
-	private void enableDebug(boolean debug) {
-
-		if (debug) {
-			final Level lvl = Level.toLevel("debug");
-			Logger.getRootLogger().setLevel(lvl);
-		}
-
-	}
 
 	private void executeSubmission() throws NoSuchJobException,
 	JobStagingException {
@@ -434,7 +425,7 @@ public class Gricli {
 				try {
 					Thread.sleep(sleepTime * 1000);
 				} catch (final InterruptedException e) {
-					myLogger.error(e);
+					myLogger.error(e.getLocalizedMessage(), e);
 				}
 			}
 
@@ -485,7 +476,29 @@ public class Gricli {
 		}
 	}
 
-	private void login(String username, char[] password)
+	private void loginWithShibboleth(String username, String idp) {
+		try {
+			final ConsoleReader consoleReader = new ConsoleReader();
+			System.out.println(clientProperties.getServiceInterfaceUrl());
+			final char[] password = consoleReader.readLine(
+					"Please enter shibboleth password: ", new Character('*'))
+					.toCharArray();
+
+			Credential c = CredentialFactory.createFromSlcs(null, idp,
+					username, password,
+					LoginManager.DEFAULT_PROXY_LIFETIME_IN_HOURS * 3600);
+
+			serviceInterface = LoginManager.login(c,
+					clientProperties.getServiceInterfaceUrl(), true);
+
+		} catch (final IOException ie) {
+			throw new RuntimeException(ie);
+		} catch (final LoginException le) {
+			throw new RuntimeException(le);
+		}
+	}
+
+	private void myproxyLogin(String username, char[] password)
 			throws ServiceInterfaceException, LoginException {
 
 		if (verbose) {
@@ -496,30 +509,14 @@ public class Gricli {
 		final LoginParams loginParams = new LoginParams(
 				clientProperties.getServiceInterfaceUrl(), username, password,
 				DEFAULT_MYPROXY_SERVER, DEFAULT_MYPROXY_PORT);
-		serviceInterface = LoginManager.login(null, null, null, null,
-				loginParams, false);
+
+		serviceInterface = LoginManager.myProxyLogin(username, password,
+				clientProperties.getServiceInterfaceUrl(), true);
 
 		if (verbose) {
 			System.out.println("Login successful.");
 		}
 
-	}
-
-	private void loginWithShibboleth(String username, String idp) {
-		try {
-			final ConsoleReader consoleReader = new ConsoleReader();
-			System.out.println(clientProperties.getServiceInterfaceUrl());
-			final char[] password = consoleReader.readLine(
-					"Please enter shibboleth password: ", new Character('*'))
-					.toCharArray();
-			System.out.println(username);
-			LoginManager.shiblogin(username, password, idp,
-					clientProperties.getServiceInterfaceUrl(), true);
-		} catch (final IOException ie) {
-			throw new RuntimeException(ie);
-		} catch (final LoginException le) {
-			throw new RuntimeException(le);
-		}
 	}
 
 	/**

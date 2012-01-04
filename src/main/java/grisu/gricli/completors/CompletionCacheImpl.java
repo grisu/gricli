@@ -19,12 +19,13 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CompletionCacheImpl implements CompletionCache {
 
-	static final Logger myLogger = Logger.getLogger(CompletionCacheImpl.class
-			.getName());
+	static final Logger myLogger = LoggerFactory
+			.getLogger(CompletionCacheImpl.class);
 
 	public final Set<String> currentlyListedUrls = Collections
 			.synchronizedSet(new HashSet<String>());
@@ -32,71 +33,92 @@ public class CompletionCacheImpl implements CompletionCache {
 	private final GricliEnvironment env;
 	private final GrisuRegistry reg;
 
-	private String[] fqans = new String[] { "*** Loading...", "...try again***" };
+	// private static final String[] LOADING_VOS = new String[] {
+	// "*** Loading...", "...try again***" };
+
+	private String[] fqans = null;
 	private String[] applications = new String[] { "*** Loading...",
-			"...try again***" };
+	"...try again***" };
 
 	private static Cache cache = CacheManager.getInstance().getCache("short");
 
-	public CompletionCacheImpl(GricliEnvironment env) throws LoginRequiredException {
+	public CompletionCacheImpl(GricliEnvironment env)
+			throws LoginRequiredException {
 		this.env = env;
 		this.reg = env.getGrisuRegistry();
 		// this.jm =
 		// RunningJobManager.getDefault(this.env.getServiceInterface());
-		new Thread() {
+		Thread t = new Thread() {
 			@Override
 			public void run() {
-				getAllQueues();
-				myLogger.debug("All queues loaded for completion");
+				try {
+					getAllQueues();
+					myLogger.debug("All queues loaded for completion");
+				} catch (Exception e) {
+					myLogger.error("Can't load queues.", e);
+				}
 			}
-		}.start();
-		new Thread() {
+		};
+		t.setName("getAllQueuesBackgroundThread");
+		// t.setDaemon(true);
+		t.start();
+		Thread t2 = new Thread() {
 			@Override
 			public void run() {
-				String[] fqans = CompletionCacheImpl.this.reg
-						.getUserEnvironmentManager().getAllAvailableFqans(true);
-				CompletionCacheImpl.this.fqans = fqans;
+				final String[] fqans = getAllFqans();
 				myLogger.debug("All vos loaded for completion");
-				for (String fqan : fqans) {
+				for (final String fqan : fqans) {
 					getAllQueuesForFqan(fqan);
 					myLogger.debug("All queues loaded for fqan: " + fqan);
 				}
 			}
-		}.start();
-		new Thread() {
+		};
+		t2.setName("groupsAndSublocLoadBackgroundThread");
+		// t2.setDaemon(true);
+		t2.start();
+		Thread t3 = new Thread() {
 			@Override
 			public void run() {
-				ArrayList<String> results = new ArrayList<String>();
-				Collections.addAll(results, CompletionCacheImpl.this.reg.getUserEnvironmentManager()
+				final ArrayList<String> results = new ArrayList<String>();
+				Collections.addAll(results, CompletionCacheImpl.this.reg
+						.getUserEnvironmentManager()
 						.getAllAvailableApplications());
 				results.add(0, Constants.GENERIC_APPLICATION_NAME);
 
-				String[] apps = results.toArray(new String[] {});
-
+				final String[] apps = results.toArray(new String[] {});
 
 				CompletionCacheImpl.this.applications = apps;
 				myLogger.debug("All applications loaded for completion");
 			}
-		}.start();
+		};
+		t3.setName("appInfoLoadBackgroundThread");
+		// t3.setDaemon(true);
+		t3.start();
 
-		new Thread() {
+		Thread t4 = new Thread() {
 			@Override
 			public void run() {
 				getJobnames();
 				myLogger.debug("All jobnames loaded for completion");
 			}
-		}.start();
-		new Thread() {
+		};
+		t4.setName("jobnameLoadBackgroundThread");
+		// t4.setDaemon(true);
+		t4.start();
+		Thread t5 = new Thread() {
 			@Override
 			public void run() {
 				getAllSites();
 				myLogger.debug("All sites loaded for completion");
 			}
-		}.start();
+		};
+		t5.setName("siteLoadBackgroundThread");
+		// t5.setDaemon(true);
+		t5.start();
 	}
 
 	public void addFileListingToCache(String urlToList, GridFile list) {
-		Element el = new Element(urlToList, list);
+		final Element el = new Element(urlToList, list);
 		cache.put(el);
 
 	}
@@ -105,25 +127,38 @@ public class CompletionCacheImpl implements CompletionCache {
 		return applications;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see grisu.gricli.completors.CompletionCache#getAllFqans()
 	 */
-	public String[] getAllFqans() {
+	public synchronized String[] getAllFqans() {
+		if ((fqans == null)) {
+			fqans = CompletionCacheImpl.this.reg.getUserEnvironmentManager()
+					.getAllAvailableFqans(true);
+
+		}
 		return fqans;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see grisu.gricli.completors.CompletionCache#getAllQueues()
 	 */
 	public Set<String> getAllQueues() {
-		return this.reg.getUserEnvironmentManager().getAllAvailableSubmissionLocations();
+		return this.reg.getUserEnvironmentManager()
+				.getAllAvailableSubmissionLocations();
 	}
 
 	public String[] getAllQueuesForFqan(String fqan) {
-		return this.reg.getResourceInformation().getAllAvailableSubmissionLocations(fqan);
+		return this.reg.getResourceInformation()
+				.getAllAvailableSubmissionLocations(fqan);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see grisu.gricli.completors.CompletionCache#getAllSites()
 	 */
 	public Set<String> getAllSites() {
@@ -135,16 +170,15 @@ public class CompletionCacheImpl implements CompletionCache {
 		SortedSet<DtoJob> jobs = null;
 		if (!forceRefresh) {
 			try {
-				jobs = (SortedSet<DtoJob>) cache
-						.get(Constants.ALLJOBS_KEY);
-			} catch (Exception e) {
+				jobs = (SortedSet<DtoJob>) cache.get(Constants.ALLJOBS_KEY);
+			} catch (final Exception e) {
 				// doesn't matter
 			}
 		}
 
 		if (jobs == null) {
 			jobs = this.reg.getUserEnvironmentManager().getCurrentJobs(true);
-			Element e = new Element(Constants.ALLJOBS_KEY, jobs);
+			final Element e = new Element(Constants.ALLJOBS_KEY, jobs);
 			cache.put(e);
 		}
 
@@ -155,7 +189,9 @@ public class CompletionCacheImpl implements CompletionCache {
 		return env;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see grisu.gricli.completors.CompletionCache#getJobnames()
 	 */
 	public SortedSet<String> getJobnames() {
@@ -173,24 +209,26 @@ public class CompletionCacheImpl implements CompletionCache {
 				if (!currentlyListedUrls.contains(url)) {
 
 					currentlyListedUrls.add(url);
-					new Thread() {
+					Thread t = new Thread() {
 						@Override
 						public void run() {
 
 							try {
-								GridFile f = reg.getFileManager().ls(url);
-								Element e = new Element(url, f);
+								final GridFile f = reg.getFileManager().ls(url);
+								final Element e = new Element(url, f);
 								cache.put(e);
-							} catch (RemoteFileSystemException e) {
-								myLogger.error(e);
-								GridFile f = new GridFile(url, false, e);
-								Element el = new Element(url, f);
+							} catch (final RemoteFileSystemException e) {
+								myLogger.error(e.getLocalizedMessage(), e);
+								final GridFile f = new GridFile(url, false, e);
+								final Element el = new Element(url, f);
 								cache.put(el);
 							} finally {
 								currentlyListedUrls.remove(url);
 							}
 						}
-					}.start();
+					};
+					t.setName("ls thread for: " + url);
+					t.start();
 				}
 
 				throw new StillLoadingException(url);
@@ -206,12 +244,14 @@ public class CompletionCacheImpl implements CompletionCache {
 	 * @see grisu.gricli.completors.CompletionCache#refreshJobnames()
 	 */
 	public void refreshJobnames() {
-		new Thread() {
+		Thread t = new Thread() {
 			@Override
 			public void run() {
 				reg.getUserEnvironmentManager().getReallyAllJobnames(true);
 			}
-		}.start();
+		};
+		t.setName("refresh jobnames thread");
+		t.start();
 	}
 
 	public void removeFileListingFromCache(String url) {

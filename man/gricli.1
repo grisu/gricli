@@ -93,29 +93,6 @@ Example usage:
 print globals print global memory set memory 1g help memory help
 global memory
 .SS List of globals:
-.SS application
-.PP
-The is the applicaiton package used by the job.
-.PP
-To set the package use the `set' command.
-To see a list of available packages use the `print packages'
-command.
-To see the which package is set for a job before it is submitted,
-use the command `print global package'.
-After a job has been submitted you can check the package with
-`print job  package'
-.PP
-Note that the package is not set by default and is required to
-submit a job.
-.PP
-Example usage:
-.PP
-\f[CR]
-      print\ packages
-      set\ package\ R
-      print\ global\ package
-      print\ job\ myjob\ package
-\f[]
 .SS cpus
 .PP
 The number of cpus to be used by a job.
@@ -135,7 +112,7 @@ Example usage:
 \f[]
 .SS debug
 .PP
-Boolean to show debug output from Grilci exceptions.
+Boolean to show debug output from exceptions.
 .PP
 This value can be set using the `set' command.
 .PP
@@ -158,7 +135,7 @@ To view the description of a submitted job use the command
 Example usage:
 .PP
 \f[CR]
-      set\ description\ "my\ job\ descritpion"
+      set\ description\ "my\ job\ description"
       print\ global\ description
       print\ job\ myjob\ description
 \f[]
@@ -193,7 +170,7 @@ Example usage:
 \f[]
 .SS email
 .PP
-The email address to send notificaitons to.
+The email address to send notifications to.
 .PP
 The email address can be set using the `set' command.
 To view the email address of a job before submission use the
@@ -240,6 +217,27 @@ Example usage:
       set\ email_on_start\ true
       set\ email_on_start\ false
 \f[]
+.SS environment
+.PP
+The execution evironment variables of a job.
+.PP
+To add an environment variable and value use the `add env  '
+command.
+.PP
+Note that you do not need `$' as part of the variable name.
+.PP
+To view the environment variables and their values before
+submission use the command `print global environment'.
+To view the environment variables after submission use the command
+`print job  environmentVariables'.
+.PP
+Example usage:
+.PP
+\f[CR]
+      add\ environment\ MY_VAR\ MY_VALUE
+      print\ global\ environment
+      print\ job\ myjob\ environmentVariables
+\f[]
 .SS gdir
 .PP
 The grid directory.
@@ -258,14 +256,14 @@ Note that the group must be set before a job can be submitted.
 To view the group before a job has been submitted use the command
 `print global group'.
 To view the group after a job has been submitted use the command
-`print job  fqan'.
+`print job  group'.
 .PP
 Example usage:
 .PP
 \f[CR]
       set\ group\ /nz/nesi
       print\ global\ group
-      print\ job\ myjob\ fqan
+      print\ job\ myjob\ group
 \f[]
 .SS host
 .PP
@@ -324,7 +322,7 @@ The number of hosts used for an mpi job can be checked after
 submission using the command `print job  hostCount'.
 .PP
 Please note that a `host' is a compute node within a queue.
-Since the hardware specificaitons may vary between hosts in a
+Since the hardware specifications may vary between hosts in a
 queue, you are advised to check the properties of your queues to
 ensure you jobs run correctly.
 In particular, it is important that jobs do not request more
@@ -344,7 +342,7 @@ queue.
 .PP
 Custom
 .PP
-Please note that is is up to you to ensure your job is scheduled
+Please note that is up to you to ensure your job is scheduled
 correctly as this job type implies you may not be relying on Open
 MPI to coordinate your processes.
 .PP
@@ -370,7 +368,7 @@ The command accepts values in the following formats:
       set\ memory\ 1g200m\ \ \ \ :\ sets\ memory\ to\ 1224\ MB
 \f[]
 .PP
-To view the memory of a job before sumbmission use the command
+To view the memory of a job before submission use the command
 `print global memory'.
 To view the memory of a job after submission use the command 'print
 job memory.
@@ -391,12 +389,34 @@ Example usage:
 \f[CR]
       set\ outputfile\ /home/myfolder/gricli_output.txt
 \f[]
+.SS package
+.PP
+This is the application package used by the job.
+.PP
+To set the package use the `set' command.
+To see a list of available packages use the `print packages'
+command.
+To see which package is set for a job before it is submitted, use
+the command `print global package'.
+After a job has been submitted you can check the package with
+`print job  package'
+.PP
+Note that the package is not set by default and is required to
+submit a job.
+.PP
+Example usage:
+.PP
+\f[CR]
+      print\ package
+      set\ package\ R
+      print\ global\ package
+      print\ job\ myjob\ package
+\f[]
 .SS prompt
 .PP
 The prompt message.
 .PP
-This is set to `gricli' by defualt but can changed using the `set'
-command.
+This is can changed using the `set' command.
 The command can accept macros, substituting the values of other
 globals into the prompt.
 .PP
@@ -420,11 +440,12 @@ To view the queues available for a specific groups use the command
 `print queues '
 .PP
 To see which queues support a particular application package use
-the command `print package '.
-To see a list of applications use the command `print packages'.
+the command `print package <application_package>'.
+To see a list of application packages use the command
+`print packages'.
 .PP
-If you have set the package, then the queue locaiton can be
-determined automatically.
+If you have set the application package, then the queue location
+can be determined automatically.
 Use the command `set queue auto' to enable this option.
 .PP
 To see the queue before a job is submitted use the command
@@ -444,17 +465,17 @@ Example usage:
 .PP
 The application package version.
 .PP
-This is the package version to be used.
+This is the application package version to be used.
 By default the value is `any'.
 .PP
-If a package is specified and the queue is set to auto then the job
-will be submitted to valid queue locaiton that supports a version
-of the chosen package.
+If a package is specified and the queue is set to auto, the job
+will be submitted to a queue location that supports a version of
+the chosen application package.
 .PP
 To ensure a specific version of the package is used, use the `set'
 command to choose the version.
-To see the list of versions available for a package use the command
-`print package '.
+To see the list of versions available for an application package
+use the command `print package <application_package>'.
 .PP
 Example usage:
 .PP
@@ -485,17 +506,12 @@ command `print global walltime'.
 To view the walltime after a job has been submitted, use the
 command `print job  walltime'.
 .PP
-You can also see the remaining walltime for a job that has started
-here:
-.PP
-\f[CR]
-      http://cluster.ceres.auckland.ac.nz/cgi-bin/showq.cgi
-\f[]
-.PP
 Example usage:
 .PP
 \f[CR]
-      set\ walltime\ 1000
+      set\ walltime\ 240
+      set\ walltime\ 240m
+      set\ walltime\ 4h
       set\ walltime\ 30d4h12m
       print\ global\ walltime
       print\ job\ myjob\ walltime
@@ -505,12 +521,12 @@ Example usage:
 .PP
 Displays the following information about the Gricli shell:
 .PP
-version: This is the version of Gricli you are using.
+version: This is the software version you are using.
 grisu frontend version: The interface used to communicate with
 Grisu.
-grisu backend: They Grisu backend (BeSTGRID or BeSTGRID-DEV) grisu
-backend host: The Grisu host.
-grisu backend version: The version of Grisu used by Gricli.
+grisu backend: The Grisu backend (BeSTGRID or DEV) grisu backend
+host: The Grisu host.
+grisu backend version: The version of Grisu used.
 documentation: Where you may find further help and information.
 contact: Who to contact in case you have problems or questions.
 .PP
@@ -537,6 +553,7 @@ Currently available lists are:
 .PP
 \f[CR]
       files\ \ \ \ \ \ \ :\ The\ files\ attached\ for\ a\ job.
+      environment\ :\ The\ environment\ variables\ in\ the\ job\ execution\ environment
 \f[]
 .PP
 Example usage:
@@ -545,6 +562,7 @@ Example usage:
       add\ files\ ~/myfile.txt
       add\ files\ "~/my\ file.txt"
       add\ files\ grid://groups/nz/nesi/myfile.txt
+      add\ environment\ MY_VAR\ MY_VALUE
 \f[]
 .SS apropos
 .PP
@@ -571,6 +589,8 @@ the job.
 .PP
 Supports glob regular expressions.
 Note that if a job is still running it will be stopped.
+The archive process may take a while depending on how large the
+files are.
 .PP
 Parameters:
 .PP
@@ -613,7 +633,7 @@ Supports multiple arguments and glob regular expressions.
 Parameters
 .PP
 \f[CR]
-      files\ \ \ :\ Whitespace\ seperated\ list\ of\ files
+      files\ \ \ :\ Whitespace\ separated\ list\ of\ files
 \f[]
 .PP
 Example usage:
@@ -646,7 +666,7 @@ Parameters
 .PP
 \f[CR]
       bactchjob\ \ \ :\ The\ name\ of\ the\ batchjob
-      files\ \ \ :\ Whitespace\ seperated\ list\ of\ files
+      files\ \ \ \ \ \ \ :\ Whitespace\ separated\ list\ of\ files
 \f[]
 .PP
 Example usage:
@@ -743,24 +763,8 @@ Example usage:
       clean\ myjob_2
       clean\ myjob*
       clean\ *
+      clean\ jobs
 \f[]
-.SS clear
-.PP
-Clears the selected list.
-.PP
-Parameters:
-.PP
-\f[CR]
-      list\ \ \ \ :\ The\ list\ to\ clear
-\f[]
-.PP
-Currently available lists in gricli are:
-.PP
-\f[CR]
-      files\ \ \ \ \ \ \ :\ The\ files\ associated\ with\ a\ job.
-\f[]
-.PP
-Example usage:
 .SS destroy proxy
 .PP
 Deletes your login information.
@@ -831,13 +835,22 @@ Example usage:
 Not yet implemented.
 .SS help
 .PP
+The command syntax presented in the help files has the following
+format:
+.PP
+\f[CR]
+      command_name\ <required_argument>\ [optional_argument]\ 
+\f[]
+.PP
+A command may have multiple required and optional arguments.
+.PP
 Prints this help message or a help message for a certain command,
 topic or global variable.
 .PP
 Parameters:
 .PP
 \f[CR]
-      keywords\ \ \ \ :\ A\ whitespace\ seperated\ list\ of\ keywords.
+      keywords\ \ \ \ :\ A\ whitespace\ separated\ list\ of\ keywords.
 \f[]
 .PP
 Usage:
@@ -925,7 +938,7 @@ The choice of backend is one of:
 .PP
 \f[CR]
       BeSTGRID\ \ \ \ \ \ \ \ :\ The\ default\ backend.
-      BeSTGRID-DEV\ \ \ \ :\ The\ development\ backend.\ \ \ \ \ 
+      DEV\ \ \ \ :\ The\ development\ backend.\ \ \ \ \ 
 \f[]
 .PP
 If there is no certificate proxy the user is asked details to
@@ -935,7 +948,7 @@ Example usage:
 .PP
 \f[CR]
       ilogin\ BeSTGRID
-      ilogin\ BeSTGRID-DEV\ 
+      ilogin\ DEV\ 
 \f[]
 .SS kill job
 .PP
@@ -961,10 +974,11 @@ Example usage:
       kill\ job\ myjob_2
       kill\ job\ myjob*
       kill\ job\ *
+      kill\ jobs
 \f[]
 .SS login
 .PP
-Logs in to a grisu backend with existing certificate proxy.
+Logs in to a Grisu backend with existing certificate proxy.
 .PP
 Reports an error if there is no proxy.
 .PP
@@ -976,14 +990,14 @@ The choice of backend is one of:
 .PP
 \f[CR]
       BeSTGRID\ \ \ \ \ \ \ \ :\ The\ default\ backend.
-      BeSTGRID-DEV\ \ \ \ :\ The\ development\ backend.\ \ \ \ \ 
+      DEV\ \ \ \ \ \ \ \ \ \ \ \ \ :\ The\ development\ backend.\ \ \ \ \ 
 \f[]
 .PP
 Example usage:
 .PP
 \f[CR]
       login\ BeSTGRID
-      login\ BeSTGRID-DEV\ 
+      login\ DEV\ 
 \f[]
 .SS ls
 .PP
@@ -1002,39 +1016,6 @@ Example usage:
       ls\ ~
       ls\ /home/whoami
       ls\ grid://groups/nz/nesi
-\f[]
-.SS print application
-.PP
-Prints the availabe versions and queue locations for the specificed
-application package.
-.PP
-Parameters:
-.PP
-\f[CR]
-      package\ \ \ \ :\ The\ application\ package.
-\f[]
-.PP
-To see a list of available packages use:
-.PP
-\f[CR]
-      print\ packages
-\f[]
-.PP
-Example usage:
-.PP
-\f[CR]
-      print\ package\ R
-      print\ package\ BEAST
-      print\ package\ UnixCommands
-\f[]
-.SS print applications
-.PP
-List all application package names available on the grid.
-.PP
-Example usage:
-.PP
-\f[CR]
-      print\ packages
 \f[]
 .SS print global
 .PP
@@ -1077,11 +1058,11 @@ Example usage:
 Prints either all or a specific property of a job.
 .PP
 \f[CR]
-      jobname\ :\ The\ name\ of\ the\ job.\ Supports\ glob\ regular\ expressions.
+      jobname\ \ \ \ \ :\ The\ name\ of\ the\ job.\ Supports\ glob\ regular\ expressions.
       property\ \ \ \ :\ The\ property.
 \f[]
 .PP
-To see the avaible job properties use:
+To see the available job properties use:
 .PP
 \f[CR]
       print\ job\ <jobname>
@@ -1109,6 +1090,60 @@ Example usage:
 \f[CR]
       print\ jobs
 \f[]
+.SS print package
+.PP
+Prints the available versions and queue locations for the specified
+application package.
+.PP
+Parameters:
+.PP
+\f[CR]
+      application_package\ \ \ \ :\ The\ application\ package.\ Supports\ glob\ regular\ expressions.
+\f[]
+.PP
+To see a list of available applications use:
+.PP
+\f[CR]
+      print\ packages
+\f[]
+.PP
+Note that application packages are bound to queues so you must
+ensure the queue you submit to can support the application you
+would like to use.
+This will be taken care of when you set the queue to `auto'.
+.PP
+If you set the queue manually, use the this command to check that
+the application and the version you would like to use is supported
+by the queue.
+.PP
+Example usage:
+.PP
+\f[CR]
+      print\ package\ R
+      print\ package\ BEAST
+      print\ package\ UnixCommands
+      print\ package\ *
+      print\ package\ B*
+\f[]
+.SS print packages
+.PP
+List all application packages available to you.
+.PP
+Note that application packages are bound to queues so you must
+ensure the queue you submit to can support the package you would
+like to use.
+This will be taken care of when you set the queue to `auto'.
+.PP
+If you set the queue manually, use the
+`print package <application_package>' command to check that the
+application and the version you would like to use is supported by
+the queue.
+.PP
+Example usage:
+.PP
+\f[CR]
+      print\ packages
+\f[]
 .SS print queue
 .PP
 Displays all details about a queue.
@@ -1122,6 +1157,19 @@ Parameters:
       queue:\ the\ name\ of\ the\ queue
 \f[]
 .PP
+Fields:
+.PP
+\f[CR]
+      Site\ \ \ \ \ \ \ \ \ \ \ \ :\ The\ location\ of\ the\ hosts\ represented\ by\ the\ queue.
+      Queue\ name\ \ \ \ \ \ :\ The\ name\ of\ the\ queue.
+      Job\ manager\ \ \ \ \ :\ The\ type\ of\ job\ scheduler\ used.
+      GRAM\ version\ \ \ \ :\ GRAM\ is\ a\ submission\ system.\ More\ recent\ versions\ provide\ better\ performance.
+      
+      Total\ jobs\ \ \ \ \ \ :\ The\ total\ number\ of\ jobs\ in\ the\ queue.
+      Running\ jobs\ \ \ \ :\ The\ number\ of\ active\ jobs\ in\ the\ queue.
+      Waiting\ jobs\ \ \ \ :\ The\ number\ of\ jobs\ waiting\ to\ run.
+\f[]
+.PP
 Example usage:
 .PP
 \f[CR]
@@ -1132,8 +1180,8 @@ Example usage:
 Lists all queues that are available for the current environment.
 .PP
 The current environment is the group you set, the application
-package and package version you choose (if any), also walltime,
-number of cpus and memory.
+package and version you choose (if any), also walltime, number of
+CPUs and memory (RAM).
 .PP
 Parameters:
 .PP
@@ -1181,15 +1229,28 @@ Example usage:
 \f[]
 .SS run
 .PP
-Runs a Gricli script.
+Runs a set of commands from a plain text file.
+.PP
+Using a script can automate common tasks such as configuring your
+job environment.
 .PP
 Parameters:
 .PP
 \f[CR]
-      script\ \ :\ The\ script\ to\ run.
+      script\ \ :\ The\ plain\ text\ file\ containing\ commands.
 \f[]
 .PP
-A Gricli script can be of any file extension.
+A specific file extension (.txt, \&.xyz) is not required for the
+filename and you may use the `#' character to ignore lines in the
+script.
+.PP
+Example script:
+.SH Name: myscript
+.SH Script to setup and run a job
+.PP
+set group /my/group set package UnixCommands set jobname myjob set
+jobtype single set memory 1g set cpus 1 set walltime 10m set
+description \[lq]a test job\[rq] submit echo \[lq]Hello World\[rq]
 .PP
 Example usage:
 .PP
@@ -1207,21 +1268,47 @@ Sets a value for a variable.
       value\ \ \ :\ The\ value.
 \f[]
 .PP
-Currenltly only the global variables for a job can be set.
+Currently only the global variables for a job can be set.
+To reset a global to a default value use the `unset ' command.
 .PP
 Example usage:
 .PP
 \f[CR]
-      set\ memory\ 1024
+      set\ memory\ 1g
       set\ set\ cpus\ 10
-      set\ walltime\ 500
+      set\ walltime\ 3d
+\f[]
+.SS status
+.PP
+Displays a summary of current jobs.
+.PP
+Fields are defined as follows:
+.PP
+\f[CR]
+      Active\ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ The\ number\ of\ jobs\ that\ are\ running\ or\ waiting\ to\ run.
+      Finished\ \ \ \ \ \ \ \ \ \ \ \ :\ The\ number\ of\ jobs\ that\ have\ stopped\ running.
+      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Successful\ jobs\ finished\ within\ their\ walltime\ limit.
+      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Failed\ jobs\ were\ killed.
+      Broken/Not\ found\ \ \ \ \ \ \ \ \ \ \ \ :\ These\ jobs\ have\ had\ an\ error\ before\ starting.
+\f[]
+.PP
+Example usage:
+.PP
+\f[CR]
+      status
 \f[]
 .SS submit
 .PP
-Submits a new job.
+Submits a new job to execute the provided command
 .PP
-The job parameters are set using the global variables and the
-command returns the name of the job on success.
+The job will be created on will wait on the queue until it is
+executed.
+If the submission is successful, the name of the job will be
+displayed.
+The job parameters are set using the global variables.
+For more information on job properties type `help globals'.
+To learn more about jobs in general, see the help topic entry for
+Jobs: `help topic Jobs'.
 .PP
 Parameters:
 .PP
@@ -1230,14 +1317,31 @@ Parameters:
       &\ \ \ \ \ \ \ \ \ \ :\ Specifies\ asynchronous\ execution.\ \ 
 \f[]
 .PP
-If & is specificed the command will run in the background.
+If & is specified the command will run in the background.
 .PP
 Example usage:
 .PP
 \f[CR]
       submit\ echo\ "hello\ world"
-      submit\ "echo\ "hello\ world""
-      submit\ "sleep\ 100"\ &
+      submit\ sleep\ 100\ &
+\f[]
+.SS unset
+.PP
+Resets an optional variable to its default value.
+.PP
+\f[CR]
+      var\ \ \ \ \ :\ The\ name\ of\ the\ optional\ variable.
+\f[]
+.PP
+Currently only the non-essential global variables for a job can be
+unset.
+To set a global variable use the `set  ' command.
+.PP
+Example usage:
+.PP
+\f[CR]
+      unset\ files
+      unset\ email
 \f[]
 .SS user clearCache
 .PP
@@ -1300,6 +1404,13 @@ reference the file attached in the above example as follows:
 .PP
 Notice that now the file is in the working directory of the program
 and we do not need to specify the full path to the original file.
+.SS Removing Files
+.PP
+After a job has been submitted, the `files' global will remain
+unchanged.
+If you would like to clear the list of attached files use the
+command `unset files'.
+This will set the list to empty.
 .SS Shared Filesytems
 .PP
 On shared filesystems, you may safely avoid attaching files as all
@@ -1378,19 +1489,20 @@ To see the value for a specific job property use the command
 `print global '.
 .SS Job Requirements
 .PP
-A typical job requires that that a package be set and that the
-version be specific or `any'.
+A typical job requires that that an application package be set and
+that the version be specific or `any'.
 To view the available packages, use the command `print packages'.
 .PP
-Note that packages belong to specific queues and to use
-applications in the package you must have access to the appropriate
-queue.
-To see the versions and queues for a package use the command
-`print package '.
+Note that application packages are bound to specific queues and to
+use applications in the package you must have access to the
+appropriate queue.
+To see the versions and queues for an application package use the
+command `print package <application_package>'.
 .PP
 To set the queue, use the `set' command.
 You can view all available queues with the `print queues' command
-or you can filter by package using the command `print package '.
+or you can filter by package using the command
+`print package <application_package>'.
 You may also filter by group using the command `print queues '.
 .PP
 If you do not mind which queue your job is submitted to, you can

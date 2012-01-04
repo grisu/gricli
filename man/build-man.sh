@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 # builds the gricli manpage, uses the help.properties 
 # file to get descriptions for all commands
@@ -14,6 +14,7 @@ TOPICS_DIR=$GRICLI_DIR/src/main/resources/help/topics
 
 USAGE_FILE=$GRICLI_DIR/USAGE.md
 
+rm $USAGE_FILE
 cat $GRICLI_DIR/man/manpage-template.md > $USAGE_FILE
 
 echo "# GLOBALS" >> $USAGE_FILE
@@ -101,3 +102,6 @@ echo 'The Gricli source code and all documentation may be downloaded from
 <http://github.com/grisu/gricli>.' >> $USAGE_FILE
 
 pandoc -s -w man $USAGE_FILE -o $GRICLI_DIR/man/gricli.1
+
+mkdir -p $GRICLI_DIR/target
+cp $GRICLI_DIR/man/gricli.1 $GRICLI_DIR/target/gricli.1

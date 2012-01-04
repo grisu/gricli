@@ -6,22 +6,21 @@ import grisu.gricli.environment.GricliEnvironment;
 
 import java.util.Map;
 
-public class PrintHostsCommand implements
-GricliCommand {
+public class PrintHostsCommand implements GricliCommand {
 
-	@SyntaxDescription(command={"print","hosts"})
-	public PrintHostsCommand(){
+	@SyntaxDescription(command = { "print", "hosts" })
+	public PrintHostsCommand() {
 		super();
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
-		ServiceInterface si = env.getServiceInterface();
-		Map<String, String> hostMap = si.getAllHosts().asMap();
+			throws GricliRuntimeException {
+		final ServiceInterface si = env.getServiceInterface();
+		final Map<String, String> hostMap = si.getAllHosts().asMap();
 
 		env.printMessage("available hosts: =====");
 
-		for (String key : hostMap.keySet()) {
+		for (final String key : hostMap.keySet()) {
 			env.printMessage(key + " : " + hostMap.get(key));
 		}
 		return env;

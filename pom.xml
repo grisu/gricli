@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>grisu.frontend</groupId>
 	<artifactId>gricli</artifactId>
@@ -36,6 +37,25 @@
 		</repository>
 	</repositories>
 
+	<pluginRepositories>
+		<pluginRepository>
+			<id>bestgrid plugin</id>
+			<url>http://code.ceres.auckland.ac.nz/nexus/content/groups/public/</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>bestgrid plugin Snapshots</id>
+			<url>http://code.ceres.auckland.ac.nz/nexus/content/groups/public-snapshots/</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
 	<distributionManagement>
 		<repository>
 			<name>BeSTGRID Releases Repository</name>
@@ -51,11 +71,11 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	<version>0.7-rc5</version>
+	<version>0.7-SNAPSHOT</version>
 	<description>Grisu commandline client</description>
 
 	<properties>
-		<grisu.dependency.version>0.3.7-rc5</grisu.dependency.version>
+		<grisu.dependency.version>0.4-SNAPSHOT</grisu.dependency.version>
 	</properties>
 
 
@@ -128,18 +148,18 @@
 			<version>${grisu.dependency.version}</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1.1</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.5.8</version>
-			<type>jar</type>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>log4j</artifactId>
-					<groupId>log4j</groupId>
-				</exclusion>
-			</exclusions>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>1.6.3</version>
 		</dependency>
 
 	</dependencies>
@@ -309,7 +329,7 @@
 
 		<!-- This profile creates/updates man and USAGE.md page, needs pandoc installed -->
 		<profile>
-			<id>doc</id>
+			<id>man</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -318,13 +338,15 @@
 						<version>1.1</version>
 						<executions>
 							<execution>
+								<id>Man page generation</id>
+								<phase>compile</phase>
 								<goals>
 									<goal>exec</goal>
 								</goals>
 							</execution>
 						</executions>
 						<configuration>
-							<executable>sh</executable>
+							<executable>bash</executable>
 							<workingDirectory>${project.basedir}</workingDirectory>
 							<arguments>
 								<argument>${project.basedir}/man/build-man.sh</argument>
@@ -336,6 +358,165 @@
 				</plugins>
 
 			</build>
+
+		</profile>
+
+
+		<profile>
+			<id>deb</id>
+			<!-- <activation> -->
+			<!-- <property> -->
+			<!-- <name>BUILD_NUMBER</name> -->
+			<!-- </property> -->
+			<!-- </activation> -->
+
+			<build>
+				<plugins>
+
+					<plugin>
+						<artifactId>jdeb</artifactId>
+						<groupId>org.vafer</groupId>
+						<version>0.9-nz</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>jdeb</goal>
+								</goals>
+								<configuration>
+									<changesIn>CHANGES.txt</changesIn>
+									<deb>[[buildDir]]/gricli.deb</deb>
+									<!-- <installDir>/opt/grisu</installDir> -->
+									<dataSet>
+										<data>
+											<src>${project.build.directory}/gricli-binary.jar</src>
+											<type>file</type>
+											<mapper>
+												<type>perm</type>
+												<prefix>/usr/local/grisu/</prefix>
+												<user>root</user>
+												<group>root</group>
+											</mapper>
+										</data>
+										<data>
+											<src>${project.basedir}/src/deb/data/griclish</src>
+											<type>file</type>
+											<mapper>
+												<type>perm</type>
+												<prefix>/usr/bin/</prefix>
+												<user>root</user>
+												<group>root</group>
+												<filemode>755</filemode>
+											</mapper>
+										</data>
+										<data>
+											<src>${project.basedir}/src/deb/data/bcprov.jar</src>
+											<type>file</type>
+											<mapper>
+												<type>perm</type>
+												<prefix>/usr/local/grisu/</prefix>
+												<user>root</user>
+												<group>root</group>
+											</mapper>
+										</data>
+										<data>
+											<src>${project.basedir}/target/gricli.1</src>
+											<type>file</type>
+											<mapper>
+												<type>perm</type>
+												<prefix>/usr/share/man/man1/</prefix>
+												<user>root</user>
+												<group>root</group>
+											</mapper>
+										</data>
+									</dataSet>
+
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+
+		</profile>
+		<profile>
+			<id>rpm</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>rpm-maven-plugin</artifactId>
+						<version>2.1-alpha-1</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>rpm</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<copyright>2011, University of Auckland</copyright>
+							<distribution>Grisu</distribution>
+							<group>Application/Other</group>
+							<!-- <icon>src/main/resources/icon.gif</icon> -->
+							<packager>Markus Binsteiner</packager>
+							<prefix>/usr/local</prefix>
+							<!-- <version>0.7-SNAPSHOT</version> -->
+							<!-- <changelogFile>src/changelog</changelogFile> -->
+							<!-- <defineStatements> -->
+							<!-- <defineStatement>_unpackaged_files_terminate_build 0</defineStatement> -->
+							<!-- </defineStatements> -->
+							<mappings>
+								<mapping>
+									<directory>/usr/local/grisu</directory>
+									<filemode>755</filemode>
+									<username>root</username>
+									<groupname>root</groupname>
+									<sources>
+										<source>
+											<location>target/gricli-binary.jar</location>
+										</source>
+										<source>
+											<location>src/deb/data/bcprov.jar</location>
+										</source>
+									</sources>
+								</mapping>
+								<mapping>
+									<directory>/usr/bin</directory>
+									<documentation>true</documentation>
+									<filemode>755</filemode>
+									<username>root</username>
+									<groupname>root</groupname>
+									<sources>
+										<source>
+											<location>src/deb/data/griclish</location>
+										</source>
+									</sources>
+								</mapping>
+								<mapping>
+									<directory>/usr/share/man/man1</directory>
+									<filemode>744</filemode>
+									<username>root</username>
+									<groupname>root</groupname>
+									<sources>
+										<source>
+											<location>target/gricli.1</location>
+										</source>
+									</sources>
+								</mapping>
+							</mappings>
+							<preinstallScriptlet>
+								<script>echo "Installing Gricli..."</script>
+							</preinstallScriptlet>
+							<!-- <postinstallScriptlet> <scriptFile>src/main/scripts/postinstall</scriptFile> 
+								<fileEncoding>utf-8</fileEncoding> </postinstallScriptlet> <preremoveScriptlet> 
+								<scriptFile>src/main/scripts/preremove</scriptFile> <fileEncoding>utf-8</fileEncoding> 
+								</preremoveScriptlet> -->
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+
 
 		</profile>
 

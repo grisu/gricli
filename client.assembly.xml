@@ -33,7 +33,7 @@
 	<!-- probably unnecessary -->
 	<files>
 		<file>
-			<source>src/main/resources/log4j.xml</source>
+			<source>src/main/resources/logback.xml</source>
 			<outputDirectory>/</outputDirectory>
 		</file>
 	</files>

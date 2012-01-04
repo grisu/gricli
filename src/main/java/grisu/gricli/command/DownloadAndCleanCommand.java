@@ -4,36 +4,46 @@ import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.environment.GricliEnvironment;
-import grisu.gricli.util.ServiceInterfaceUtils;
 
-public class DownloadAndCleanCommand implements
-GricliCommand {
+public class DownloadAndCleanCommand implements GricliCommand {
 
 	private final String jobFilter;
+	private final String target;
 
-	@SyntaxDescription(command={"downloadclean","job"},arguments={"jobname"})
-	@AutoComplete(completors={JobnameCompletor.class})
-	public DownloadAndCleanCommand(String jobFilter){
+	@SyntaxDescription(command = { "downloadclean", "job" }, arguments = { "jobname" })
+	@AutoComplete(completors = { JobnameCompletor.class })
+	public DownloadAndCleanCommand(String jobFilter) {
 		this.jobFilter = jobFilter;
+		this.target = null;
+	}
+
+	@SyntaxDescription(command = { "downloadclean", "job" }, arguments = {
+			"jobname", "target" })
+	@AutoComplete(completors = { JobnameCompletor.class,
+			LocalFolderCompletor.class })
+	public DownloadAndCleanCommand(String jobFilter, String targetDir) {
+		this.jobFilter = jobFilter;
+		this.target = targetDir;
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
-		for (String jobname : ServiceInterfaceUtils.filterJobNames(env.getServiceInterface(),
-				this.jobFilter)) {
-			try {
-				DownloadJobCommand download = new DownloadJobCommand(jobname);
-				env = download.execute(env);
-				CleanJobCommand clean = new CleanJobCommand(jobname);
-				env = clean.execute(env);
-				Gricli.completionCache.refreshJobnames();
+		//		for (final String jobname : ServiceInterfaceUtils.filterJobNames(
+		//				env.getServiceInterface(), this.jobFilter)) {
+		try {
+			final DownloadJobCommand download = new DownloadJobCommand(
+					jobFilter, target);
+			env = download.execute(env);
+			final CleanJobCommand clean = new CleanJobCommand(jobFilter);
+			env = clean.execute(env);
+			Gricli.completionCache.refreshJobnames();
 
-			} catch (GricliRuntimeException ex){
-				env.printError(ex.getMessage());
-			}
-
+		} catch (final GricliRuntimeException ex) {
+			env.printError(ex.getMessage());
 		}
+
+		//		}
 
 		return env;
 	}

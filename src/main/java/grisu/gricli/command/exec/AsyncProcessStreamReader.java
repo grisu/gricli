@@ -6,11 +6,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AsyncProcessStreamReader {
 
-	private static Logger myLogger = Logger
+	private static Logger myLogger = LoggerFactory
 			.getLogger(AsyncProcessStreamReader.class.getName());
 
 	private final GricliEnvironment env;
@@ -31,15 +32,15 @@ public class AsyncProcessStreamReader {
 			@Override
 			public void run() {
 				try {
-					InputStreamReader isr = new InputStreamReader(
+					final InputStreamReader isr = new InputStreamReader(
 							process.getInputStream());
-					BufferedReader br = new BufferedReader(isr);
+					final BufferedReader br = new BufferedReader(isr);
 					String line = null;
 					while ((line = br.readLine()) != null) {
 						env.printMessage(line);
 					}
-				} catch (IOException ioe) {
-					myLogger.error(ioe);
+				} catch (final IOException ioe) {
+					myLogger.error(ioe.getLocalizedMessage(), ioe);
 				}
 			}
 		};
@@ -47,14 +48,14 @@ public class AsyncProcessStreamReader {
 			@Override
 			public void run() {
 				try {
-					InputStreamReader isr = new InputStreamReader(
+					final InputStreamReader isr = new InputStreamReader(
 							process.getErrorStream());
-					BufferedReader br = new BufferedReader(isr);
+					final BufferedReader br = new BufferedReader(isr);
 					String line = null;
 					while ((line = br.readLine()) != null) {
 						env.printError(line);
 					}
-				} catch (IOException ioe) {
+				} catch (final IOException ioe) {
 					ioe.printStackTrace();
 				}
 			}
@@ -67,7 +68,7 @@ public class AsyncProcessStreamReader {
 	public int waitForProcessToFinish() throws InterruptedException {
 		try {
 			process.waitFor();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// e.printStackTrace();
 		}
 		outThread.join();

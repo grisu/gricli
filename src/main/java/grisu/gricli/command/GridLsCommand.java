@@ -8,39 +8,36 @@ import grisu.gricli.environment.GricliEnvironment;
 import grisu.model.dto.GridFile;
 import jline.ANSIBuffer;
 
-
-public class GridLsCommand implements
-GricliCommand {
-
+public class GridLsCommand implements GricliCommand {
 
 	private final String path;
 
-	@SyntaxDescription(command={"gls"},arguments={"path"})
-	@AutoComplete(completors={FqanCompletor.class})
-	public GridLsCommand(String path){
+	@SyntaxDescription(command = { "gls" }, arguments = { "path" })
+	@AutoComplete(completors = { FqanCompletor.class })
+	public GridLsCommand(String path) {
 		this.path = path;
 	}
 
 	public GricliEnvironment execute(GricliEnvironment env)
-	throws GricliRuntimeException {
-		ServiceInterface si = env.getServiceInterface();
+			throws GricliRuntimeException {
+		final ServiceInterface si = env.getServiceInterface();
 		try {
-			String url = "grid://groups" + this.path;
-			GridFile folder = si.ls(url, 1);
-			for (GridFile file : folder.getChildren()) {
+			final String url = "grid://groups" + this.path;
+			final GridFile folder = si.ls(url, 1);
+			for (final GridFile file : folder.getChildren()) {
 				String result = null;
 				if (file.isFolder()) {
 					result = file.getName() + "/";
 				} else {
 					result = file.getName();
 				}
-				if (file.isVirtual()){
+				if (file.isVirtual()) {
 					result = new ANSIBuffer().red(result).toString();
 				}
 				env.printMessage(result);
 			}
 
-		} catch (RemoteFileSystemException ex) {
+		} catch (final RemoteFileSystemException ex) {
 			throw new GricliRuntimeException(ex);
 		}
 		return env;

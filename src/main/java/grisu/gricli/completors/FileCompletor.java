@@ -19,30 +19,53 @@ import com.google.common.base.Strings;
 
 public class FileCompletor implements Completor {
 
+	private boolean displayLocalFiles = true;
+
+	public FileCompletor() {
+	}
+
+	// public FileCompletor(boolean displayLocalFiles) {
+	// // prevents the display of local files for empty completion strings
+	// this.displayLocalFiles = displayLocalFiles;
+	// }
+
 	public int complete(String s, int i, List l) {
 
-		if (Strings.isNullOrEmpty(s) || FileManager.isLocal(s)) {
+		if ((displayLocalFiles && Strings.isNullOrEmpty(s))
+				|| ((displayLocalFiles) && (s != null) && FileManager
+						.isLocal(s))) {
 			return completeLocalFile(s, i, l);
 		}
 
-		String urlTemp = FileManager.calculateParentUrl(s);
+		if ((s == null)
+				|| (ServiceInterface.VIRTUAL_GRID_PROTOCOL_NAME + ":/")
+				.startsWith(s)) {
+			final String temp = ServiceInterface.VIRTUAL_GRID_PROTOCOL_NAME
+					+ "://";
 
-		String url = FileManager.ensureTrailingSlash(urlTemp);
+			l.add(temp);
+			return 0;
+		}
+
+
+		final String urlTemp = FileManager.calculateParentUrl(s);
+
+		final String url = FileManager.ensureTrailingSlash(urlTemp);
 
 		GridFile f;
 		try {
 			f = Gricli.completionCache.ls(url);
-		} catch (StillLoadingException e) {
+		} catch (final StillLoadingException e) {
 
 			try {
 				Thread.sleep(ClientPropertiesManager
 						.getGricliCompletionSleepTimeInMS());
-			} catch (InterruptedException e1) {
+			} catch (final InterruptedException e1) {
 			}
 			// try again
 			try {
 				f = Gricli.completionCache.ls(url);
-			} catch (StillLoadingException e1) {
+			} catch (final StillLoadingException e1) {
 				l.add("*** loading...");
 				l.add("...try again ***");
 				return url.length();
@@ -54,61 +77,58 @@ public class FileCompletor implements Completor {
 	}
 
 	public int completeLocalFile(final String buf, final int cursor,
-			final List candidates)
-	{
-		String buffer = buf == null ? "" : buf;
+			final List candidates) {
+		final String buffer = buf == null ? "" : buf;
 
 		String translated = buffer;
 
 		// special character: ~ maps to the user's home directory
-		if (translated.startsWith ("~" + File.separator))
-		{
-			translated = System.getProperty ("user.home")
-					+ translated.substring (1);
-		}
-		else if (translated.startsWith ("~"))
-		{
-			translated = new File (System.getProperty ("user.home"))
-			.getParentFile ().getAbsolutePath ();
-		}
-		else if (!(translated.startsWith (File.separator)))
-		{
-			translated = new File ("").getAbsolutePath ()
-					+ File.separator + translated;
+		if (translated.startsWith("~" + File.separator)) {
+			translated = System.getProperty("user.home")
+					+ translated.substring(1);
+		} else if (translated.startsWith("~")) {
+			translated = new File(System.getProperty("user.home"))
+			.getParentFile().getAbsolutePath();
+		} else if (!(translated.startsWith(File.separator))) {
+			translated = new File("").getAbsolutePath() + File.separator
+					+ translated;
 		}
 
-		File f = new File (translated);
+		final File f = new File(translated);
 
 		final File dir;
 
-		if (translated.endsWith (File.separator)) {
+		if (translated.endsWith(File.separator)) {
 			dir = f;
 		} else {
-			dir = f.getParentFile ();
+			dir = f.getParentFile();
 		}
 
-		final File [] entries = dir == null ? new File [0] : dir.listFiles ();
+		final File[] entries = dir == null ? new File[0] : dir.listFiles();
 
 		return matchFiles(buffer, translated, entries, candidates);
 
 	}
 
 	/**
-	 *  Match the specified <i>buffer</i> to the array of <i>entries</i>
-	 *  and enter the matches into the list of <i>candidates</i>. This method
-	 *  can be overridden in a subclass that wants to do more
-	 *  sophisticated file name completion.
-	 *
-	 *  @param      buffer          the untranslated buffer
-	 *  @param      translated      the buffer with common characters replaced
-	 *  @param      entries         the list of files to match
-	 *  @param      candidates      the list of candidates to populate
-	 *
-	 *  @return  the offset of the match
+	 * Match the specified <i>buffer</i> to the array of <i>entries</i> and
+	 * enter the matches into the list of <i>candidates</i>. This method can be
+	 * overridden in a subclass that wants to do more sophisticated file name
+	 * completion.
+	 * 
+	 * @param buffer
+	 *            the untranslated buffer
+	 * @param translated
+	 *            the buffer with common characters replaced
+	 * @param entries
+	 *            the list of files to match
+	 * @param candidates
+	 *            the list of candidates to populate
+	 * 
+	 * @return the offset of the match
 	 */
-	public int matchFiles (String buffer, String translated,
-			File [] entries, List candidates)
-	{
+	public int matchFiles(String buffer, String translated, File[] entries,
+			List candidates) {
 		if (entries == null) {
 			return -1;
 		}
@@ -117,17 +137,17 @@ public class FileCompletor implements Completor {
 		if ((ServiceInterface.VIRTUAL_GRID_PROTOCOL_NAME + "://")
 				.startsWith(buffer)) {
 			matches = 1;
-			//			String temp = new ANSIBuffer().blue(
+			// String temp = new ANSIBuffer().blue(
 			// ServiceInterface.VIRTUAL_GRID_PROTOCOL_NAME + "://") .toString();
-			String temp = ServiceInterface.VIRTUAL_GRID_PROTOCOL_NAME+"://";
+			final String temp = ServiceInterface.VIRTUAL_GRID_PROTOCOL_NAME
+					+ "://";
 
 			candidates.add(temp);
 		}
 
 		// first pass: just count the matches
-		for (File entrie : entries) {
-			if (entrie.getAbsolutePath ().startsWith (translated))
-			{
+		for (final File entrie : entries) {
+			if (entrie.getAbsolutePath().startsWith(translated)) {
 				matches++;
 			}
 		}
@@ -137,19 +157,16 @@ public class FileCompletor implements Completor {
 		// red - compressed
 		// cyan - symlink
 
-		Set<String> tempSet = Sets.newTreeSet();
-		for (File entrie : entries) {
-			if (entrie.getAbsolutePath ().startsWith (translated))
-			{
-				String name = entrie.getName ()
-						+ ((matches == 1) && entrie.isDirectory ()
-								? File.separator : " ");
+		final Set<String> tempSet = Sets.newTreeSet();
+		for (final File entrie : entries) {
+			if (entrie.getAbsolutePath().startsWith(translated)) {
+				final String name = entrie.getName()
+						+ ((matches == 1) && entrie.isDirectory() ? File.separator
+								: " ");
 
 				/*
-	                        if (entries [i].isDirectory ())
-	                        {
-	                                name = new ANSIBuffer ().blue (name).toString ();
-	                        }
+				 * if (entries [i].isDirectory ()) { name = new ANSIBuffer
+				 * ().blue (name).toString (); }
 				 */
 
 				tempSet.add(name);
@@ -158,8 +175,8 @@ public class FileCompletor implements Completor {
 
 		candidates.addAll(tempSet);
 
-		final int index = buffer.lastIndexOf (File.separator);
-		return index + File.separator.length ();
+		final int index = buffer.lastIndexOf(File.separator);
+		return index + File.separator.length();
 	}
 
 	/**
@@ -188,7 +205,7 @@ public class FileCompletor implements Completor {
 		int matches = 0;
 
 		// first pass: just count the matches
-		for (GridFile f : entries) {
+		for (final GridFile f : entries) {
 
 			if (f.getPath() != null) {
 				if (FileManager.removeDoubleSlashes(f.getPath()).startsWith(
@@ -208,11 +225,11 @@ public class FileCompletor implements Completor {
 		// blue - directory
 		// red - compressed
 		// cyan - symlink
-		for (GridFile f : entries) {
+		for (final GridFile f : entries) {
 			if (f.getPath() != null) {
 				if (FileManager.removeDoubleSlashes(f.getPath()).startsWith(
 						translated)) {
-					String name = f.getName()
+					final String name = f.getName()
 							+ (((matches == 1) && f.isFolder()) ? "/" : " ");
 
 					/*
@@ -225,7 +242,7 @@ public class FileCompletor implements Completor {
 				if (translated.endsWith("/")
 						|| f.getName().startsWith(
 								FileManager.getFilename(translated))) {
-					String name = f.getName()
+					final String name = f.getName()
 							+ (((matches == 1) && f.isFolder()) ? "/" : " ");
 					candidates.add(name);
 				}
@@ -235,6 +252,11 @@ public class FileCompletor implements Completor {
 		final int index = buffer.lastIndexOf("/");
 
 		return index + 1;
+	}
+
+	public void setDisplayLocalFile(boolean display) {
+		this.displayLocalFiles = display;
+
 	}
 
 }

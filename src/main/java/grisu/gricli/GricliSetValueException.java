@@ -13,15 +13,15 @@ public class GricliSetValueException extends GricliRuntimeException {
 		this.reason = reason;
 	}
 
-	public String getVar() {
-		return this.var;
+	public String getReason() {
+		return this.reason;
 	}
 
 	public String getValue() {
 		return this.value;
 	}
 
-	public String getReason() {
-		return this.reason;
+	public String getVar() {
+		return this.var;
 	}
 }

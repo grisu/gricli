@@ -7,10 +7,10 @@ import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobPropertiesCompletor;
 import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.environment.GricliEnvironment;
-import grisu.gricli.util.ServiceInterfaceUtils;
 import grisu.jcommons.constants.Constants;
 import grisu.jcommons.constants.JobSubmissionProperty;
 import grisu.model.dto.DtoJob;
+import grisu.utils.ServiceInterfaceUtils;
 import grisu.utils.WalltimeUtils;
 
 import java.text.DateFormat;
@@ -21,24 +21,25 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.python.google.common.collect.Maps;
 
-public class PrintJobCommand implements
-GricliCommand {
+public class PrintJobCommand implements GricliCommand {
 	private final String jobname;
 	private final String attribute;
 
-	@SyntaxDescription(command={"print","jobs"})
-	public PrintJobCommand(){
-		this("*","status");
+	@SyntaxDescription(command = { "print", "jobs" })
+	public PrintJobCommand() {
+		this("*", "status");
 	}
 
-	@SyntaxDescription(command={"print","job"},arguments={"jobname"})
-	@AutoComplete(completors={JobnameCompletor.class})
-	public PrintJobCommand(String jobname){
-		this(jobname,null);
+	@SyntaxDescription(command = { "print", "job" }, arguments = { "jobname" })
+	@AutoComplete(completors = { JobnameCompletor.class })
+	public PrintJobCommand(String jobname) {
+		this(jobname, null);
 	}
 
-	@SyntaxDescription(command={"print","job"},arguments={"jobname","attribute"})
-	@AutoComplete(completors={JobnameCompletor.class,JobPropertiesCompletor.class})
+	@SyntaxDescription(command = { "print", "job" }, arguments = { "jobname",
+			"attribute" })
+	@AutoComplete(completors = { JobnameCompletor.class,
+			JobPropertiesCompletor.class })
 	public PrintJobCommand(String jobname, String attribute) {
 		this.jobname = jobname;
 		this.attribute = attribute;
@@ -46,10 +47,10 @@ GricliCommand {
 
 	public GricliEnvironment execute(GricliEnvironment env)
 			throws GricliRuntimeException {
-		ServiceInterface si = env.getServiceInterface();
-		List<String> jobNames = ServiceInterfaceUtils.filterJobNames(si,
+		final ServiceInterface si = env.getServiceInterface();
+		final List<String> jobNames = ServiceInterfaceUtils.filterJobNames(si,
 				jobname);
-		for (String j : jobNames) {
+		for (final String j : jobNames) {
 			try {
 				if (attribute != null) {
 					if ((jobNames.size() > 1) || "*".equals(this.jobname)) {
@@ -58,9 +59,9 @@ GricliCommand {
 						printJobAttribute(env, si, j, attribute, false);
 					}
 				} else {
-					printJob(env,si, j);
+					printJob(env, si, j);
 				}
-			} catch (NoSuchJobException ex) {
+			} catch (final NoSuchJobException ex) {
 				throw new GricliRuntimeException("job " + j + " does not exist");
 			}
 		}
@@ -68,10 +69,10 @@ GricliCommand {
 		return env;
 	}
 
-	private String formatAttribute(String aName, String aVal){
+	private String formatAttribute(String aName, String aVal) {
 
-		if (Constants.SUBMISSION_TIME_KEY.equals(aName)){
-			Date d = new Date(Long.parseLong(aVal));
+		if (Constants.SUBMISSION_TIME_KEY.equals(aName)) {
+			final Date d = new Date(Long.parseLong(aVal));
 			return DateFormat.getInstance().format(d);
 		} else if (Constants.MEMORY_IN_B_KEY.equals(aName)) {
 			double memory = Long.parseLong(aVal);
@@ -79,7 +80,7 @@ GricliCommand {
 			return String.format("%.2f GB", memory);
 
 		} else if (Constants.WALLTIME_IN_MINUTES_KEY.equals(aName)) {
-			String[] strings = WalltimeUtils
+			final String[] strings = WalltimeUtils
 					.convertSecondsInHumanReadableString(Integer.parseInt(aVal) * 60);
 			return StringUtils.join(strings, " ");
 		} else {
@@ -89,17 +90,17 @@ GricliCommand {
 
 	private void printJob(GricliEnvironment env, ServiceInterface si, String j)
 			throws NoSuchJobException {
-		DtoJob job = si.getJob(j);
+		final DtoJob job = si.getJob(j);
 		env.printMessage("Printing details for job " + jobname + "/n");
 		// env.printMessage("status: "
 		// + JobConstants.translateStatus(si.getJobStatus(jobname)));
-		Map<String, String> props = job.propertiesAsMap();
-		Map<String, String> result = Maps.newTreeMap();
+		final Map<String, String> props = job.propertiesAsMap();
+		final Map<String, String> result = Maps.newTreeMap();
 
 		result.put(Constants.STATUS_STRING,
 				JobConstants.translateStatus(job.getStatus()));
 
-		for (String key : props.keySet()) {
+		for (final String key : props.keySet()) {
 
 			String valName = JobSubmissionProperty.getPrettyName(key);
 
@@ -115,7 +116,7 @@ GricliCommand {
 
 		}
 
-		for (String key : result.keySet()) {
+		for (final String key : result.keySet()) {
 			env.printError(key + " : " + result.get(key));
 		}
 
@@ -124,18 +125,19 @@ GricliCommand {
 
 	}
 
-	private void printJobAttribute(GricliEnvironment env, ServiceInterface si, String j,
-			String attribute, boolean displayJobName) throws NoSuchJobException {
+	private void printJobAttribute(GricliEnvironment env, ServiceInterface si,
+			String j, String attribute, boolean displayJobName)
+			throws NoSuchJobException {
 		DtoJob job = null;
 		try {
 			job = si.getJob(j);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			env.printError("Can't get job " + j + ": "
 					+ e.getLocalizedMessage());
 			return;
 		}
 
-		JobSubmissionProperty p = JobSubmissionProperty
+		final JobSubmissionProperty p = JobSubmissionProperty
 				.fromPrettyName(attribute);
 		String prop = null;
 		if (p != null) {
@@ -152,14 +154,14 @@ GricliCommand {
 		if ((Constants.STATUS_STRING.equals(prop))) {
 			try {
 				msg = JobConstants.translateStatus(si.getJobStatus(j));
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				msg = "n/a";
 			}
 
 		} else {
 			msg = formatAttribute(prop, job.jobProperty(prop));
 		}
-		if (displayJobName){
+		if (displayJobName) {
 			env.printMessage(j + " : " + msg);
 		} else {
 			env.printMessage(msg);
