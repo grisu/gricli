@@ -34,7 +34,7 @@ Note that regardless of your queue choice, you must choose a group. You can view
 'print groups'. To set the group use the command 'set group <group>'.
 
 Job memory and CPU count will depend on your application. By default a job has 2 GB of memory and 1 CPU. This is the
-default configuration for a 'single' jobtype. To use multiple CPUs you will need to set the jobtype to 'smp' or 'mpi' and increase the number of cpus. You may also use the 'custom' jobtype but here it is up to you to ensure correct parallelism.
+default configuration for a 'single' jobtype. To use multiple CPUs you will need to set the jobtype to 'smp' or 'mpi' and increase the number of cpus.
 For more information on these job types use the command 'help jobtype'.
 
 If your job requires any files to run you can use the 'attach' command to set them. The files can include input files

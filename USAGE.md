@@ -285,26 +285,27 @@ The job type determines how the job is configured for execution.
 
 The current values are:
 
+    single	 : A job that will use one CPU
     smp          : A job that will use one or more CPUs on a single host.
     mpi          : A job that will use one or more CPUs across one or more hosts using the Open MPI framework.
-    custom       : A job that will use one or more CPUs across one or more hosts using a custom configuration.
 
 The number of hosts used for an mpi job can be checked after submission using the command 'print job <jobname> hostCount'.
 
 Please note that a 'host' is a compute node within a queue. Since the hardware specifications may vary between hosts in a queue, you are advised to check the properties of your queues to ensure you jobs run correctly. In particular, it is important that jobs do not request more resources than are available for a given job type. Some tips are provided below:
 
+Single
+
+Memory requirements for single jobs should not exceed that available on a host in the queue.
+
 SMP
 
-When you select a job of this type, please ensure that the at least one host in the queue can meet the job requirements.
+Please ensure that the at least one host in the queue can meet the memory and CPU requirements.
 
 MPI
 
 When you select a job of this type, please ensure that the requested resources do not exceed the maximum capacity of the queue.
-
-Custom
-
-Please note that is up to you to ensure your job is scheduled correctly as this job type implies you may not be relying on Open MPI to coordinate your processes.
-    
+You may also force the number of hosts to be used using the 'hostCount' global.  See the help entry on hostCount for more information.
+  
 
 Example usage:
 
@@ -676,11 +677,11 @@ Example usage:
 
 Kills a job if it still running and then removes it from the database and deletes the job directory.
 
-Supports glob regular expressions.
+To clean all jobs use 'clean job *'.
 
 Parameters:
 
-    jobname : The name of the job to clean
+    jobname : The name of the job to clean. Supports glob regular expressions.
 
 Example usage:
 
@@ -689,7 +690,7 @@ Example usage:
     clean myjob_2
     clean myjob*
     clean *
-    clean jobs
+
 
 ## destroy proxy
 
@@ -877,7 +878,7 @@ Kills a job by stopping its execution.
 
 This stops the remote execution of the job but leaves the job in the job database and also the job directory intact. To delete the job directory you need to clean the job. 
 
-Note that a job cannot be resumed once it has been killed.
+Note that a job cannot be resumed once it has been killed. To kill all jobs use 'kill job *'.
 
 Parameters:
 
@@ -890,7 +891,6 @@ Example usage:
     kill job myjob_2
     kill job myjob*
     kill job *
-    kill jobs
 
 
 
@@ -1118,7 +1118,7 @@ Example usage:
 ## quit
 
 
-Logs out of this Gricli session.
+Logs out of this session.
 
 Login information is left intact so you don't need to enter those on your next login.
  
@@ -1389,7 +1389,7 @@ Note that regardless of your queue choice, you must choose a group. You can view
 'print groups'. To set the group use the command 'set group <group>'.
 
 Job memory and CPU count will depend on your application. By default a job has 2 GB of memory and 1 CPU. This is the
-default configuration for a 'single' jobtype. To use multiple CPUs you will need to set the jobtype to 'smp' or 'mpi' and increase the number of cpus. You may also use the 'custom' jobtype but here it is up to you to ensure correct parallelism.
+default configuration for a 'single' jobtype. To use multiple CPUs you will need to set the jobtype to 'smp' or 'mpi' and increase the number of cpus. 
 For more information on these job types use the command 'help jobtype'.
 
 If your job requires any files to run you can use the 'attach' command to set them. The files can include input files

@@ -2,6 +2,8 @@ Command:	set <var> <value>
 
 Sets a value for a variable.
 
+Parameters:
+
     var		: The name of the variable.
     value	: The value.
 
