@@ -9,7 +9,6 @@ import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.GricliCommandFactory;
 import grisu.gricli.command.InteractiveLoginCommand;
 import grisu.gricli.command.LocalLoginCommand;
-import grisu.gricli.command.RefreshProxyCommand;
 import grisu.gricli.command.RunCommand;
 import grisu.gricli.completors.CompletionCache;
 import grisu.gricli.completors.DummyCompletionCache;
@@ -22,7 +21,6 @@ import grisu.jcommons.view.cli.CliHelpers;
 import grisu.jcommons.view.cli.LineByLineProgressDisplay;
 import grisu.settings.Environment;
 import grith.jgrith.control.SlcsLoginWrapper;
-import grith.jgrith.credential.Credential;
 import grith.jgrith.plainProxy.LocalProxy;
 
 import java.io.File;
@@ -83,7 +81,12 @@ public class Gricli {
 
 	static private GricliExitStatus exitStatus = SUCCESS;
 
-	public static final int MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST = 3600 * 24 * 3;
+	// public static final int MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST =
+	// (3600 * 24 * 9)
+	// + (3600 * 23) + 3500;
+
+	// 3 days
+	public static final int MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST = 259200;
 
 	private static void executionLoop() throws IOException {
 
@@ -113,31 +116,6 @@ public class Gricli {
 						SINGLETON_COMMANDFACTORY, env);
 			}
 
-			// check whether proxy needs renewal
-			if (System.console() != null) {
-
-				Credential c = env.getGrisuRegistry().getCredential();
-
-				int remaining = c.getRemainingLifetime();
-
-				if (remaining < MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST) {
-
-					c.autorefresh();
-					remaining = c.getRemainingLifetime();
-
-					if (remaining < MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST) {
-
-						// env.printMessage("Your session lifetime is below the configured threshold. Plese enter your login details below in order to renew it.");
-
-						try {
-							new RefreshProxyCommand().execute(env);
-						} catch (GricliRuntimeException e) {
-							env.printError(e.getLocalizedMessage());
-						}
-					}
-
-				}
-			}
 		}
 	}
 
@@ -220,6 +198,8 @@ public class Gricli {
 
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
+
+		Thread.currentThread().setName("main");
 
 		EnvironmentVariableHelpers.loadEnvironmentVariablesToSystemProperties();
 

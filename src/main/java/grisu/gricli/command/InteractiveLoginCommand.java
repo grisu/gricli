@@ -34,8 +34,13 @@ public class InteractiveLoginCommand implements GricliCommand {
 			env.getGrisuRegistry().getCredential().saveCredential();
 
 			env.getGrisuRegistry().getCredential()
-					.setMinimumLifetime(
-							Gricli.MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST);
+			.addPropertyChangeListener(env);
+
+			env.getGrisuRegistry()
+			.getCredential()
+			.setMinimumLifetime(
+					Gricli.MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST);
+
 
 			// setting up completion cache, loads some stuff in the background
 			// too...
@@ -134,7 +139,6 @@ public class InteractiveLoginCommand implements GricliCommand {
 		} catch (final LoginException ex) {
 			throw new GricliRuntimeException(ex);
 		}
-
 
 		return login(env, si);
 

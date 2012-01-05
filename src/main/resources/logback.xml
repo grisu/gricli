@@ -18,7 +18,7 @@
   <appender name="STDOUT"
     class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-      <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+      <pattern>%-30(%d{HH:mm:ss.SSS} [%thread]) session=%X{session} version=%X{gricli-version} %-4relative %-5level %logger{0} - %msg%n</pattern>
     </encoder>
   </appender>
 

@@ -31,6 +31,7 @@ public class LocalLoginCommand implements GricliCommand {
 							LoginManager.DEFAULT_PROXY_LIFETIME_IN_HOURS,
 							Gricli.MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST);
 
+
 			return InteractiveLoginCommand.login(env, serviceInterface);
 
 		} catch (final LoginException ex) {
