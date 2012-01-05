@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.logging.Level;
 
 import jline.ArgumentCompletor;
@@ -201,14 +200,17 @@ public class Gricli {
 
 		Thread.currentThread().setName("main");
 
+		LoginManager.setClientName("Gricli");
+
+		LoginManager.setClientVersion(grisu.jcommons.utils.Version
+				.get("gricli"));
+
 		EnvironmentVariableHelpers.loadEnvironmentVariablesToSystemProperties();
 
 		Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
 
 		CliHelpers.setProgressDisplay(new LineByLineProgressDisplay());
 
-		MDC.put("session",
-				System.getProperty("user.name") + "_" + new Date().getTime());
 
 		// MDC.put("local_user", System.getProperty("user.name"));
 		MDC.put("gricli-version", Version.get("gricli"));
