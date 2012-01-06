@@ -70,7 +70,7 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	<version>0.7-rc1</version>
+	<version>0.7-rc2-SNAPSHOT</version>
 	<description>Grisu commandline client</description>
 
 	<properties>
@@ -103,7 +103,7 @@
 		<dependency>
 			<groupId>grisu.frontend</groupId>
 			<artifactId>grisu-client</artifactId>
-			<version>0.4-rc1</version>
+			<version>0.4-rc2-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -144,7 +144,7 @@
 		<dependency>
 			<groupId>grisu.backend</groupId>
 			<artifactId>grisu-core</artifactId>
-			<version>0.4-rc1</version>
+			<version>0.4-rc2-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 
