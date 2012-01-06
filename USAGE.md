@@ -197,10 +197,10 @@ Example usage:
     set email_on_start true
     set email_on_start false
 
-### environment
+### env
 
 
-The execution evironment variables of a job.
+The execution environment variables of a job.
 
 To add an environment variable and value use the 'add env <var> <value>' command.
 
@@ -211,8 +211,8 @@ To view the environment variables after submission use the command 'print job <j
 
 Example usage:
 
-    add environment MY_VAR MY_VALUE
-    print global environment
+    add env MY_VAR MY_VALUE
+    print global env
     print job myjob environmentVariables
 
 
@@ -241,8 +241,6 @@ Example usage:
     print job myjob group
 
 
-
-
 ### host
 
 
@@ -258,6 +256,25 @@ Example usage:
     set host ng2.canterbury.ac.nz
     print global host
     print job myjob submissionHost
+    
+   
+### hostcount
+
+
+The number of compute hosts to be used
+
+The hostcount is important for jobs where processes communicate across a number of physical machines or hosts.
+Setting the hostcount will force the job to use the set number of hosts. This can improve efficiency as the communications
+overhead is less between processes running on the same host. However the job may take longer to be dequeued as the requirements 
+are more restrictive.
+
+
+Example usage:
+
+    set hostcount 2
+    print global hostcount
+    print job myjob hostcount
+
 
 ### jobname
 
@@ -692,8 +709,10 @@ Example usage:
     clean *
 
 
-## destroy proxy
+## close session
 
+
+Command: close session 
 
 Deletes your login information.
 
@@ -703,7 +722,7 @@ This can be used if you would like to login with another profile.
 
 Example usage:
 
-    destroy proxy
+    close session
 
 
 ## downloadclean job
@@ -1129,6 +1148,17 @@ Example usage:
     quit
 
 
+## renew session
+
+
+Updates your login information, extending the time required before another login is required.
+
+This is used for the institutional login option where access is granted on a short term basis with expiry set for 237 hours from the time of renewal.
+
+Example usage:
+
+    renew session
+    
 
 ## run
 
@@ -1170,6 +1200,8 @@ Example usage:
 
 
 Sets a value for a variable.
+
+Parameters:
 
     var		: The name of the variable.
     value	: The value.
@@ -1248,6 +1280,33 @@ Example usage:
 Clears the Grisu file system cache. 
 
 You need to logout and login again to see the effects of this command. Be aware that the next login will take longer than usual because the filesystem cache is rebuilt at that stage.
+
+## view [jobname] <filename> 
+
+
+Prints the contents of a file.
+
+Once a job is submitted, a job directory is created which contains all the files associated with that job.
+The view command will print the contents of a specified text file in that job directory.
+
+The command can also print the contents of a file on a local or remote filesystem without reference to a jobname.
+In this case, a relative or full path name is required.
+
+Parameters:
+
+    jobname:	The name of the job which the file is associated with (optional).
+    filename:	The relative or full path of the file.
+    
+Example usage:
+
+	view myfile.txt
+	view ~/some/dir/myfile.txt
+    view myjob stdout.txt
+    view myjob input/first.txt
+    view grid://groups/nz/nesi/myfile.txt
+    view grid://jobs/myjob/myfile.txt
+    view gsiftp://some.example.server/home/myfile.txt
+
 
 ## wait job
 
@@ -1337,8 +1396,8 @@ Note that the TAB key can be used to suggest names and values at each level in t
 Viewing Files
 -------------
 
-Currently you may view local files using the command 'exec cat /path/to/local/file' .
-Upcoming releases will include a command to let you view local as well as remote files easily.
+Use the 'view' command to print the contents of local and remote files. This command also accepts a jobname to
+easily view files associated with your jobs. For more information type 'help view'.
 
 Further Information
 -------------------

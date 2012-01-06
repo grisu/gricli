@@ -4,12 +4,12 @@ Resets an optional variable to its default value.
 
     var		: The name of the optional variable.
 
-Currently only the non-essential global variables for a job can be unset. 
-To set a global variable use the 'set <var> <value>' command.
+Currently only the optional list variables for a job can be unset. 
+To add an item to a list use the 'add <list> <item>' command.
 
 Example usage:
 
 	unset files
-	unset email
+	unset env
 	
 

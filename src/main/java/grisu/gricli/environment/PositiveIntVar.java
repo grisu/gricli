@@ -17,7 +17,7 @@ public class PositiveIntVar extends IntVar {
 		super.set(value);
 		if (value != null && value <= 0) {
 			throw new GricliSetValueException(getName(), "" + value,
-					"cannot be negative");
+					"must be positive");
 		}
 	}
 }
