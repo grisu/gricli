@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>grisu.frontend</groupId>
 	<artifactId>gricli</artifactId>
@@ -103,7 +104,7 @@
 		<dependency>
 			<groupId>grisu.frontend</groupId>
 			<artifactId>grisu-client</artifactId>
-			<version>0.4-rc2-SNAPSHOT</version>
+			<version>${grisu.dependency.version}</version>
 		</dependency>
 
 		<dependency>
@@ -141,12 +142,12 @@
 			<version>140</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>grisu.backend</groupId>
-			<artifactId>grisu-core</artifactId>
-			<version>0.4-rc2-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>grisu.backend</groupId> -->
+<!-- 			<artifactId>grisu-core</artifactId> -->
+<!-- 			<version>0.4-rc2-SNAPSHOT</version> -->
+<!-- 			<scope>provided</scope> -->
+<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -505,7 +506,7 @@
 						<executions>
 							<execution>
 								<goals>
-									<goal>rpm</goal>
+									<goal>attached-rpm</goal>
 								</goals>
 							</execution>
 						</executions>
@@ -531,9 +532,9 @@
 										<source>
 											<location>target/gricli-binary.jar</location>
 										</source>
-										<source>
-											<location>src/deb/data/bcprov.jar</location>
-										</source>
+<!-- 										<source> -->
+<!-- 											<location>src/deb/data/bcprov.jar</location> -->
+<!-- 										</source> -->
 									</sources>
 								</mapping>
 								<mapping>
@@ -560,6 +561,10 @@
 									</sources>
 								</mapping>
 							</mappings>
+							<requires>
+								<require>java-1.6.0-openjdk</require>
+								<require>bouncycastle</require>
+							</requires>
 							<preinstallScriptlet>
 								<script>echo "Installing Gricli..."</script>
 							</preinstallScriptlet>
