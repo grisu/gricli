@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>grisu.frontend</groupId>
 	<artifactId>gricli</artifactId>
@@ -71,7 +70,7 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	<version>0.7-rc2-SNAPSHOT</version>
+	<version>0.7-rc2</version>
 	<description>Grisu commandline client</description>
 
 	<properties>
@@ -104,7 +103,7 @@
 		<dependency>
 			<groupId>grisu.frontend</groupId>
 			<artifactId>grisu-client</artifactId>
-			<version>0.4-rc2-SNAPSHOT</version>
+			<version>0.4-rc1</version>
 		</dependency>
 
 		<dependency>
@@ -145,7 +144,7 @@
 		<dependency>
 			<groupId>grisu.backend</groupId>
 			<artifactId>grisu-core</artifactId>
-			<version>0.4-rc2-SNAPSHOT</version>
+			<version>0.4-rc1</version>
 			<scope>provided</scope>
 		</dependency>
 
