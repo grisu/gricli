@@ -1,8 +1,8 @@
 Package: gricli
-Version: 0.7-SNAPSHOT
+Version: VERSION_TOKEN
 Section: misc
 Priority: optional
 Architecture: all
-Depends: sun-java6-jdk
+Depends: sun-java6-jdk,libbcprov-java
 Maintainer: Markus Binsteiner <m.binsteiner@auckland.ac.nz>
 Description: Grisu commandline frontend
