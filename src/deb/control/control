@@ -3,6 +3,6 @@ Version: VERSION_TOKEN
 Section: misc
 Priority: optional
 Architecture: all
-Depends: sun-java6-jdk,libbcprov-java
+Depends: default-jre,libbcprov-java
 Maintainer: Markus Binsteiner <m.binsteiner@auckland.ac.nz>
 Description: Grisu commandline frontend
