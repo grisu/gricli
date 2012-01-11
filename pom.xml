@@ -70,7 +70,7 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	<version>0.7-rc4-SNAPSHOT</version>
+	<version>0.7-rc4</version>
 	<description>Grisu commandline client</description>
 
 	<properties>
