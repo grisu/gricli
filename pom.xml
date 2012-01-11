@@ -138,7 +138,7 @@
 		<dependency>
 			<groupId>bouncycastle</groupId>
 			<artifactId>bcprov-jdk15</artifactId>
-			<version>140</version>
+			<version>145</version>
 			<scope>provided</scope>
 		</dependency>
 <!-- 		<dependency> -->
@@ -448,7 +448,7 @@
 											<type>file</type>
 											<mapper>
 												<type>perm</type>
-												<prefix>/usr/local/grisu/</prefix>
+												<prefix>/usr/local/lib/grisu/</prefix>
 												<user>root</user>
 												<group>root</group>
 											</mapper>
@@ -515,7 +515,7 @@
 							<group>Application/Other</group>
 							<!-- <icon>src/main/resources/icon.gif</icon> -->
 							<packager>Markus Binsteiner</packager>
-							<prefix>/usr/local</prefix>
+<!-- 							<prefix>/usr/local</prefix> -->
 							<version>${project.version}</version>
 							<!-- <changelogFile>src/changelog</changelogFile> -->
 							<!-- <defineStatements> -->
@@ -523,7 +523,7 @@
 							<!-- </defineStatements> -->
 							<mappings>
 								<mapping>
-									<directory>/usr/local/grisu</directory>
+									<directory>/usr/local/lib/grisu</directory>
 									<filemode>755</filemode>
 									<username>root</username>
 									<groupname>root</groupname>
@@ -531,9 +531,9 @@
 										<source>
 											<location>target/gricli-binary.jar</location>
 										</source>
-<!-- 										<source> -->
-<!-- 											<location>src/deb/data/bcprov.jar</location> -->
-<!-- 										</source> -->
+										<source>
+											<location>src/deb/data/bcprov.jar</location>
+										</source>
 									</sources>
 								</mapping>
 								<mapping>
@@ -562,7 +562,7 @@
 							</mappings>
 							<requires>
 								<require>java-1.6.0-openjdk</require>
-								<require>bouncycastle</require>
+<!-- 								<require>bouncycastle</require> -->
 							</requires>
 							<preinstallScriptlet>
 								<script>echo "Installing Gricli..."</script>
