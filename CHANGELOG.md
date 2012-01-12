@@ -4,6 +4,7 @@ Changelog
 0.7
 ---
 
+* All gricli properties are now exported as job environment variables, like walltime -> GRISU_WALLTIME
 * "kill/clean jobs" commands now deprecated. "kill/clean job [list of jobnames/globs]" is used insted. Supports globs completion.
 * "download" and "downloadclean" commands now support optional target directory.
 * "view" command can now list jobdirectories directly ("view job <jobname> <file_relative_to_jobdir>").
