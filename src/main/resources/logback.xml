@@ -25,7 +25,7 @@
 <!--  <appender name="SYSLOG" class="grisu.control.util.SyslogAppender">
     <syslogHost>localhost</syslogHost>
     <facility>USER</facility>
-    <port>5145</port>
+    <port>514</port>
     <suffixPattern>[%level] [%thread] [%logger{0}] csid=[%X{session}] user=[%X{user}] cmdid=[%X{cmdid}] - %msg%n</suffixPattern>
   </appender> -->
   
