@@ -74,7 +74,7 @@
 	<description>Grisu commandline client</description>
 
 	<properties>
-		<grisu.dependency.version>0.4-SNAPSHOT</grisu.dependency.version>
+		<grisu.dependency.version>0.4-rc3-SNAPSHOT</grisu.dependency.version>
 	</properties>
 
 
@@ -103,7 +103,7 @@
 		<dependency>
 			<groupId>grisu.frontend</groupId>
 			<artifactId>grisu-client</artifactId>
-			<version>0.4-rc2-SNAPSHOT</version>
+			<version>0.4-rc4-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
