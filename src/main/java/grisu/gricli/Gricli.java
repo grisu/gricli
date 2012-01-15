@@ -95,7 +95,7 @@ public class Gricli {
 		java.util.logging.LogManager.getLogManager().reset();
 		java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);
 
-		String logback = "/etc/gricli/logback.xml";
+		String logback = "/etc/gricli/gricli.log.conf.xml";
 
 		if (!new File(logback).exists() || (new File(logback).length() > 0)) {
 			logback = Environment.getGrisuClientDirectory()

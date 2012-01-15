@@ -161,6 +161,11 @@
 			<version>1.6.3</version>
 		</dependency>
 
+		<dependency>
+			<groupId>me.moocar</groupId>
+			<artifactId>logback-gelf</artifactId>
+			<version>0.9.6</version>
+		</dependency>
 	</dependencies>
 
 	<issueManagement>
