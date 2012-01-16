@@ -197,10 +197,10 @@ Example usage:
     set email_on_start true
     set email_on_start false
 
-### environment
+### env
 
 
-The execution evironment variables of a job.
+The execution environment variables of a job.
 
 To add an environment variable and value use the 'add env <var> <value>' command.
 
@@ -209,12 +209,19 @@ Note that you do not need '$' as part of the variable name.
 To view the environment variables and their values before submission use the command 'print global environment'.
 To view the environment variables after submission use the command 'print job <jobname> environmentVariables'.
 
+The list of environment variables can be cleared using the 'unset' command.
+
 Example usage:
 
-    add environment MY_VAR MY_VALUE
-    print global environment
+    add env MY_VAR MY_VALUE
+    unset env
+    print global env
     print job myjob environmentVariables
 
+For MPI jobs using multiple hosts, the environment variables must be explicitly exported using the -x option in mpirun e.g:
+
+    submit -x MY_VAR /home/me001/my_application arg0 arg1
+     
 
 ### gdir
 
@@ -241,8 +248,6 @@ Example usage:
     print job myjob group
 
 
-
-
 ### host
 
 
@@ -258,6 +263,25 @@ Example usage:
     set host ng2.canterbury.ac.nz
     print global host
     print job myjob submissionHost
+    
+   
+### hostcount
+
+
+The number of compute hosts to be used
+
+The hostcount is important for jobs where processes communicate across a number of physical machines or hosts.
+Setting the hostcount will force the job to use the set number of hosts. This can improve efficiency as the communications
+overhead is less between processes running on the same host. However the job may take longer to be dequeued as the requirements 
+are more restrictive.
+
+
+Example usage:
+
+    set hostcount 2
+    print global hostcount
+    print job myjob hostcount
+
 
 ### jobname
 
@@ -285,26 +309,27 @@ The job type determines how the job is configured for execution.
 
 The current values are:
 
+    single	 : A job that will use one CPU
     smp          : A job that will use one or more CPUs on a single host.
     mpi          : A job that will use one or more CPUs across one or more hosts using the Open MPI framework.
-    custom       : A job that will use one or more CPUs across one or more hosts using a custom configuration.
 
 The number of hosts used for an mpi job can be checked after submission using the command 'print job <jobname> hostCount'.
 
 Please note that a 'host' is a compute node within a queue. Since the hardware specifications may vary between hosts in a queue, you are advised to check the properties of your queues to ensure you jobs run correctly. In particular, it is important that jobs do not request more resources than are available for a given job type. Some tips are provided below:
 
+Single
+
+Memory requirements for single jobs should not exceed that available on a host in the queue.
+
 SMP
 
-When you select a job of this type, please ensure that the at least one host in the queue can meet the job requirements.
+Please ensure that the at least one host in the queue can meet the memory and CPU requirements.
 
 MPI
 
 When you select a job of this type, please ensure that the requested resources do not exceed the maximum capacity of the queue.
-
-Custom
-
-Please note that is up to you to ensure your job is scheduled correctly as this job type implies you may not be relying on Open MPI to coordinate your processes.
-    
+You may also force the number of hosts to be used using the 'hostCount' global.  See the help entry on hostCount for more information.
+  
 
 Example usage:
 
@@ -676,11 +701,11 @@ Example usage:
 
 Kills a job if it still running and then removes it from the database and deletes the job directory.
 
-Supports glob regular expressions.
+To clean all jobs use 'clean job *'.
 
 Parameters:
 
-    jobname : The name of the job to clean
+    jobname : The name of the job to clean. Supports glob regular expressions.
 
 Example usage:
 
@@ -689,10 +714,12 @@ Example usage:
     clean myjob_2
     clean myjob*
     clean *
-    clean jobs
 
-## destroy proxy
 
+## close session
+
+
+Command: close session 
 
 Deletes your login information.
 
@@ -702,7 +729,7 @@ This can be used if you would like to login with another profile.
 
 Example usage:
 
-    destroy proxy
+    close session
 
 
 ## downloadclean job
@@ -877,7 +904,7 @@ Kills a job by stopping its execution.
 
 This stops the remote execution of the job but leaves the job in the job database and also the job directory intact. To delete the job directory you need to clean the job. 
 
-Note that a job cannot be resumed once it has been killed.
+Note that a job cannot be resumed once it has been killed. To kill all jobs use 'kill job *'.
 
 Parameters:
 
@@ -890,7 +917,6 @@ Example usage:
     kill job myjob_2
     kill job myjob*
     kill job *
-    kill jobs
 
 
 
@@ -1118,7 +1144,7 @@ Example usage:
 ## quit
 
 
-Logs out of this Gricli session.
+Logs out of this session.
 
 Login information is left intact so you don't need to enter those on your next login.
  
@@ -1129,6 +1155,17 @@ Example usage:
     quit
 
 
+## renew session
+
+
+Updates your login information, extending the time required before another login is required.
+
+This is used for the institutional login option where access is granted on a short term basis with expiry set for 237 hours from the time of renewal.
+
+Example usage:
+
+    renew session
+    
 
 ## run
 
@@ -1170,6 +1207,8 @@ Example usage:
 
 
 Sets a value for a variable.
+
+Parameters:
 
     var		: The name of the variable.
     value	: The value.
@@ -1232,14 +1271,13 @@ Resets an optional variable to its default value.
 
     var		: The name of the optional variable.
 
-Currently only the non-essential global variables for a job can be unset. 
-To set a global variable use the 'set <var> <value>' command.
+Currently only the optional list variables for a job can be unset. 
+To add an item to a list use the 'add <list> <item>' command.
 
 Example usage:
 
 	unset files
-	unset email
-	
+	unset env
 
 
 ## user clearCache
@@ -1248,6 +1286,33 @@ Example usage:
 Clears the Grisu file system cache. 
 
 You need to logout and login again to see the effects of this command. Be aware that the next login will take longer than usual because the filesystem cache is rebuilt at that stage.
+
+## view [jobname] <filename> 
+
+
+Prints the contents of a file.
+
+Once a job is submitted, a job directory is created which contains all the files associated with that job.
+The view command will print the contents of a specified text file in that job directory.
+
+The command can also print the contents of a file on a local or remote filesystem without reference to a jobname.
+In this case, a relative or full path name is required.
+
+Parameters:
+
+    jobname:	The name of the job which the file is associated with (optional).
+    filename:	The relative or full path of the file.
+    
+Example usage:
+
+	view myfile.txt
+	view ~/some/dir/myfile.txt
+    view myjob stdout.txt
+    view myjob input/first.txt
+    view grid://groups/nz/nesi/myfile.txt
+    view grid://jobs/myjob/myfile.txt
+    view gsiftp://some.example.server/home/myfile.txt
+
 
 ## wait job
 
@@ -1337,8 +1402,8 @@ Note that the TAB key can be used to suggest names and values at each level in t
 Viewing Files
 -------------
 
-Currently you may view local files using the command 'exec cat /path/to/local/file' .
-Upcoming releases will include a command to let you view local as well as remote files easily.
+Use the 'view' command to print the contents of local and remote files. This command also accepts a jobname to
+easily view files associated with your jobs. For more information type 'help view'.
 
 Further Information
 -------------------
@@ -1389,7 +1454,7 @@ Note that regardless of your queue choice, you must choose a group. You can view
 'print groups'. To set the group use the command 'set group <group>'.
 
 Job memory and CPU count will depend on your application. By default a job has 2 GB of memory and 1 CPU. This is the
-default configuration for a 'single' jobtype. To use multiple CPUs you will need to set the jobtype to 'smp' or 'mpi' and increase the number of cpus. You may also use the 'custom' jobtype but here it is up to you to ensure correct parallelism.
+default configuration for a 'single' jobtype. To use multiple CPUs you will need to set the jobtype to 'smp' or 'mpi' and increase the number of cpus. 
 For more information on these job types use the command 'help jobtype'.
 
 If your job requires any files to run you can use the 'attach' command to set them. The files can include input files
