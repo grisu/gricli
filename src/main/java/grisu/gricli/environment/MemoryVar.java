@@ -5,7 +5,11 @@ import grisu.gricli.GricliSetValueException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
+
 public class MemoryVar extends ScalarVar<Integer> {
+
+	public static final String DEFAULT_MEMORY = "2g";
 
 	public MemoryVar(String name, Integer value) {
 		super(name, value, false);
@@ -13,9 +17,10 @@ public class MemoryVar extends ScalarVar<Integer> {
 
 	@Override
 	protected Integer fromString(String arg) throws GricliSetValueException {
-		if (arg == null) {
-			throw new GricliSetValueException(getName(), "null",
-					"memory cannot be null");
+		if (StringUtils.isBlank(arg)) {
+			//	throw new GricliSetValueException(getName(), "null",
+			//			"memory cannot be null");
+			arg = DEFAULT_MEMORY;
 		}
 		int imem = 0;
 		try {

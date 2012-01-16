@@ -10,15 +10,18 @@ import org.apache.commons.lang.StringUtils;
 
 public class WalltimeVar extends ScalarVar<Integer> {
 
+	public static final String DEFAULT_WALLTIME = "60";
+
 	public WalltimeVar(String name, Integer value) {
 		super(name, value);
 	}
 
 	@Override
 	protected Integer fromString(String arg) throws GricliSetValueException {
-		if (arg == null) {
-			throw new GricliSetValueException(getName(), "null",
-					"cannot be unset");
+		if (StringUtils.isBlank(arg)) {
+			arg = DEFAULT_WALLTIME;
+			// throw new GricliSetValueException(getName(), "null",
+			// "cannot be unset");
 		}
 		int ivalue = 0;
 		try {

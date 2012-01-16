@@ -19,7 +19,7 @@ public class SetCommand implements GricliCommand {
 	@SyntaxDescription(command = { "unset" }, arguments = { "var" })
 	@AutoComplete(completors = { VarCompletor.class })
 	public SetCommand(String global) {
-		this(global, null);
+		this(global, "");
 	}
 
 	@SyntaxDescription(command = { "set" }, arguments = { "var", "value" })

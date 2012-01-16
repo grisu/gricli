@@ -20,8 +20,9 @@ public class DirVar extends ScalarVar<File> {
 	@Override
 	protected File fromString(String arg) throws GricliSetValueException {
 		if (arg == null) {
-			throw new GricliSetValueException(getName(), "null",
-					"dir cannot be unset");
+			// throw new GricliSetValueException(getName(), "null",
+			// "dir cannot be unset");
+			arg = "~";
 		}
 		try {
 			// expand path for checking

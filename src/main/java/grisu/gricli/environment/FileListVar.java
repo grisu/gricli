@@ -19,7 +19,7 @@ public class FileListVar extends GricliVar<List<String>> {
 	@Override
 	protected List<String> fromStrings(String[] args)
 			throws GricliSetValueException {
-		if (args[0] == null) {
+		if ((args == null) || (args[0] == null)) {
 			return new ArrayList<String>();
 		}
 		final ArrayList<String> result = new ArrayList<String>();
