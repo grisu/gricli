@@ -425,9 +425,15 @@ public class Gricli {
 		} catch (final GricliSetValueException ex) {
 			exitStatus = RUNTIME;
 			error = ex;
-			System.err.println("variable " + ex.getVar() + " cannot be set to "
-					+ ex.getValue());
-			System.err.println("reason: " + ex.getReason());
+			if (StringUtils.isBlank(ex.getValue())) {
+
+				System.err.println("Global '" + ex.getVar()
+						+ "' cannot be unset.");
+			} else {
+				System.err.println("variable " + ex.getVar()
+						+ " cannot be set to " + ex.getValue());
+				System.err.println("reason: " + ex.getReason());
+			}
 		} catch (final GricliRuntimeException ex) {
 			exitStatus = RUNTIME;
 			Throwable exc = ex;

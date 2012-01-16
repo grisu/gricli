@@ -60,7 +60,7 @@ public class GricliEnvironment implements PropertyChangeListener {
 	public static final int STATUS_RECHECK_INTERVALL = 8;
 
 	public GricliEnvironment() {
-		this.email = new StringVar("email", "");
+		this.email = new StringVar("email", "", true);
 		this.email_on_start = new BoolVar("email_on_start", false);
 		this.email_on_finish = new BoolVar("email_on_finish", false);
 
