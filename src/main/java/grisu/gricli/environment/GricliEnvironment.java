@@ -426,7 +426,7 @@ public class GricliEnvironment implements PropertyChangeListener {
 
 		try {
 			final String output = outputfile.get();
-			if (StringUtils.isBlank(output)) {
+			if (StringUtils.isNotBlank(output)) {
 				final File outputfile = new File(output);
 				out = new PrintStream(new BufferedOutputStream(
 						new FileOutputStream(outputfile, true)));

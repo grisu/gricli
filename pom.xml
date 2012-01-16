@@ -103,7 +103,7 @@
 		<dependency>
 			<groupId>grisu.frontend</groupId>
 			<artifactId>grisu-client</artifactId>
-			<version>0.4-rc7</version>
+			<version>0.4-rc8-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -165,6 +165,12 @@
 			<groupId>me.moocar</groupId>
 			<artifactId>logback-gelf</artifactId>
 			<version>nz.0.9.7</version>
+		</dependency>
+		<dependency>
+			<groupId>grisu.backend</groupId>
+			<artifactId>grisu-core</artifactId>
+			<version>0.4-rc8-SNAPSHOT</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
