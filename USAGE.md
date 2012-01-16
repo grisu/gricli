@@ -209,12 +209,19 @@ Note that you do not need '$' as part of the variable name.
 To view the environment variables and their values before submission use the command 'print global environment'.
 To view the environment variables after submission use the command 'print job <jobname> environmentVariables'.
 
+The list of environment variables can be cleared using the 'unset' command.
+
 Example usage:
 
     add env MY_VAR MY_VALUE
+    unset env
     print global env
     print job myjob environmentVariables
 
+For MPI jobs using multiple hosts, the environment variables must be explicitly exported using the -x option in mpirun e.g:
+
+    submit -x MY_VAR /home/me001/my_application arg0 arg1
+     
 
 ### gdir
 
@@ -1264,14 +1271,13 @@ Resets an optional variable to its default value.
 
     var		: The name of the optional variable.
 
-Currently only the non-essential global variables for a job can be unset. 
-To set a global variable use the 'set <var> <value>' command.
+Currently only the optional list variables for a job can be unset. 
+To add an item to a list use the 'add <list> <item>' command.
 
 Example usage:
 
 	unset files
-	unset email
-	
+	unset env
 
 
 ## user clearCache
