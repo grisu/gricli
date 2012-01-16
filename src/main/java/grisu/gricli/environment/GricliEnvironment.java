@@ -411,6 +411,7 @@ public class GricliEnvironment implements PropertyChangeListener {
 	}
 
 	public void printError(String message) {
+		Thread.dumpStack();
 		myLogger.info("gricli-audit-error username="
 				+ System.getProperty("user.name") + "command=" + message);
 		System.err.println(message);
@@ -425,7 +426,7 @@ public class GricliEnvironment implements PropertyChangeListener {
 
 		try {
 			final String output = outputfile.get();
-			if (output != null) {
+			if (StringUtils.isBlank(output)) {
 				final File outputfile = new File(output);
 				out = new PrintStream(new BufferedOutputStream(
 						new FileOutputStream(outputfile, true)));
