@@ -35,6 +35,7 @@
         <graylog2ServerHost>logstash.ceres.auckland.ac.nz</graylog2ServerHost>
         <graylog2ServerPort>12201</graylog2ServerPort>
         <useLoggerName>true</useLoggerName>
+        <useThreadName>true</useThreadName>
         <graylog2ServerVersion>0.9.6</graylog2ServerVersion>
         <chunkThreshold>1000</chunkThreshold>
         <additionalField>csid:_client_session_id</additionalField>

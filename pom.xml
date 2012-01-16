@@ -164,7 +164,7 @@
 		<dependency>
 			<groupId>me.moocar</groupId>
 			<artifactId>logback-gelf</artifactId>
-			<version>0.9.6</version>
+			<version>nz.0.9.7-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
