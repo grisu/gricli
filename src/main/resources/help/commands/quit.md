@@ -10,5 +10,3 @@ Example usage:
 
     quit
 
-Example commit
-
