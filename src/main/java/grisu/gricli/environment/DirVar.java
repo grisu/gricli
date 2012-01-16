@@ -22,7 +22,6 @@ public class DirVar extends ScalarVar<File> {
 		if (arg == null) {
 			throw new GricliSetValueException(getName(), "null",
 					"dir cannot be unset");
-			// arg = "~";
 		}
 		try {
 			// expand path for checking
