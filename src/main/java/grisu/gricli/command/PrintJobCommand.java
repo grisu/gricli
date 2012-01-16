@@ -37,7 +37,7 @@ public class PrintJobCommand implements GricliCommand {
 	}
 
 	@SyntaxDescription(command = { "print", "job" }, arguments = { "jobname",
-			"attribute" })
+	"attribute" })
 	@AutoComplete(completors = { JobnameCompletor.class,
 			JobPropertiesCompletor.class })
 	public PrintJobCommand(String jobname, String attribute) {
@@ -117,7 +117,7 @@ public class PrintJobCommand implements GricliCommand {
 		}
 
 		for (final String key : result.keySet()) {
-			env.printError(key + " : " + result.get(key));
+			env.printMessage(key + " : " + result.get(key));
 		}
 
 		// String table = OutputHelpers.getTable(result);
@@ -127,7 +127,7 @@ public class PrintJobCommand implements GricliCommand {
 
 	private void printJobAttribute(GricliEnvironment env, ServiceInterface si,
 			String j, String attribute, boolean displayJobName)
-			throws NoSuchJobException {
+					throws NoSuchJobException {
 		DtoJob job = null;
 		try {
 			job = si.getJob(j);

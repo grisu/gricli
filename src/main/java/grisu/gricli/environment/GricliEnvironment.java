@@ -12,7 +12,10 @@ import grisu.model.GrisuRegistry;
 import grisu.model.GrisuRegistryManager;
 import grisu.model.dto.GridFile;
 import grisu.model.status.StatusObject;
+import grith.jgrith.credential.Credential;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,7 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GricliEnvironment {
+public class GricliEnvironment implements PropertyChangeListener {
 
 	static final Logger myLogger = LoggerFactory
 			.getLogger(GricliEnvironment.class);
@@ -437,10 +440,26 @@ public class GricliEnvironment {
 		}
 	}
 
+	public void propertyChange(PropertyChangeEvent evt) {
+
+		Object o = evt.getSource();
+
+		if ( o instanceof Credential) {
+			Credential c = (Credential)o;
+
+			String propName = evt.getPropertyName();
+			if ("belowMinLifetime".equals(propName)) {
+				addNotification("The credential used is below the recomended minimum lifetime and can't be auto-refreshed. Please issue 'renew session' to refresh it.");
+			}
+
+		}
+
+	}
+
+
 	public void quiet(boolean q) {
 		this.quiet = q;
 	}
-
 
 	public void setServiceInterface(ServiceInterface si) {
 		this.si = si;

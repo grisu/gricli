@@ -12,7 +12,6 @@ import jline.MultiCompletor;
 import jline.NullCompletor;
 import jline.SimpleCompletor;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,8 +133,6 @@ public class GricliCommandFactory {
 	}
 
 	public GricliCommand create(String[] args) throws SyntaxException {
-		myLogger.info("gricli-audit-command " + "command={}",
-				StringUtils.join(args, " "));
 
 		return creator.create(args);
 	}

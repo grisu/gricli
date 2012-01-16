@@ -9,7 +9,6 @@ import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.GricliCommandFactory;
 import grisu.gricli.command.InteractiveLoginCommand;
 import grisu.gricli.command.LocalLoginCommand;
-import grisu.gricli.command.RefreshProxyCommand;
 import grisu.gricli.command.RunCommand;
 import grisu.gricli.completors.CompletionCache;
 import grisu.gricli.completors.DummyCompletionCache;
@@ -17,12 +16,12 @@ import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.environment.GricliVar;
 import grisu.gricli.parser.GricliTokenizer;
 import grisu.jcommons.utils.EnvironmentVariableHelpers;
+import grisu.jcommons.utils.VariousStringHelpers;
 import grisu.jcommons.utils.Version;
 import grisu.jcommons.view.cli.CliHelpers;
 import grisu.jcommons.view.cli.LineByLineProgressDisplay;
 import grisu.settings.Environment;
 import grith.jgrith.control.SlcsLoginWrapper;
-import grith.jgrith.credential.Credential;
 import grith.jgrith.plainProxy.LocalProxy;
 
 import java.io.File;
@@ -45,6 +44,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -83,7 +83,46 @@ public class Gricli {
 
 	static private GricliExitStatus exitStatus = SUCCESS;
 
-	public static final int MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST = 3600 * 24 * 3;
+	// public static final int MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST =
+	// (3600 * 24 * 9)
+	// + (3600 * 23) + 3500;
+
+	// 3 days
+	public static final int MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST = 259200;
+
+	private static void configLogging() {
+		// stop javaxws logging
+		java.util.logging.LogManager.getLogManager().reset();
+		java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);
+
+		String logback = "/etc/gricli/gricli.log.conf.xml";
+
+		if (!new File(logback).exists() || (new File(logback).length() > 0)) {
+			logback = Environment.getGrisuClientDirectory()
+					+ File.separator
+					+ "gricli.log.conf.xml";
+		}
+		if (new File(logback).exists()
+				&& (new File(logback).length() > 0)) {
+
+			LoggerContext lc = (LoggerContext) LoggerFactory
+					.getILoggerFactory();
+
+			try {
+				JoranConfigurator configurator = new JoranConfigurator();
+				configurator.setContext(lc);
+				// the context was probably already configured by default
+				// configuration
+				// rules
+				lc.reset();
+				configurator.doConfigure(logback);
+			} catch (JoranException je) {
+				je.printStackTrace();
+			}
+			StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
+
+		}
+	}
 
 	private static void executionLoop() throws IOException {
 
@@ -113,31 +152,6 @@ public class Gricli {
 						SINGLETON_COMMANDFACTORY, env);
 			}
 
-			// check whether proxy needs renewal
-			if (System.console() != null) {
-
-				Credential c = env.getGrisuRegistry().getCredential();
-
-				int remaining = c.getRemainingLifetime();
-
-				if (remaining < MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST) {
-
-					c.autorefresh();
-					remaining = c.getRemainingLifetime();
-
-					if (remaining < MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST) {
-
-						// env.printMessage("Your session lifetime is below the configured threshold. Plese enter your login details below in order to renew it.");
-
-						try {
-							new RefreshProxyCommand().execute(env);
-						} catch (GricliRuntimeException e) {
-							env.printError(e.getLocalizedMessage());
-						}
-					}
-
-				}
-			}
 		}
 	}
 
@@ -202,13 +216,15 @@ public class Gricli {
 			try {
 				final String dn = env.getServiceInterface().getDN();
 				MDC.put("dn", dn);
+				String un = VariousStringHelpers.getCN(dn);
+				MDC.put("user", un);
 			} catch (final Exception e) {
 				myLogger.error(e.getLocalizedMessage(), e);
 			}
 
 			return true;
-		} catch (final GricliException ex) {
-			myLogger.error("login exception", ex);
+		} catch (final Exception ex) {
+			myLogger.error("Login exception", ex);
 			Throwable t = ex;
 			while (t.getCause() != null) {
 				t = t.getCause();
@@ -221,14 +237,21 @@ public class Gricli {
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
 
+		configLogging();
+
+		Thread.currentThread().setName("main");
+
+		LoginManager.setClientName("Gricli");
+
+		LoginManager.setClientVersion(grisu.jcommons.utils.Version
+				.get("gricli"));
+
 		EnvironmentVariableHelpers.loadEnvironmentVariablesToSystemProperties();
 
 		Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
 
 		CliHelpers.setProgressDisplay(new LineByLineProgressDisplay());
 
-		MDC.put("session",
-				System.getProperty("user.name") + "_" + new Date().getTime());
 
 		// MDC.put("local_user", System.getProperty("user.name"));
 		MDC.put("gricli-version", Version.get("gricli"));
@@ -258,37 +281,6 @@ public class Gricli {
 		t.start();
 
 		try {
-
-			// stop javaxws logging
-			java.util.logging.LogManager.getLogManager().reset();
-			java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);
-
-			String logback = "/etc/gricli/logback.xml";
-
-			if (!new File(logback).exists() && (new File(logback).length() > 0)) {
-				logback = Environment.getGrisuClientDirectory()
-						+ File.separator + "logback.xml";
-			}
-			if (new File(logback).exists()
-					&& (new File(logback).length() > 0)) {
-
-				LoggerContext lc = (LoggerContext) LoggerFactory
-						.getILoggerFactory();
-
-				try {
-					JoranConfigurator configurator = new JoranConfigurator();
-					configurator.setContext(lc);
-					// the context was probably already configured by default
-					// configuration
-					// rules
-					lc.reset();
-					configurator.doConfigure(logback);
-				} catch (JoranException je) {
-					je.printStackTrace();
-				}
-				StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
-
-			}
 
 			env = new GricliEnvironment();
 			SigintHandler.install(env);
@@ -394,9 +386,25 @@ public class Gricli {
 	private static void runCommand(String[] c, GricliCommandFactory f,
 			GricliEnvironment env) {
 		Throwable error = null;
+		Date start = null;
+		Date end = null;
 		try {
+
+
+			myLogger.info("Creating command: " + "command=[{}]",
+					StringUtils.join(c, " "));
+
 			final GricliCommand command = f.create(c);
+
+			start = new Date();
+
+			String cmdId = c[0] + "_" + start.getTime();
+			MDC.put("cmdid", cmdId);
+
+			myLogger.info("Executing command: " + "command=[{}]",
+					StringUtils.join(c, " "));
 			command.execute(env);
+
 			exitStatus = SUCCESS;
 
 		} catch (final InvalidCommandException ex) {
@@ -438,12 +446,29 @@ public class Gricli {
 					+ DEBUG_FILE_PATH
 					+ " to eresearch-admin@auckland.ac.nz together with description of what triggered the problem");
 		} finally {
+
+			end = new Date();
+			if (start == null) {
+				start = end;
+			}
+
+			long duration = end.getTime() - start.getTime();
+
 			if (error != null) {
 				myLogger.error(error.getLocalizedMessage(), error);
 				if (env.debug.get() && (error != null)) {
 					error.printStackTrace();
 				}
+				myLogger.info("Finished command: "
+						+ "command=[{}] [failed] error=[{}] duration=[{}]",
+						new Object[] { StringUtils.join(c, " "),
+								error.getLocalizedMessage(), duration });
+			} else {
+				myLogger.info("Finished command: "
+						+ "command=[{}] duration=[{}]",
+						StringUtils.join(c, " "), duration);
 			}
+			MDC.remove("cmdid");
 		}
 	}
 

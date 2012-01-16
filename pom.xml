@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>grisu.frontend</groupId>
 	<artifactId>gricli</artifactId>
@@ -71,11 +70,11 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	<version>0.7-SNAPSHOT</version>
+	<version>0.7-rc6-SNAPSHOT</version>
 	<description>Grisu commandline client</description>
 
 	<properties>
-		<grisu.dependency.version>0.4-SNAPSHOT</grisu.dependency.version>
+		<grisu.dependency.version>0.4-rc3-SNAPSHOT</grisu.dependency.version>
 	</properties>
 
 
@@ -104,7 +103,7 @@
 		<dependency>
 			<groupId>grisu.frontend</groupId>
 			<artifactId>grisu-client</artifactId>
-			<version>${grisu.dependency.version}</version>
+			<version>0.4-rc5</version>
 		</dependency>
 
 		<dependency>
@@ -139,15 +138,15 @@
 		<dependency>
 			<groupId>bouncycastle</groupId>
 			<artifactId>bcprov-jdk15</artifactId>
-			<version>140</version>
+			<version>145</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>grisu.backend</groupId>
-			<artifactId>grisu-core</artifactId>
-			<version>${grisu.dependency.version}</version>
-			<scope>provided</scope>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>grisu.backend</groupId> -->
+<!-- 			<artifactId>grisu-core</artifactId> -->
+<!-- 			<version>0.4-rc2-SNAPSHOT</version> -->
+<!-- 			<scope>provided</scope> -->
+<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -162,6 +161,11 @@
 			<version>1.6.3</version>
 		</dependency>
 
+		<dependency>
+			<groupId>me.moocar</groupId>
+			<artifactId>logback-gelf</artifactId>
+			<version>nz.0.9.7</version>
+		</dependency>
 	</dependencies>
 
 	<issueManagement>
@@ -239,6 +243,9 @@
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<pushChanges>false</pushChanges>
 					<localCheckout>true</localCheckout>
+
+					<releaseProfiles>man,deb,rpm</releaseProfiles>
+
 				</configuration>
 			</plugin>
 
@@ -374,9 +381,62 @@
 				<plugins>
 
 					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>2.5</version>
+						<executions>
+							<execution>
+								<id>copy-deb-control</id>
+								<!-- here the phase you need -->
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${basedir}/target/deb/control</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${basedir}/src/deb/control</directory>
+											<filtering>false</filtering>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>com.google.code.maven-replacer-plugin</groupId>
+						<artifactId>maven-replacer-plugin</artifactId>
+						<version>1.4.0</version>
+						<executions>
+							<execution>
+								<id>fix_deb_version</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<includes>
+								<include>target/classes/gricli.version</include>
+								<include>target/deb/control/control</include>
+							</includes>
+							<ignoreMissingFile>false</ignoreMissingFile>
+
+							<replacements>
+								<replacement>
+									<token>VERSION_TOKEN</token>
+									<value>${project.version}</value>
+								</replacement>
+							</replacements>
+						</configuration>
+					</plugin>
+
+					<plugin>
 						<artifactId>jdeb</artifactId>
 						<groupId>org.vafer</groupId>
-						<version>0.9-nz</version>
+						<version>0.9</version>
 						<executions>
 							<execution>
 								<phase>package</phase>
@@ -385,15 +445,15 @@
 								</goals>
 								<configuration>
 									<changesIn>CHANGES.txt</changesIn>
-									<deb>[[buildDir]]/gricli.deb</deb>
-									<!-- <installDir>/opt/grisu</installDir> -->
+									<deb>[[buildDir]]/gricli-${project.version}.deb</deb>
+									<controlDir>target/deb/control</controlDir>
 									<dataSet>
 										<data>
 											<src>${project.build.directory}/gricli-binary.jar</src>
 											<type>file</type>
 											<mapper>
 												<type>perm</type>
-												<prefix>/usr/local/grisu/</prefix>
+												<prefix>/usr/local/lib/grisu/</prefix>
 												<user>root</user>
 												<group>root</group>
 											</mapper>
@@ -409,16 +469,16 @@
 												<filemode>755</filemode>
 											</mapper>
 										</data>
-										<data>
-											<src>${project.basedir}/src/deb/data/bcprov.jar</src>
-											<type>file</type>
-											<mapper>
-												<type>perm</type>
-												<prefix>/usr/local/grisu/</prefix>
-												<user>root</user>
-												<group>root</group>
-											</mapper>
-										</data>
+										<!-- <data> -->
+										<!-- <src>${project.basedir}/src/deb/data/bcprov.jar</src> -->
+										<!-- <type>file</type> -->
+										<!-- <mapper> -->
+										<!-- <type>perm</type> -->
+										<!-- <prefix>/usr/local/grisu/</prefix> -->
+										<!-- <user>root</user> -->
+										<!-- <group>root</group> -->
+										<!-- </mapper> -->
+										<!-- </data> -->
 										<data>
 											<src>${project.basedir}/target/gricli.1</src>
 											<type>file</type>
@@ -450,7 +510,7 @@
 						<executions>
 							<execution>
 								<goals>
-									<goal>rpm</goal>
+									<goal>attached-rpm</goal>
 								</goals>
 							</execution>
 						</executions>
@@ -460,15 +520,15 @@
 							<group>Application/Other</group>
 							<!-- <icon>src/main/resources/icon.gif</icon> -->
 							<packager>Markus Binsteiner</packager>
-							<prefix>/usr/local</prefix>
-							<!-- <version>0.7-SNAPSHOT</version> -->
+<!-- 							<prefix>/usr/local</prefix> -->
+							<version>${project.version}</version>
 							<!-- <changelogFile>src/changelog</changelogFile> -->
 							<!-- <defineStatements> -->
 							<!-- <defineStatement>_unpackaged_files_terminate_build 0</defineStatement> -->
 							<!-- </defineStatements> -->
 							<mappings>
 								<mapping>
-									<directory>/usr/local/grisu</directory>
+									<directory>/usr/local/lib/grisu</directory>
 									<filemode>755</filemode>
 									<username>root</username>
 									<groupname>root</groupname>
@@ -505,6 +565,10 @@
 									</sources>
 								</mapping>
 							</mappings>
+							<requires>
+								<require>java-1.6.0-openjdk</require>
+<!-- 								<require>bouncycastle</require> -->
+							</requires>
 							<preinstallScriptlet>
 								<script>echo "Installing Gricli..."</script>
 							</preinstallScriptlet>
