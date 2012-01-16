@@ -1,6 +1,6 @@
-Global: environment
+Global: env
 
-The execution evironment variables of a job.
+The execution environment variables of a job.
 
 To add an environment variable and value use the 'add env <var> <value>' command.
 
@@ -11,7 +11,12 @@ To view the environment variables after submission use the command 'print job <j
 
 Example usage:
 
-    add environment MY_VAR MY_VALUE
-    print global environment
+    add env MY_VAR MY_VALUE
+    print global env
     print job myjob environmentVariables
 
+For MPI jobs using multiple hosts, the environment variables must be explicitly exported using the -x option in mpirun e.g:
+
+    submit -x MY_VAR /home/me001/my_application arg0 arg1
+    
+    
