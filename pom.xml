@@ -103,7 +103,7 @@
 		<dependency>
 			<groupId>grisu.frontend</groupId>
 			<artifactId>grisu-client</artifactId>
-			<version>0.4-rc5</version>
+			<version>0.4-rc7-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

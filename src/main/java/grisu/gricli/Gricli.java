@@ -17,7 +17,6 @@ import grisu.gricli.environment.GricliVar;
 import grisu.gricli.parser.GricliTokenizer;
 import grisu.jcommons.utils.EnvironmentVariableHelpers;
 import grisu.jcommons.utils.VariousStringHelpers;
-import grisu.jcommons.utils.Version;
 import grisu.jcommons.view.cli.CliHelpers;
 import grisu.jcommons.view.cli.LineByLineProgressDisplay;
 import grisu.settings.Environment;
@@ -97,7 +96,7 @@ public class Gricli {
 
 		String logback = "/etc/gricli/gricli.log.conf.xml";
 
-		if (!new File(logback).exists() || (new File(logback).length() > 0)) {
+		if (!new File(logback).exists() || (new File(logback).length() == 0)) {
 			logback = Environment.getGrisuClientDirectory()
 					+ File.separator
 					+ "gricli.log.conf.xml";
@@ -241,7 +240,7 @@ public class Gricli {
 
 		Thread.currentThread().setName("main");
 
-		LoginManager.setClientName("Gricli");
+		LoginManager.setClientName("gricli");
 
 		LoginManager.setClientVersion(grisu.jcommons.utils.Version
 				.get("gricli"));
@@ -254,7 +253,7 @@ public class Gricli {
 
 
 		// MDC.put("local_user", System.getProperty("user.name"));
-		MDC.put("gricli-version", Version.get("gricli"));
+		// MDC.put("gricli-version", Version.get("gricli"));
 
 		LoginManager.initEnvironment();
 
