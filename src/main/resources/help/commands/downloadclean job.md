@@ -16,7 +16,6 @@ If the download is not successful the job will not be cleaned.
 
 Note that once a job has been cleaned it is no longer accessible via job related commands.
 
-
 Example usage:
 
     downloadclean myjob
