@@ -397,6 +397,9 @@ public class Gricli {
 
 			start = new Date();
 
+			if ((c == null) || (c.length == 0)) {
+				return;
+			}
 			String cmdId = c[0] + "_" + start.getTime();
 			MDC.put("cmdid", cmdId);
 

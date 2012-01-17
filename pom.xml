@@ -249,7 +249,7 @@
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<pushChanges>false</pushChanges>
 					<localCheckout>true</localCheckout>
-
+					<tagNameFormat>${project.version}</tagNameFormat>
 					<releaseProfiles>man,deb,rpm</releaseProfiles>
 
 				</configuration>
