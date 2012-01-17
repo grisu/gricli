@@ -173,7 +173,7 @@ public class GricliEnvironment implements PropertyChangeListener {
 		this.memory = new MemoryVar("memory", 2048);
 		this.walltime = new WalltimeVar("walltime", 10);
 		this.cpus = new PositiveIntVar("cpus", 1);
-		this.hostCount = new PositiveIntVar("hostCount", null, true);
+		this.hostCount = new PositiveIntVar("hostcount", null, true);
 
 		this.version = new StringVar("version", null, true);
 		this.application = new StringVar("package", null, true);
@@ -411,7 +411,6 @@ public class GricliEnvironment implements PropertyChangeListener {
 	}
 
 	public void printError(String message) {
-		Thread.dumpStack();
 		myLogger.info("gricli-audit-error username="
 				+ System.getProperty("user.name") + "command=" + message);
 		System.err.println(message);

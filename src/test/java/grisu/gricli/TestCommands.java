@@ -335,7 +335,7 @@ public class TestCommands {
 
 	@Test
 	public void testUnsetHostCount() throws Exception {
-		final SetCommand unset = new SetCommand("hostCount");
+		final SetCommand unset = new SetCommand("hostcount");
 		unset.execute(env);
 		assertNull(env.queue.get());
 	}

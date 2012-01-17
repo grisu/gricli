@@ -9,6 +9,7 @@ import grisu.jcommons.constants.Constants;
 
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,9 @@ public class SetCommand implements GricliCommand {
 	private void validate(GricliEnvironment env) throws GricliRuntimeException {
 
 		if (Constants.QUEUE_KEY.equals(global)) {
+			if (StringUtils.isBlank(values[0])) {
+				return;
+			}
 			Set<String> allQueues = Gricli.completionCache.getAllQueues();
 			if (!allQueues.contains(values[0])) {
 				throw new GricliRuntimeException("Queue '" + values[0]
