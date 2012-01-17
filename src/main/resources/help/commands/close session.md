@@ -1,4 +1,4 @@
-Command: destroy proxy 
+Command: close session
 
 Deletes your login information.
 
@@ -8,5 +8,5 @@ This can be used if you would like to login with another profile.
 
 Example usage:
 
-    destroy proxy
+   close session
 

@@ -1,8 +1,11 @@
-Command: clean job <jobname>
+Command: clean job <jobname> [&]
 
 Kills a job if it still running and then removes it from the database and deletes the job directory.
 
 To clean all jobs use 'clean job *'.
+
+Jobs can also be cleaned asynchronously using '&' and the end of the command. This will complete the operation
+in the background and report back in the prompt with a '*'. To view pending messages, use the 'print messages' command.
 
 Parameters:
 

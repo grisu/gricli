@@ -19,4 +19,6 @@ For MPI jobs using multiple hosts, the environment variables must be explicitly 
 
     submit -x MY_VAR /home/me001/my_application arg0 arg1
     
+
+    
     
