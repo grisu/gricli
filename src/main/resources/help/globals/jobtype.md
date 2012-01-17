@@ -12,7 +12,8 @@ The current values are:
 
 The number of hosts used for an mpi job can be checked after submission using the command 'print job <jobname> hostCount'.
 
-Please note that a 'host' is a compute node within a queue. Since the hardware specifications may vary between hosts in a queue, you are advised to check the properties of your queues to ensure you jobs run correctly. In particular, it is important that jobs do not request more resources than are available for a given job type. Some tips are provided below:
+Please note that a 'host' is a compute node within a queue. Since the hardware specifications may vary between hosts in a queue,
+you are advised to check the properties of your queues to ensure you jobs run correctly. In particular, it is important that jobs do not request more resources than are available for a given job type. Some tips are provided below:
 
 SMP
 
@@ -31,4 +32,4 @@ Example usage:
 
     set jobtype mpi
     print global jobtype
-    print job myjob hostCount
+    print job myjob hostcount
