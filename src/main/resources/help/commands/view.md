@@ -8,7 +8,7 @@ The view command will print the contents of a specified text file in that job di
 The command can also print the contents of a remote file without reference to a jobname.
 In this case, a full path name is required.
 
-Note: Local file paths (e.g ~/myfile) are not currently supported. To view a local file use the 'exec' e.g:
+Note: Local file paths (e.g ~/myfile) are not currently supported. To view a local file use the 'exec' command e.g:
 
     exec cat /my/local/file 
 
