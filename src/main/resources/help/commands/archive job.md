@@ -1,9 +1,12 @@
-Command: archive job <jobname>
+Command: archive job <jobname> [&]
 
 Downloads the job to the default archive location and then cleans the job.
 
 Supports glob regular expressions. Note that if a job is still running it will be stopped. 
 The archive process may take a while depending on how large the files are. 
+
+Jobs can also be archived asynchronously using '&' and the end of the command. This will complete the operation
+in the background and report back in the prompt with a '*'. To view pending messages, use the 'print messages' command.
 
 Parameters:
 
@@ -27,4 +30,4 @@ Example usage:
     archive job myjob
     archive job myjob_1
     archive job myjob*
-
+    archive job myjob &

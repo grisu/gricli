@@ -12,10 +12,7 @@ in the background and report back in the prompt with a '*'. To view pending mess
 Parameters:
 
     command    : The command to be executed.  
-
-
-If & is specified the command will run in the background.     
-    	
+ 	
 Example usage:
 
     submit echo "hello world"

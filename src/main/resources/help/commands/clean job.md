@@ -13,8 +13,10 @@ Parameters:
 
 Example usage:
 
-    clean myjob
-    clean myjob_1
-    clean myjob_2
-    clean myjob*
-    clean *
+    clean job myjob
+    clean job myjob_1
+    clean job myjob_2
+    clean job myjob*
+    clean job *
+    clean job myjob &
+    
