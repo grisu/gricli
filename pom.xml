@@ -73,9 +73,6 @@
 	<version>0.7-rc9-SNAPSHOT</version>
 	<description>Grisu commandline client</description>
 
-	<properties>
-		<grisu.dependency.version>0.4-rc3-SNAPSHOT</grisu.dependency.version>
-	</properties>
 
 
 	<dependencies>
@@ -249,7 +246,7 @@
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<pushChanges>false</pushChanges>
 					<localCheckout>true</localCheckout>
-					<tagNameFormat>${project.version}</tagNameFormat>
+					<tagNameFormat>@{project.version}</tagNameFormat>
 					<releaseProfiles>man,deb,rpm</releaseProfiles>
 
 				</configuration>
