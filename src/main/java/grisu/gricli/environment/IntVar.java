@@ -2,6 +2,8 @@ package grisu.gricli.environment;
 
 import grisu.gricli.GricliSetValueException;
 
+import org.apache.commons.lang.StringUtils;
+
 public class IntVar extends ScalarVar<Integer> {
 
 	public IntVar(String name, Integer value) {
@@ -14,7 +16,7 @@ public class IntVar extends ScalarVar<Integer> {
 
 	@Override
 	protected Integer fromString(String arg) throws GricliSetValueException {
-		if (arg == null) {
+		if (StringUtils.isBlank(arg)) {
 			return null;
 		}
 		try {

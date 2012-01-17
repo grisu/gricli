@@ -4,6 +4,8 @@ import grisu.gricli.GricliSetValueException;
 
 import java.util.Hashtable;
 
+import org.apache.commons.lang.StringUtils;
+
 public class EnvironmentVar extends GricliVar<Hashtable<String, String>> {
 
 	public EnvironmentVar(String name) {
@@ -18,7 +20,7 @@ public class EnvironmentVar extends GricliVar<Hashtable<String, String>> {
 	@Override
 	protected Hashtable<String, String> fromStrings(String[] args)
 			throws GricliSetValueException {
-		if (args != null && args[0] != null) {
+		if (StringUtils.isNotBlank(args[0])) {
 			throw new GricliSetValueException(getName(), "",
 					"environment global cannot be set. please use 'unset' or 'add'  commands");
 		} else {

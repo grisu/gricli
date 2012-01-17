@@ -17,7 +17,6 @@ import grisu.gricli.environment.GricliVar;
 import grisu.gricli.parser.GricliTokenizer;
 import grisu.jcommons.utils.EnvironmentVariableHelpers;
 import grisu.jcommons.utils.VariousStringHelpers;
-import grisu.jcommons.utils.Version;
 import grisu.jcommons.view.cli.CliHelpers;
 import grisu.jcommons.view.cli.LineByLineProgressDisplay;
 import grisu.settings.Environment;
@@ -97,7 +96,7 @@ public class Gricli {
 
 		String logback = "/etc/gricli/gricli.log.conf.xml";
 
-		if (!new File(logback).exists() || (new File(logback).length() > 0)) {
+		if (!new File(logback).exists() || (new File(logback).length() == 0)) {
 			logback = Environment.getGrisuClientDirectory()
 					+ File.separator
 					+ "gricli.log.conf.xml";
@@ -241,7 +240,7 @@ public class Gricli {
 
 		Thread.currentThread().setName("main");
 
-		LoginManager.setClientName("Gricli");
+		LoginManager.setClientName("gricli");
 
 		LoginManager.setClientVersion(grisu.jcommons.utils.Version
 				.get("gricli"));
@@ -254,7 +253,7 @@ public class Gricli {
 
 
 		// MDC.put("local_user", System.getProperty("user.name"));
-		MDC.put("gricli-version", Version.get("gricli"));
+		// MDC.put("gricli-version", Version.get("gricli"));
 
 		LoginManager.initEnvironment();
 
@@ -398,6 +397,9 @@ public class Gricli {
 
 			start = new Date();
 
+			if ((c == null) || (c.length == 0)) {
+				return;
+			}
 			String cmdId = c[0] + "_" + start.getTime();
 			MDC.put("cmdid", cmdId);
 
@@ -426,9 +428,15 @@ public class Gricli {
 		} catch (final GricliSetValueException ex) {
 			exitStatus = RUNTIME;
 			error = ex;
-			System.err.println("variable " + ex.getVar() + " cannot be set to "
-					+ ex.getValue());
-			System.err.println("reason: " + ex.getReason());
+			if (StringUtils.isBlank(ex.getValue())) {
+
+				System.err.println("Global '" + ex.getVar()
+						+ "' cannot be unset.");
+			} else {
+				System.err.println("variable " + ex.getVar()
+						+ " cannot be set to " + ex.getValue());
+				System.err.println("reason: " + ex.getReason());
+			}
 		} catch (final GricliRuntimeException ex) {
 			exitStatus = RUNTIME;
 			Throwable exc = ex;

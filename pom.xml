@@ -70,12 +70,9 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	<version>0.7-rc6-SNAPSHOT</version>
+	<version>0.7-rc10-SNAPSHOT</version>
 	<description>Grisu commandline client</description>
 
-	<properties>
-		<grisu.dependency.version>0.4-rc3-SNAPSHOT</grisu.dependency.version>
-	</properties>
 
 
 	<dependencies>
@@ -103,7 +100,7 @@
 		<dependency>
 			<groupId>grisu.frontend</groupId>
 			<artifactId>grisu-client</artifactId>
-			<version>0.4-rc5</version>
+			<version>0.4-rc8</version>
 		</dependency>
 
 		<dependency>
@@ -165,6 +162,12 @@
 			<groupId>me.moocar</groupId>
 			<artifactId>logback-gelf</artifactId>
 			<version>nz.0.9.7</version>
+		</dependency>
+		<dependency>
+			<groupId>grisu.backend</groupId>
+			<artifactId>grisu-core</artifactId>
+			<version>0.4-rc8</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
@@ -238,12 +241,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.1</version>
+				<version>2.2.2</version>
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<pushChanges>false</pushChanges>
 					<localCheckout>true</localCheckout>
-
+					<tagNameFormat>v@{project.version}</tagNameFormat>
 					<releaseProfiles>man,deb,rpm</releaseProfiles>
 
 				</configuration>

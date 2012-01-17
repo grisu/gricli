@@ -1,10 +1,15 @@
 package grisu.gricli.command;
 
+import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.VarCompletor;
 import grisu.gricli.completors.VarValueCompletor;
 import grisu.gricli.environment.GricliEnvironment;
+import grisu.jcommons.constants.Constants;
 
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +37,25 @@ public class SetCommand implements GricliCommand {
 	public GricliEnvironment execute(final GricliEnvironment env)
 			throws GricliRuntimeException {
 
+		validate(env);
+
 		env.getVariable(global).set(values);
 		return env;
+
+	}
+
+	private void validate(GricliEnvironment env) throws GricliRuntimeException {
+
+		if (Constants.QUEUE_KEY.equals(global)) {
+			if (StringUtils.isBlank(values[0])) {
+				return;
+			}
+			Set<String> allQueues = Gricli.completionCache.getAllQueues();
+			if (!allQueues.contains(values[0])) {
+				throw new GricliRuntimeException("Queue '" + values[0]
+						+ "' not a valid queuename.");
+			}
+		}
 
 	}
 }

@@ -60,7 +60,7 @@ public class GricliEnvironment implements PropertyChangeListener {
 	public static final int STATUS_RECHECK_INTERVALL = 8;
 
 	public GricliEnvironment() {
-		this.email = new StringVar("email", "");
+		this.email = new StringVar("email", "", true);
 		this.email_on_start = new BoolVar("email_on_start", false);
 		this.email_on_finish = new BoolVar("email_on_finish", false);
 
@@ -173,7 +173,7 @@ public class GricliEnvironment implements PropertyChangeListener {
 		this.memory = new MemoryVar("memory", 2048);
 		this.walltime = new WalltimeVar("walltime", 10);
 		this.cpus = new PositiveIntVar("cpus", 1);
-		this.hostCount = new PositiveIntVar("hostCount", null, true);
+		this.hostCount = new PositiveIntVar("hostcount", null, true);
 
 		this.version = new StringVar("version", null, true);
 		this.application = new StringVar("package", null, true);
@@ -425,7 +425,7 @@ public class GricliEnvironment implements PropertyChangeListener {
 
 		try {
 			final String output = outputfile.get();
-			if (output != null) {
+			if (StringUtils.isNotBlank(output)) {
 				final File outputfile = new File(output);
 				out = new PrintStream(new BufferedOutputStream(
 						new FileOutputStream(outputfile, true)));
