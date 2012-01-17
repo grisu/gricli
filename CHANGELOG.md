@@ -15,8 +15,6 @@ Changelog
 * Debian and RedHat packages
 * "kill/clean", "archive" and "submit" commands can now be executed in background using "&" operator
 * Custom job type removed from docs and replaced by single
-* hostCount renamed to hostcount
-* job number prefix 00
 
 0.6
 ----
