@@ -2,14 +2,14 @@ Command: run <script>
 
 Runs a set of commands from a plain text file.
 
-Using a script can automate common tasks such as configuring your job environment.
+Using a script can automate common tasks such as configuring your job environment or submitting a job.
 
 Parameters:
 
-    script	: The plain text file containing commands.
+    script : The plain text file containing commands.
 
-A specific file extension (.txt, .xyz) is not required for the filename and you may use the '#' character 
-to ignore lines in the script.
+A specific file extension (.txt, .xyz) is not required for the filename.
+You may also use the '#' character to ignore lines in the script.
 
 Example script:
 
@@ -23,7 +23,7 @@ set memory 1g
 set cpus 1
 set walltime 10m
 set description "a test job"
-submit echo "Hello World"
+submit echo Hello World
 
 Example usage:
 

@@ -2,7 +2,7 @@ Command: kill job <jobname> [&]
 
 Kills a job by stopping its execution.
 
-This stops the remote execution of the job but leaves the job in the job database and also the job directory intact.
+This stops the remote execution of the job but leaves the job in the job database and also leaves the job directory intact.
 To delete the job directory you need to clean the job. 
 
 Note that a job cannot be resumed once it has been killed. To kill all jobs use 'kill job *'.

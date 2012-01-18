@@ -1,14 +1,16 @@
-Command:	set <var> <value>
+Command: set <var> <value>
 
 Sets a value for a variable.
 
 Parameters:
 
-    var		: The name of the variable.
-    value	: The value.
+    var	  : The name of the variable.
+    value : The value.
 
-Currently only the global variables for a job can be set.
-To reset a global to a default value use the 'unset <global>' command.
+Currently only the global variables for a job (such as the amount of memory to be used) can be set.
+
+To the set the value of list-type variables such as 'files' and 'env' use the 'add' command.
+See the help file for the 'add' command for examples of setting and unsetting lists.
 
 Example usage:
 

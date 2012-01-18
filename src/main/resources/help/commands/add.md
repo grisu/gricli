@@ -1,4 +1,4 @@
-Command:	add <list> <item>
+Command: add <list> <item>
 
 Adds an item to a list.
 
@@ -6,13 +6,13 @@ Currently only a single item can be added per call. To add multiple items, use t
 
 Parameters:
 
-    list	: The name of the list.
-    item	: The value to add. 
+    list : The name of the list.
+    item : The value to add. 
 
 Currently available lists are:
 
-    files       : The files attached for a job.
-    env : The environment variables in the job execution environment
+    files : The files attached for a job.
+    env   : The environment variables in the job execution environment
 
 Example usage:
 

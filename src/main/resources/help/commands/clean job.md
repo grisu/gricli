@@ -1,6 +1,6 @@
 Command: clean job <jobname> [&]
 
-Kills a job if it still running and then removes it from the database and deletes the job directory.
+Kills a job if it still running and then removes it from the job database and deletes the job directory.
 
 To clean all jobs use 'clean job *'.
 

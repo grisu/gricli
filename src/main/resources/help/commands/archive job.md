@@ -10,7 +10,7 @@ in the background and report back in the prompt with a '*'. To view pending mess
 
 Parameters:
 
-    jobname    : The name of the job to archive. 
+    jobname : The name of the job to archive. 
 
 The default archive location is in the user's home directory on the Data Fabric:
 
@@ -20,10 +20,9 @@ You can also access the Data Fabric via your browser at the following address:
 
     http://df.bestgrid.org/
 
-Your files will be located in your home directory.
+Your files will be located in your Data Fabric home directory.
 
 If the archiving was successful, the job will be deleted from the job database and the original job directory will be deleted.
-
 
 Example usage:
 

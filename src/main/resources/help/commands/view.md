@@ -14,8 +14,8 @@ Note: Local file paths (e.g ~/myfile) are not currently supported. To view a loc
 
 Parameters:
 
-    jobname:	The name of the job which the file is associated with (optional).
-    filename:	The relative or full path of the file.
+    jobname  : The name of the job which the file is associated with. (Optional)
+    filename : The relative or full path of the file.
     
 Example usage:
 

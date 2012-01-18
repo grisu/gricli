@@ -1,13 +1,13 @@
-Command: print queues [queue properties]
+Command: print queues [queue_properties]
 
 Lists all queues that are available for the current environment.
 
 The current environment is the group you set, the application package and version you choose (if any),
-also walltime, number of CPUs and memory (RAM).
+as well as the walltime, number of CPUs and memory (RAM).
 
 Parameters:
 
-	queue properties : (optional) properties you want to have displayed, per queue. 
+	queue_properties : List of properties you want to have displayed per queue. (Optional) 
 
 Allowed values: 
 

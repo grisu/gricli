@@ -1,4 +1,4 @@
-Command:	download job <jobname> [target_dir]
+Command: download job <jobname> [target_dir]
 
 Downloads the whole job directory to the specified locaiton.
 
