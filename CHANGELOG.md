@@ -15,6 +15,8 @@ Changelog
 * "kill/clean", "archive" and "submit" commands can now be executed in background using "&" operator
 * Custom job type removed from docs and replaced by single
 * hostCount renamed to hostcount
+* host is no longer a global
+* print queue [propeties] doesn't list memory properties
 
 0.6
 ----
