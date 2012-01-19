@@ -44,7 +44,7 @@ file transfers. This becomes significant if you are dealing with large files.
 Remote Files
 ------------
 
-You may attach files from your cluster's GridFTP server by using grid:// prefix :
+You may attach files from your cluster's GridFTP server by using 'grid://' prefix:
 
     attach grid://path/to/my/remote/file.txt
     submit myprogram --input file.txt
@@ -70,8 +70,17 @@ Viewing Files
 -------------
 
 Currently you may view local files using the command 'exec cat /path/to/local/file' .
-Upcoming releases will include a command to let you view local as well as remote files easily.
+To view remote files use the following command:
 
+    view grid://path/to/my/remote/file.txt
+    view gsiftp://path/to/my/remote/file.txt
+    
+The 'view' command also allows you view the contents of files in the job directory:
+
+    view myjob myfile
+   
+Note that this command will not work with jobs that have been cleaned.        
+   
 Further Information
 -------------------
 

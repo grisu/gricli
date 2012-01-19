@@ -60,7 +60,7 @@ or 'false'.
 Jobs may also have a description. This helps identify the job after it has been submitted. For more information, use
 the command 'help description'.
 
-An output file may also be specified to redirect messages from Gricli to a file. For more information see the help
+An output file may also be specified to redirect messages from the submission shell to a file. For more information see the help
 entry on 'outputfile'.
 
 The 'debug' property accepts a boolean (true or false) and will display errors in full. This is useful if you are having
@@ -90,12 +90,9 @@ writing to output files. For examples, type 'help view'.
 Downloading Job Results
 -----------------------
 
-When a job is complete you can download the job to the location defined in the global 'dir'.
-To ensure your job is downloaded to an appropriate directory, please check that the 'dir' global is correct. 
-
-You can set the dir global with the command 'set dir <path>' and view it with the command 'print global dir'. Alternatively, 
-you may use the 'cd' and 'ls' commands to navigate to the appropriate directory and the global 'dir' will match the 
-current working directory. To see the current working directory use the 'pwd' command.
+When a job is complete you can download the job directory using the 'download job <jobname> [target_dir]' command.
+The target dir is where the job will be downloaded to. It is optional and by default with be downloaded to the current working diretory
+as set in the global 'dir'. To see the current working directory use the commands 'pwd' or 'print global dir'.
 
 The job files can also be archived to your home directory on the Data Fabric. This will be grid://groups/nz/nesi
 You can do this using the 'archive job' command. Note that this command cleans the job upon success.
@@ -123,7 +120,7 @@ Here is an example of how you can setup, submit and download a job:
     > set walltime 10
     > set jobname echoJob
     > set description "Job to test echo command"
-    > submit echo "Hello World"
+    > submit echo Hello World
     > print job echoJob status
     > download job echoJob
     > clean job echoJob 
