@@ -6,27 +6,20 @@ The job type determines how the job is configured for execution.
 
 The current values are:
 
-    smp          : A job that will use one or more CPUs on a single host.
-    mpi          : A job that will use one or more CPUs across one or more hosts using the Open MPI framework.
-    custom       : A job that will use one or more CPUs across one or more hosts using a custom configuration.
-
-The number of hosts used for an mpi job can be checked after submission using the command 'print job <jobname> hostCount'.
+    single : A job that will use one CPU on one host.
+    smp    : A job that will use one or more CPUs on one host.
+    mpi    : A job that will use one or more CPUs across one or more hosts using the Open MPI framework.
 
 Please note that a 'host' is a compute node within a queue. Since the hardware specifications may vary between hosts in a queue,
-you are advised to check the properties of your queues to ensure you jobs run correctly. In particular, it is important that jobs do not request more resources than are available for a given job type. Some tips are provided below:
+you are advised to check the properties of the queue to ensure you jobs run correctly. In particular, it is important that jobs do not request more resources than are available for a given job type.
 
-SMP
+By default, an mpi job may schedule CPUs on any nodes in the queue. You may use the hostcount global to force the CPUs to be scheduled on a 
+specific number of nodes. To remove this restriction, use the unset command:
 
-When you select a job of this type, please ensure that the at least one host in the queue can meet the job requirements.
+    set hostcount 2
+    unset hostcount
 
-MPI
-
-When you select a job of this type, please ensure that the requested resources do not exceed the maximum capacity of the queue.
-
-Custom
-
-Please note that is up to you to ensure your job is scheduled correctly as this job type implies you may not be relying on Open MPI to coordinate your processes.
-    
+If you have set the hostcount, you can check the value using the command 'print global hostcount' and after submission using the command 'print job <jobname> hostcount'.  
 
 Example usage:
 

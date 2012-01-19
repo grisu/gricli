@@ -9,7 +9,7 @@ are more restrictive.
 
 The hostcount is unset by default and will not show in the list of globals. Once set, it will be visible in the
 list of globals. Note that when setting the hostcount, you must use a positive integer. To disable the hostcount 
-restriction use 'unset hostcount'.
+restriction use the command 'unset hostcount'.
 
 Example usage:
 

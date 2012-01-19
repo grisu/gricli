@@ -7,8 +7,8 @@ If a job has not finished after the allocated walltime, the job will be killed.
 
 Walltime can be set with strings as follows:
 
-   set walltime 120            : sets the walltime for 120 minutes.
-   set walltime 1d2h3m         : sets the walltime for 1 day 2 hours and 3 minutes.
+   set walltime 120    : Sets the walltime for 2 hours
+   set walltime 1d2h3m : Sets the walltime for 1 day 2 hours and 3 minutes.
 
 To view the walltime before a job has been submitted, use the command 'print global walltime'.
 To view the walltime after a job has been submitted, use the command 'print job <jobname> walltime'.

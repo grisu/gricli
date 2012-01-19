@@ -5,6 +5,9 @@ The application package version.
 This is the application package version to be used. 
 By default the value is 'any'.
 
+Note that this global is not visible under 'print globals' unless it has been set. To unset the variable
+use the 'unset' command
+
 If a package is specified and the queue is set to auto, the job will be submitted
 to a queue location that supports a version of the chosen application package.
 
@@ -18,5 +21,7 @@ Example usage:
 
     set package R
     set version  2.11.1
+    
+    unset version
 
     

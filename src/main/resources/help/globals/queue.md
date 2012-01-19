@@ -8,7 +8,7 @@ To set the queue use the 'set' command.
 To see a list of queues use the 'print queues command'.
 
 You can only submit jobs to queues assigned to your group.
-To view the available to groups use the 'print groups' command.
+To view the available groups use the 'print groups' command.
 To view the queues available for a specific groups use the command 'print queues <group>'
 
 To see which queues support a particular application package use the command 'print package <application_package>'.
