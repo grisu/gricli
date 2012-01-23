@@ -25,6 +25,18 @@ public class LocalLoginCommand implements GricliCommand {
 			if (siUrl == null) {
 				siUrl = env.getServiceInterfaceUrl();
 			}
+
+			// try {
+			// Credential c = Credential.load();
+			//
+			// if (!c.isValid()) {
+			// throw new CredentialException(
+			// "No valid session found and interactive login not available for scripted execution. Please login manually and try again.");
+			// }
+			// } catch (CredentialException ce) {
+			// throw new GricliRuntimeException(ce.getLocalizedMessage());
+			// }
+
 			final ServiceInterface serviceInterface = LoginManager
 					.loginCommandlineLocalProxy(siUrl);
 

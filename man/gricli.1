@@ -237,9 +237,9 @@ set\ email_on_start\ true
 set\ email_on_start\ false
 \f[]
 .fi
-.SS environment
+.SS env
 .PP
-The execution evironment variables of a job.
+The execution environment variables of a job.
 .PP
 To add an environment variable and value use the `add env ' command.
 .PP
@@ -254,9 +254,18 @@ Example usage:
 .IP
 .nf
 \f[C]
-add\ environment\ MY_VAR\ MY_VALUE
-print\ global\ environment
+add\ env\ MY_VAR\ MY_VALUE
+print\ global\ env
 print\ job\ myjob\ environmentVariables
+\f[]
+.fi
+.PP
+For MPI jobs using multiple hosts, the environment variables must be
+explicitly exported using the -x option in mpirun e.g:
+.IP
+.nf
+\f[C]
+submit\ -x\ MY_VAR\ /home/me001/my_application\ arg0\ arg1
 \f[]
 .fi
 .SS gdir
@@ -286,6 +295,19 @@ Example usage:
 set\ group\ /nz/nesi
 print\ global\ group
 print\ job\ myjob\ group
+\f[]
+.fi
+.SS hostcount
+.PP
+The number of compute hosts
+.PP
+Example usage:
+.IP
+.nf
+\f[C]
+set\ hostCount\ 2
+print\ global\ hostcount
+print\ job\ myjob\ hostcount
 \f[]
 .fi
 .SS host
@@ -824,13 +846,13 @@ attach\ myfile_1\ myfile_2
 Kills a job if it still running and then removes it from the database
 and deletes the job directory.
 .PP
-Supports glob regular expressions.
+To clean all jobs use `clean job *'.
 .PP
 Parameters:
 .IP
 .nf
 \f[C]
-jobname\ :\ The\ name\ of\ the\ job\ to\ clean
+jobname\ :\ The\ name\ of\ the\ job\ to\ clean.\ Supports\ glob\ regular\ expressions.
 \f[]
 .fi
 .PP
@@ -843,10 +865,9 @@ clean\ myjob_1
 clean\ myjob_2
 clean\ myjob*
 clean\ *
-clean\ jobs
 \f[]
 .fi
-.SS destroy proxy
+.SS close session
 .PP
 Deletes your login information.
 .PP
@@ -1064,6 +1085,7 @@ database and also the job directory intact.
 To delete the job directory you need to clean the job.
 .PP
 Note that a job cannot be resumed once it has been killed.
+To kill all jobs use `kill job *'.
 .PP
 Parameters:
 .IP
@@ -1082,7 +1104,6 @@ kill\ job\ myjob_1
 kill\ job\ myjob_2
 kill\ job\ myjob*
 kill\ job\ *
-kill\ jobs
 \f[]
 .fi
 .SS login
@@ -1379,6 +1400,24 @@ Example usage:
 quit
 \f[]
 .fi
+.SS renew session
+.PP
+Renews the current session, extending the time required before another
+login is required.
+.PP
+This is used for the institutional login option where access is granted
+on a short term basis with expiry set for 10 days from the time of
+renewal.
+The command may be useful when you have long running workflows and want
+to avoid subsequent login steps.
+.PP
+Example usage:
+.IP
+.nf
+\f[C]
+renew\ session
+\f[]
+.fi
 .SS run
 .PP
 Runs a set of commands from a plain text file.
@@ -1417,6 +1456,8 @@ run\ myscript.xyz
 .SS set
 .PP
 Sets a value for a variable.
+.PP
+Parameters:
 .IP
 .nf
 \f[C]
@@ -1500,16 +1541,15 @@ var\ \ \ \ \ :\ The\ name\ of\ the\ optional\ variable.
 \f[]
 .fi
 .PP
-Currently only the non-essential global variables for a job can be
-unset.
-To set a global variable use the `set ' command.
+Currently only the optional list variables for a job can be unset.
+To add an item to a list use the `add ' command.
 .PP
 Example usage:
 .IP
 .nf
 \f[C]
 unset\ files
-unset\ email
+unset\ env
 \f[]
 .fi
 .SS user clearCache
@@ -1519,6 +1559,7 @@ Clears the Grisu file system cache.
 You need to logout and login again to see the effects of this command.
 Be aware that the next login will take longer than usual because the
 filesystem cache is rebuilt at that stage.
+.SS view
 .SS wait job
 .PP
 Waits for a job to finish on the remote compute resource.
@@ -1697,8 +1738,6 @@ By default a job has 2 GB of memory and 1 CPU.
 This is the default configuration for a `single' jobtype.
 To use multiple CPUs you will need to set the jobtype to `smp' or `mpi'
 and increase the number of cpus.
-You may also use the `custom' jobtype but here it is up to you to ensure
-correct parallelism.
 For more information on these job types use the command `help jobtype'.
 .PP
 If your job requires any files to run you can use the `attach' command

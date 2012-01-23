@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 
 import jline.ArgumentCompletor;
@@ -44,6 +45,7 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
+import org.python.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -131,7 +133,15 @@ public class Gricli {
 		}
 
 		if (scriptName != null) {
+			myLogger.debug("Executing script: script=[{}]", scriptName);
+			List<String> lines = FileUtils.readLines(new File(scriptName));
+			for (Integer i=0; i<lines.size(); i++) {
+				String line = lines.get(i);
+				myLogger.debug("script=[{}] line=[{}]", line,
+						Strings.padStart(i.toString(), 3, '0'));
+			}
 			run(new FileInputStream(scriptName));
+			myLogger.debug("Finished script: script=[{}]", scriptName);
 			return;
 		}
 

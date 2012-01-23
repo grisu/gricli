@@ -246,7 +246,7 @@
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<pushChanges>false</pushChanges>
 					<localCheckout>true</localCheckout>
-					<tagNameFormat>v@{project.version}</tagNameFormat>
+					<tagNameFormat>@{project.version}</tagNameFormat>
 					<releaseProfiles>man,deb,rpm</releaseProfiles>
 
 				</configuration>
@@ -472,16 +472,31 @@
 												<filemode>755</filemode>
 											</mapper>
 										</data>
-										<!-- <data> -->
-										<!-- <src>${project.basedir}/src/deb/data/bcprov.jar</src> -->
-										<!-- <type>file</type> -->
-										<!-- <mapper> -->
-										<!-- <type>perm</type> -->
-										<!-- <prefix>/usr/local/grisu/</prefix> -->
-										<!-- <user>root</user> -->
-										<!-- <group>root</group> -->
-										<!-- </mapper> -->
-										<!-- </data> -->
+										
+										<data>
+											<src>${project.basedir}/src/deb/data/nesi-repo.key</src>
+											<type>file</type>
+											<mapper>
+												<type>perm</type>
+												<prefix>/usr/share/keyrings/</prefix>
+												<user>root</user>
+												<group>root</group>
+												<filemode>755</filemode>
+											</mapper>
+										</data>
+										
+										<data>
+											<src>${project.basedir}/src/deb/data/nesi-repo.list</src>
+											<type>file</type>
+											<mapper>
+												<type>perm</type>
+												<prefix>/etc/apt/sources.list.d/</prefix>
+												<user>root</user>
+												<group>root</group>
+												<filemode>755</filemode>
+											</mapper>
+										</data>																		
+
 										<data>
 											<src>${project.basedir}/target/gricli.1</src>
 											<type>file</type>

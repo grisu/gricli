@@ -209,19 +209,16 @@ Note that you do not need '$' as part of the variable name.
 To view the environment variables and their values before submission use the command 'print global environment'.
 To view the environment variables after submission use the command 'print job <jobname> environmentVariables'.
 
-The list of environment variables can be cleared using the 'unset' command.
-
 Example usage:
 
     add env MY_VAR MY_VALUE
-    unset env
     print global env
     print job myjob environmentVariables
 
 For MPI jobs using multiple hosts, the environment variables must be explicitly exported using the -x option in mpirun e.g:
 
     submit -x MY_VAR /home/me001/my_application arg0 arg1
-     
+    
 
 ### gdir
 
@@ -248,6 +245,25 @@ Example usage:
     print job myjob group
 
 
+
+
+### hostcount
+
+
+The number of compute hosts
+
+
+
+Example usage:
+
+    set hostCount 2
+    print global hostcount
+    print job myjob hostcount
+
+
+
+
+
 ### host
 
 
@@ -263,25 +279,6 @@ Example usage:
     set host ng2.canterbury.ac.nz
     print global host
     print job myjob submissionHost
-    
-   
-### hostcount
-
-
-The number of compute hosts to be used
-
-The hostcount is important for jobs where processes communicate across a number of physical machines or hosts.
-Setting the hostcount will force the job to use the set number of hosts. This can improve efficiency as the communications
-overhead is less between processes running on the same host. However the job may take longer to be dequeued as the requirements 
-are more restrictive.
-
-
-Example usage:
-
-    set hostcount 2
-    print global hostcount
-    print job myjob hostcount
-
 
 ### jobname
 
@@ -309,27 +306,26 @@ The job type determines how the job is configured for execution.
 
 The current values are:
 
-    single	 : A job that will use one CPU
     smp          : A job that will use one or more CPUs on a single host.
     mpi          : A job that will use one or more CPUs across one or more hosts using the Open MPI framework.
+    custom       : A job that will use one or more CPUs across one or more hosts using a custom configuration.
 
 The number of hosts used for an mpi job can be checked after submission using the command 'print job <jobname> hostCount'.
 
 Please note that a 'host' is a compute node within a queue. Since the hardware specifications may vary between hosts in a queue, you are advised to check the properties of your queues to ensure you jobs run correctly. In particular, it is important that jobs do not request more resources than are available for a given job type. Some tips are provided below:
 
-Single
-
-Memory requirements for single jobs should not exceed that available on a host in the queue.
-
 SMP
 
-Please ensure that the at least one host in the queue can meet the memory and CPU requirements.
+When you select a job of this type, please ensure that the at least one host in the queue can meet the job requirements.
 
 MPI
 
 When you select a job of this type, please ensure that the requested resources do not exceed the maximum capacity of the queue.
-You may also force the number of hosts to be used using the 'hostCount' global.  See the help entry on hostCount for more information.
-  
+
+Custom
+
+Please note that is up to you to ensure your job is scheduled correctly as this job type implies you may not be relying on Open MPI to coordinate your processes.
+    
 
 Example usage:
 
@@ -715,11 +711,8 @@ Example usage:
     clean myjob*
     clean *
 
-
 ## close session
 
-
-Command: close session 
 
 Deletes your login information.
 
@@ -729,7 +722,7 @@ This can be used if you would like to login with another profile.
 
 Example usage:
 
-    close session
+    destroy proxy
 
 
 ## downloadclean job
@@ -917,6 +910,7 @@ Example usage:
     kill job myjob_2
     kill job myjob*
     kill job *
+
 
 
 
@@ -1144,7 +1138,7 @@ Example usage:
 ## quit
 
 
-Logs out of this session.
+Logs out of this Gricli session.
 
 Login information is left intact so you don't need to enter those on your next login.
  
@@ -1158,14 +1152,16 @@ Example usage:
 ## renew session
 
 
-Updates your login information, extending the time required before another login is required.
+Renews the current session, extending the time required before another login is required.
 
-This is used for the institutional login option where access is granted on a short term basis with expiry set for 237 hours from the time of renewal.
+This is used for the institutional login option where access is granted on a short term basis with expiry set for 10 days from the time of renewal.
+The command may be useful when you have long running workflows and want to avoid subsequent login steps.
 
 Example usage:
 
     renew session
-    
+
+
 
 ## run
 
@@ -1278,6 +1274,7 @@ Example usage:
 
 	unset files
 	unset env
+	
 
 
 ## user clearCache
@@ -1287,31 +1284,8 @@ Clears the Grisu file system cache.
 
 You need to logout and login again to see the effects of this command. Be aware that the next login will take longer than usual because the filesystem cache is rebuilt at that stage.
 
-## view [jobname] <filename> 
+## view
 
-
-Prints the contents of a file.
-
-Once a job is submitted, a job directory is created which contains all the files associated with that job.
-The view command will print the contents of a specified text file in that job directory.
-
-The command can also print the contents of a file on a local or remote filesystem without reference to a jobname.
-In this case, a relative or full path name is required.
-
-Parameters:
-
-    jobname:	The name of the job which the file is associated with (optional).
-    filename:	The relative or full path of the file.
-    
-Example usage:
-
-	view myfile.txt
-	view ~/some/dir/myfile.txt
-    view myjob stdout.txt
-    view myjob input/first.txt
-    view grid://groups/nz/nesi/myfile.txt
-    view grid://jobs/myjob/myfile.txt
-    view gsiftp://some.example.server/home/myfile.txt
 
 
 ## wait job
@@ -1402,8 +1376,8 @@ Note that the TAB key can be used to suggest names and values at each level in t
 Viewing Files
 -------------
 
-Use the 'view' command to print the contents of local and remote files. This command also accepts a jobname to
-easily view files associated with your jobs. For more information type 'help view'.
+Currently you may view local files using the command 'exec cat /path/to/local/file' .
+Upcoming releases will include a command to let you view local as well as remote files easily.
 
 Further Information
 -------------------
@@ -1454,7 +1428,7 @@ Note that regardless of your queue choice, you must choose a group. You can view
 'print groups'. To set the group use the command 'set group <group>'.
 
 Job memory and CPU count will depend on your application. By default a job has 2 GB of memory and 1 CPU. This is the
-default configuration for a 'single' jobtype. To use multiple CPUs you will need to set the jobtype to 'smp' or 'mpi' and increase the number of cpus. 
+default configuration for a 'single' jobtype. To use multiple CPUs you will need to set the jobtype to 'smp' or 'mpi' and increase the number of cpus.
 For more information on these job types use the command 'help jobtype'.
 
 If your job requires any files to run you can use the 'attach' command to set them. The files can include input files
