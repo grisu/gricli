@@ -2,7 +2,7 @@ Global: dir
 
 The job directory.
 
-This is the directory the job will be downloaded to after a 'download' or 'downloadclean' command.
+This is the directory the job will be downloaded to after a 'download' or 'downloadclean' command if a target directory is not specified.
 
 It is also used as the starting point where relative paths are applicable. 
 For example if a file is located at /home/myfolder/myfile and the dir variable is /home then 

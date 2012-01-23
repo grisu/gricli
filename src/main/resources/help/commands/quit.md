@@ -1,10 +1,12 @@
 Command: quit 
 
-Logs out of this Gricli session.
+Logs out of the current session.
 
-Login information is left intact so you don\'t need to enter those on your next login.
- 
-If the information is no longer valid you will need to provide the information again.
+If you use the Institutional Login option, your login information will be vaild for 10 days.
+You don't need to provide your credentials again if you login before then.
+
+If you want to extend the time on your session use the 'renew session' command.
+You will be asked for your credentials again and they will be vaild for 10 days.
 
 Example usage:
 

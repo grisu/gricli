@@ -1,16 +1,16 @@
 The command syntax presented in the help files has the following format:
 
-    command_name <required_argument> [optional_argument] 
+    command_name <required_argument> [optional_argument]
 
 A command may have multiple required and optional arguments.
 
-Command:	help [keywords]
+Command: help [keywords]
 
 Prints this help message or a help message for a certain command, topic or global variable.
 
 Parameters:
 
-    keywords	: A whitespace separated list of keywords.
+    keywords : A whitespace separated list of keywords.
 	
 Usage:
 
@@ -30,7 +30,7 @@ Usage:
 
     help globals	
 
-	Lists all available globals.
+	    Lists all available globals.
 
     help topics			
         
@@ -54,7 +54,7 @@ Usage:
 
     help <keywords>		
 
-        Prints the help message for the command that is called by this combination of keywords (if it exists)
+        Prints the help message for the command that is called by this combination of keywords (if it exists).
 
     help search <keyword>	
   

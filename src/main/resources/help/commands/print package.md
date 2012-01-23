@@ -4,7 +4,7 @@ Prints the available versions and queue locations for the specified application 
 
 Parameters:
 
-    application_package    : The application package. Supports glob regular expressions.
+    application_package : The application package. Supports glob regular expressions.
 
 To see a list of available applications use:
 

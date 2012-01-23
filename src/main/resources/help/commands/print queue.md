@@ -2,7 +2,10 @@ Command: print queue [queue]
 
 Displays all details about a queue.
 
-Beware that the queue you are querying about needs to be available for your currently setup environment (package, group,...).
+Please be aware that the queue you are querying needs to be available for your currently setup environment.
+
+The current environment is the group you set, the application package and version you choose (if any),
+as well as the walltime, number of CPUs and memory (RAM).
 
 Parameters:
 
@@ -10,14 +13,14 @@ Parameters:
 	
 Fields:
 
-	Site			: The location of the hosts represented by the queue.
-	Queue name		: The name of the queue.
-	Job manager		: The type of job scheduler used.
-	GRAM version	: GRAM is a submission system. More recent versions provide better performance.
+	Site		 : The location of the hosts represented by the queue.
+	Queue name	 : The name of the queue.
+	Job manager	 : The type of job scheduler used.
+	GRAM version : GRAM is a submission system. More recent versions provide better performance.
 	
-	Total jobs		: The total number of jobs in the queue.
-	Running jobs	: The number of active jobs in the queue.
-	Waiting jobs	: The number of jobs waiting to run.
+	Total jobs	 : The total number of jobs in the queue.
+	Running jobs : The number of active jobs in the queue.
+	Waiting jobs : The number of jobs waiting to run.
 	
     
 Example usage:

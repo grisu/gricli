@@ -1,12 +1,12 @@
-Command: exec <commandline>
+Command: exec <command>
 
 Executes a command from the underlying shell.
 
 Parameters:
 
-    commandline        : The command string to execute. 
+    command : The command to execute. 
 
-Be aware, you can't use commands with remote files (yet).
+Please note that you can not use commands with remote files (yet).
 
 Example usage:
 

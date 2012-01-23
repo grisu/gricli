@@ -2,6 +2,8 @@ Global: email
 
 The email address to send notifications to.
 
+Email notifications can be sent when a job has started and when it has finished.
+
 The email address can be set using the 'set' command.
 To view the email address of a job before submission use the command 'print global email'.
 To view the email address of a job after submission use the command 'print job <jobname> email_address'.

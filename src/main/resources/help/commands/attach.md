@@ -1,4 +1,4 @@
-Command:	attach <files>
+Command: attach <files>
 
 Attaches a file to the file list of the current job.
 
@@ -6,7 +6,7 @@ Supports multiple arguments and glob regular expressions.
 
 Parameters
 
-    files	: Whitespace separated list of files
+    files : Whitespace separated list of files
 
 Example usage:
 
