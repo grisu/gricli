@@ -15,4 +15,5 @@ public class CleanJobCommand extends KillJobCommand {
 	public CleanJobCommand(String... jobnames) {
 		super(true, jobnames);
 	}
+
 }

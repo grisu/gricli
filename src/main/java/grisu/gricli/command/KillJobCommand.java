@@ -21,6 +21,8 @@ public class KillJobCommand implements GricliCommand, StatusObject.Listener {
 
 	private final boolean async;
 
+	private boolean silent = false;
+
 	// @SyntaxDescription(command = { "kill", "jobs" })
 	// @AutoComplete(completors = { JobnameCompletor.class })
 	public KillJobCommand() {
@@ -58,21 +60,24 @@ public class KillJobCommand implements GricliCommand, StatusObject.Listener {
 		}
 
 		if (deprecated) {
-
-			env.printMessage("\""
-					+ cmd
-					+ " jobs\" command is depreacted. Please use \""
-					+ cmd
-					+ " job [arg]\" instead. For more information on usage please type"
-					+
-					" \"help "
-					+ cmd + "\" job");
+			if (!silent) {
+				env.printMessage("\""
+						+ cmd
+						+ " jobs\" command is depreacted. Please use \""
+						+ cmd
+						+ " job [arg]\" instead. For more information on usage please type"
+						+
+						" \"help "
+						+ cmd + "\" job");
+			}
 			return env;
 		}
 
 		if ((jobnames == null) || (jobnames.length == 0)) {
-			env.printError("Can't execute " + cmd
-					+ " command. Please provide at least one jobname.");
+			if (!silent) {
+				env.printError("Can't execute " + cmd
+						+ " command. Please provide at least one jobname.");
+			}
 			return env;
 
 		}
@@ -91,59 +96,83 @@ public class KillJobCommand implements GricliCommand, StatusObject.Listener {
 		if (no == 1) {
 			jobsString = "job";
 		} else if (no == 0) {
-			env.printMessage("No jobname matched provided argument(s). Nothing to do...");
+			if (!silent) {
+				env.printMessage("No jobname matched provided argument(s). Nothing to do...");
+			}
 			return env;
 		}
 
 		if (async) {
 			if (clean) {
 				env.addTaskToMonitor("Cleaning of " + no + " " + jobsString, so);
-				env.printMessage("Cleaning of " + no + " " + jobsString
-						+ " kicked off. Running in background...");
+				if (!silent) {
+					env.printMessage("Cleaning of " + no + " " + jobsString
+							+ " kicked off. Running in background...");
+				}
 			} else {
 				env.addTaskToMonitor("Killing of " + no + " " + jobsString, so);
-				env.printMessage("Killing of " + no + " " + jobsString
-						+ " kicked off. Running in background...");
+				if (!silent) {
+					env.printMessage("Killing of " + no + " " + jobsString
+							+ " kicked off. Running in background...");
+				}
 			}
 		} else {
 
 			if (clean) {
-				env.printMessage("Cleaning " + no + " " + jobsString + "...");
+				if (!silent) {
+					env.printMessage("Cleaning " + no + " " + jobsString + "...");
+				}
 			} else {
-				env.printMessage("Killing " + no + " " + jobsString + "...");
+				if (!silent) {
+					env.printMessage("Killing " + no + " " + jobsString + "...");
+				}
 			}
 
 			try {
 				so.addListener(this);
 				so.waitForActionToFinish(2, false);
 				so.removeListener(this);
-				CliHelpers.setProgress(no, no);
+				if (!silent) {
+					CliHelpers.setProgress(no, no);
+				}
 			} catch (final Exception e) {
 				throw new GricliRuntimeException(e.getLocalizedMessage());
 			}
 			if (so.getStatus().isFailed()) {
-				env.printError("Killing of job(s) failed: "
-						+ so.getStatus().getErrorCause());
+				if (!silent) {
+					env.printError("Killing of job(s) failed: "
+							+ so.getStatus().getErrorCause());
+				}
 			}
 
 
 			if (clean) {
 				Gricli.completionCache.refreshJobnames();
-				env.printMessage("Job(s) cleaned...");
+				if (!silent) {
+					env.printMessage("Job(s) cleaned...");
+				}
 			} else {
-				env.printMessage("Job(s) killed...");
+				if (!silent) {
+					env.printMessage("Job(s) killed...");
+				}
 			}
 
 		}
 		return env;
 	}
 
+	public void setSilent() {
+		this.silent = true;
+	}
+
 	public void statusMessage(ActionStatusEvent event) {
 
-		final int current = event.getActionStatus().getCurrentElements() / 2;
-		final int total = event.getActionStatus().getTotalElements() / 2;
+		if (!silent) {
+			final int current = event.getActionStatus().getCurrentElements() / 2;
+			final int total = event.getActionStatus().getTotalElements() / 2;
 
-		CliHelpers.setProgress(current, total);
+			CliHelpers.setProgress(current, total);
+		}
 	}
 
 }
