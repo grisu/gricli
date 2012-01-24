@@ -25,10 +25,14 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.python.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +62,11 @@ public class GricliEnvironment implements PropertyChangeListener {
 
 
 	public static final int STATUS_RECHECK_INTERVALL = 8;
+
+	private final Map<StatusObject, Thread> backgroundTasksActive = Maps.newConcurrentMap();
+
+	private final Set<StatusObject> backgroundTasksFinished = Collections
+			.synchronizedSet(new LinkedHashSet<StatusObject>());
 
 	public GricliEnvironment() {
 		this.email = new StringVar("email", "", true);
@@ -244,12 +253,17 @@ public class GricliEnvironment implements PropertyChangeListener {
 
 				} catch (StatusException e) {
 					addNotification("Can't find task handle for " + taskDesc);
+				} finally {
+					backgroundTasksActive.remove(status);
+					backgroundTasksFinished.add(status);
 				}
 			}
 		};
 
 		t.setDaemon(true);
-		t.setName("client task monitor: " + status.getHandle());
+		t.setName("client_task_monitor=[" + status.getHandle() + "]");
+
+		backgroundTasksActive.put(status, t);
 		t.start();
 
 	}
@@ -265,6 +279,10 @@ public class GricliEnvironment implements PropertyChangeListener {
 		addTaskToMonitor(taskDesk, so);
 	}
 
+	public Set<StatusObject> getActiveMonitors() {
+		return backgroundTasksActive.keySet();
+	}
+
 	public String getCurrentAbsoluteDirectory() {
 		try {
 			final File dir = (File) getVariable("dir").get();
@@ -273,6 +291,10 @@ public class GricliEnvironment implements PropertyChangeListener {
 			myLogger.error(e.getLocalizedMessage(), e);
 			return null;
 		}
+	}
+
+	public Set<StatusObject> getFinishedMonitors() {
+		return backgroundTasksFinished;
 	}
 
 	public GrisuRegistry getGrisuRegistry() {
