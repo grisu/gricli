@@ -358,10 +358,10 @@ public class Gricli {
 
 			try {
 				if (new File(SESSION_SETTINGS_PATH).exists()) {
-					env = new RunCommand(SESSION_SETTINGS_PATH).execute(env);
+					new RunCommand(SESSION_SETTINGS_PATH).execute(env);
 				}
 				if (new File(CONFIG_FILE_PATH).exists()) {
-					env = new RunCommand(CONFIG_FILE_PATH).execute(env);
+					new RunCommand(CONFIG_FILE_PATH).execute(env);
 				}
 			} catch (final GricliRuntimeException ex) {
 				// config does not exist
