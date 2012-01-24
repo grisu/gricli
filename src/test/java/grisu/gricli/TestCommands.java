@@ -76,7 +76,8 @@ public class TestCommands {
 				new String[] { f.getAbsolutePath() });
 		final AttachCommand attach2 = new AttachCommand(new String[] {});
 
-		attach2.execute(attach1.execute(env));
+		attach1.execute(env);
+		attach2.execute(env);
 
 		assertEquals(env.files.get().size(), 1);
 

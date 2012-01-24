@@ -20,7 +20,7 @@ public class TestLanguage {
 	}
 
 	public static class ErrorCommand implements GricliCommand {
-		public GricliEnvironment execute(GricliEnvironment env)
+		public void execute(GricliEnvironment env)
 				throws GricliRuntimeException {
 			throw new GricliRuntimeException("error");
 		}
