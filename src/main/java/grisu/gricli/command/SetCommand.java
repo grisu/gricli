@@ -34,13 +34,12 @@ public class SetCommand implements GricliCommand {
 		this.values = new String[] { value };
 	}
 
-	public GricliEnvironment execute(final GricliEnvironment env)
+	public void execute(final GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		validate(env);
 
 		env.getVariable(global).set(values);
-		return env;
 
 	}
 

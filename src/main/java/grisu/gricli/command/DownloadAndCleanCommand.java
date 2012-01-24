@@ -2,8 +2,10 @@ package grisu.gricli.command;
 
 import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
+import grisu.gricli.LoginRequiredException;
 import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.environment.GricliEnvironment;
+import grisu.utils.ServiceInterfaceUtils;
 
 import java.util.Date;
 
@@ -48,7 +50,7 @@ public class DownloadAndCleanCommand implements GricliCommand {
 		this.async = async;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(final GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		if ((async != null) && !"&".equals(async)) {
@@ -62,33 +64,44 @@ public class DownloadAndCleanCommand implements GricliCommand {
 			try {
 				final DownloadJobCommand download = new DownloadJobCommand(
 						jobFilter, target);
-				env = download.execute(env);
+				download.execute(env);
 				final CleanJobCommand clean = new CleanJobCommand(jobFilter);
-				env = clean.execute(env);
+				clean.execute(env);
 				Gricli.completionCache.refreshJobnames();
 
 			} catch (final GricliRuntimeException ex) {
 				env.printError(ex.getMessage());
 			}
 		} else {
-			final GricliEnvironment tempEnv = env;
+
 			Thread t = new Thread() {
 				@Override
 				public void run() {
 
 					try {
+						for (final String jobname : ServiceInterfaceUtils
+								.filterJobNames(env.getServiceInterface(),
+										jobFilter)) {
+
+						}
+					} catch (LoginRequiredException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					try {
 						final DownloadJobCommand download = new DownloadJobCommand(
 								jobFilter, target);
 						download.setSilent();
-						download.execute(tempEnv);
+						download.execute(env);
 						final CleanJobCommand clean = new CleanJobCommand(
 								jobFilter);
 						clean.setSilent();
-						clean.execute(tempEnv);
+						clean.execute(env);
 						Gricli.completionCache.refreshJobnames();
-						tempEnv.addNotification("Finished downloading and cleaning jobs.");
+						env.addNotification("Finished downloading and cleaning jobs.");
 					} catch (final GricliRuntimeException ex) {
-						tempEnv.addNotification("Download clean failed: "
+						env.addNotification("Download clean failed: "
 								+ ex.getLocalizedMessage());
 					}
 				}
@@ -98,9 +111,6 @@ public class DownloadAndCleanCommand implements GricliCommand {
 			env.printMessage("Downloading and cleaning jobs in background...");
 		}
 
-		//		}
-
-		return env;
 	}
 
 }

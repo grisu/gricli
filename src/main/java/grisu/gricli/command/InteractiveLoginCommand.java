@@ -108,7 +108,7 @@ public class InteractiveLoginCommand implements GricliCommand {
 		this.x509 = x509;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		ServiceInterface si;
@@ -140,7 +140,7 @@ public class InteractiveLoginCommand implements GricliCommand {
 			throw new GricliRuntimeException(ex);
 		}
 
-		return login(env, si);
+		login(env, si);
 
 	}
 

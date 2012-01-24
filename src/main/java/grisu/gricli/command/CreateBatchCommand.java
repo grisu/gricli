@@ -16,7 +16,7 @@ public class CreateBatchCommand implements GricliCommand {
 		this.name = name;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		final ServiceInterface si = env.getServiceInterface();
@@ -27,7 +27,6 @@ public class CreateBatchCommand implements GricliCommand {
 		} catch (final BatchJobException e) {
 			throw new GricliRuntimeException(e);
 		}
-		return env;
 	}
 
 }

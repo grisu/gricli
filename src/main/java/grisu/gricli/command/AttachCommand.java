@@ -56,7 +56,7 @@ public class AttachCommand implements GricliCommand {
 		}
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		for (final String glob : globs) {
@@ -74,7 +74,7 @@ public class AttachCommand implements GricliCommand {
 				}
 			}
 		}
-		return env;
+
 	}
 
 	private String[] getAllFiles(String glob) throws GricliRuntimeException {
@@ -102,7 +102,7 @@ public class AttachCommand implements GricliCommand {
 		} else {
 			// relative path
 			dir = new File(System.getProperty("user.dir"), glob)
-					.getParentFile();
+			.getParentFile();
 			final String temp = dirComponents.get(dirComponents.size() - 1);
 			dirComponents.clear();
 			dirComponents.add(temp);

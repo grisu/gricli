@@ -17,7 +17,7 @@ public class AboutCommand implements GricliCommand {
 	public AboutCommand() {
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		Credential c = env.getGrisuRegistry().getCredential();
@@ -87,7 +87,6 @@ public class AboutCommand implements GricliCommand {
 
 		env.printMessage(output);
 
-		return env;
 	}
 
 }

@@ -10,11 +10,10 @@ public class QuitCommand implements GricliCommand {
 	public QuitCommand() {
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		Gricli.shutdown(env);
 		System.exit(0);
-		return env;
 	}
 
 }

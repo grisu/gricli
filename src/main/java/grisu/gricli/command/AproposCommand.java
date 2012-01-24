@@ -31,7 +31,7 @@ public class AproposCommand implements GricliCommand {
 		this.keyword = keyword;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		final Map<String, String> result = getAllCommands(env);
@@ -40,7 +40,6 @@ public class AproposCommand implements GricliCommand {
 			env.printMessage(key + "\t- " + result.get(key));
 		}
 
-		return env;
 	}
 
 	private Map<String, String> getAllCommands(GricliEnvironment env) {

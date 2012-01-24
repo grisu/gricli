@@ -44,7 +44,7 @@ public class ExecCommand implements GricliCommand {
 		}
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		// downloading files that start with grid:// or gsiftp://
@@ -82,7 +82,7 @@ public class ExecCommand implements GricliCommand {
 			myLogger.error(e.getLocalizedMessage(), e);
 			env.printError(e.getLocalizedMessage());
 
-			return env;
+			return;
 		}
 
 		final AsyncProcessStreamReader reader = new AsyncProcessStreamReader(
@@ -99,7 +99,6 @@ public class ExecCommand implements GricliCommand {
 			}
 		}
 
-		return env;
 	}
 
 }

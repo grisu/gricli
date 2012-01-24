@@ -21,9 +21,9 @@ public class ChdirCommand implements GricliCommand {
 		c = new SetCommand("dir", dir);
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
-		return c.execute(env);
+		c.execute(env);
 	}
 
 }

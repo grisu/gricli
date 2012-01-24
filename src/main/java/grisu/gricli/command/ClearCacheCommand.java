@@ -14,11 +14,11 @@ public class ClearCacheCommand implements GricliCommand {
 
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		env.getServiceInterface().setUserProperty(
 				Constants.CLEAR_MOUNTPOINT_CACHE, null);
-		return env;
+
 	}
 
 }

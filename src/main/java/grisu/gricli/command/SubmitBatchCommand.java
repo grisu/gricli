@@ -16,7 +16,7 @@ public class SubmitBatchCommand implements GricliCommand {
 		this.batchname = batchname;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		BatchJobObject obj;
@@ -41,7 +41,6 @@ public class SubmitBatchCommand implements GricliCommand {
 		} catch (final InterruptedException e) {
 			throw new GricliRuntimeException(e);
 		}
-		return env;
 	}
 
 }

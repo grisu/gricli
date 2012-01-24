@@ -9,13 +9,12 @@ public class PrintGroupsCommand implements GricliCommand {
 	public PrintGroupsCommand() {
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		for (final String fqan : env.getServiceInterface().getFqans()
 				.asSortedSet()) {
 			env.printMessage(fqan);
 		}
-		return null;
 	}
 
 }

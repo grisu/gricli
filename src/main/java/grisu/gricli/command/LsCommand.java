@@ -37,7 +37,7 @@ public class LsCommand implements GricliCommand {
 		this.url = url;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		final ServiceInterface si = env.getServiceInterface();
@@ -111,7 +111,6 @@ public class LsCommand implements GricliCommand {
 			throw new GricliRuntimeException(e);
 		}
 
-		return env;
 	}
 
 }

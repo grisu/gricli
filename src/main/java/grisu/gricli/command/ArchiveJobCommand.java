@@ -31,7 +31,7 @@ public class ArchiveJobCommand implements GricliCommand {
 	}
 
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		final ServiceInterface si = env.getServiceInterface();
 		si.setUserProperty(Constants.DEFAULT_JOB_ARCHIVE_LOCATION, null);
@@ -55,7 +55,7 @@ public class ArchiveJobCommand implements GricliCommand {
 			}
 			if (jobnames.size() == 0) {
 				env.printError("No valid jobname specified.");
-				return env;
+				return;
 			}
 
 			Map<String, String> handles = Maps.newLinkedHashMap();
@@ -122,7 +122,6 @@ public class ArchiveJobCommand implements GricliCommand {
 			Gricli.completionCache.refreshJobnames();
 		}
 
-		return env;
 	}
 
 }

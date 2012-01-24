@@ -11,12 +11,11 @@ public class CompositeCommand implements GricliCommand {
 		this.cs = cs;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		for (final GricliCommand c : cs) {
-			env = c.execute(env);
+			c.execute(env);
 		}
-		return env;
 	}
 
 }

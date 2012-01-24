@@ -14,10 +14,10 @@ public class AnnotatedCommand implements GricliCommand {
 
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		try {
-			return this.c.execute(env);
+			this.c.execute(env);
 		} catch (final GricliRuntimeException e) {
 			throw new GricliRuntimeException(annotation + " " + e.getMessage());
 		}

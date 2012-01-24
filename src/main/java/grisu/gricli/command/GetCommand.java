@@ -12,7 +12,7 @@ public class GetCommand implements GricliCommand {
 	}
 
 	@SyntaxDescription(command = { "get" })
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		// String url = "gsiftp://" + env.host.get() + env.gdir.get() + "/"
 		// + file;
@@ -23,7 +23,6 @@ public class GetCommand implements GricliCommand {
 		// } catch (RemoteFileSystemException ex) {
 		// throw new GricliRuntimeException(ex);
 		// }
-		return env;
 	}
 
 }

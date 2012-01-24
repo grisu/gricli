@@ -24,7 +24,7 @@ public class PrintQueueCommand implements GricliCommand {
 		this.queue = queue;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		final String fqan = (String) env.getVariable("group").get();
@@ -51,13 +51,12 @@ public class PrintQueueCommand implements GricliCommand {
 
 		if (match == null) {
 			env.printError("Queue not available for current job setup.");
-			return env;
+			return;
 		}
 
 		final String output = formatOutput(match);
 		env.printMessage(output);
 
-		return env;
 	}
 
 	private String formatOutput(GridResource gr) {

@@ -11,10 +11,10 @@ public class ClearListCommand implements GricliCommand {
 		this.list = list;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		env.files.get().clear();
-		return env;
+
 	}
 
 }

@@ -86,7 +86,7 @@ public class DownloadJobCommand implements GricliCommand {
 	}
 
 
-	public GricliEnvironment execute(final GricliEnvironment env)
+	public void execute(final GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		if ((async != null) && !"&".equals(async)) {
@@ -142,7 +142,7 @@ public class DownloadJobCommand implements GricliCommand {
 					}
 				}
 			}
-			return env;
+			return;
 		} else {
 			final String normalDirNameFinal = normalDirName;
 			Thread t = new Thread() {
@@ -165,7 +165,7 @@ public class DownloadJobCommand implements GricliCommand {
 			t.setName("download_job_async_"+new Date().getTime());
 			t.start();
 			env.printMessage("Downloading jobs in background...");
-			return env;
+			return;
 
 		}
 	}

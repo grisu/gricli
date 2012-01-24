@@ -12,9 +12,9 @@ public class PwdCommand implements GricliCommand {
 		c = new PrintGlobalsCommand("dir");
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
-		return c.execute(env);
+		c.execute(env);
 	}
 
 }

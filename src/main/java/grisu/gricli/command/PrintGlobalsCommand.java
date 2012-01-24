@@ -22,7 +22,7 @@ public class PrintGlobalsCommand implements GricliCommand {
 		this.global = global;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		for (final GricliVar<?> var : env.getVariables()) {
 			if ((this.global == null)
@@ -31,7 +31,6 @@ public class PrintGlobalsCommand implements GricliCommand {
 			}
 		}
 
-		return env;
 	}
 
 	private void printGlobal(GricliVar<?> var, GricliEnvironment env) {

@@ -37,7 +37,7 @@ public class CpCommand implements GricliCommand {
 		this.files = files;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		if (this.files.length == 0) {
@@ -79,7 +79,6 @@ public class CpCommand implements GricliCommand {
 			throw new GricliRuntimeException(e);
 		}
 
-		return null;
 	}
 
 }

@@ -31,7 +31,7 @@ public class ViewCommand implements GricliCommand {
 	}
 
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		if ((job_or_filenames == null) || (job_or_filenames.length == 0)) {
@@ -99,51 +99,6 @@ public class ViewCommand implements GricliCommand {
 			env.printError("Can't read file: " + e.getLocalizedMessage());
 		}
 
-		return env;
-		// try {
-		// BufferedReader in
-		// = new BufferedReader(new FileReader(this.filename));
-		//
-		// Terminal t = Terminal.getTerminal();
-		// int h = t.getTerminalHeight();
-		// int w = t.getTerminalWidth();
-		//
-		// String line = "";
-		//
-		// int ch = 0;
-		// int c = 0;
-		//
-		// while ((line = in.readLine()) != null){
-		//
-		// if (ch >= h){
-		// while (true){
-		//
-		// c = t.readVirtualKey(System.in);
-		// if (c == jline.UnixTerminal.ARROW_DOWN){
-		// break;
-		// } else if (c == jline.UnixTerminal.END_CODE){
-		// ch = 0;
-		// break;
-		// } else {
-		// System.out.println(c);
-		// }
-		//
-		// }
-		// c = 0;
-		//
-		// } else {
-		// ch++;
-		// }
-		// env.printMessage(line.replaceAll("\\p{Cntrl}", "?"));
-		//
-		// }
-		//
-		//
-		// return env;
-		// } catch (IOException ex){
-		// throw new GricliRuntimeException("file " + this.filename +
-		// "not found");
-		// }
 	}
 
 }

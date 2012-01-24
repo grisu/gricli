@@ -21,7 +21,7 @@ public class AddCommand implements GricliCommand {
 		this.value = value;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		if (file != null) {
@@ -29,7 +29,6 @@ public class AddCommand implements GricliCommand {
 		} else {
 			env.env.get().put(var, value);
 		}
-		return env;
 	}
 
 }

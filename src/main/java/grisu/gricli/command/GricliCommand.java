@@ -8,6 +8,6 @@ import grisu.gricli.environment.GricliEnvironment;
  */
 public interface GricliCommand {
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException;
 }

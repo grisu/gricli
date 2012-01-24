@@ -10,7 +10,7 @@ public class PrintMessagesCommand implements GricliCommand {
 	}
 
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		for (String message : env.getNotifications()) {
@@ -19,7 +19,6 @@ public class PrintMessagesCommand implements GricliCommand {
 
 		env.getNotifications().clear();
 
-		return env;
 	}
 
 }

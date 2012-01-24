@@ -16,13 +16,13 @@ public class AddBatchCommand implements GricliCommand {
 	private final String command;
 
 	@SyntaxDescription(command = { "batch", "add" }, arguments = { "name",
-			"command" })
+	"command" })
 	public AddBatchCommand(String name, String command) {
 		this.name = name;
 		this.command = command;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		BatchJobObject obj;
@@ -49,7 +49,6 @@ public class AddBatchCommand implements GricliCommand {
 
 		obj.addJob(job);
 
-		return env;
 	}
 
 }

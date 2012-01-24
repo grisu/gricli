@@ -31,7 +31,7 @@ public class RunCommand implements GricliCommand {
 		this.script = script;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		final ArrayList<GricliCommand> cl = new ArrayList<GricliCommand>();
@@ -63,8 +63,8 @@ public class RunCommand implements GricliCommand {
 					+ script + " on line " + tokenizer.getLineNumber() + "  :"
 					+ e.getMessage());
 		}
-		return new CompositeCommand(cl.toArray(new GricliCommand[] {}))
-				.execute(env);
+		new CompositeCommand(cl.toArray(new GricliCommand[] {}))
+		.execute(env);
 	}
 
 }

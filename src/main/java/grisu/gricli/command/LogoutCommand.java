@@ -11,7 +11,7 @@ public class LogoutCommand implements GricliCommand {
 		super();
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		try {
 			env.getServiceInterface().logout();
@@ -24,6 +24,5 @@ public class LogoutCommand implements GricliCommand {
 
 		env.getGrisuRegistry().getCredential().destroy();
 
-		return env;
 	}
 }

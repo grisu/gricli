@@ -111,7 +111,7 @@ public class PrintQueuesCommand implements GricliCommand {
 		}
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		final String fqan = (String) env.getVariable("group").get();
@@ -128,13 +128,12 @@ public class PrintQueuesCommand implements GricliCommand {
 
 		if (grs.size() == 0) {
 			env.printMessage("No queues available for your currently setup environment. Maybe try to set another group/application?");
-			return env;
+			return;
 		}
 
 		final String output = formatOutput(grs);
 		env.printMessage("\n" + output);
 
-		return env;
 	}
 
 	private String formatOutput(Set<GridResource> grs)

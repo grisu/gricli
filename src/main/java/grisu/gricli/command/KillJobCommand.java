@@ -51,7 +51,7 @@ public class KillJobCommand implements GricliCommand, StatusObject.Listener {
 		this(false, jobnames);
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		String cmd = "kill";
@@ -70,7 +70,7 @@ public class KillJobCommand implements GricliCommand, StatusObject.Listener {
 						" \"help "
 						+ cmd + "\" job");
 			}
-			return env;
+			return;
 		}
 
 		if ((jobnames == null) || (jobnames.length == 0)) {
@@ -78,7 +78,7 @@ public class KillJobCommand implements GricliCommand, StatusObject.Listener {
 				env.printError("Can't execute " + cmd
 						+ " command. Please provide at least one jobname.");
 			}
-			return env;
+			return;
 
 		}
 
@@ -99,7 +99,7 @@ public class KillJobCommand implements GricliCommand, StatusObject.Listener {
 			if (!silent) {
 				env.printMessage("No jobname matched provided argument(s). Nothing to do...");
 			}
-			return env;
+			return;
 		}
 
 		if (async) {
@@ -158,7 +158,6 @@ public class KillJobCommand implements GricliCommand, StatusObject.Listener {
 			}
 
 		}
-		return env;
 	}
 
 	public void setSilent() {

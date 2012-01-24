@@ -45,7 +45,7 @@ public class PrintJobCommand implements GricliCommand {
 		this.attribute = attribute;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		final ServiceInterface si = env.getServiceInterface();
 		final List<String> jobNames = ServiceInterfaceUtils.filterJobNames(si,
@@ -66,7 +66,6 @@ public class PrintJobCommand implements GricliCommand {
 			}
 		}
 
-		return env;
 	}
 
 	private String formatAttribute(String aName, String aVal) {

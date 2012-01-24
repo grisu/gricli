@@ -64,7 +64,7 @@ public class SubmitCommand implements GricliCommand, PropertyChangeListener {
 
 	}
 
-	public GricliEnvironment execute(final GricliEnvironment env)
+	public void execute(final GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		final JobObject job = createJob(env);
@@ -93,7 +93,6 @@ public class SubmitCommand implements GricliCommand, PropertyChangeListener {
 		}
 
 
-		return env;
 	}
 
 	public String getCommandline() {

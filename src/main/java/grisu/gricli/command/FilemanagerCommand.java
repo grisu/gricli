@@ -19,7 +19,7 @@ public class FilemanagerCommand implements GricliCommand {
 		this.url = url;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		final ServiceInterface si = env.getServiceInterface();
 		try {
@@ -35,7 +35,6 @@ public class FilemanagerCommand implements GricliCommand {
 		} catch (final RemoteFileSystemException ex) {
 			throw new GricliRuntimeException(ex);
 		}
-		return env;
 	}
 
 }

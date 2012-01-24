@@ -12,7 +12,7 @@ public class RefreshProxyCommand implements GricliCommand {
 
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		Credential cred = env.getGrisuRegistry().getCredential();
@@ -36,7 +36,6 @@ public class RefreshProxyCommand implements GricliCommand {
 			env.printMessage("Session could not be refreshed...");
 		}
 
-		return env;
 
 	}
 

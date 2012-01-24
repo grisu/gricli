@@ -17,7 +17,7 @@ public class WaitJobCommand implements GricliCommand {
 		this.jobname = jobname;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		final ServiceInterface si = env.getServiceInterface();
 		try {
@@ -26,8 +26,6 @@ public class WaitJobCommand implements GricliCommand {
 		} catch (final NoSuchJobException e) {
 			env.printError("job " + jobname + " not found");
 		}
-
-		return env;
 	}
 
 }

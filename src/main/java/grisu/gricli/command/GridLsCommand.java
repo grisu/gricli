@@ -18,7 +18,7 @@ public class GridLsCommand implements GricliCommand {
 		this.path = path;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		final ServiceInterface si = env.getServiceInterface();
 		try {
@@ -40,7 +40,6 @@ public class GridLsCommand implements GricliCommand {
 		} catch (final RemoteFileSystemException ex) {
 			throw new GricliRuntimeException(ex);
 		}
-		return env;
 	}
 
 }

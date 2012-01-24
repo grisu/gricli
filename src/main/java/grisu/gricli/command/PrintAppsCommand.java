@@ -42,7 +42,7 @@ public class PrintAppsCommand implements GricliCommand {
 		this.version = version;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		if (this.app != null) {
@@ -50,7 +50,6 @@ public class PrintAppsCommand implements GricliCommand {
 		} else {
 			printApplications(env);
 		}
-		return env;
 	}
 
 	private void printApplications(GricliEnvironment env)

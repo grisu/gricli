@@ -19,7 +19,7 @@ public class LocalLoginCommand implements GricliCommand {
 		this.siUrl = siUrl;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		try {
 			if (siUrl == null) {
@@ -40,7 +40,7 @@ public class LocalLoginCommand implements GricliCommand {
 			final ServiceInterface serviceInterface = LoginManager
 					.loginCommandlineLocalProxy(siUrl);
 
-			return InteractiveLoginCommand.login(env, serviceInterface);
+			InteractiveLoginCommand.login(env, serviceInterface);
 
 		} catch (final LoginException ex) {
 			throw new GricliRuntimeException(ex);

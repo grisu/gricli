@@ -27,7 +27,7 @@ public class HelpCommand implements GricliCommand {
 		this.keywords = keywords;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		String help = null;
@@ -101,7 +101,6 @@ public class HelpCommand implements GricliCommand {
 			env.printMessage(help);
 		}
 
-		return env;
 
 	}
 

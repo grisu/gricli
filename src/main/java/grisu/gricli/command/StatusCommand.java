@@ -18,7 +18,7 @@ public class StatusCommand implements GricliCommand {
 	public StatusCommand() {
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		final SortedSet<DtoJob> jobs = Gricli.completionCache
@@ -62,7 +62,6 @@ public class StatusCommand implements GricliCommand {
 
 		env.printMessage(msg);
 
-		return env;
 	}
 
 }

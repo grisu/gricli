@@ -15,7 +15,7 @@ public class SubmitSweepCommand implements GricliCommand {
 		this.template = template;
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		String tempTemplate = this.template;
@@ -39,13 +39,13 @@ public class SubmitSweepCommand implements GricliCommand {
 		while (invisibleInputFileM.find()) {
 			final String found = invisibleInputFileM.group();
 			final String filename = found.substring(4, found.length() - 1);
-			env = new AttachCommand(null, new String[] { filename })
-					.execute(env);
+			new AttachCommand(null, new String[] { filename })
+			.execute(env);
 			tempTemplate = tempTemplate.replace(found, "");
 		}
 		env.printMessage("submitting " + tempTemplate);
 
-		return new SubmitCommand(tempTemplate).execute(env);
+		new SubmitCommand(tempTemplate).execute(env);
 	}
 
 }

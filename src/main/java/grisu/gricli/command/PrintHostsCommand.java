@@ -13,7 +13,7 @@ public class PrintHostsCommand implements GricliCommand {
 		super();
 	}
 
-	public GricliEnvironment execute(GricliEnvironment env)
+	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		final ServiceInterface si = env.getServiceInterface();
 		final Map<String, String> hostMap = si.getAllHosts().asMap();
@@ -23,7 +23,6 @@ public class PrintHostsCommand implements GricliCommand {
 		for (final String key : hostMap.keySet()) {
 			env.printMessage(key + " : " + hostMap.get(key));
 		}
-		return env;
 	}
 
 }
