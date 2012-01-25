@@ -112,7 +112,11 @@ public class DownloadJobCommand implements GricliCommand {
 				normalDirName = StringUtils.replace(env.dir.get()
 						.toString(), "~", System.getProperty("user.home"));
 			} else {
-				File targetDir = new File(target);
+				if (target.startsWith("~")) {
+					normalDirName = StringUtils.replaceOnce(target, "~",
+							System.getProperty("user.home"));
+				}
+				File targetDir = new File(normalDirName);
 				if (targetDir.exists()) {
 					targetDir.mkdirs();
 					if (!targetDir.exists()) {
