@@ -17,6 +17,7 @@ Changelog
 * hostCount renamed to hostcount
 * host is no longer a global
 * print queue [propeties] doesn't list memory properties
+* added commands to monitor asynchronous tasks
 
 0.6
 ----
