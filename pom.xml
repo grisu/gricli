@@ -100,7 +100,7 @@
 		<dependency>
 			<groupId>grisu.frontend</groupId>
 			<artifactId>grisu-client</artifactId>
-			<version>0.4-rc8</version>
+			<version>${grisu.version}</version>
 		</dependency>
 
 		<dependency>
@@ -166,7 +166,7 @@
 		<dependency>
 			<groupId>grisu.backend</groupId>
 			<artifactId>grisu-core</artifactId>
-			<version>0.4-rc8</version>
+			<version>${grisu.version}</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
@@ -604,4 +604,7 @@
 
 	</profiles>
 
+	<properties>
+		<grisu.version>0.4-rc10-SNAPSHOT</grisu.version>
+	</properties>
 </project>

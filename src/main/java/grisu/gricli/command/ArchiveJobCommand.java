@@ -76,18 +76,28 @@ public class ArchiveJobCommand implements GricliCommand {
 			}
 
 			for (String handle : handles.keySet()) {
+				StatusObject so = null;
+				try {
+
+					so = new StatusObject(si, handle);
+					so.setShortDesc("archving_job_" + handles.get(handle));
+				} catch (Exception e1) {
+					CliHelpers.setIndeterminateProgress("Archiving failed; "
+							+ e1.getLocalizedMessage(), false);
+					throw new GricliRuntimeException(e1.getLocalizedMessage());
+				}
 				if (async) {
 					env.addTaskToMonitor(
-							"Archiving of job " + handles.get(handle), handle);
+							"Archiving of job " + handles.get(handle), so);
 				} else {
 					CliHelpers.setIndeterminateProgress(
 							"Waiting for archiving of job "
 									+ handles.get(handle) + "...", true);
 
-					StatusObject so = null;
 					try {
-						so = StatusObject
-								.waitForActionToFinish(si, handle, GricliEnvironment.STATUS_RECHECK_INTERVALL, true);
+						so.waitForActionToFinish(
+								GricliEnvironment.STATUS_RECHECK_INTERVALL,
+								true);
 						CliHelpers.setIndeterminateProgress("Job archived to: "
 								+ handle, false);
 					} catch (final Exception e) {

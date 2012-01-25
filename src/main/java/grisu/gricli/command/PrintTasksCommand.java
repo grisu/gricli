@@ -2,7 +2,12 @@ package grisu.gricli.command;
 
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.environment.GricliEnvironment;
+import grisu.gricli.util.OutputHelpers;
 import grisu.model.status.StatusObject;
+
+import java.util.Map;
+
+import org.python.google.common.collect.Maps;
 
 public class PrintTasksCommand implements GricliCommand {
 
@@ -24,19 +29,38 @@ public class PrintTasksCommand implements GricliCommand {
 			throws GricliRuntimeException {
 
 
-		env.printMessage("Active tasks:");
-		for (StatusObject so : env.getActiveMonitors()) {
-
-			env.printMessage(so.getHandle() + ": "
-					+ so.getStatus().percentFinished() + " %");
-
-		}
-
 		env.printMessage("");
-		env.printMessage("Finished tasks:");
-		for (StatusObject so : env.getFinishedMonitors()) {
-			env.printMessage(so.getHandle() + ": " + !so.getStatus().isFailed());
+		Map<String, String> table = Maps.newLinkedHashMap();
+
+		if (env.getActiveMonitors().size() == 0) {
+			env.printMessage("No active tasks.");
+		} else {
+			env.printMessage("Active tasks:");
+			env.printMessage("");
+
+			for (StatusObject so : env.getActiveMonitors()) {
+				table.put(so.getShortDesc(), so.getStatus().percentFinished()
+						+ " %");
+			}
+
+			env.printMessage(OutputHelpers.getTable(table));
+
 		}
+		env.printMessage("");
+		if (env.getFinishedMonitors().size() == 0) {
+			env.printMessage("No finished tasks.");
+		} else {
+			env.printMessage("Finished tasks:");
+			env.printMessage("");
+			table = Maps.newLinkedHashMap();
+			for (StatusObject so : env.getFinishedMonitors()) {
+				table.put(so.getShortDesc(),
+						(so.getStatus().isFailed()) ? "failed"
+								: "success");
+			}
+			env.printMessage(OutputHelpers.getTable(table));
+		}
+		env.printMessage("");
 
 	}
 

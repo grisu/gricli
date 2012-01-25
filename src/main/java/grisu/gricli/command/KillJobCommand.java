@@ -89,6 +89,16 @@ public class KillJobCommand implements GricliCommand, StatusObject.Listener {
 
 
 		final StatusObject so = new StatusObject(si, handle);
+		String desc = "killing_";
+		if (clean) {
+			desc = "cleaning_";
+		}
+		if (jobnames.length == 1) {
+			desc = desc + "job_" + jobnames[0];
+		} else {
+			desc = desc + jobnames.length + "_jobs";
+		}
+		so.setShortDesc(desc);
 
 		final int no = so.getStatus().getTotalElements() / 2;
 

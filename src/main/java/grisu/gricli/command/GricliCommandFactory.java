@@ -85,6 +85,7 @@ public class GricliCommandFactory {
 		f.add(ViewCommand.class);
 		f.add(PrintMessagesCommand.class);
 		f.add(PrintTasksCommand.class);
+		f.add(PrintTaskCommand.class);
 
 		try {
 			f.init();

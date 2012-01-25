@@ -25,14 +25,10 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.python.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,10 +59,11 @@ public class GricliEnvironment implements PropertyChangeListener {
 
 	public static final int STATUS_RECHECK_INTERVALL = 8;
 
-	private final Map<StatusObject, Thread> backgroundTasksActive = Maps.newConcurrentMap();
+	private final List<StatusObject> backgroundTasksActive = Collections
+			.synchronizedList(new LinkedList<StatusObject>());
 
-	private final Set<StatusObject> backgroundTasksFinished = Collections
-			.synchronizedSet(new LinkedHashSet<StatusObject>());
+	private final List<StatusObject> backgroundTasksFinished = Collections
+			.synchronizedList(new LinkedList<StatusObject>());
 
 	public GricliEnvironment() {
 		this.email = new StringVar("email", "", true);
@@ -77,6 +74,7 @@ public class GricliEnvironment implements PropertyChangeListener {
 
 		this.gdir = new StringVar("gdir", "");
 		this.dir = new DirVar("dir", new File(System.getProperty("user.dir")));
+		this.dir.setPersistent(false);
 		this.dir.addListener(new GricliVarListener<File>() {
 			public void valueChanged(File value) {
 				try {
@@ -230,6 +228,10 @@ public class GricliEnvironment implements PropertyChangeListener {
 		getNotifications().add(msg);
 	}
 
+	public void addTaskToMonitor(final StatusObject status) {
+		addTaskToMonitor(status.getDescription(), status);
+	}
+
 	public synchronized void addTaskToMonitor(final String taskDesc,
 			final StatusObject status) {
 
@@ -263,7 +265,7 @@ public class GricliEnvironment implements PropertyChangeListener {
 		t.setDaemon(true);
 		t.setName("client_task_monitor=[" + status.getHandle() + "]");
 
-		backgroundTasksActive.put(status, t);
+		backgroundTasksActive.add(status);
 		t.start();
 
 	}
@@ -279,8 +281,8 @@ public class GricliEnvironment implements PropertyChangeListener {
 		addTaskToMonitor(taskDesk, so);
 	}
 
-	public Set<StatusObject> getActiveMonitors() {
-		return backgroundTasksActive.keySet();
+	public List<StatusObject> getActiveMonitors() {
+		return backgroundTasksActive;
 	}
 
 	public String getCurrentAbsoluteDirectory() {
@@ -293,7 +295,7 @@ public class GricliEnvironment implements PropertyChangeListener {
 		}
 	}
 
-	public Set<StatusObject> getFinishedMonitors() {
+	public List<StatusObject> getFinishedMonitors() {
 		return backgroundTasksFinished;
 	}
 

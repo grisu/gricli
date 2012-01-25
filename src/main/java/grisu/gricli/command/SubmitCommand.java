@@ -10,6 +10,7 @@ import grisu.gricli.completors.InputFileCompletor;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 import grisu.jcommons.view.cli.CliHelpers;
+import grisu.model.status.StatusObject;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -79,8 +80,12 @@ public class SubmitCommand implements GricliCommand, PropertyChangeListener {
 					try {
 						submit(job, false);
 
+						StatusObject so = new StatusObject(env.getServiceInterface(), submitHandle);
+
+						so.setShortDesc("submitting_job_" + jobname);
+
 						env.addTaskToMonitor("Job submission for job "
-								+ jobname, submitHandle);
+								+ jobname, so);
 					} catch (final GricliRuntimeException ex) {/* do nothing */
 					}
 				}
