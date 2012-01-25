@@ -609,6 +609,6 @@
 	</profiles>
 
 	<properties>
-		<grisu.version>0.4-rc12-SNAPSHOT</grisu.version>
+		<grisu.version>0.4-rc12</grisu.version>
 	</properties>
 </project>
