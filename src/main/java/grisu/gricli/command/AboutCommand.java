@@ -54,7 +54,8 @@ public class AboutCommand implements GricliCommand {
 		// env.printMessage("User ID: " + env.getServiceInterface().getDN());
 
 		temp.put("Gricli version", grisu.jcommons.utils.Version.get("gricli"));
-		temp.put("Grisu frontend version", grisu.jcommons.utils.Version.get("grisu-client"));
+		temp.put("Grisu frontend version",
+				grisu.jcommons.utils.Version.get("grisu-client-lib"));
 		temp.put("Grisu backend version", env.getServiceInterface().getInterfaceInfo("VERSION"));
 		temp.put("Grisu backend",
 				(String) env.getGrisuRegistry().get(Constants.BACKEND));
