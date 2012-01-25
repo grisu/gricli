@@ -22,9 +22,33 @@ import org.python.google.common.base.Strings;
 
 @SuppressWarnings("restriction")
 public class DownloadJobCommand implements GricliCommand {
+	public static String calculateTargetDir(String dir, String currentDir) throws GricliRuntimeException {
+
+		String normalDirName = null;
+		if (StringUtils.isBlank(dir)) {
+			normalDirName = StringUtils.replace(currentDir, "~", System.getProperty("user.home"));
+		} else {
+			if (dir.startsWith("~")) {
+				normalDirName = StringUtils.replaceOnce(dir, "~",
+						System.getProperty("user.home"));
+			}
+			File targetDir = new File(normalDirName);
+			if (targetDir.exists()) {
+				targetDir.mkdirs();
+				if (!targetDir.exists()) {
+					throw new GricliRuntimeException("Can't create target dir "
+							+ dir);
+				}
+			}
+			normalDirName = targetDir.getAbsolutePath();
+
+		}
+		return normalDirName;
+	}
 	protected final String jobFilter;
 	protected final String target;
 	protected final String async;
+
 	protected boolean clean;
 
 	@SyntaxDescription(command = { "download", "job" }, arguments = { "jobname" })
@@ -107,27 +131,10 @@ public class DownloadJobCommand implements GricliCommand {
 				jobFilter);
 
 		String normalDirName = null;
+
 		try {
-			if (StringUtils.isBlank(target)) {
-				normalDirName = StringUtils.replace(env.dir.get()
-						.toString(), "~", System.getProperty("user.home"));
-			} else {
-				if (target.startsWith("~")) {
-					normalDirName = StringUtils.replaceOnce(target, "~",
-							System.getProperty("user.home"));
-				}
-				File targetDir = new File(normalDirName);
-				if (targetDir.exists()) {
-					targetDir.mkdirs();
-					if (!targetDir.exists()) {
-						throw new GricliRuntimeException("Can't create target dir "
-								+ target);
-					}
-				}
-				normalDirName = targetDir.getAbsolutePath();
 
-			}
-
+			normalDirName = calculateTargetDir(target, env.dir.get().toString());
 			// check whether one of the target dirs already exits..
 			for (final String jobname : jobnames) {
 				File targetTemp = new File(target, jobname);

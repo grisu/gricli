@@ -82,12 +82,6 @@
 			<artifactId>jline</artifactId>
 			<version>bestgrid-0.9.95-2</version>
 		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8</version>
-			<scope>test</scope>
-		</dependency>
 
 		<dependency>
 			<groupId>org.easymock</groupId>
@@ -168,6 +162,16 @@
 			<artifactId>grisu-core</artifactId>
 			<version>${grisu.version}</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-all</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
 		</dependency>
 	</dependencies>
 
