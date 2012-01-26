@@ -20,9 +20,22 @@ set -e
 
 case "$1" in
     configure)
-    	echo "Adding nesi debian repo key..."
-		/usr/bin/apt-key add /usr/share/keyrings/nesi-repo.key
-	;;
+    	
+    	if [ -f /usr/share/keyrings/nesi-repo.key ]; then
+			rm /usr/share/keyrings/nesi-repo.key.dpkg-new2
+		else
+    		echo "Adding nesi debian repo key..."
+    		mv /usr/share/keyrings/nesi-repo.key.dpkg-new2 /usr/share/keyrings/nesi-repo.key
+			/usr/bin/apt-key add /usr/share/keyrings/nesi-repo.key
+		fi
+		
+		if [ -f /etc/apt/sources.list.d/nesi-repo.list ]; then
+			rm /etc/apt/sources.list.d/nesi-repo.list.dpkg-new2
+		else
+    		mv /etc/apt/sources.list.d/nesi-repo.list.dpkg-new2 /etc/apt/sources.list.d/nesi-repo.list
+		fi
+    
+		;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
     ;;

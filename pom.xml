@@ -248,7 +248,7 @@
 				<version>2.2.2</version>
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
-					<pushChanges>false</pushChanges>
+					<pushChanges>true</pushChanges>
 					<localCheckout>true</localCheckout>
 					<tagNameFormat>@{project.version}</tagNameFormat>
 					<releaseProfiles>man,deb,rpm</releaseProfiles>
@@ -478,7 +478,7 @@
 										</data>
 										
 										<data>
-											<src>${project.basedir}/src/deb/data/nesi-repo.key</src>
+											<src>${project.basedir}/src/deb/data/nesi-repo.key.dpkg-new2</src>
 											<type>file</type>
 											<mapper>
 												<type>perm</type>
@@ -490,7 +490,7 @@
 										</data>
 										
 										<data>
-											<src>${project.basedir}/src/deb/data/nesi-repo.list</src>
+											<src>${project.basedir}/src/deb/data/nesi-repo.list.dpkg-new2</src>
 											<type>file</type>
 											<mapper>
 												<type>perm</type>
