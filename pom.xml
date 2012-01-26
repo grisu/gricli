@@ -19,60 +19,11 @@
 				<checksumPolicy>fail</checksumPolicy>
 			</snapshots>
 		</repository>
-		<repository>
-			<id>bestgrid.public.snapshot</id>
-			<url>http://code.ceres.auckland.ac.nz/nexus/content/groups/public-snapshots/
-			</url>
-			<releases>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-		</repository>
 	</repositories>
 
-	<pluginRepositories>
-		<pluginRepository>
-			<id>bestgrid plugin</id>
-			<url>http://code.ceres.auckland.ac.nz/nexus/content/groups/public/</url>
-			<layout>default</layout>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-		<pluginRepository>
-			<id>bestgrid plugin Snapshots</id>
-			<url>http://code.ceres.auckland.ac.nz/nexus/content/groups/public-snapshots/</url>
-			<layout>default</layout>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
-
-	<distributionManagement>
-		<repository>
-			<name>BeSTGRID Releases Repository</name>
-			<id>bestgrid.release</id>
-			<url>http://code.ceres.auckland.ac.nz/nexus/content/repositories/releases
-			</url>
-		</repository>
-		<snapshotRepository>
-			<id>bestgrid.snapshot</id>
-			<name>BeSTGRID Snapshots Repository</name>
-			<url>http://code.ceres.auckland.ac.nz/nexus/content/repositories/snapshots
-			</url>
-		</snapshotRepository>
-	</distributionManagement>
 
 	<version>0.7-rc10-SNAPSHOT</version>
 	<description>Grisu commandline client</description>
-
 
 
 	<dependencies>
@@ -109,15 +60,6 @@
 			<version>1.6</version>
 			<scope>compile</scope>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>jline</groupId> -->
-		<!-- <artifactId>jline</artifactId> -->
-		<!-- <version>1.0</version> -->
-		<!-- <scope>compile</scope> -->
-		<!-- </dependency> -->
-		<!-- <dependency> <groupId>grisu.backend</groupId> <artifactId>grisu-core</artifactId> 
-			<version>${grisu.dependency.version}</version> <type>jar</type> <scope>provided</scope> 
-			</dependency> -->
 
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
@@ -132,12 +74,6 @@
 			<version>145</version>
 			<scope>provided</scope>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>grisu.backend</groupId> -->
-<!-- 			<artifactId>grisu-core</artifactId> -->
-<!-- 			<version>0.4-rc2-SNAPSHOT</version> -->
-<!-- 			<scope>provided</scope> -->
-<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -180,7 +116,7 @@
 		<url>https://github.com/grisu/gricli/issues</url>
 	</issueManagement>
 	<ciManagement>
-		<system>Hudson</system>
+		<system>Jenkins</system>
 		<url>http://code.ceres.auckland.ac.nz/hudson/job/Gricli-SNAPSHOT</url>
 	</ciManagement>
 	<scm>
@@ -193,15 +129,6 @@
 	</organization>
 	<build>
 		<plugins>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
 
 			<plugin>
 				<groupId>com.google.code.maven-replacer-plugin</groupId>
@@ -241,21 +168,6 @@
 					<forkMode>once</forkMode>
 				</configuration>
 			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.2.2</version>
-				<configuration>
-					<autoVersionSubmodules>true</autoVersionSubmodules>
-					<pushChanges>true</pushChanges>
-					<localCheckout>true</localCheckout>
-					<tagNameFormat>@{project.version}</tagNameFormat>
-					<releaseProfiles>man,deb,rpm</releaseProfiles>
-
-				</configuration>
-			</plugin>
-
 
 			<!-- you can disable the assembly plugin if you want, your builds will 
 				be faster I find it quite handy to have maven build an executable jar, though -->
@@ -308,38 +220,7 @@
 
 		</profile>
 
-		<profile>
-			<id>sign</id>
-			<activation>
-				<property>
-					<name>BUILD_NUMBER</name>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jarsigner-plugin</artifactId>
-						<version>1.2</version>
-						<executions>
-							<execution>
-								<id>sign</id>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<alias>grisu</alias>
-							<storepass>FxAKs3p6</storepass>
-							<keypass>FxAKs3p6</keypass>
-						</configuration>
-					</plugin>
 
-
-				</plugins>
-			</build>
-		</profile>
 
 		<!-- This profile creates/updates man and USAGE.md page, needs pandoc installed -->
 		<profile>
@@ -608,7 +489,9 @@
 
 	</profiles>
 
-	<properties>
-		<grisu.version>0.4-rc13</grisu.version>
-	</properties>
+	<parent>
+		<groupId>nz.org.nesi</groupId>
+		<artifactId>nesi</artifactId>
+		<version>0.3-SNAPSHOT</version>
+	</parent>
 </project>
