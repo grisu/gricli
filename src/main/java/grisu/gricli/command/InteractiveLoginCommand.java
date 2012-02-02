@@ -81,7 +81,7 @@ public class InteractiveLoginCommand implements GricliCommand {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			env.printMessage("Logged in.\n");
+			env.printMessage("Logged in. Type \"help\" or \"about\" for more information.");
 		}
 		if ((fqans != null) && (fqans.length == 0)) {
 			env.printMessage("You don't seem to be a member of any supported groups so you probably won't be able to access any resources. Please contact support.");
