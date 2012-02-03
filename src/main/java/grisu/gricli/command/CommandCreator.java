@@ -101,10 +101,10 @@ public class CommandCreator {
 		pc.cons = c.cons;
 
 		myLogger.info(
-				"Creating command: " + "command=[{}]",
+				"Creating command: " + "command=[{}] cmd=[{}] args=[{}]",
 				new String[] {
-				StringUtils.join(tokens, " "),
-				StringUtils.join(pc.keywords, " "),
+						StringUtils.join(tokens, " "),
+						StringUtils.join(pc.keywords, " "),
 						StringUtils.join(pc.arguments, " ") });
 
 		return pc.create();
