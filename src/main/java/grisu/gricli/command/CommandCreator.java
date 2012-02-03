@@ -99,6 +99,14 @@ public class CommandCreator {
 			throw new UnknownCommandException("incomplete command");
 		}
 		pc.cons = c.cons;
+
+		myLogger.info(
+				"Creating command: " + "command=[{}]",
+				new String[] {
+				StringUtils.join(tokens, " "),
+				StringUtils.join(pc.keywords, " "),
+						StringUtils.join(pc.arguments, " ") });
+
 		return pc.create();
 	}
 

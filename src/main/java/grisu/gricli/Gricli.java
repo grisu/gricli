@@ -400,18 +400,15 @@ public class Gricli {
 		try {
 
 
-			myLogger.info("Creating command: " + "command=[{}]",
-					StringUtils.join(c, " "));
+			start = new Date();
+			String cmdId = c[0] + "_" + start.getTime();
+			MDC.put("cmdid", cmdId);
 
 			final GricliCommand command = f.create(c);
-
-			start = new Date();
 
 			if ((c == null) || (c.length == 0)) {
 				return;
 			}
-			String cmdId = c[0] + "_" + start.getTime();
-			MDC.put("cmdid", cmdId);
 
 			myLogger.info("Executing command: " + "command=[{}]",
 					StringUtils.join(c, " "));
