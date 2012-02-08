@@ -394,6 +394,11 @@ public class Gricli {
 
 	private static void runCommand(String[] c, GricliCommandFactory f,
 			GricliEnvironment env) {
+
+		if ((c == null) || (c.length == 0)) {
+			return;
+		}
+
 		Throwable error = null;
 		Date start = null;
 		Date end = null;
