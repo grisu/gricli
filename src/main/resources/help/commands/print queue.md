@@ -4,8 +4,13 @@ Displays all details about a queue.
 
 Please be aware that the queue you are querying needs to be available for your currently setup environment.
 
-The current environment is the group you set, the application package and version you choose (if any),
-as well as the walltime, number of CPUs and memory (RAM).
+The current environment is the group you set, the application package and version you choose (if any).
+The order that these variables are set is important and they should be set in the following order:
+
+     group
+     package (optional)
+     version (optional)
+
 
 Parameters:
 
