@@ -91,11 +91,11 @@ help global memory
 ### cpus
 
 
-The number of cpus to be used by a job.
+The number of CPUs to be used by a job.
 
-To set the number of cpus use the 'set' command.
-To view the number of cpus used in a job use the command 'print global cpus'.
-After a job has been submitted you can check the cpus used with the command 'print job <jobname> cpus'
+To set the number of CPUs use the 'set' command.
+To view the number of CPUs used in a job use the command 'print global cpus'.
+After a job has been submitted you can check the CPUs used with the command 'print job <jobname> cpus'
 
 Example usage:
 
@@ -137,7 +137,7 @@ Example usage:
 
 The job directory.
 
-This is the directory the job will be downloaded to after a 'download' or 'downloadclean' command.
+This is the directory the job will be downloaded to after a 'download' or 'downloadclean' command if a target directory is not specified.
 
 It is also used as the starting point where relative paths are applicable. 
 For example if a file is located at /home/myfolder/myfile and the dir variable is /home then 
@@ -159,6 +159,8 @@ Example usage:
 
 
 The email address to send notifications to.
+
+Email notifications can be sent when a job has started and when it has finished.
 
 The email address can be set using the 'set' command.
 To view the email address of a job before submission use the command 'print global email'.
@@ -206,18 +208,20 @@ To add an environment variable and value use the 'add env <var> <value>' command
 
 Note that you do not need '$' as part of the variable name.
 
-To view the environment variables and their values before submission use the command 'print global environment'.
-To view the environment variables after submission use the command 'print job <jobname> environmentVariables'.
+To view the environment variables and their values before submission use the command 'print global env'.
+To view the environment variables after submission use the command 'print job <jobname> env'.
 
 Example usage:
 
     add env MY_VAR MY_VALUE
     print global env
-    print job myjob environmentVariables
+    print job myjob env
 
 For MPI jobs using multiple hosts, the environment variables must be explicitly exported using the -x option in mpirun e.g:
 
     submit -x MY_VAR /home/me001/my_application arg0 arg1
+    
+
     
 
 ### gdir
@@ -250,35 +254,24 @@ Example usage:
 ### hostcount
 
 
-The number of compute hosts
+The number of compute hosts to be used
 
+The hostcount is important for jobs where processes communicate across a number of physical machines or hosts e.g. MPI jobs.
+Setting the hostcount will force the job to use the set number of hosts. This can improve efficiency as the communications
+overhead is less between processes running on the same host. However the job may take longer to be dequeued as the requirements 
+are more restrictive.
 
+The hostcount is unset by default and will not show in the list of globals. Once set, it will be visible in the
+list of globals. Note that when setting the hostcount, you must use a positive integer. To disable the hostcount 
+restriction use the command 'unset hostcount'.
 
 Example usage:
 
-    set hostCount 2
+    set hostcount 2
+    unset hostcount
     print global hostcount
     print job myjob hostcount
 
-
-
-
-
-### host
-
-
-The hostname.
-
-To set the hostname use the 'set' command.
-The available hostnames can be seen using the command 'print hosts'.
-To view the host before a job has been submitted use the command 'print global host'.
-To view the host after a job has been sumitted ise the command 'print job <jobname> submissionHost'.
-
-Example usage:
-
-    set host ng2.canterbury.ac.nz
-    print global host
-    print job myjob submissionHost
 
 ### jobname
 
@@ -306,48 +299,57 @@ The job type determines how the job is configured for execution.
 
 The current values are:
 
-    smp          : A job that will use one or more CPUs on a single host.
-    mpi          : A job that will use one or more CPUs across one or more hosts using the Open MPI framework.
-    custom       : A job that will use one or more CPUs across one or more hosts using a custom configuration.
+    single : A job that will use one CPU on one host.
+    smp    : A job that will use one or more CPUs on one host.
+    mpi    : A job that will use one or more CPUs across one or more hosts using the Open MPI framework.
 
-The number of hosts used for an mpi job can be checked after submission using the command 'print job <jobname> hostCount'.
+Please note that a 'host' is a compute node within a queue. Since the hardware specifications may vary between hosts in a queue,
+you are advised to check the properties of the queue to ensure you jobs run correctly. In particular, it is important that jobs do not request more resources than are available for a given job type.
 
-Please note that a 'host' is a compute node within a queue. Since the hardware specifications may vary between hosts in a queue, you are advised to check the properties of your queues to ensure you jobs run correctly. In particular, it is important that jobs do not request more resources than are available for a given job type. Some tips are provided below:
+By default, an mpi job may schedule CPUs on any nodes in the queue. You may use the hostcount global to force the CPUs to be scheduled on a 
+specific number of nodes. To remove this restriction, use the unset command:
 
-SMP
+    set hostcount 2
+    unset hostcount
 
-When you select a job of this type, please ensure that the at least one host in the queue can meet the job requirements.
-
-MPI
-
-When you select a job of this type, please ensure that the requested resources do not exceed the maximum capacity of the queue.
-
-Custom
-
-Please note that is up to you to ensure your job is scheduled correctly as this job type implies you may not be relying on Open MPI to coordinate your processes.
-    
+If you have set the hostcount, you can check the value using the command 'print global hostcount' and after submission using the command 'print job <jobname> hostcount'.  
 
 Example usage:
 
     set jobtype mpi
     print global jobtype
-    print job myjob hostCount
+    print job myjob hostcount
 
 ### memory
 
 
 The total memory (in MB) to be used by the job.
 
-The total memory is the divided amongst the cpus.
+The value of this global represents the amount of physical memory (RAM) to be allocated as well as the amount of
+virtual memory to be allocated. This means that if you enter the following command:
+
+    set memory 1024
+    
+Your job will have 1024 MB (or 1 GB) of RAM and 1 GB of virtual memory
+
+The way memory is used depends on the jobtype.
+
+    single : All memory is used by one CPU.
+    smp    : The memory is shared between one or more CPUs on a single host.
+    mpi    : The memory is divided between the CPUs which may be on one or more hosts.
+    
 To set the memory for the job, use the 'set' command. The command accepts values in the following formats:
 
-    set memory 200       : sets memory to 200 MB
-    set memory 200m      : sets memory to 200 MB
-    set memory 1g        : sets memory to 1 GB (1024 MB)
-    set memory 1g200m    : sets memory to 1224 MB
+    set memory 200    : sets memory to 200 MB
+    set memory 200m   : sets memory to 200 MB
+    set memory 1g     : sets memory to 1 GB (1024 MB)
+    set memory 1g200m : sets memory to 1224 MB
 
 To view the memory of a job before submission use the command 'print global memory'.
 To view the memory of a job after submission use the command 'print job <jobname> memory.
+
+Please note that if you request more memory than is available for your jobtype on a given queue, the job may
+stay on the queue because the scheduler cannot find the appropriate resources to start the job.
 
 Example usage:
 
@@ -361,13 +363,19 @@ Example usage:
 ### outputfile
 
 
-The path to a file where Gricli output is redirected to.
+The path to a file where command output is redirected to.
 
-Some Gricli commands will print messages for the user. This output can be redirected to a file for processing.
+Some commands will print messages for the user. This output can be redirected to a file for processing.
+
+Note that this option does not redirect job output. They will use the standard output files stdout.txt and stderr.txt
+You can see the contents of these files using the 'view' command e.g:
+
+    view myjob stdout.txt
+    view myjob stderr.txt
 
 Example usage:
 
-    set outputfile /home/myfolder/gricli_output.txt
+    set outputfile /home/myfolder/output.txt
 
 ### package
 
@@ -376,10 +384,14 @@ This is the application package used by the job.
 
 To set the package use the 'set' command.
 To see a list of available packages use the 'print packages' command.
+
 To see which package is set for a job before it is submitted, use the command 'print global package'.
 After a job has been submitted you can check the package with 'print job <jobname> package'
 
-Note that the package is not set by default and is required to submit a job.
+Note that the package is set to generic by default. If you want the queue to be determined automatically, 
+then it is best to set the package to ensure that the selected queue can support your job. Otherwise you would 
+need to set the queue manually and check that it supports the application run by your job.
+If you would like to set the queue manually, use the command 'print package <package>' to see the available queues for your application.
 
 Example usage:
 
@@ -415,7 +427,7 @@ To set the queue use the 'set' command.
 To see a list of queues use the 'print queues command'.
 
 You can only submit jobs to queues assigned to your group.
-To view the available to groups use the 'print groups' command.
+To view the available groups use the 'print groups' command.
 To view the queues available for a specific groups use the command 'print queues <group>'
 
 To see which queues support a particular application package use the command 'print package <application_package>'.
@@ -445,6 +457,9 @@ The application package version.
 This is the application package version to be used. 
 By default the value is 'any'.
 
+Note that this global is not visible under 'print globals' unless it has been set. To unset the variable
+use the 'unset' command
+
 If a package is specified and the queue is set to auto, the job will be submitted
 to a queue location that supports a version of the chosen application package.
 
@@ -458,6 +473,8 @@ Example usage:
 
     set package R
     set version  2.11.1
+    
+    unset version
 
 
 ### walltime
@@ -470,8 +487,8 @@ If a job has not finished after the allocated walltime, the job will be killed.
 
 Walltime can be set with strings as follows:
 
-   set walltime 120            : sets the walltime for 120 minutes.
-   set walltime 1d2h3m         : sets the walltime for 1 day 2 hours and 3 minutes.
+   set walltime 120    : Sets the walltime for 2 hours
+   set walltime 1d2h3m : Sets the walltime for 1 day 2 hours and 3 minutes.
 
 To view the walltime before a job has been submitted, use the command 'print global walltime'.
 To view the walltime after a job has been submitted, use the command 'print job <jobname> walltime'.
@@ -516,20 +533,20 @@ Currently only a single item can be added per call. To add multiple items, use t
 
 Parameters:
 
-    list	: The name of the list.
-    item	: The value to add. 
+    list : The name of the list.
+    item : The value to add. 
 
 Currently available lists are:
 
-    files       : The files attached for a job.
-    environment : The environment variables in the job execution environment
+    files : The files attached for a job.
+    env   : The environment variables in the job execution environment
 
 Example usage:
 
     add files ~/myfile.txt
     add files "~/my file.txt"
     add files grid://groups/nz/nesi/myfile.txt
-    add environment MY_VAR MY_VALUE
+    add env MY_VAR MY_VALUE
 	
     
 
@@ -542,15 +559,15 @@ Example usage:
 Lists help entries that are associated with a keyword. 
 
 The command displays the entry type (command, global or topic) and the entry name.
-To find out more use the help command on the command,  global or topic of interest.
+To find out more use the 'help' command on the command, global or topic of interest.
 
 Parameters:
 
-    keyword       : The keyword to search for.
+    keyword : The keyword to search for.
 
 Example usage
 
-  apropos queues
+    apropos queues
 
 ## archive job
 
@@ -560,9 +577,12 @@ Downloads the job to the default archive location and then cleans the job.
 Supports glob regular expressions. Note that if a job is still running it will be stopped. 
 The archive process may take a while depending on how large the files are. 
 
+Jobs can also be archived asynchronously using '&' and the end of the command. This will complete the operation
+in the background and report back in the prompt with a '*'. To view pending messages, use the 'print messages' command.
+
 Parameters:
 
-    jobname    : The name of the job to archive. 
+    jobname : The name of the job to archive. 
 
 The default archive location is in the user's home directory on the Data Fabric:
 
@@ -572,17 +592,16 @@ You can also access the Data Fabric via your browser at the following address:
 
     http://df.bestgrid.org/
 
-Your files will be located in your home directory.
+Your files will be located in your Data Fabric home directory.
 
 If the archiving was successful, the job will be deleted from the job database and the original job directory will be deleted.
-
 
 Example usage:
 
     archive job myjob
     archive job myjob_1
     archive job myjob*
-
+    archive job myjob &
 
 ## attach
 
@@ -593,7 +612,7 @@ Supports multiple arguments and glob regular expressions.
 
 Parameters
 
-    files	: Whitespace separated list of files
+    files : Whitespace separated list of files
 
 Example usage:
 
@@ -624,8 +643,8 @@ Supports multiple arguments and glob regular expressions.
 
 Parameters
 
-    bactchjob   : The name of the batchjob
-    files       : Whitespace separated list of files
+    bactchjob : The name of the batchjob
+    files     : Whitespace separated list of files
 
 Example usage:
 
@@ -645,9 +664,9 @@ Batch job objects act as containers for jobs.
 
 Parameters:
 
-    name	: The name of the new batch job. 
+    name : The name of the new batch job. 
 
-Choose a meaningful name and make sure it is unique with respect to other job names.
+Please choose a meaningful name and make sure it is unique with respect to other job names.
 
 Example usage:
 
@@ -663,7 +682,7 @@ The batch job should created beforehand using the 'batch create' command.
 
 Parameters:
 
-    name    : The name of the batch job to submit.
+    name : The name of the batch job to submit.
 
 Example usage:
 
@@ -677,11 +696,12 @@ Changes the current job directory.
 
 Can be used in conjunction with the 'pwd' and 'ls' commands to explore the file system.
 The command also sets the job global 'dir' which determines where relative paths start from.
+
 Grid locations (starting with prefix grid://) are currently not supported.
 
 Parameters:
 
-    dir    : The path to the new current directory.
+    dir : The path to the new current directory.
 
 Example usage:
 
@@ -695,9 +715,12 @@ Example usage:
 ## clean job
 
 
-Kills a job if it still running and then removes it from the database and deletes the job directory.
+Kills a job if it still running and then removes it from the job database and deletes the job directory.
 
 To clean all jobs use 'clean job *'.
+
+Jobs can also be cleaned asynchronously using '&' and the end of the command. This will complete the operation
+in the background and report back in the prompt with a '*'. To view pending messages, use the 'print messages' command.
 
 Parameters:
 
@@ -705,11 +728,13 @@ Parameters:
 
 Example usage:
 
-    clean myjob
-    clean myjob_1
-    clean myjob_2
-    clean myjob*
-    clean *
+    clean job myjob
+    clean job myjob_1
+    clean job myjob_2
+    clean job myjob*
+    clean job *
+    clean job myjob &
+    
 
 ## close session
 
@@ -722,39 +747,50 @@ This can be used if you would like to login with another profile.
 
 Example usage:
 
-    destroy proxy
+   close session
 
 
 ## downloadclean job
 
 
-Downloads the job and cleans the job upon success.
+Downloads the job to the specified directory and cleans the job upon success.
 
 Parameters:
 
     jobname    : The name of the job to download and clean.
+    target_dir : The target dir to download the job directory to.
 
+The job directory includes all the job input and output files and will be downloaded to the location specified
+in the global 'dir' or optionally, the 'target_dir' which can be specified after the 'jobname'. The 'target_dir'
+will be created if it does not exist.
 
 If the download is not successful the job will not be cleaned.
 
 Note that once a job has been cleaned it is no longer accessible via job related commands.
 
-
 Example usage:
 
+    downloadclean myjob
 
 ## download job
 
 
-Downloads the whole job directory to the location specified in the global 'dir'.
+Downloads the whole job directory to the specified locaiton.
+
+The job directory which includes all the job input and output files will be downloaded to the location specified
+in the global 'dir' or optionally, the 'target_dir' which can be specified after the 'jobname'.
+
+If the 'target_dir' does not exist, it will be created.
 
 Parameters:
 
-    jobname	: The name of the job to download.
+    jobname	   : The name of the job to download.
+    target_dir : The target dir to download the job directory to.
 
 Example usage:
 
     download job myjob
+    download job myjob /some/dir
 
 
 ## exec
@@ -764,9 +800,9 @@ Executes a command from the underlying shell.
 
 Parameters:
 
-    commandline        : The command string to execute. 
+    command : The command to execute. 
 
-Be aware, you can't use commands with remote files (yet).
+Please note that you can not use commands with remote files (yet).
 
 Example usage:
 
@@ -786,7 +822,7 @@ Not yet implemented.
 
 The command syntax presented in the help files has the following format:
 
-    command_name <required_argument> [optional_argument] 
+    command_name <required_argument> [optional_argument]
 
 A command may have multiple required and optional arguments.
 
@@ -795,7 +831,7 @@ Prints this help message or a help message for a certain command, topic or globa
 
 Parameters:
 
-    keywords	: A whitespace separated list of keywords.
+    keywords : A whitespace separated list of keywords.
 	
 Usage:
 
@@ -815,7 +851,7 @@ Usage:
 
     help globals	
 
-	Lists all available globals.
+	    Lists all available globals.
 
     help topics			
         
@@ -839,7 +875,7 @@ Usage:
 
     help <keywords>		
 
-        Prints the help message for the command that is called by this combination of keywords (if it exists)
+        Prints the help message for the command that is called by this combination of keywords (if it exists).
 
     help search <keyword>	
   
@@ -876,14 +912,14 @@ Logs in to a Grisu backend.
 
 Parameters:
 
-    backend     : The Grisu backend. 
+    backend : The Grisu backend. 
 
 The choice of backend is one of:
 
-    BeSTGRID        : The default backend.
-    DEV    : The development backend.     
+    BeSTGRID : The default backend.
+    DEV      : The development backend.     
 
-If there is no certificate proxy the user is asked details to create one.
+If there is no proxy certificate the user is asked to create one.
 
 Example usage:
 
@@ -895,9 +931,13 @@ Example usage:
 
 Kills a job by stopping its execution.
 
-This stops the remote execution of the job but leaves the job in the job database and also the job directory intact. To delete the job directory you need to clean the job. 
+This stops the remote execution of the job but leaves the job in the job database and also leaves the job directory intact.
+To delete the job directory you need to clean the job. 
 
 Note that a job cannot be resumed once it has been killed. To kill all jobs use 'kill job *'.
+
+Jobs can also be killed asynchronously using '&' and the end of the command. This will complete the operation
+in the background and report back in the prompt with a '*'. To view pending messages, use the 'print messages' command.
 
 Parameters:
 
@@ -910,6 +950,7 @@ Example usage:
     kill job myjob_2
     kill job myjob*
     kill job *
+    kill job myjob &
 
 
 
@@ -918,16 +959,16 @@ Example usage:
 ## login
 
 
-Logs in to a Grisu backend with existing certificate proxy. 
+Logs in to a Grisu backend with existing proxy certificate. 
 
-Reports an error if there is no proxy.
+The command will report an error if there is no proxy certificate.
 
     backend	: The Grisu backend to login to.
 
 The choice of backend is one of:
 
-    BeSTGRID        : The default backend.
-    DEV    			: The development backend.     
+    BeSTGRID : The default backend.
+    DEV : The development backend.     
 
 Example usage:
 
@@ -941,7 +982,7 @@ Lists the current directory or the directory that is specified by the path.
 
 Parameters:
 
-    path	: The directory to list.
+    path : The directory to list. (Optional)
 
 Example usage:
 
@@ -976,6 +1017,8 @@ Example usage:
 
 Lists all global variables.
 
+Global variables are use to define the properties of a job such as the memory to be used and the associated input files.
+
 Example usage:
 
 
@@ -983,6 +1026,9 @@ Example usage:
 
 
 Lists all groups that are available to you.
+
+Note that a group will determine which queues you may submit to. 
+Queues determine the physical and software resources available for a job.
 
 Example usage:
 
@@ -1001,8 +1047,8 @@ Example usage:
 
 Prints either all or a specific property of a job.
 
-    jobname     : The name of the job. Supports glob regular expressions.
-    property	: The property.
+    jobname  : The name of the job. Supports glob regular expressions.
+    property : The job property. (Optional)
 
 To see the available job properties use:
 
@@ -1020,13 +1066,41 @@ Example usage:
 
 Lists all jobs in the job database.
 
-The job database will store information on jobs that are currently running or have finished / stopped. Once a job has been cleaned or archived, the job will be removed from the database and can no longer be queried.
+The job database will store information on jobs that are currently running, finished or killed.
+Once a job has been cleaned or archived, the job will be removed from the database and can no longer be queried.
 
 Example usage:
 
     print jobs
 
 
+
+## print messages
+
+
+Prints pending messages from asynchronous operations
+
+Commands can be issued to run in the background using the ampersand '&' e.g:
+
+    submit echo hello &
+    kill job myjob &
+    clean job myjob &
+    archive job myjob &
+    
+The commands will then be executed asynchronously and when they have completed an asterisk '*' will be shown in the shell prompt e.g:
+
+    jobs> submit echo hello &
+    ...
+    (1*) jobs> 
+
+This command will show the messages produced by these background opertations, informing you of their success or failure.
+Once the messages have been printed, they are cleared from memory.
+
+Example usage:
+
+    print messages
+    
+    
 
 ## print package
 
@@ -1035,7 +1109,7 @@ Prints the available versions and queue locations for the specified application 
 
 Parameters:
 
-    application_package    : The application package. Supports glob regular expressions.
+    application_package : The application package. Supports glob regular expressions.
 
 To see a list of available applications use:
 
@@ -1066,7 +1140,7 @@ Note that application packages are bound to queues so you must ensure the queue 
 package you would like to use. This will be taken care of when you set the queue to 'auto'.
 
 If you set the queue manually, use the 'print package <application_package>' command to check that the application and the version you would
-like to use is supported by the queue.
+like to use are supported by the queue.
 
 Example usage:
 
@@ -1078,7 +1152,10 @@ Example usage:
 
 Displays all details about a queue.
 
-Beware that the queue you are querying about needs to be available for your currently setup environment (package, group,...).
+Please be aware that the queue you are querying needs to be available for your currently setup environment.
+
+The current environment is the group you set, the application package and version you choose (if any),
+as well as the walltime, number of CPUs and memory (RAM).
 
 Parameters:
 
@@ -1086,14 +1163,14 @@ Parameters:
 	
 Fields:
 
-	Site			: The location of the hosts represented by the queue.
-	Queue name		: The name of the queue.
-	Job manager		: The type of job scheduler used.
-	GRAM version	: GRAM is a submission system. More recent versions provide better performance.
+	Site		 : The location of the hosts represented by the queue.
+	Queue name	 : The name of the queue.
+	Job manager	 : The type of job scheduler used.
+	GRAM version : GRAM is a submission system. More recent versions provide better performance.
 	
-	Total jobs		: The total number of jobs in the queue.
-	Running jobs	: The number of active jobs in the queue.
-	Waiting jobs	: The number of jobs waiting to run.
+	Total jobs	 : The total number of jobs in the queue.
+	Running jobs : The number of active jobs in the queue.
+	Waiting jobs : The number of jobs waiting to run.
 	
     
 Example usage:
@@ -1106,11 +1183,11 @@ Example usage:
 Lists all queues that are available for the current environment.
 
 The current environment is the group you set, the application package and version you choose (if any),
-also walltime, number of CPUs and memory (RAM).
+as well as the walltime, number of CPUs and memory (RAM).
 
 Parameters:
 
-	queue properties : (optional) properties you want to have displayed, per queue. 
+	queue_properties : List of properties you want to have displayed per queue. (Optional) 
 
 Allowed values: 
 
@@ -1129,7 +1206,7 @@ Example usage:
 
 Prints the current working directory.
 
-Used in conjunction with 'ls' and 'cd' to navigate the filesystem.
+Used in conjunction with 'ls' and 'cd' to navigate the file system.
 
 Example usage:
 
@@ -1138,11 +1215,13 @@ Example usage:
 ## quit
 
 
-Logs out of this Gricli session.
+Logs out of the current session.
 
-Login information is left intact so you don't need to enter those on your next login.
- 
-If the information is no longer valid you will need to provide the information again.
+If you use the Institutional Login option, your login information will be vaild for 10 days.
+You don't need to provide your credentials again if you login before then.
+
+If you want to extend the time on your session use the 'renew session' command.
+You will be asked for your credentials again and they will be vaild for 10 days.
 
 Example usage:
 
@@ -1154,7 +1233,7 @@ Example usage:
 
 Renews the current session, extending the time required before another login is required.
 
-This is used for the institutional login option where access is granted on a short term basis with expiry set for 10 days from the time of renewal.
+This is used for the Institutional Login option where access is granted on a short term basis with expiry set for 10 days from the time of renewal.
 The command may be useful when you have long running workflows and want to avoid subsequent login steps.
 
 Example usage:
@@ -1168,14 +1247,14 @@ Example usage:
 
 Runs a set of commands from a plain text file.
 
-Using a script can automate common tasks such as configuring your job environment.
+Using a script can automate common tasks such as configuring your job environment or submitting a job.
 
 Parameters:
 
-    script	: The plain text file containing commands.
+    script : The plain text file containing commands.
 
-A specific file extension (.txt, .xyz) is not required for the filename and you may use the '#' character 
-to ignore lines in the script.
+A specific file extension (.txt, .xyz) is not required for the filename.
+You may also use the '#' character to ignore lines in the script.
 
 Example script:
 
@@ -1189,7 +1268,7 @@ set memory 1g
 set cpus 1
 set walltime 10m
 set description "a test job"
-submit echo "Hello World"
+submit echo Hello World
 
 Example usage:
 
@@ -1206,11 +1285,13 @@ Sets a value for a variable.
 
 Parameters:
 
-    var		: The name of the variable.
-    value	: The value.
+    var	  : The name of the variable.
+    value : The value.
 
-Currently only the global variables for a job can be set.
-To reset a global to a default value use the 'unset <global>' command.
+Currently only the global variables for a job (such as the amount of memory to be used) can be set.
+
+To the set the value of list-type variables such as 'files' and 'env' use the 'add' command.
+See the help file for the 'add' command for examples of setting and unsetting lists.
 
 Example usage:
 
@@ -1226,11 +1307,16 @@ Displays a summary of current jobs.
 
 Fields are defined as follows:
 
-	Active				: The number of jobs that are running or waiting to run.
-	Finished			: The number of jobs that have stopped running.
-						  Successful jobs finished within their walltime limit.
-						  Failed jobs were killed.
-	Broken/Not found 	        : These jobs have had an error before starting.
+	Active			 : The number of jobs that are running or waiting to run.
+	Finished		 : The number of jobs that have stopped running.						  
+						 - Successful jobs finished within their walltime limit.
+						 - Failed jobs were stopped for some reason.
+						  
+	Broken/Not found : These jobs have had an error before starting.
+
+To see which jobs have failed try looking at the output of the stderr.txt file:
+
+    view myjob stderr.txt
 
 Example usage:
 
@@ -1241,33 +1327,33 @@ Example usage:
 ## submit
 
 
-Submits a new job to execute the provided command
+Submits a new job to execute a command
 
-The job will be created on will wait on the queue until it is executed. If the submission is successful, the name of the job will be displayed.
-The job parameters are set using the global variables. For more information on job properties type 'help globals'. To learn more about jobs in
-general, see the help topic entry for Jobs: 'help topic Jobs'.
+The job will be created and will wait on a queue until it is executed. 
+
+The job properties (such as associated files and memory) are set using 'global variables'. 
+For more information on global varaibles type 'help globals'. To learn more about jobs in general, see the help topic entry for Jobs: 'help topic Jobs'.
+
+Jobs can also be submitted asynchronously using '&' and the end of the command. 
+This will complete the operation in the background and report back in the prompt with a '*'.
+To view pending messages, use the 'print messages' command.
 
 Parameters:
 
-    command    : The command to be executed.
-    &          : Specifies asynchronous execution.  
-
-
-If & is specified the command will run in the background.     
-    	
+    command : The command to be executed.  
+ 	
 Example usage:
 
-    submit echo "hello world"
+    submit echo Hello World
     submit sleep 100 &
 
 ## unset
 
 
-Resets an optional variable to its default value.
+Resets a list variable to its default value.
 
-    var		: The name of the optional variable.
+    var	: The name of the list variable.
 
-Currently only the optional list variables for a job can be unset. 
 To add an item to a list use the 'add <list> <item>' command.
 
 Example usage:
@@ -1280,26 +1366,60 @@ Example usage:
 ## user clearCache
 
 
-Clears the Grisu file system cache. 
+Clears the file system cache. 
 
-You need to logout and login again to see the effects of this command. Be aware that the next login will take longer than usual because the filesystem cache is rebuilt at that stage.
+You need to logout and login again to see the effects of this command.
+
+Note: The next login will take longer than usual because the file system cache is rebuilt at that stage.
 
 ## view
 
+
+Prints the contents of a file.
+
+Once a job is submitted, a job directory is created which contains all the files associated with that job.
+The view command will print the contents of a specified text file in that job directory.
+
+The command can also print the contents of a remote file without reference to a jobname.
+In this case, a full path name is required.
+
+Note: Local file paths (e.g ~/myfile) are not currently supported. To view a local file use the 'exec' command e.g:
+
+    exec cat /my/local/file 
+
+Parameters:
+
+    jobname  : The name of the job which the file is associated with. (Optional)
+    filename : The relative or full path of the file.
+    
+Example usage:
+
+    view myjob stdout.txt
+    view myjob input/first.txt
+    view grid://groups/nz/nesi/myfile.xyz
+    view grid://jobs/myjob/myfile.xyz
+    view gsiftp://some.example.server/home/myfile.xyz
+    
 
 
 ## wait job
 
 
-Waits for a job to finish on the remote compute resource. 
+Waits for a job to finish. 
 
-This is useful in Grilci scripts where the execution will block until the job has finished. It allows for actions to be taken automatically when a job has finished. 
+This is useful in scripts where the execution will block until the job has finished.
+It allows for actions to be taken automatically when a job has finished e.g:
+
+    set jobname myjob
+    submit echo Hello
+    wait job myjob
+    download job myjob
 
 Parameters:
 
-    jobname	: the name of the job on which to wait. Regular expressions are not supported.
+    jobname	: The name of the job on which to wait. 
 
-Currently only a single job can be waited on.
+Note: Regular expressions are not supported and only a single job can be waited on.
 
 Example usage:
 
@@ -1351,7 +1471,7 @@ file transfers. This becomes significant if you are dealing with large files.
 Remote Files
 ------------
 
-You may attach files from your cluster's GridFTP server by using grid:// prefix :
+You may attach files from your cluster's GridFTP server by using 'grid://' prefix:
 
     attach grid://path/to/my/remote/file.txt
     submit myprogram --input file.txt
@@ -1377,8 +1497,17 @@ Viewing Files
 -------------
 
 Currently you may view local files using the command 'exec cat /path/to/local/file' .
-Upcoming releases will include a command to let you view local as well as remote files easily.
+To view remote files use the following command:
 
+    view grid://path/to/my/remote/file.txt
+    view gsiftp://path/to/my/remote/file.txt
+    
+The 'view' command also allows you view the contents of files in the job directory:
+
+    view myjob myfile
+   
+Note that this command will not work with jobs that have been cleaned.        
+   
 Further Information
 -------------------
 
@@ -1454,7 +1583,7 @@ or 'false'.
 Jobs may also have a description. This helps identify the job after it has been submitted. For more information, use
 the command 'help description'.
 
-An output file may also be specified to redirect messages from Gricli to a file. For more information see the help
+An output file may also be specified to redirect messages from the submission shell to a file. For more information see the help
 entry on 'outputfile'.
 
 The 'debug' property accepts a boolean (true or false) and will display errors in full. This is useful if you are having
@@ -1484,12 +1613,9 @@ writing to output files. For examples, type 'help view'.
 Downloading Job Results
 -----------------------
 
-When a job is complete you can download the job to the location defined in the global 'dir'.
-To ensure your job is downloaded to an appropriate directory, please check that the 'dir' global is correct. 
-
-You can set the dir global with the command 'set dir <path>' and view it with the command 'print global dir'. Alternatively, 
-you may use the 'cd' and 'ls' commands to navigate to the appropriate directory and the global 'dir' will match the 
-current working directory. To see the current working directory use the 'pwd' command.
+When a job is complete you can download the job directory using the 'download job <jobname> [target_dir]' command.
+The target dir is where the job will be downloaded to. It is optional and by default with be downloaded to the current working diretory
+as set in the global 'dir'. To see the current working directory use the commands 'pwd' or 'print global dir'.
 
 The job files can also be archived to your home directory on the Data Fabric. This will be grid://groups/nz/nesi
 You can do this using the 'archive job' command. Note that this command cleans the job upon success.
@@ -1517,7 +1643,7 @@ Here is an example of how you can setup, submit and download a job:
     > set walltime 10
     > set jobname echoJob
     > set description "Job to test echo command"
-    > submit echo "Hello World"
+    > submit echo Hello World
     > print job echoJob status
     > download job echoJob
     > clean job echoJob 
