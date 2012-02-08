@@ -415,9 +415,6 @@
 										<source>
 											<location>target/gricli-binary.jar</location>
 										</source>
-										<source>
-											<location>src/deb/data/bcprov.jar</location>
-										</source>
 									</sources>
 								</mapping>
 								<mapping>
@@ -445,8 +442,8 @@
 								</mapping>
 							</mappings>
 							<requires>
+								<require>nesi</require>
 								<require>java-1.6.0-openjdk</require>
-<!-- 								<require>bouncycastle</require> -->
 							</requires>
 							<preinstallScriptlet>
 								<script>echo "Installing Gricli..."</script>
@@ -468,6 +465,6 @@
 	<parent>
 		<groupId>nz.org.nesi</groupId>
 		<artifactId>nesi</artifactId>
-		<version>0.7</version>
+		<version>0.9</version>
 	</parent>
 </project>
