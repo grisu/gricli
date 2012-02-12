@@ -216,20 +216,15 @@ public class Gricli {
 
 		try {
 			GricliCommand login = null;
-			if (System.console() != null){
-				login =  new InteractiveLoginCommand(backend, x509, username, idp);
+			if (System.console() != null) {
+				login = new InteractiveLoginCommand(backend, x509, username,
+						idp);
 			} else {
 				login = new LocalLoginCommand(backend);
 			}
 			login.execute(env);
-			try {
-				final String dn = env.getServiceInterface().getDN();
-				MDC.put("dn", dn);
-				String un = VariousStringHelpers.getCN(dn);
-				MDC.put("user", un);
-			} catch (final Exception e) {
-				myLogger.error(e.getLocalizedMessage(), e);
-			}
+
+			prepareLogging(env);
 
 			return true;
 		} catch (final Exception ex) {
@@ -241,6 +236,30 @@ public class Gricli {
 			System.err.println(t.getLocalizedMessage());
 			return false;
 		}
+	}
+
+	private static boolean login(GricliEnvironment env, String backend,
+			String credConfig) {
+
+		try {
+			GricliCommand login = null;
+			login = new LocalLoginCommand(backend, credConfig, null);
+
+			login.execute(env);
+
+			prepareLogging(env);
+
+			return true;
+		} catch (final Exception ex) {
+			myLogger.error("Login exception", ex);
+			Throwable t = ex;
+			while (t.getCause() != null) {
+				t = t.getCause();
+			}
+			System.err.println(t.getLocalizedMessage());
+			return false;
+		}
+
 	}
 
 	@SuppressWarnings("static-access")
@@ -314,35 +333,61 @@ public class Gricli {
 					.withDescription("institution name").create("i"));
 			options.addOption(OptionBuilder.withLongOpt("x509")
 					.withDescription("x509 certificate login").create("x"));
+			options.addOption(OptionBuilder.withLongOpt("credential").hasArg()
+					.withDescription("credential config file").create("c"));
 			try {
 				cl = parser.parse(options, args);
 				if (!cl.hasOption('n')) {
 
-					// checking whether login parameters make sense...
-					if (cl.hasOption("u")) {
-						// means myproxy or shib login
+					if (cl.hasOption("c")) {
+
+						if (cl.hasOption("u") || cl.hasOption("x")
+								|| cl.hasOption("i")) {
+							env.printError("Credential config file specified, ignoring -u, -x and -i options...");
+						}
+
+						final String credConfigFile = cl.getOptionValue("c");
+
+						if (StringUtils.isBlank(credConfigFile)) {
+							throw new ParseException(
+									"No credential config file specified.");
+						}
+
+						String backend = cl.getOptionValue('b');
+						backend = (backend != null) ? backend : "BeSTGRID";
+
+						if (!login(env, backend, credConfigFile)) {
+							System.exit(LOGIN.getStatus());
+						}
+
+					} else {
+
+						// checking whether login parameters make sense...
+						if (cl.hasOption("u")) {
+							// means myproxy or shib login
+							if (cl.hasOption("x")) {
+								throw new ParseException(
+										"X509 login and other login method specified. Please use only one.");
+							}
+						}
 						if (cl.hasOption("x")) {
-							throw new ParseException(
-									"X509 login and other login method specified. Please use only one.");
+							if (cl.hasOption("i")) {
+								throw new ParseException(
+										"X509 login and idp login methods specified. Please use only one.");
+							}
 						}
-					}
-					if (cl.hasOption("x")) {
-						if (cl.hasOption("i")) {
-							throw new ParseException(
-									"X509 login and idp login methods specified. Please use only one.");
+
+						final String username = cl.getOptionValue("u");
+
+						final String idp = cl.getOptionValue("i");
+
+						final boolean x509 = cl.hasOption("x");
+
+						String backend = cl.getOptionValue('b');
+						backend = (backend != null) ? backend : "BeSTGRID";
+						if (!login(env, backend, x509, username, idp)) {
+							System.exit(LOGIN.getStatus());
 						}
-					}
-
-					final String username = cl.getOptionValue("u");
-
-					final String idp = cl.getOptionValue("i");
-
-					final boolean x509 = cl.hasOption("x");
-
-					String backend = cl.getOptionValue('b');
-					backend = (backend != null) ? backend : "BeSTGRID";
-					if (!login(env, backend, x509, username, idp)) {
-						System.exit(LOGIN.getStatus());
 					}
 				}
 
@@ -378,6 +423,17 @@ public class Gricli {
 					+ DEBUG_FILE_PATH
 					+ " to eresearch-admin@auckland.ac.nz together with description of what you are trying to do.");
 			myLogger.error("something went terribly wrong ", th);
+		}
+	}
+
+	private static void prepareLogging(GricliEnvironment env) {
+		try {
+			final String dn = env.getServiceInterface().getDN();
+			MDC.put("dn", dn);
+			String un = VariousStringHelpers.getCN(dn);
+			MDC.put("user", un);
+		} catch (final Exception e) {
+			myLogger.error(e.getLocalizedMessage(), e);
 		}
 	}
 
