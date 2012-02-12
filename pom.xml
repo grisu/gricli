@@ -22,7 +22,7 @@
 	</repositories>
 
 
-	<version>0.8-SNAPSHOT</version>
+	<version>0.7.1-SNAPSHOT</version>
 	<description>Grisu commandline client</description>
 
 
@@ -467,4 +467,7 @@
 		<artifactId>nesi</artifactId>
 		<version>0.9</version>
 	</parent>
+	<properties>
+		<grisu.version>0.4.1</grisu.version>
+	</properties>
 </project>
