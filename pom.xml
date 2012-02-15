@@ -359,7 +359,7 @@
 										</data>															
 
 										<data>
-											<src>${project.basedir}/target/gricli.1</src>
+											<src>${project.basedir}/man/gricli.1</src>
 											<type>file</type>
 											<mapper>
 												<type>perm</type>
@@ -436,7 +436,7 @@
 									<groupname>root</groupname>
 									<sources>
 										<source>
-											<location>target/gricli.1</location>
+											<location>man/gricli.1</location>
 										</source>
 									</sources>
 								</mapping>
