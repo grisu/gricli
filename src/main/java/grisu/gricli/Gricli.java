@@ -335,8 +335,20 @@ public class Gricli {
 					.withDescription("x509 certificate login").create("x"));
 			options.addOption(OptionBuilder.withLongOpt("credential").hasArg()
 					.withDescription("credential config file").create("c"));
+			options.addOption(OptionBuilder.withLongOpt("myproxy").hasArg()
+					.withDescription("MyProxy host to use)").create("m"));
+
 			try {
 				cl = parser.parse(options, args);
+
+				// setting default myproxy server
+				if (cl.hasOption('m')) {
+
+					String host = cl.getOptionValue('m');
+					LoginManager.myProxyHost = host;
+
+				}
+
 				if (!cl.hasOption('n')) {
 
 					if (cl.hasOption("c")) {
