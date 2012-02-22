@@ -102,12 +102,12 @@ memory
 .SS List of globals:
 .SS cpus
 .PP
-The number of cpus to be used by a job.
+The number of CPUs to be used by a job.
 .PP
-To set the number of cpus use the `set' command.
-To view the number of cpus used in a job use the command `print global
+To set the number of CPUs use the `set' command.
+To view the number of CPUs used in a job use the command `print global
 cpus'.
-After a job has been submitted you can check the cpus used with the
+After a job has been submitted you can check the CPUs used with the
 command `print job cpus'
 .PP
 Example usage:
@@ -157,7 +157,7 @@ print\ job\ myjob\ description
 The job directory.
 .PP
 This is the directory the job will be downloaded to after a `download'
-or `downloadclean' command.
+or `downloadclean' command if a target directory is not specified.
 .PP
 It is also used as the starting point where relative paths are
 applicable.
@@ -186,6 +186,9 @@ cd\ ~/myfolder
 .SS email
 .PP
 The email address to send notifications to.
+.PP
+Email notifications can be sent when a job has started and when it has
+finished.
 .PP
 The email address can be set using the `set' command.
 To view the email address of a job before submission use the command
@@ -246,9 +249,9 @@ To add an environment variable and value use the `add env ' command.
 Note that you do not need `$' as part of the variable name.
 .PP
 To view the environment variables and their values before submission use
-the command `print global environment'.
+the command `print global env'.
 To view the environment variables after submission use the command
-`print job environmentVariables'.
+`print job env'.
 .PP
 Example usage:
 .IP
@@ -256,7 +259,7 @@ Example usage:
 \f[C]
 add\ env\ MY_VAR\ MY_VALUE
 print\ global\ env
-print\ job\ myjob\ environmentVariables
+print\ job\ myjob\ env
 \f[]
 .fi
 .PP
@@ -299,35 +302,30 @@ print\ job\ myjob\ group
 .fi
 .SS hostcount
 .PP
-The number of compute hosts
+The number of compute hosts to be used
+.PP
+The hostcount is important for jobs where processes communicate across a
+number of physical machines or hosts e.g.\ MPI jobs.
+Setting the hostcount will force the job to use the set number of hosts.
+This can improve efficiency as the communications overhead is less
+between processes running on the same host.
+However the job may take longer to be dequeued as the requirements are
+more restrictive.
+.PP
+The hostcount is unset by default and will not show in the list of
+globals.
+Once set, it will be visible in the list of globals.
+Note that when setting the hostcount, you must use a positive integer.
+To disable the hostcount restriction use the command `unset hostcount'.
 .PP
 Example usage:
 .IP
 .nf
 \f[C]
-set\ hostCount\ 2
+set\ hostcount\ 2
+unset\ hostcount
 print\ global\ hostcount
 print\ job\ myjob\ hostcount
-\f[]
-.fi
-.SS host
-.PP
-The hostname.
-.PP
-To set the hostname use the `set' command.
-The available hostnames can be seen using the command `print hosts'.
-To view the host before a job has been submitted use the command `print
-global host'.
-To view the host after a job has been sumitted ise the command `print
-job submissionHost'.
-.PP
-Example usage:
-.IP
-.nf
-\f[C]
-set\ host\ ng2.canterbury.ac.nz
-print\ global\ host
-print\ job\ myjob\ submissionHost
 \f[]
 .fi
 .SS jobname
@@ -362,38 +360,34 @@ The current values are:
 .IP
 .nf
 \f[C]
-smp\ \ \ \ \ \ \ \ \ \ :\ A\ job\ that\ will\ use\ one\ or\ more\ CPUs\ on\ a\ single\ host.
-mpi\ \ \ \ \ \ \ \ \ \ :\ A\ job\ that\ will\ use\ one\ or\ more\ CPUs\ across\ one\ or\ more\ hosts\ using\ the\ Open\ MPI\ framework.
-custom\ \ \ \ \ \ \ :\ A\ job\ that\ will\ use\ one\ or\ more\ CPUs\ across\ one\ or\ more\ hosts\ using\ a\ custom\ configuration.
+single\ :\ A\ job\ that\ will\ use\ one\ CPU\ on\ one\ host.
+smp\ \ \ \ :\ A\ job\ that\ will\ use\ one\ or\ more\ CPUs\ on\ one\ host.
+mpi\ \ \ \ :\ A\ job\ that\ will\ use\ one\ or\ more\ CPUs\ across\ one\ or\ more\ hosts\ using\ the\ Open\ MPI\ framework.
 \f[]
 .fi
 .PP
-The number of hosts used for an mpi job can be checked after submission
-using the command `print job hostCount'.
-.PP
 Please note that a `host' is a compute node within a queue.
 Since the hardware specifications may vary between hosts in a queue, you
-are advised to check the properties of your queues to ensure you jobs
-run correctly.
+are advised to check the properties of the queue to ensure you jobs run
+correctly.
 In particular, it is important that jobs do not request more resources
 than are available for a given job type.
-Some tips are provided below:
 .PP
-SMP
+By default, an mpi job may schedule CPUs on any nodes in the queue.
+You may use the hostcount global to force the CPUs to be scheduled on a
+specific number of nodes.
+To remove this restriction, use the unset command:
+.IP
+.nf
+\f[C]
+set\ hostcount\ 2
+unset\ hostcount
+\f[]
+.fi
 .PP
-When you select a job of this type, please ensure that the at least one
-host in the queue can meet the job requirements.
-.PP
-MPI
-.PP
-When you select a job of this type, please ensure that the requested
-resources do not exceed the maximum capacity of the queue.
-.PP
-Custom
-.PP
-Please note that is up to you to ensure your job is scheduled correctly
-as this job type implies you may not be relying on Open MPI to
-coordinate your processes.
+If you have set the hostcount, you can check the value using the command
+`print global hostcount' and after submission using the command `print
+job hostcount'.
 .PP
 Example usage:
 .IP
@@ -401,23 +395,44 @@ Example usage:
 \f[C]
 set\ jobtype\ mpi
 print\ global\ jobtype
-print\ job\ myjob\ hostCount
+print\ job\ myjob\ hostcount
 \f[]
 .fi
 .SS memory
 .PP
 The total memory (in MB) to be used by the job.
 .PP
-The total memory is the divided amongst the cpus.
+The value of this global represents the amount of physical memory (RAM)
+to be allocated as well as the amount of virtual memory to be allocated.
+This means that if you enter the following command:
+.IP
+.nf
+\f[C]
+set\ memory\ 1024
+\f[]
+.fi
+.PP
+Your job will have 1024 MB (or 1 GB) of RAM and 1 GB of virtual memory
+.PP
+The way memory is used depends on the jobtype.
+.IP
+.nf
+\f[C]
+single\ :\ All\ memory\ is\ used\ by\ one\ CPU.
+smp\ \ \ \ :\ The\ memory\ is\ shared\ between\ one\ or\ more\ CPUs\ on\ a\ single\ host.
+mpi\ \ \ \ :\ The\ memory\ is\ divided\ between\ the\ CPUs\ which\ may\ be\ on\ one\ or\ more\ hosts.
+\f[]
+.fi
+.PP
 To set the memory for the job, use the `set' command.
 The command accepts values in the following formats:
 .IP
 .nf
 \f[C]
-set\ memory\ 200\ \ \ \ \ \ \ :\ sets\ memory\ to\ 200\ MB
-set\ memory\ 200m\ \ \ \ \ \ :\ sets\ memory\ to\ 200\ MB
-set\ memory\ 1g\ \ \ \ \ \ \ \ :\ sets\ memory\ to\ 1\ GB\ (1024\ MB)
-set\ memory\ 1g200m\ \ \ \ :\ sets\ memory\ to\ 1224\ MB
+set\ memory\ 200\ \ \ \ :\ sets\ memory\ to\ 200\ MB
+set\ memory\ 200m\ \ \ :\ sets\ memory\ to\ 200\ MB
+set\ memory\ 1g\ \ \ \ \ :\ sets\ memory\ to\ 1\ GB\ (1024\ MB)
+set\ memory\ 1g200m\ :\ sets\ memory\ to\ 1224\ MB
 \f[]
 .fi
 .PP
@@ -426,22 +441,37 @@ global memory'.
 To view the memory of a job after submission use the command 'print job
 memory.
 .PP
+Please note that if you request more memory than is available for your
+jobtype on a given queue, the job may stay on the queue because the
+scheduler cannot find the appropriate resources to start the job.
+.PP
 Example usage:
 .PP
 set memory 1224 set memory 1g200m print global memory print job myjob
 memory
 .SS outputfile
 .PP
-The path to a file where Gricli output is redirected to.
+The path to a file where command output is redirected to.
 .PP
-Some Gricli commands will print messages for the user.
+Some commands will print messages for the user.
 This output can be redirected to a file for processing.
+.PP
+Note that this option does not redirect job output.
+They will use the standard output files stdout.txt and stderr.txt You
+can see the contents of these files using the `view' command e.g:
+.IP
+.nf
+\f[C]
+view\ myjob\ stdout.txt
+view\ myjob\ stderr.txt
+\f[]
+.fi
 .PP
 Example usage:
 .IP
 .nf
 \f[C]
-set\ outputfile\ /home/myfolder/gricli_output.txt
+set\ outputfile\ /home/myfolder/output.txt
 \f[]
 .fi
 .SS package
@@ -450,13 +480,19 @@ This is the application package used by the job.
 .PP
 To set the package use the `set' command.
 To see a list of available packages use the `print packages' command.
+.PP
 To see which package is set for a job before it is submitted, use the
 command `print global package'.
 After a job has been submitted you can check the package with `print job
 package'
 .PP
-Note that the package is not set by default and is required to submit a
-job.
+Note that the package is set to generic by default.
+If you want the queue to be determined automatically, then it is best to
+set the package to ensure that the selected queue can support your job.
+Otherwise you would need to set the queue manually and check that it
+supports the application run by your job.
+If you would like to set the queue manually, use the command `print
+package ' to see the available queues for your application.
 .PP
 Example usage:
 .IP
@@ -491,7 +527,7 @@ To set the queue use the `set' command.
 To see a list of queues use the `print queues command'.
 .PP
 You can only submit jobs to queues assigned to your group.
-To view the available to groups use the `print groups' command.
+To view the available groups use the `print groups' command.
 To view the queues available for a specific groups use the command
 `print queues '
 .PP
@@ -525,6 +561,10 @@ The application package version.
 This is the application package version to be used.
 By default the value is `any'.
 .PP
+Note that this global is not visible under `print globals' unless it has
+been set.
+To unset the variable use the `unset' command
+.PP
 If a package is specified and the queue is set to auto, the job will be
 submitted to a queue location that supports a version of the chosen
 application package.
@@ -543,6 +583,8 @@ set\ version\ any
 
 set\ package\ R
 set\ version\ \ 2.11.1
+
+unset\ version
 \f[]
 .fi
 .SS walltime
@@ -556,8 +598,8 @@ killed.
 .PP
 Walltime can be set with strings as follows:
 .PP
-set walltime 120 : sets the walltime for 120 minutes.
-set walltime 1d2h3m : sets the walltime for 1 day 2 hours and 3 minutes.
+set walltime 120 : Sets the walltime for 2 hours set walltime 1d2h3m :
+Sets the walltime for 1 day 2 hours and 3 minutes.
 .PP
 To view the walltime before a job has been submitted, use the command
 `print global walltime'.
@@ -607,8 +649,8 @@ Parameters:
 .IP
 .nf
 \f[C]
-list\ \ \ \ :\ The\ name\ of\ the\ list.
-item\ \ \ \ :\ The\ value\ to\ add.\ 
+list\ :\ The\ name\ of\ the\ list.
+item\ :\ The\ value\ to\ add.\ 
 \f[]
 .fi
 .PP
@@ -616,8 +658,8 @@ Currently available lists are:
 .IP
 .nf
 \f[C]
-files\ \ \ \ \ \ \ :\ The\ files\ attached\ for\ a\ job.
-environment\ :\ The\ environment\ variables\ in\ the\ job\ execution\ environment
+files\ :\ The\ files\ attached\ for\ a\ job.
+env\ \ \ :\ The\ environment\ variables\ in\ the\ job\ execution\ environment
 \f[]
 .fi
 .PP
@@ -628,7 +670,7 @@ Example usage:
 add\ files\ ~/myfile.txt
 add\ files\ "~/my\ file.txt"
 add\ files\ grid://groups/nz/nesi/myfile.txt
-add\ environment\ MY_VAR\ MY_VALUE
+add\ env\ MY_VAR\ MY_VALUE
 \f[]
 .fi
 .SS apropos
@@ -637,20 +679,24 @@ Lists help entries that are associated with a keyword.
 .PP
 The command displays the entry type (command, global or topic) and the
 entry name.
-To find out more use the help command on the command, global or topic of
-interest.
+To find out more use the `help' command on the command, global or topic
+of interest.
 .PP
 Parameters:
 .IP
 .nf
 \f[C]
-keyword\ \ \ \ \ \ \ :\ The\ keyword\ to\ search\ for.
+keyword\ :\ The\ keyword\ to\ search\ for.
 \f[]
 .fi
 .PP
 Example usage
-.PP
-apropos queues
+.IP
+.nf
+\f[C]
+apropos\ queues
+\f[]
+.fi
 .SS archive job
 .PP
 Downloads the job to the default archive location and then cleans the
@@ -661,11 +707,17 @@ Note that if a job is still running it will be stopped.
 The archive process may take a while depending on how large the files
 are.
 .PP
+Jobs can also be archived asynchronously using `&' and the end of the
+command.
+This will complete the operation in the background and report back in
+the prompt with a `*'.
+To view pending messages, use the `print messages' command.
+.PP
 Parameters:
 .IP
 .nf
 \f[C]
-jobname\ \ \ \ :\ The\ name\ of\ the\ job\ to\ archive.\ 
+jobname\ :\ The\ name\ of\ the\ job\ to\ archive.\ 
 \f[]
 .fi
 .PP
@@ -687,7 +739,7 @@ http://df.bestgrid.org/
 \f[]
 .fi
 .PP
-Your files will be located in your home directory.
+Your files will be located in your Data Fabric home directory.
 .PP
 If the archiving was successful, the job will be deleted from the job
 database and the original job directory will be deleted.
@@ -699,6 +751,7 @@ Example usage:
 archive\ job\ myjob
 archive\ job\ myjob_1
 archive\ job\ myjob*
+archive\ job\ myjob\ &
 \f[]
 .fi
 .SS attach
@@ -711,7 +764,7 @@ Parameters
 .IP
 .nf
 \f[C]
-files\ \ \ :\ Whitespace\ separated\ list\ of\ files
+files\ :\ Whitespace\ separated\ list\ of\ files
 \f[]
 .fi
 .PP
@@ -749,8 +802,8 @@ Parameters
 .IP
 .nf
 \f[C]
-bactchjob\ \ \ :\ The\ name\ of\ the\ batchjob
-files\ \ \ \ \ \ \ :\ Whitespace\ separated\ list\ of\ files
+bactchjob\ :\ The\ name\ of\ the\ batchjob
+files\ \ \ \ \ :\ Whitespace\ separated\ list\ of\ files
 \f[]
 .fi
 .PP
@@ -775,12 +828,12 @@ Parameters:
 .IP
 .nf
 \f[C]
-name\ \ \ \ :\ The\ name\ of\ the\ new\ batch\ job.\ 
+name\ :\ The\ name\ of\ the\ new\ batch\ job.\ 
 \f[]
 .fi
 .PP
-Choose a meaningful name and make sure it is unique with respect to
-other job names.
+Please choose a meaningful name and make sure it is unique with respect
+to other job names.
 .PP
 Example usage:
 .IP
@@ -800,7 +853,7 @@ Parameters:
 .IP
 .nf
 \f[C]
-name\ \ \ \ :\ The\ name\ of\ the\ batch\ job\ to\ submit.
+name\ :\ The\ name\ of\ the\ batch\ job\ to\ submit.
 \f[]
 .fi
 .PP
@@ -819,6 +872,7 @@ Can be used in conjunction with the `pwd' and `ls' commands to explore
 the file system.
 The command also sets the job global `dir' which determines where
 relative paths start from.
+.PP
 Grid locations (starting with prefix grid://) are currently not
 supported.
 .PP
@@ -826,7 +880,7 @@ Parameters:
 .IP
 .nf
 \f[C]
-dir\ \ \ \ :\ The\ path\ to\ the\ new\ current\ directory.
+dir\ :\ The\ path\ to\ the\ new\ current\ directory.
 \f[]
 .fi
 .PP
@@ -843,10 +897,16 @@ attach\ myfile_1\ myfile_2
 .fi
 .SS clean job
 .PP
-Kills a job if it still running and then removes it from the database
-and deletes the job directory.
+Kills a job if it still running and then removes it from the job
+database and deletes the job directory.
 .PP
 To clean all jobs use `clean job *'.
+.PP
+Jobs can also be cleaned asynchronously using `&' and the end of the
+command.
+This will complete the operation in the background and report back in
+the prompt with a `*'.
+To view pending messages, use the `print messages' command.
 .PP
 Parameters:
 .IP
@@ -860,11 +920,12 @@ Example usage:
 .IP
 .nf
 \f[C]
-clean\ myjob
-clean\ myjob_1
-clean\ myjob_2
-clean\ myjob*
-clean\ *
+clean\ job\ myjob
+clean\ job\ myjob_1
+clean\ job\ myjob_2
+clean\ job\ myjob*
+clean\ job\ *
+clean\ job\ myjob\ &
 \f[]
 .fi
 .SS close session
@@ -876,23 +937,26 @@ You will have to enter your login information again on your next login.
 This can be used if you would like to login with another profile.
 .PP
 Example usage:
-.IP
-.nf
-\f[C]
-destroy\ proxy
-\f[]
-.fi
+.PP
+close session
 .SS downloadclean job
 .PP
-Downloads the job and cleans the job upon success.
+Downloads the job to the specified directory and cleans the job upon
+success.
 .PP
 Parameters:
 .IP
 .nf
 \f[C]
 jobname\ \ \ \ :\ The\ name\ of\ the\ job\ to\ download\ and\ clean.
+target_dir\ :\ The\ target\ dir\ to\ download\ the\ job\ directory\ to.
 \f[]
 .fi
+.PP
+The job directory includes all the job input and output files and will
+be downloaded to the location specified in the global `dir' or
+optionally, the `target_dir' which can be specified after the `jobname'.
+The `target_dir' will be created if it does not exist.
 .PP
 If the download is not successful the job will not be cleaned.
 .PP
@@ -900,16 +964,28 @@ Note that once a job has been cleaned it is no longer accessible via job
 related commands.
 .PP
 Example usage:
+.IP
+.nf
+\f[C]
+downloadclean\ myjob
+\f[]
+.fi
 .SS download job
 .PP
-Downloads the whole job directory to the location specified in the
-global `dir'.
+Downloads the whole job directory to the specified locaiton.
+.PP
+The job directory which includes all the job input and output files will
+be downloaded to the location specified in the global `dir' or
+optionally, the `target_dir' which can be specified after the `jobname'.
+.PP
+If the `target_dir' does not exist, it will be created.
 .PP
 Parameters:
 .IP
 .nf
 \f[C]
-jobname\ :\ The\ name\ of\ the\ job\ to\ download.
+jobname\ \ \ \ :\ The\ name\ of\ the\ job\ to\ download.
+target_dir\ :\ The\ target\ dir\ to\ download\ the\ job\ directory\ to.
 \f[]
 .fi
 .PP
@@ -918,6 +994,7 @@ Example usage:
 .nf
 \f[C]
 download\ job\ myjob
+download\ job\ myjob\ /some/dir
 \f[]
 .fi
 .SS exec
@@ -928,11 +1005,11 @@ Parameters:
 .IP
 .nf
 \f[C]
-commandline\ \ \ \ \ \ \ \ :\ The\ command\ string\ to\ execute.\ 
+command\ :\ The\ command\ to\ execute.\ 
 \f[]
 .fi
 .PP
-Be aware, you can't use commands with remote files (yet).
+Please note that you can not use commands with remote files (yet).
 .PP
 Example usage:
 .IP
@@ -952,7 +1029,7 @@ The command syntax presented in the help files has the following format:
 .IP
 .nf
 \f[C]
-command_name\ <required_argument>\ [optional_argument]\ 
+command_name\ <required_argument>\ [optional_argument]
 \f[]
 .fi
 .PP
@@ -965,7 +1042,7 @@ Parameters:
 .IP
 .nf
 \f[C]
-keywords\ \ \ \ :\ A\ whitespace\ separated\ list\ of\ keywords.
+keywords\ :\ A\ whitespace\ separated\ list\ of\ keywords.
 \f[]
 .fi
 .PP
@@ -989,7 +1066,7 @@ help\ commands\ \ \ \ \ \ \
 
 help\ globals\ \ \ \ 
 
-Lists\ all\ available\ globals.
+\ \ \ \ Lists\ all\ available\ globals.
 
 help\ topics\ \ \ \ \ \ \ \ \ 
 
@@ -1013,7 +1090,7 @@ help\ topic\ <topic>\ \ \ \ \ \
 
 help\ <keywords>\ \ \ \ \ 
 
-\ \ \ \ Prints\ the\ help\ message\ for\ the\ command\ that\ is\ called\ by\ this\ combination\ of\ keywords\ (if\ it\ exists)
+\ \ \ \ Prints\ the\ help\ message\ for\ the\ command\ that\ is\ called\ by\ this\ combination\ of\ keywords\ (if\ it\ exists).
 
 help\ search\ <keyword>\ \ \ 
 
@@ -1052,7 +1129,7 @@ Parameters:
 .IP
 .nf
 \f[C]
-backend\ \ \ \ \ :\ The\ Grisu\ backend.\ 
+backend\ :\ The\ Grisu\ backend.\ 
 \f[]
 .fi
 .PP
@@ -1060,13 +1137,12 @@ The choice of backend is one of:
 .IP
 .nf
 \f[C]
-BeSTGRID\ \ \ \ \ \ \ \ :\ The\ default\ backend.
-DEV\ \ \ \ :\ The\ development\ backend.\ \ \ \ \ 
+BeSTGRID\ :\ The\ default\ backend.
+DEV\ \ \ \ \ \ :\ The\ development\ backend.\ \ \ \ \ 
 \f[]
 .fi
 .PP
-If there is no certificate proxy the user is asked details to create
-one.
+If there is no proxy certificate the user is asked to create one.
 .PP
 Example usage:
 .IP
@@ -1081,11 +1157,17 @@ ilogin\ DEV\
 Kills a job by stopping its execution.
 .PP
 This stops the remote execution of the job but leaves the job in the job
-database and also the job directory intact.
+database and also leaves the job directory intact.
 To delete the job directory you need to clean the job.
 .PP
 Note that a job cannot be resumed once it has been killed.
 To kill all jobs use `kill job *'.
+.PP
+Jobs can also be killed asynchronously using `&' and the end of the
+command.
+This will complete the operation in the background and report back in
+the prompt with a `*'.
+To view pending messages, use the `print messages' command.
 .PP
 Parameters:
 .IP
@@ -1104,13 +1186,14 @@ kill\ job\ myjob_1
 kill\ job\ myjob_2
 kill\ job\ myjob*
 kill\ job\ *
+kill\ job\ myjob\ &
 \f[]
 .fi
 .SS login
 .PP
-Logs in to a Grisu backend with existing certificate proxy.
+Logs in to a Grisu backend with existing proxy certificate.
 .PP
-Reports an error if there is no proxy.
+The command will report an error if there is no proxy certificate.
 .IP
 .nf
 \f[C]
@@ -1122,8 +1205,8 @@ The choice of backend is one of:
 .IP
 .nf
 \f[C]
-BeSTGRID\ \ \ \ \ \ \ \ :\ The\ default\ backend.
-DEV\ \ \ \ \ \ \ \ \ \ \ \ \ :\ The\ development\ backend.\ \ \ \ \ 
+BeSTGRID\ :\ The\ default\ backend.
+DEV\ :\ The\ development\ backend.\ \ \ \ \ 
 \f[]
 .fi
 .PP
@@ -1144,7 +1227,7 @@ Parameters:
 .IP
 .nf
 \f[C]
-path\ \ \ \ :\ The\ directory\ to\ list.
+path\ :\ The\ directory\ to\ list.\ (Optional)
 \f[]
 .fi
 .PP
@@ -1182,10 +1265,17 @@ print\ global\ cpus
 .PP
 Lists all global variables.
 .PP
+Global variables are use to define the properties of a job such as the
+memory to be used and the associated input files.
+.PP
 Example usage:
 .SS print groups
 .PP
 Lists all groups that are available to you.
+.PP
+Note that a group will determine which queues you may submit to.
+Queues determine the physical and software resources available for a
+job.
 .PP
 Example usage:
 .IP
@@ -1205,8 +1295,8 @@ Prints either all or a specific property of a job.
 .IP
 .nf
 \f[C]
-jobname\ \ \ \ \ :\ The\ name\ of\ the\ job.\ Supports\ glob\ regular\ expressions.
-property\ \ \ \ :\ The\ property.
+jobname\ \ :\ The\ name\ of\ the\ job.\ Supports\ glob\ regular\ expressions.
+property\ :\ The\ job\ property.\ (Optional)
 \f[]
 .fi
 .PP
@@ -1233,7 +1323,7 @@ print\ job\ *\ jobDirectory
 Lists all jobs in the job database.
 .PP
 The job database will store information on jobs that are currently
-running or have finished / stopped.
+running, finished or killed.
 Once a job has been cleaned or archived, the job will be removed from
 the database and can no longer be queried.
 .PP
@@ -1242,6 +1332,44 @@ Example usage:
 .nf
 \f[C]
 print\ jobs
+\f[]
+.fi
+.SS print messages
+.PP
+Prints pending messages from asynchronous operations
+.PP
+Commands can be issued to run in the background using the ampersand `&'
+e.g:
+.IP
+.nf
+\f[C]
+submit\ echo\ hello\ &
+kill\ job\ myjob\ &
+clean\ job\ myjob\ &
+archive\ job\ myjob\ &
+\f[]
+.fi
+.PP
+The commands will then be executed asynchronously and when they have
+completed an asterisk `*' will be shown in the shell prompt e.g:
+.IP
+.nf
+\f[C]
+jobs>\ submit\ echo\ hello\ &
+...
+(1*)\ jobs>\ 
+\f[]
+.fi
+.PP
+This command will show the messages produced by these background
+opertations, informing you of their success or failure.
+Once the messages have been printed, they are cleared from memory.
+.PP
+Example usage:
+.IP
+.nf
+\f[C]
+print\ messages
 \f[]
 .fi
 .SS print package
@@ -1253,7 +1381,7 @@ Parameters:
 .IP
 .nf
 \f[C]
-application_package\ \ \ \ :\ The\ application\ package.\ Supports\ glob\ regular\ expressions.
+application_package\ :\ The\ application\ package.\ Supports\ glob\ regular\ expressions.
 \f[]
 .fi
 .PP
@@ -1294,7 +1422,7 @@ the queue you submit to can support the package you would like to use.
 This will be taken care of when you set the queue to `auto'.
 .PP
 If you set the queue manually, use the `print package ' command to check
-that the application and the version you would like to use is supported
+that the application and the version you would like to use are supported
 by the queue.
 .PP
 Example usage:
@@ -1308,8 +1436,21 @@ print\ packages
 .PP
 Displays all details about a queue.
 .PP
-Beware that the queue you are querying about needs to be available for
-your currently setup environment (package, group,\&...).
+Please be aware that the queue you are querying needs to be available
+for your currently setup environment.
+.PP
+The current environment is the group you set, the application package
+and version you choose (if any).
+The order that these variables are set is important and they should be
+set in the following order:
+.IP
+.nf
+\f[C]
+\ group
+\ package\ (optional)
+\ version\ (optional)
+\f[]
+.fi
 .PP
 Parameters:
 .IP
@@ -1323,14 +1464,14 @@ Fields:
 .IP
 .nf
 \f[C]
-Site\ \ \ \ \ \ \ \ \ \ \ \ :\ The\ location\ of\ the\ hosts\ represented\ by\ the\ queue.
-Queue\ name\ \ \ \ \ \ :\ The\ name\ of\ the\ queue.
-Job\ manager\ \ \ \ \ :\ The\ type\ of\ job\ scheduler\ used.
-GRAM\ version\ \ \ \ :\ GRAM\ is\ a\ submission\ system.\ More\ recent\ versions\ provide\ better\ performance.
+Site\ \ \ \ \ \ \ \ \ :\ The\ location\ of\ the\ hosts\ represented\ by\ the\ queue.
+Queue\ name\ \ \ :\ The\ name\ of\ the\ queue.
+Job\ manager\ \ :\ The\ type\ of\ job\ scheduler\ used.
+GRAM\ version\ :\ GRAM\ is\ a\ submission\ system.\ More\ recent\ versions\ provide\ better\ performance.
 
-Total\ jobs\ \ \ \ \ \ :\ The\ total\ number\ of\ jobs\ in\ the\ queue.
-Running\ jobs\ \ \ \ :\ The\ number\ of\ active\ jobs\ in\ the\ queue.
-Waiting\ jobs\ \ \ \ :\ The\ number\ of\ jobs\ waiting\ to\ run.
+Total\ jobs\ \ \ :\ The\ total\ number\ of\ jobs\ in\ the\ queue.
+Running\ jobs\ :\ The\ number\ of\ active\ jobs\ in\ the\ queue.
+Waiting\ jobs\ :\ The\ number\ of\ jobs\ waiting\ to\ run.
 \f[]
 .fi
 .PP
@@ -1346,35 +1487,59 @@ print\ queue\ default:gram5.ceres.auckland.ac.nz
 Lists all queues that are available for the current environment.
 .PP
 The current environment is the group you set, the application package
-and version you choose (if any), also walltime, number of CPUs and
-memory (RAM).
+and version you choose (if any).
+The order that these variables are set is important and they should be
+set in the following order:
+.IP
+.nf
+\f[C]
+\ group
+\ package\ (optional)
+\ version\ (optional)
+\f[]
+.fi
+.PP
+Once the environment is defined, the print queues command will list the
+available queues.
 .PP
 Parameters:
 .IP
 .nf
 \f[C]
-queue\ properties\ :\ (optional)\ properties\ you\ want\ to\ have\ displayed,\ per\ queue.\ 
+queue_properties\ :\ List\ of\ properties\ you\ want\ to\ have\ displayed\ per\ queue.\ (Optional)\ 
 \f[]
 .fi
 .PP
 Allowed values:
-.PP
-free_job_slots, gram_version, job_manager, queue_name, ramsize, rank,
-running_jobs, site, smp_size, total_jobs, virtualramsize, waiting_jobs
+.IP
+.nf
+\f[C]
+free_job_slots\ :\ The\ number\ of\ free\ CPUs\ on\ the\ queue.
+gram_version\ \ \ :\ The\ job\ monitor\ version.
+job_manager\ \ \ \ :\ The\ job\ scheduling\ framework.
+queue_name\ \ \ \ \ :\ The\ name\ of\ the\ queue.
+rank\ \ \ \ \ \ \ \ \ \ \ :\ The\ number\ of\ free\ CPUs\ on\ the\ queue.
+running_jobs\ \ \ :\ The\ number\ of\ currently\ running\ jobs.
+site\ \ \ \ \ \ \ \ \ \ \ :\ The\ institution\ managing\ the\ queue.
+total_jobs\ \ \ \ \ :\ The\ total\ number\ of\ jobs,\ both\ running\ and\ queued.
+waiting_jobs\ \ \ :\ The\ number\ of\ jobs\ that\ are\ waiting\ on\ the\ queue.
+\f[]
+.fi
 .PP
 Example usage:
 .IP
 .nf
 \f[C]
 print\ queues\ 
-print\ queues\ site\ job_manager\ total_jobs\ rank
+print\ queues\ site
+print\ queues\ site\ job_manager
 \f[]
 .fi
 .SS pwd
 .PP
 Prints the current working directory.
 .PP
-Used in conjunction with `ls' and `cd' to navigate the filesystem.
+Used in conjunction with `ls' and `cd' to navigate the file system.
 .PP
 Example usage:
 .IP
@@ -1385,13 +1550,17 @@ pwd
 .fi
 .SS quit
 .PP
-Logs out of this Gricli session.
+Logs out of the current session.
 .PP
-Login information is left intact so you don't need to enter those on
-your next login.
+If you use the Institutional Login option, your login information will
+be vaild for 10 days.
+You don't need to provide your credentials again if you login before
+then.
 .PP
-If the information is no longer valid you will need to provide the
-information again.
+If you want to extend the time on your session use the `renew session'
+command.
+You will be asked for your credentials again and they will be vaild for
+10 days.
 .PP
 Example usage:
 .IP
@@ -1402,20 +1571,22 @@ quit
 .fi
 .SS renew session
 .PP
-Renews the current session, extending the time required before another
-login is required.
+Renews the current session, and enable auto-renew.
 .PP
-This is used for the institutional login option where access is granted
-on a short term basis with expiry set for 10 days from the time of
-renewal.
-The command may be useful when you have long running workflows and want
+This command may be useful when you have long running workflows and want
 to avoid subsequent login steps.
+Once the command has been issued, auto-renew will be enabled your
+session will not expire while the submission shell is running.
+.PP
+You can check the status of the auto-renew option by using the `about'
+command.
 .PP
 Example usage:
 .IP
 .nf
 \f[C]
 renew\ session
+about
 \f[]
 .fi
 .SS run
@@ -1423,18 +1594,18 @@ renew\ session
 Runs a set of commands from a plain text file.
 .PP
 Using a script can automate common tasks such as configuring your job
-environment.
+environment or submitting a job.
 .PP
 Parameters:
 .IP
 .nf
 \f[C]
-script\ \ :\ The\ plain\ text\ file\ containing\ commands.
+script\ :\ The\ plain\ text\ file\ containing\ commands.
 \f[]
 .fi
 .PP
-A specific file extension (.txt, .xyz) is not required for the filename
-and you may use the `#' character to ignore lines in the script.
+A specific file extension (.txt, .xyz) is not required for the filename.
+You may also use the `#' character to ignore lines in the script.
 .PP
 Example script:
 .SH Name: myscript
@@ -1442,7 +1613,7 @@ Example script:
 .PP
 set group /my/group set package UnixCommands set jobname myjob set
 jobtype single set memory 1g set cpus 1 set walltime 10m set description
-\[lq]a test job\[rq] submit echo \[lq]Hello World\[rq]
+\[lq]a test job\[rq] submit echo Hello World
 .PP
 Example usage:
 .IP
@@ -1461,13 +1632,18 @@ Parameters:
 .IP
 .nf
 \f[C]
-var\ \ \ \ \ :\ The\ name\ of\ the\ variable.
-value\ \ \ :\ The\ value.
+var\ \ \ :\ The\ name\ of\ the\ variable.
+value\ :\ The\ value.
 \f[]
 .fi
 .PP
-Currently only the global variables for a job can be set.
-To reset a global to a default value use the `unset ' command.
+Currently only the global variables for a job (such as the amount of
+memory to be used) can be set.
+.PP
+To the set the value of list-type variables such as `files' and `env'
+use the `add' command.
+See the help file for the `add' command for examples of setting and
+unsetting lists.
 .PP
 Example usage:
 .IP
@@ -1486,11 +1662,21 @@ Fields are defined as follows:
 .IP
 .nf
 \f[C]
-Active\ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ The\ number\ of\ jobs\ that\ are\ running\ or\ waiting\ to\ run.
-Finished\ \ \ \ \ \ \ \ \ \ \ \ :\ The\ number\ of\ jobs\ that\ have\ stopped\ running.
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Successful\ jobs\ finished\ within\ their\ walltime\ limit.
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Failed\ jobs\ were\ killed.
-Broken/Not\ found\ \ \ \ \ \ \ \ \ \ \ \ :\ These\ jobs\ have\ had\ an\ error\ before\ starting.
+Active\ \ \ \ \ \ \ \ \ \ \ :\ The\ number\ of\ jobs\ that\ are\ running\ or\ waiting\ to\ run.
+Finished\ \ \ \ \ \ \ \ \ :\ The\ number\ of\ jobs\ that\ have\ stopped\ running.\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\ Successful\ jobs\ finished\ within\ their\ walltime\ limit.
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\ Failed\ jobs\ were\ stopped\ for\ some\ reason.
+
+Broken/Not\ found\ :\ These\ jobs\ have\ had\ an\ error\ before\ starting.
+\f[]
+.fi
+.PP
+To see which jobs have failed try looking at the output of the
+stderr.txt file:
+.IP
+.nf
+\f[C]
+view\ myjob\ stderr.txt
 \f[]
 .fi
 .PP
@@ -1503,45 +1689,48 @@ status
 .fi
 .SS submit
 .PP
-Submits a new job to execute the provided command
+Submits a new job to execute a command
 .PP
-The job will be created on will wait on the queue until it is executed.
-If the submission is successful, the name of the job will be displayed.
-The job parameters are set using the global variables.
-For more information on job properties type `help globals'.
+The job will be created and will wait on a queue until it is executed.
+.PP
+The job properties (such as associated files and memory) are set using
+`global variables'.
+For more information on global varaibles type `help globals'.
 To learn more about jobs in general, see the help topic entry for Jobs:
 `help topic Jobs'.
+.PP
+Jobs can also be submitted asynchronously using `&' and the end of the
+command.
+This will complete the operation in the background and report back in
+the prompt with a `*'.
+To view pending messages, use the `print messages' command.
 .PP
 Parameters:
 .IP
 .nf
 \f[C]
-command\ \ \ \ :\ The\ command\ to\ be\ executed.
-&\ \ \ \ \ \ \ \ \ \ :\ Specifies\ asynchronous\ execution.\ \ 
+command\ :\ The\ command\ to\ be\ executed.\ \ 
 \f[]
 .fi
-.PP
-If & is specified the command will run in the background.
 .PP
 Example usage:
 .IP
 .nf
 \f[C]
-submit\ echo\ "hello\ world"
+submit\ echo\ Hello\ World
 submit\ sleep\ 100\ &
 \f[]
 .fi
 .SS unset
 .PP
-Resets an optional variable to its default value.
+Resets a list variable to its default value.
 .IP
 .nf
 \f[C]
-var\ \ \ \ \ :\ The\ name\ of\ the\ optional\ variable.
+var\ :\ The\ name\ of\ the\ list\ variable.
 \f[]
 .fi
 .PP
-Currently only the optional list variables for a job can be unset.
 To add an item to a list use the `add ' command.
 .PP
 Example usage:
@@ -1554,29 +1743,82 @@ unset\ env
 .fi
 .SS user clearCache
 .PP
-Clears the Grisu file system cache.
+Clears the file system cache.
 .PP
 You need to logout and login again to see the effects of this command.
-Be aware that the next login will take longer than usual because the
-filesystem cache is rebuilt at that stage.
+.PP
+Note: The next login will take longer than usual because the file system
+cache is rebuilt at that stage.
 .SS view
-.SS wait job
 .PP
-Waits for a job to finish on the remote compute resource.
+Prints the contents of a file.
 .PP
-This is useful in Grilci scripts where the execution will block until
-the job has finished.
-It allows for actions to be taken automatically when a job has finished.
+Once a job is submitted, a job directory is created which contains all
+the files associated with that job.
+The view command will print the contents of a specified text file in
+that job directory.
+.PP
+The command can also print the contents of a remote file without
+reference to a jobname.
+In this case, a full path name is required.
+.PP
+Note: Local file paths (e.g ~/myfile) are not currently supported.
+To view a local file use the `exec' command e.g:
+.IP
+.nf
+\f[C]
+exec\ cat\ /my/local/file\ 
+\f[]
+.fi
 .PP
 Parameters:
 .IP
 .nf
 \f[C]
-jobname\ :\ the\ name\ of\ the\ job\ on\ which\ to\ wait.\ Regular\ expressions\ are\ not\ supported.
+jobname\ \ :\ The\ name\ of\ the\ job\ which\ the\ file\ is\ associated\ with.\ (Optional)
+filename\ :\ The\ relative\ or\ full\ path\ of\ the\ file.
 \f[]
 .fi
 .PP
-Currently only a single job can be waited on.
+Example usage:
+.IP
+.nf
+\f[C]
+view\ myjob\ stdout.txt
+view\ myjob\ input/first.txt
+view\ grid://groups/nz/nesi/myfile.xyz
+view\ grid://jobs/myjob/myfile.xyz
+view\ gsiftp://some.example.server/home/myfile.xyz
+\f[]
+.fi
+.SS wait job
+.PP
+Waits for a job to finish.
+.PP
+This is useful in scripts where the execution will block until the job
+has finished.
+It allows for actions to be taken automatically when a job has finished
+e.g:
+.IP
+.nf
+\f[C]
+set\ jobname\ myjob
+submit\ echo\ Hello
+wait\ job\ myjob
+download\ job\ myjob
+\f[]
+.fi
+.PP
+Parameters:
+.IP
+.nf
+\f[C]
+jobname\ :\ The\ name\ of\ the\ job\ on\ which\ to\ wait.\ 
+\f[]
+.fi
+.PP
+Note: Regular expressions are not supported and only a single job can be
+waited on.
 .PP
 Example usage:
 .SH Files
@@ -1643,8 +1885,8 @@ transfers.
 This becomes significant if you are dealing with large files.
 .SS Remote Files
 .PP
-You may attach files from your cluster's GridFTP server by using grid://
-prefix :
+You may attach files from your cluster's GridFTP server by using
+`grid://' prefix:
 .IP
 .nf
 \f[C]
@@ -1686,8 +1928,25 @@ This makes typing long paths much more convenient
 .PP
 Currently you may view local files using the command `exec cat
 /path/to/local/file' .
-Upcoming releases will include a command to let you view local as well
-as remote files easily.
+To view remote files use the following command:
+.IP
+.nf
+\f[C]
+view\ grid://path/to/my/remote/file.txt
+view\ gsiftp://path/to/my/remote/file.txt
+\f[]
+.fi
+.PP
+The `view' command also allows you view the contents of files in the job
+directory:
+.IP
+.nf
+\f[C]
+view\ myjob\ myfile
+\f[]
+.fi
+.PP
+Note that this command will not work with jobs that have been cleaned.
 .SS Further Information
 .PP
 For more information on any of the commands, globals or concepts
@@ -1774,8 +2033,8 @@ Jobs may also have a description.
 This helps identify the job after it has been submitted.
 For more information, use the command `help description'.
 .PP
-An output file may also be specified to redirect messages from Gricli to
-a file.
+An output file may also be specified to redirect messages from the
+submission shell to a file.
 For more information see the help entry on `outputfile'.
 .PP
 The `debug' property accepts a boolean (true or false) and will display
@@ -1808,17 +2067,13 @@ output files.
 For examples, type `help view'.
 .SS Downloading Job Results
 .PP
-When a job is complete you can download the job to the location defined
-in the global `dir'.
-To ensure your job is downloaded to an appropriate directory, please
-check that the `dir' global is correct.
-.PP
-You can set the dir global with the command `set dir ' and view it with
-the command `print global dir'.
-Alternatively, you may use the `cd' and `ls' commands to navigate to the
-appropriate directory and the global `dir' will match the current
-working directory.
-To see the current working directory use the `pwd' command.
+When a job is complete you can download the job directory using the
+`download job [target_dir]' command.
+The target dir is where the job will be downloaded to.
+It is optional and by default with be downloaded to the current working
+diretory as set in the global `dir'.
+To see the current working directory use the commands `pwd' or `print
+global dir'.
 .PP
 The job files can also be archived to your home directory on the Data
 Fabric.
@@ -1849,7 +2104,7 @@ Here is an example of how you can setup, submit and download a job:
 >\ set\ walltime\ 10
 >\ set\ jobname\ echoJob
 >\ set\ description\ "Job\ to\ test\ echo\ command"
->\ submit\ echo\ "Hello\ World"
+>\ submit\ echo\ Hello\ World
 >\ print\ job\ echoJob\ status
 >\ download\ job\ echoJob
 >\ clean\ job\ echoJob\ 

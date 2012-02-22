@@ -60,6 +60,7 @@ public class GricliCommandFactory {
 		f.add(StatusCommand.class);
 
 		f.add(QuitCommand.class);
+		f.add(ExitCommand.class);
 		f.add(LogoutCommand.class);
 		f.add(HelpCommand.class);
 		f.add(AproposCommand.class);

@@ -1154,8 +1154,13 @@ Displays all details about a queue.
 
 Please be aware that the queue you are querying needs to be available for your currently setup environment.
 
-The current environment is the group you set, the application package and version you choose (if any),
-as well as the walltime, number of CPUs and memory (RAM).
+The current environment is the group you set, the application package and version you choose (if any).
+The order that these variables are set is important and they should be set in the following order:
+
+     group
+     package (optional)
+     version (optional)
+
 
 Parameters:
 
@@ -1182,8 +1187,14 @@ Example usage:
 
 Lists all queues that are available for the current environment.
 
-The current environment is the group you set, the application package and version you choose (if any),
-as well as the walltime, number of CPUs and memory (RAM).
+The current environment is the group you set, the application package and version you choose (if any).
+The order that these variables are set is important and they should be set in the following order:
+
+     group
+     package (optional)
+     version (optional)
+     
+Once the environment is defined, the print queues command will list the available queues.
 
 Parameters:
 
@@ -1191,13 +1202,21 @@ Parameters:
 
 Allowed values: 
 
-free_job_slots, gram_version, job_manager, queue_name, ramsize, rank, 
-running_jobs, site, smp_size, total_jobs, virtualramsize, waiting_jobs
+    free_job_slots : The number of free CPUs on the queue.
+    gram_version   : The job monitor version.
+    job_manager    : The job scheduling framework.
+    queue_name     : The name of the queue.
+    rank           : The number of free CPUs on the queue.
+    running_jobs   : The number of currently running jobs.
+    site           : The institution managing the queue.
+    total_jobs     : The total number of jobs, both running and queued.
+    waiting_jobs   : The number of jobs that are waiting on the queue.
     
 Example usage:
 
     print queues 
-    print queues site job_manager total_jobs rank
+    print queues site
+    print queues site job_manager
 
 
 
@@ -1231,14 +1250,17 @@ Example usage:
 ## renew session
 
 
-Renews the current session, extending the time required before another login is required.
+Renews the current session, and enable auto-renew.
 
-This is used for the Institutional Login option where access is granted on a short term basis with expiry set for 10 days from the time of renewal.
-The command may be useful when you have long running workflows and want to avoid subsequent login steps.
+This command may be useful when you have long running workflows and want to avoid subsequent login steps.
+Once the command has been issued, auto-renew will be enabled your session will not expire while the submission shell is running.
+
+You can check the status of the auto-renew option by using the 'about' command.
 
 Example usage:
 
     renew session
+    about
 
 
 
