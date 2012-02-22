@@ -8,6 +8,7 @@ import grisu.control.exceptions.NoValidCredentialException;
 import grisu.control.exceptions.ServiceInterfaceException;
 import grisu.frontend.control.login.LoginException;
 import grisu.frontend.control.login.LoginManager;
+import grisu.jcommons.constants.GridEnvironment;
 import grisu.utils.SeveralStringHelpers;
 import grith.jgrith.control.LoginParams;
 import grith.jgrith.credential.Credential;
@@ -49,8 +50,10 @@ public class Gricli {
 	public static final String SUBMISSIONLOCATION_PLACEHOLDER = "XXX_SUBMISSIONLOCATION_XXX";
 	public static final String USEREXECUTIONHOSTFS_PLACEHOLDER = "XXX_USEREXECUTIONHOSTFS";
 	public static final String MEMORY_PLACEHOLDER = "XXX_MEMORY_XXX";
-	public static final String DEFAULT_MYPROXY_SERVER = "myproxy.arcs.org.au";
-	public static final String DEFAULT_MYPROXY_PORT = "443";
+
+	// public static final String DEFAULT_MYPROXY_SERVER =
+	// "myproxy.arcs.org.au";
+	// public static final String DEFAULT_MYPROXY_PORT = "443";
 
 	/**
 	 * @param args
@@ -508,7 +511,8 @@ public class Gricli {
 
 		final LoginParams loginParams = new LoginParams(
 				clientProperties.getServiceInterfaceUrl(), username, password,
-				DEFAULT_MYPROXY_SERVER, DEFAULT_MYPROXY_PORT);
+				GridEnvironment.getDefaultMyProxyServer(),
+				Integer.toString(GridEnvironment.getDefaultMyProxyPort()));
 
 		serviceInterface = LoginManager.myProxyLogin(username, password,
 				clientProperties.getServiceInterfaceUrl(), true);
