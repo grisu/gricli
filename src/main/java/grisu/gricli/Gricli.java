@@ -345,6 +345,7 @@ public class Gricli {
 				if (cl.hasOption('m')) {
 
 					String host = cl.getOptionValue('m');
+					myLogger.debug("Setting myproxy host: {}", host);
 					LoginManager.myProxyHost = host;
 
 				}

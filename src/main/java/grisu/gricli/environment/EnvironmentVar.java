@@ -18,7 +18,7 @@ public class EnvironmentVar extends GricliVar<Hashtable<String, String>> {
 	}
 
 	@Override
-	protected Hashtable<String, String> fromStrings(String[] args)
+	public Hashtable<String, String> fromStrings(String[] args)
 			throws GricliSetValueException {
 		if (StringUtils.isNotBlank(args[0])) {
 			throw new GricliSetValueException(getName(), "",

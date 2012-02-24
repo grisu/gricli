@@ -35,7 +35,7 @@ public abstract class GricliVar<T> implements Comparable<GricliVar> {
 		}
 	}
 
-	protected abstract T fromStrings(String[] args)
+	public abstract T fromStrings(String[] args)
 			throws GricliSetValueException;
 
 	public T get() {
@@ -64,7 +64,9 @@ public abstract class GricliVar<T> implements Comparable<GricliVar> {
 	}
 
 	public void set(T value) throws GricliSetValueException {
+
 		this.value = value;
+
 		for (final GricliVarListener<T> listener : listeners) {
 			listener.valueChanged(this.value);
 		}
@@ -72,6 +74,15 @@ public abstract class GricliVar<T> implements Comparable<GricliVar> {
 
 	protected void setPersistent(boolean persistent) {
 		this.persistent = persistent;
+	}
+
+	public void setValue(Object value) throws GricliSetValueException {
+		try {
+			set((T) value);
+		} catch (ClassCastException cce) {
+			throw new GricliSetValueException(name, value.toString(),
+					"Wrong type");
+		}
 	}
 
 	@Override
