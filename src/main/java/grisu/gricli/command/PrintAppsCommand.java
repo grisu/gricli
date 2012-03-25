@@ -5,7 +5,7 @@ import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.ApplicationCompletor;
 import grisu.gricli.completors.ApplicationVersionCompletor;
 import grisu.gricli.environment.GricliEnvironment;
-import grisu.gricli.util.OutputHelpers;
+import grisu.jcommons.utils.OutputHelpers;
 import grisu.model.GrisuRegistryManager;
 import grisu.model.info.UserApplicationInformation;
 import grisu.utils.ServiceInterfaceUtils;

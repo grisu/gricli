@@ -2,7 +2,7 @@ package grisu.gricli.command;
 
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.environment.GricliEnvironment;
-import grisu.utils.WalltimeUtils;
+import grisu.jcommons.utils.WalltimeUtils;
 import grith.jgrith.credential.Credential;
 
 public class RefreshProxyCommand implements GricliCommand {

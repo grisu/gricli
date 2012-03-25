@@ -4,7 +4,7 @@ import grisu.control.JobConstants;
 import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.environment.GricliEnvironment;
-import grisu.gricli.util.OutputHelpers;
+import grisu.jcommons.utils.OutputHelpers;
 import grisu.model.dto.DtoJob;
 
 import java.util.Map;

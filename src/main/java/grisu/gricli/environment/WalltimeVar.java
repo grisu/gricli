@@ -1,7 +1,7 @@
 package grisu.gricli.environment;
 
 import grisu.gricli.GricliSetValueException;
-import grisu.utils.WalltimeUtils;
+import grisu.jcommons.utils.WalltimeUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -2,9 +2,9 @@ package grisu.gricli.command;
 
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.environment.GricliEnvironment;
-import grisu.gricli.util.OutputHelpers;
 import grisu.jcommons.constants.Constants;
-import grisu.utils.WalltimeUtils;
+import grisu.jcommons.utils.OutputHelpers;
+import grisu.jcommons.utils.WalltimeUtils;
 import grith.jgrith.credential.Credential;
 
 import java.util.Map;

@@ -2,7 +2,7 @@ package grisu.gricli.command;
 
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.environment.GricliEnvironment;
-import grisu.gricli.util.OutputHelpers;
+import grisu.jcommons.utils.OutputHelpers;
 import grisu.model.status.StatusObject;
 
 import java.util.Map;

@@ -3,7 +3,7 @@ package grisu.gricli.command;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.TaskIdCompletor;
 import grisu.gricli.environment.GricliEnvironment;
-import grisu.gricli.util.OutputHelpers;
+import grisu.jcommons.utils.OutputHelpers;
 import grisu.model.dto.DtoActionStatus;
 import grisu.model.status.StatusObject;
 
