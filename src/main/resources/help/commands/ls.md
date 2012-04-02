@@ -1,4 +1,4 @@
-Command: ls [jobname_or_path]
+Command: ls [jobname_or_path] [output_filename]
 
 Lists a jobdirectory, the current directory or the directory/file that is specified by the path.
 
