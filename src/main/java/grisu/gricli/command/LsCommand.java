@@ -54,12 +54,19 @@ public class LsCommand implements GricliCommand {
 		} else if (job_or_filename.length == 1) {
 			// means list url
 			urlToList = job_or_filename[0];
+
+			Set<String> alljobnames = env.getGrisuRegistry()
+					.getUserEnvironmentManager().getReallyAllJobnames(false);
+			if (alljobnames.contains(urlToList)) {
+				urlToList = "grid://jobs/active/" + urlToList;
+			}
+
 		} else if (job_or_filename.length == 2) {
 			// means list jobdirectory
 			String jobname = job_or_filename[0];
 			String filename = job_or_filename[1];
 
-			urlToList = "grid://jobs/" + jobname + "/" + filename;
+			urlToList = "grid://jobs/active/" + jobname + "/" + filename;
 
 		} else {
 			throw new GricliRuntimeException(
