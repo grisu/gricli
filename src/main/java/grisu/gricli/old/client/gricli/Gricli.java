@@ -8,7 +8,6 @@ import grisu.control.exceptions.NoValidCredentialException;
 import grisu.control.exceptions.ServiceInterfaceException;
 import grisu.frontend.control.login.LoginException;
 import grisu.frontend.control.login.LoginManager;
-import grisu.jcommons.constants.GridEnvironment;
 import grisu.utils.SeveralStringHelpers;
 import grith.jgrith.control.LoginParams;
 import grith.jgrith.credential.Credential;
@@ -511,8 +510,7 @@ public class Gricli {
 
 		final LoginParams loginParams = new LoginParams(
 				clientProperties.getServiceInterfaceUrl(), username, password,
-				GridEnvironment.getDefaultMyProxyServer(),
-				Integer.toString(GridEnvironment.getDefaultMyProxyPort()));
+				null, null);
 
 		serviceInterface = LoginManager.myProxyLogin(username, password,
 				clientProperties.getServiceInterfaceUrl(), true);

@@ -34,6 +34,23 @@ public class PrintQueuesCommand implements GricliCommand {
 
 	private static String[] PROPERTY_NAMES = null;
 
+	public static Set<String> calculateAllAvailableQueues(GricliEnvironment env) throws GricliRuntimeException {
+
+
+		final String fqan = (String) env.getVariable("group").get();
+
+		final JobSubmissionObjectImpl job = env.getJob();
+
+		final ApplicationInformation ai = env.getGrisuRegistry()
+				.getApplicationInformation(job.getApplication());
+		final Set<String> grs = ai.getQueues(job.getJobSubmissionPropertyMap(),
+				fqan);
+
+		return grs;
+	}
+
+
+
 	public static String[] getGridResourcePropertyNames() {
 		if (PROPERTY_NAMES == null) {
 			PROPERTY_NAMES = new String[PROPERTY.values().length];
@@ -45,55 +62,8 @@ public class PrintQueuesCommand implements GricliCommand {
 		return PROPERTY_NAMES;
 	}
 
-	// private static String getGridResourceValue(GridResource gr, String
-	// property)
-	// throws GricliRuntimeException {
-	//
-	// try {
-	// final PROPERTY p = PROPERTY.valueOf(property);
-	//
-	// switch (p) {
-	// case rank:
-	// return new Integer(gr.getRank()).toString();
-	// case site:
-	// return gr.getSiteName();
-	// case queue_name:
-	// return gr.getQueueName();
-	// case job_manager:
-	// return gr.getJobManager();
-	// case gram_version:
-	// return gr.getGRAMVersion();
-	// // case ramsize:
-	// // return new Integer(gr.getMainMemoryRAMSize()).toString();
-	// // case virtualramsize:
-	// // return new Integer(gr.getMainMemoryVirtualSize()).toString();
-	// // case smp_size:
-	// // return new Integer(gr.getSmpSize()).toString();
-	// case total_jobs:
-	// return new Integer(gr.getTotalJobs()).toString();
-	// case running_jobs:
-	// return new Integer(gr.getRunningJobs()).toString();
-	// case waiting_jobs:
-	// return new Integer(gr.getWaitingJobs()).toString();
-	// case free_job_slots:
-	// return new Integer(gr.getFreeJobSlots()).toString();
-	// }
-	//
-	// return p.prettyName;
-	// } catch (final IllegalArgumentException e) {
-	// throw new GricliRuntimeException("Property \"" + property
-	// + "\" not valid. Allowed values: "
-	// + StringUtils.join(getGridResourcePropertyNames(), ", "));
-	// }
-	//
-	// }
 
 	private final String[] propertiesToDisplay;
-
-	// @SyntaxDescription(command={"print","queues"})
-	// public PrintQueuesCommand(){
-	// this(new String[] { "rank" });
-	// }
 
 	@SyntaxDescription(command = { "print", "queues" }, arguments = { "properties" })
 	@AutoComplete(completors = { GridResourcePropertyCompletor.class })
@@ -105,19 +75,9 @@ public class PrintQueuesCommand implements GricliCommand {
 		}
 	}
 
-	public void execute(GricliEnvironment env)
-			throws GricliRuntimeException {
+	public void execute(GricliEnvironment env) throws GricliRuntimeException {
 
-		final String fqan = (String) env.getVariable("group").get();
-
-		final JobSubmissionObjectImpl job = env.getJob();
-
-		// UserEnvironmentManager uem =
-		// env.getGrisuRegistry().getUserEnvironmentManager();
-		final ApplicationInformation ai = env.getGrisuRegistry()
-				.getApplicationInformation(job.getApplication());
-		final Set<String> grs = ai.getQueues(job.getJobSubmissionPropertyMap(),
-				fqan);
+		final Set<String> grs = calculateAllAvailableQueues(env);
 
 		if ((grs == null) || (grs.size() == 0)) {
 			env.printMessage("No queues available for your currently setup environment. Maybe try to set another group/application?");
