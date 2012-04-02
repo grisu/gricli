@@ -5,6 +5,8 @@ import grisu.control.exceptions.RemoteFileSystemException;
 import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.FileCompletor;
+import grisu.gricli.completors.JobDirFileCompletor;
+import grisu.gricli.completors.LsCompletor;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.utils.FileAndUrlHelpers;
 import grisu.jcommons.utils.OutputHelpers;
@@ -23,18 +25,18 @@ import org.python.google.common.collect.Sets;
 
 public class LsCommand implements GricliCommand {
 
-	final private String url;
+	final private String[] job_or_filename;
 
 	@SyntaxDescription(command = { "ls" }, arguments = {})
 	@AutoComplete(completors = { FileCompletor.class })
 	public LsCommand() {
-		this.url = null;
+		this.job_or_filename = null;
 	}
 
 	@SyntaxDescription(command = { "ls" }, arguments = { "url" })
-	@AutoComplete(completors = { FileCompletor.class })
-	public LsCommand(String url) {
-		this.url = url;
+	@AutoComplete(completors = { LsCompletor.class, JobDirFileCompletor.class })
+	public LsCommand(String... job_or_filename) {
+		this.job_or_filename = job_or_filename;
 	}
 
 	public void execute(GricliEnvironment env)
@@ -44,10 +46,26 @@ public class LsCommand implements GricliCommand {
 		final FileManager fm = GrisuRegistryManager.getDefault(si)
 				.getFileManager();
 
-		String urlToList = url;
-		if (StringUtils.isBlank(urlToList)) {
+		String urlToList = null;
+		if ((job_or_filename == null) || (job_or_filename.length == 0)
+				|| StringUtils.isBlank(job_or_filename[0])) {
+			// means list current directory
 			urlToList = env.dir.toString();
+		} else if (job_or_filename.length == 1) {
+			// means list url
+			urlToList = job_or_filename[0];
+		} else if (job_or_filename.length == 2) {
+			// means list jobdirectory
+			String jobname = job_or_filename[0];
+			String filename = job_or_filename[1];
+
+			urlToList = "grid://jobs/" + jobname + "/" + filename;
+
+		} else {
+			throw new GricliRuntimeException(
+					"Wrong format. Please type 'help ls' for information on how to use 'ls'");
 		}
+
 
 		try {
 			final GridFile list = fm.ls(urlToList);
