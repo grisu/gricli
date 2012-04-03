@@ -15,6 +15,7 @@ import grisu.gricli.completors.DummyCompletionCache;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.environment.GricliVar;
 import grisu.gricli.parser.GricliTokenizer;
+import grisu.jcommons.dependencies.BouncyCastleTool;
 import grisu.jcommons.utils.EnvironmentVariableHelpers;
 import grisu.jcommons.utils.VariousStringHelpers;
 import grisu.jcommons.view.cli.CliHelpers;
@@ -264,6 +265,14 @@ public class Gricli {
 
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
+
+		try {
+			BouncyCastleTool.initBouncyCastle();
+		} catch (ClassNotFoundException e1) {
+			System.err
+					.println("Can't load bouncycastle security provider. Please contact support.");
+			System.exit(1);
+		}
 
 		configLogging();
 
