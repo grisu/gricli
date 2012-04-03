@@ -19,6 +19,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import jline.NullCompletor;
+
 import org.apache.commons.lang.StringUtils;
 import org.python.google.common.collect.Lists;
 import org.python.google.common.collect.Sets;
@@ -34,7 +36,8 @@ public class LsCommand implements GricliCommand {
 	}
 
 	@SyntaxDescription(command = { "ls" }, arguments = { "url" })
-	@AutoComplete(completors = { LsCompletor.class, JobDirFileCompletor.class })
+	@AutoComplete(completors = { LsCompletor.class, JobDirFileCompletor.class,
+			NullCompletor.class })
 	public LsCommand(String... job_or_filename) {
 		this.job_or_filename = job_or_filename;
 	}
