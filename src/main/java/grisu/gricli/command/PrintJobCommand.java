@@ -89,6 +89,7 @@ public class PrintJobCommand implements GricliCommand {
 
 	private void printJob(GricliEnvironment env, ServiceInterface si, String j)
 			throws NoSuchJobException {
+		si.getJobStatus(j);
 		final DtoJob job = si.getJob(j);
 		env.printMessage("Printing details for job " + jobname + "\n");
 		// env.printMessage("status: "
