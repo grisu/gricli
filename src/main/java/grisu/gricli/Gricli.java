@@ -15,8 +15,6 @@ import grisu.gricli.completors.DummyCompletionCache;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.environment.GricliVar;
 import grisu.gricli.parser.GricliTokenizer;
-import grisu.jcommons.dependencies.BouncyCastleTool;
-import grisu.jcommons.utils.EnvironmentVariableHelpers;
 import grisu.jcommons.utils.VariousStringHelpers;
 import grisu.jcommons.view.cli.CliHelpers;
 import grisu.jcommons.view.cli.LineByLineProgressDisplay;
@@ -266,34 +264,22 @@ public class Gricli {
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
 
+		configLogging();
+
 		try {
-			BouncyCastleTool.initBouncyCastle();
-		} catch (ClassNotFoundException e1) {
-			System.err
-					.println("Can't load bouncycastle security provider. Please contact support.");
+			LoginManager.initGrisuClient("gricli");
+		} catch (Exception e) {
+			System.err.println("Can't initialize environment: "
+					+ e.getLocalizedMessage());
 			System.exit(1);
 		}
 
-		configLogging();
-
-		Thread.currentThread().setName("main");
-
-		LoginManager.setClientName("gricli");
-
-		LoginManager.setClientVersion(grisu.jcommons.utils.Version
-				.get("gricli"));
-
-		EnvironmentVariableHelpers.loadEnvironmentVariablesToSystemProperties();
 
 		Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
 
 		CliHelpers.setProgressDisplay(new LineByLineProgressDisplay());
 
 
-		// MDC.put("local_user", System.getProperty("user.name"));
-		// MDC.put("gricli-version", Version.get("gricli"));
-
-		LoginManager.initEnvironment();
 
 		final Thread t = new Thread() {
 			@Override
