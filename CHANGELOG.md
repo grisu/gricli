@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.7.2
+-----
+
+* fix for temporary files not getting deleted after job download
+
 0.7
 ---
 
