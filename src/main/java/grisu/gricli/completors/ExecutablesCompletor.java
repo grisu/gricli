@@ -5,6 +5,7 @@ import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 import grisu.model.info.ApplicationInformation;
+import grisu.model.info.dto.Executable;
 
 import java.util.List;
 import java.util.Set;
@@ -48,7 +49,7 @@ public class ExecutablesCompletor implements Completor {
 					.getApplicationInformation(
 							(String) env.getVariable("application").get());
 
-			final Set<String> exes = ai.getExecutablesForVo(fqan, version);
+			final Set<Executable> exes = ai.getExecutablesForVo(fqan, version);
 
 			if (exes.size() == 0) {
 				return -1;

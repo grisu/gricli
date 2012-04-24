@@ -29,6 +29,38 @@
 	<dependencies>
 
 		<dependency>
+			<groupId>ma.glasnost.orika</groupId>
+			<artifactId>orika-core</artifactId>
+			<version>1.1.0</version>
+			<exclusions>
+			<exclusion>
+			    <groupId>org.slf4j</groupId>
+          		<artifactId>slf4j-simple</artifactId>
+			</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<!-- the main grisu dependency. -->
+		
+		<dependency>
+			<groupId>grisu</groupId>
+			<artifactId>grisu-commons</artifactId>
+			<version>${grisu.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>grisu.frontend</groupId>
+			<artifactId>grisu-client</artifactId>
+			<version>${grisu.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>grisu.backend</groupId>
+			<artifactId>grisu-core</artifactId>
+			<version>${grisu.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>external.jline</groupId>
 			<artifactId>jline</artifactId>
 			<version>bestgrid-0.9.95-2</version>
@@ -39,13 +71,6 @@
 			<artifactId>easymock</artifactId>
 			<version>3.0</version>
 			<scope>test</scope>
-		</dependency>
-
-		<!-- the main grisu dependency. -->
-		<dependency>
-			<groupId>grisu.frontend</groupId>
-			<artifactId>grisu-client</artifactId>
-			<version>${grisu.version}</version>
 		</dependency>
 
 		<dependency>
@@ -92,12 +117,6 @@
 			<groupId>me.moocar</groupId>
 			<artifactId>logback-gelf</artifactId>
 			<version>nz.0.9.7</version>
-		</dependency>
-		<dependency>
-			<groupId>grisu.backend</groupId>
-			<artifactId>grisu-core</artifactId>
-			<version>${grisu.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
