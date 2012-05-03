@@ -4,10 +4,11 @@ import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.GridResourcePropertyCompletor;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.model.info.ApplicationInformation;
+import grisu.model.info.dto.Queue;
 import grisu.model.job.JobSubmissionObjectImpl;
 
 import java.util.Arrays;
-import java.util.Set;
+import java.util.List;
 
 public class PrintQueuesCommand implements GricliCommand {
 
@@ -34,7 +35,8 @@ public class PrintQueuesCommand implements GricliCommand {
 
 	private static String[] PROPERTY_NAMES = null;
 
-	public static Set<String> calculateAllAvailableQueues(GricliEnvironment env) throws GricliRuntimeException {
+	public static List<Queue> calculateAllAvailableQueues(GricliEnvironment env)
+			throws GricliRuntimeException {
 
 
 		final String fqan = (String) env.getVariable("group").get();
@@ -43,7 +45,7 @@ public class PrintQueuesCommand implements GricliCommand {
 
 		final ApplicationInformation ai = env.getGrisuRegistry()
 				.getApplicationInformation(job.getApplication());
-		final Set<String> grs = ai.getQueues(job.getJobSubmissionPropertyMap(),
+		final List<Queue> grs = ai.getQueues(job.getJobSubmissionPropertyMap(),
 				fqan);
 
 		return grs;
@@ -77,15 +79,17 @@ public class PrintQueuesCommand implements GricliCommand {
 
 	public void execute(GricliEnvironment env) throws GricliRuntimeException {
 
-		final Set<String> grs = calculateAllAvailableQueues(env);
+		final List<Queue> grs = calculateAllAvailableQueues(env);
 
 		if ((grs == null) || (grs.size() == 0)) {
 			env.printMessage("No queues available for your currently setup environment. Maybe try to set another group/application?");
 			return;
 		}
 
-		for (String output : grs) {
-			env.printMessage(output);
+		for (Queue q : grs) {
+			env.printMessage(q.toString() + " ("
+					+ q.getGateway().getSite().getName()
+					+ ")");
 		}
 
 	}

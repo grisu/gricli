@@ -3,10 +3,22 @@ package grisu.gricli.command;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.QueueCompletor;
 import grisu.gricli.environment.GricliEnvironment;
+import grisu.jcommons.utils.OutputHelpers;
 import grisu.model.info.ApplicationInformation;
+import grisu.model.info.dto.DynamicInfo;
+import grisu.model.info.dto.Package;
+import grisu.model.info.dto.Queue;
+import grisu.model.info.dto.Version;
 import grisu.model.job.JobSubmissionObjectImpl;
 
-import java.util.Set;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import org.python.google.common.collect.Maps;
+
+import com.google.common.base.Functions;
+import com.google.common.collect.Collections2;
 
 public class PrintQueueCommand implements GricliCommand {
 
@@ -29,17 +41,80 @@ public class PrintQueueCommand implements GricliCommand {
 		// env.getGrisuRegistry().getUserEnvironmentManager();
 		final ApplicationInformation ai = env.getGrisuRegistry()
 				.getApplicationInformation(job.getApplication());
-		final Set<String> grs = ai.getQueues(job.getJobSubmissionPropertyMap(),
+		final List<Queue> grs = ai.getQueues(job.getJobSubmissionPropertyMap(),
 				fqan);
 
-
-		if ((grs == null) || !grs.contains(queue)) {
+		Queue q = null;
+		if ((grs == null)) {
 			env.printError("Queue not available for current job setup.");
+			return;
+		} else {
+
+			Collection<String> subLocs = Collections2.transform(grs,
+					Functions.toStringFunction());
+
+			for (Queue qu : grs) {
+				if (qu.toString().equals(queue)) {
+					q = qu;
+					break;
+				}
+			}
+
+			if (q == null) {
+				env.printError("Queue not available for current job setup.");
+				return;
+			}
+
 		}
 
-		// final String output = formatOutput(match);
-		// TODO get more information about queue
+		env.printMessage("");
 		env.printMessage("Queue is valid for current job setup.");
+		env.printMessage("");
+		env.printMessage("Queue details");
+		env.printMessage("");
+
+		Map<String, String> details = Maps.newLinkedHashMap();
+
+		details.put("Name", q.getName());
+		details.put("Description", q.getDescription());
+		details.put("Max. walltime", Integer.toString(q.getWalltimeInMinutes()));
+		details.put("CPUs", Integer.toString(q.getCpus()));
+		details.put("Clockspeed (MHz)",
+				Double.toString(q.getClockspeedInHz() / 1000000));
+		details.put("CPUs per host", Integer.toString(q.getCpusPerHost()));
+		details.put("Hosts", Integer.toString(q.getHosts()));
+		details.put("Scheduler type", q.getFactoryType());
+		details.put("Gateway", q.getGateway().getHost());
+		details.put("Memory", Long.toString(q.getMemory()));
+		details.put("Virtual memory", Long.toString(q.getVirtualMemory()));
+
+		if (q.getDynamicInfo().size() > 0) {
+			details.put("Dynamic info", "");
+			for (DynamicInfo di : q.getDynamicInfo()) {
+				details.put("  " + di.getType(), di.getValue());
+			}
+		}
+
+		String output = OutputHelpers.getTable(details);
+
+		details = Maps.newLinkedHashMap();
+
+		if (q.getPackages().size() > 0) {
+			output = output + "\nPackages installed:\n\n";
+
+			details.put("Name", "Version");
+			for ( Package p : q.getPackages() ) {
+				if (!p.getVersion().getVersion()
+						.equals(Version.ANY_VERSION.getVersion())) {
+					details.put(p.getApplication().getName(), p.getVersion()
+							.getVersion());
+				}
+			}
+		}
+
+		output = output + OutputHelpers.getTable(details);
+		env.printMessage(output);
+
 
 	}
 
