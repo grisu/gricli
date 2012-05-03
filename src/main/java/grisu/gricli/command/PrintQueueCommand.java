@@ -3,7 +3,9 @@ package grisu.gricli.command;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.QueueCompletor;
 import grisu.gricli.environment.GricliEnvironment;
+import grisu.jcommons.utils.MemoryUtils;
 import grisu.jcommons.utils.OutputHelpers;
+import grisu.jcommons.utils.WalltimeUtils;
 import grisu.model.info.ApplicationInformation;
 import grisu.model.info.dto.DynamicInfo;
 import grisu.model.info.dto.Package;
@@ -77,7 +79,14 @@ public class PrintQueueCommand implements GricliCommand {
 
 		details.put("Name", q.getName());
 		details.put("Description", q.getDescription());
-		details.put("Max. walltime", Integer.toString(q.getWalltimeInMinutes()));
+		int wt = q.getWalltimeInMinutes();
+		if ((wt == 0) || (wt == Integer.MAX_VALUE) || (wt == Integer.MIN_VALUE)) {
+			details.put("Max. walltime", "N/A");
+		} else {
+			String[] walltime = WalltimeUtils
+					.convertSecondsInHumanReadableString(wt);
+			details.put("Max. walltime", walltime[0] + " " + walltime[1]);
+		}
 		details.put("CPUs", Integer.toString(q.getCpus()));
 		details.put("Clockspeed (MHz)",
 				Double.toString(q.getClockspeedInHz() / 1000000));
@@ -85,8 +94,10 @@ public class PrintQueueCommand implements GricliCommand {
 		details.put("Hosts", Integer.toString(q.getHosts()));
 		details.put("Scheduler type", q.getFactoryType());
 		details.put("Gateway", q.getGateway().getHost());
-		details.put("Memory", Long.toString(q.getMemory()));
-		details.put("Virtual memory", Long.toString(q.getVirtualMemory()));
+		details.put("Memory",
+				MemoryUtils.humanReadableByteCount(q.getMemory(), false));
+		details.put("Virtual memory",
+				MemoryUtils.humanReadableByteCount(q.getVirtualMemory(), false));
 
 		if (q.getDynamicInfo().size() > 0) {
 			details.put("Dynamic info", "");

@@ -1,39 +1,37 @@
 package grisu.gricli.command;
 
 import grisu.gricli.GricliRuntimeException;
-import grisu.gricli.completors.GridResourcePropertyCompletor;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.model.info.ApplicationInformation;
 import grisu.model.info.dto.Queue;
 import grisu.model.job.JobSubmissionObjectImpl;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class PrintQueuesCommand implements GricliCommand {
 
-	enum PROPERTY {
-		rank("Rank"),
-		site("Site"),
-		queue_name("Queue name"),
-		job_manager("Job manager"),
-		gram_version("Gram version"),
-		// ramsize("Main memory RAM size"),
-		// virtualramsize("Main memory virtual size"),
-		// smp_size("SMP size"),
-		total_jobs("Total jobs"),
-		running_jobs("Running jobs"),
-		waiting_jobs("Waiting jobs"),
-		free_job_slots("Free job slots");
+	// enum PROPERTY {
+	// rank("Rank"),
+	// site("Site"),
+	// queue_name("Queue name"),
+	// job_manager("Job manager"),
+	// gram_version("Gram version"),
+	// // ramsize("Main memory RAM size"),
+	// // virtualramsize("Main memory virtual size"),
+	// // smp_size("SMP size"),
+	// total_jobs("Total jobs"),
+	// running_jobs("Running jobs"),
+	// waiting_jobs("Waiting jobs"),
+	// free_job_slots("Free job slots");
+	//
+	// String prettyName;
+	//
+	// private PROPERTY(String prettyName) {
+	// this.prettyName = prettyName;
+	// }
+	// }
 
-		String prettyName;
-
-		private PROPERTY(String prettyName) {
-			this.prettyName = prettyName;
-		}
-	}
-
-	private static String[] PROPERTY_NAMES = null;
+	// private static String[] PROPERTY_NAMES = null;
 
 	public static List<Queue> calculateAllAvailableQueues(GricliEnvironment env)
 			throws GricliRuntimeException {
@@ -53,28 +51,28 @@ public class PrintQueuesCommand implements GricliCommand {
 
 
 
-	public static String[] getGridResourcePropertyNames() {
-		if (PROPERTY_NAMES == null) {
-			PROPERTY_NAMES = new String[PROPERTY.values().length];
-			for (int i = 0; i < PROPERTY.values().length; i++) {
-				PROPERTY_NAMES[i] = PROPERTY.values()[i].toString();
-			}
-			Arrays.sort(PROPERTY_NAMES);
-		}
-		return PROPERTY_NAMES;
-	}
+	// public static String[] getGridResourcePropertyNames() {
+	// if (PROPERTY_NAMES == null) {
+	// PROPERTY_NAMES = new String[PROPERTY.values().length];
+	// for (int i = 0; i < PROPERTY.values().length; i++) {
+	// PROPERTY_NAMES[i] = PROPERTY.values()[i].toString();
+	// }
+	// Arrays.sort(PROPERTY_NAMES);
+	// }
+	// return PROPERTY_NAMES;
+	// }
 
 
-	private final String[] propertiesToDisplay;
+	// private final String[] propertiesToDisplay;
 
-	@SyntaxDescription(command = { "print", "queues" }, arguments = { "properties" })
-	@AutoComplete(completors = { GridResourcePropertyCompletor.class })
+	@SyntaxDescription(command = { "print", "queues" })
+	// @AutoComplete(completors = { GridResourcePropertyCompletor.class })
 	public PrintQueuesCommand(String... properties) {
-		if (properties.length == 0) {
-			this.propertiesToDisplay = new String[] { "rank" };
-		} else {
-			this.propertiesToDisplay = properties;
-		}
+		// if (properties.length == 0) {
+		// this.propertiesToDisplay = new String[] { "site" };
+		// } else {
+		// this.propertiesToDisplay = properties;
+		// }
 	}
 
 	public void execute(GricliEnvironment env) throws GricliRuntimeException {
