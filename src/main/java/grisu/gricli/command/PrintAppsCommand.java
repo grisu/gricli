@@ -10,6 +10,7 @@ import grisu.model.GrisuRegistryManager;
 import grisu.model.info.UserApplicationInformation;
 import grisu.model.info.dto.Application;
 import grisu.model.info.dto.Queue;
+import grisu.model.info.dto.Version;
 import grisu.utils.ServiceInterfaceUtils;
 
 import java.util.LinkedList;
@@ -84,19 +85,20 @@ public class PrintAppsCommand implements GricliCommand {
 			final UserApplicationInformation m = GrisuRegistryManager
 					.getDefault(si)
 					.getUserApplicationInformation(app.getName());
-			final Set<String> versions = m.getAllAvailableVersionsForUser();
-			for (final String version : versions) {
-				if (!FilenameUtils.wildcardMatch(version, this.version,
+			final Set<Version> versions = m.getAllAvailableVersionsForUser();
+			for (final Version version : versions) {
+				if (!FilenameUtils.wildcardMatch(version.getVersion(),
+						this.version,
 						IOCase.INSENSITIVE)) {
 					continue;
 				}
 				final Set<Queue> sublocs = m
 						.getAvailableSubmissionLocationsForVersionAndFqan(
-								version, env.group.get());
+								version.getVersion(), env.group.get());
 
 				final List<String> row = new LinkedList<String>();
 				row.add(app.getName());
-				row.add(version);
+				row.add(version.getVersion());
 				row.add("");
 				table.add(row);
 				for (final Queue subloc : sublocs) {
