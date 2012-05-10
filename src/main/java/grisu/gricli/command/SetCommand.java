@@ -8,10 +8,11 @@ import grisu.gricli.environment.GricliVar;
 import grisu.jcommons.constants.Constants;
 import grisu.jcommons.constants.JobSubmissionProperty;
 import grisu.model.info.ApplicationInformation;
+import grisu.model.info.dto.Queue;
 import grisu.model.job.JobSubmissionObjectImpl;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.python.google.common.collect.Maps;
@@ -65,11 +66,11 @@ public class SetCommand implements GricliCommand {
 			final String app = env.application.get();
 			final ApplicationInformation ai = env.getGrisuRegistry()
 					.getApplicationInformation(app);
-			final Set<String> allQueues = ai.getQueues(props, fqan);
+			final List<Queue> allQueues = ai.getQueues(props, fqan);
 
-			if (!allQueues.contains(values[0])) {
+			if (Queue.getQueue(allQueues, values[0]) == null) {
 				throw new GricliRuntimeException("Queue '" + values[0]
-								+ "' not a valid queuename or queue not available for the currently specified job parameters.");
+						+ "' not a valid queuename or queue not available for the currently specified job parameters.");
 			}
 		} else {
 
@@ -96,10 +97,10 @@ public class SetCommand implements GricliCommand {
 			final String app = env.application.get();
 			final ApplicationInformation ai = env.getGrisuRegistry()
 					.getApplicationInformation(app);
-			final Set<String> queues = ai.getQueues(props, fqan);
+			final List<Queue> queues = ai.getQueues(props, fqan);
 
-
-			if ((queues == null) || !queues.contains(queue)) {
+			Queue q = Queue.getQueue(queues, queue);
+			if (q == null) {
 
 				env.getVariable(global).setValue(oldValue);
 

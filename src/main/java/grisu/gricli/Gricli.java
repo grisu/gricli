@@ -91,6 +91,10 @@ public class Gricli {
 	public static final int MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST = 259200;
 
 	private static void configLogging() {
+		LoggerContext lc2 = (LoggerContext) LoggerFactory.getILoggerFactory();
+		// print logback's internal status
+		StatusPrinter.print(lc2);
+
 		// stop javaxws logging
 		java.util.logging.LogManager.getLogManager().reset();
 		java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);
@@ -122,6 +126,8 @@ public class Gricli {
 			StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
 
 		}
+
+
 	}
 
 	private static void executionLoop() throws IOException {

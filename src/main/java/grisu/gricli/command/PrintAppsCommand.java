@@ -8,6 +8,9 @@ import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.utils.OutputHelpers;
 import grisu.model.GrisuRegistryManager;
 import grisu.model.info.UserApplicationInformation;
+import grisu.model.info.dto.Application;
+import grisu.model.info.dto.Queue;
+import grisu.model.info.dto.Version;
 import grisu.utils.ServiceInterfaceUtils;
 
 import java.util.LinkedList;
@@ -55,18 +58,20 @@ public class PrintAppsCommand implements GricliCommand {
 	private void printApplications(GricliEnvironment env)
 			throws GricliRuntimeException {
 		final ServiceInterface si = env.getServiceInterface();
-		final List<String> apps = ServiceInterfaceUtils.filterApplicationNames(
-				si, "*");
-		for (final String app : apps) {
-			env.printMessage(app);
+		final List<Application> apps = ServiceInterfaceUtils
+				.filterApplicationNames(
+						si, "*");
+		for (final Application app : apps) {
+			env.printMessage(app.getName());
 		}
 	}
 
 	private void printApplicationsTable(GricliEnvironment env, String filter)
 			throws GricliRuntimeException {
 		final ServiceInterface si = env.getServiceInterface();
-		final List<String> apps = ServiceInterfaceUtils.filterApplicationNames(
-				si, filter);
+		final List<Application> apps = ServiceInterfaceUtils
+				.filterApplicationNames(
+						si, filter);
 		final List<List<String>> table = new LinkedList<List<String>>();
 
 		final List<String> title = new LinkedList<String>();
@@ -75,30 +80,32 @@ public class PrintAppsCommand implements GricliCommand {
 		title.add("queue");
 		table.add(title);
 
-		for (final String app : apps) {
+		for (final Application app : apps) {
 
 			final UserApplicationInformation m = GrisuRegistryManager
-					.getDefault(si).getUserApplicationInformation(app);
-			final Set<String> versions = m.getAllAvailableVersionsForUser();
-			for (final String version : versions) {
-				if (!FilenameUtils.wildcardMatch(version, this.version,
+					.getDefault(si)
+					.getUserApplicationInformation(app.getName());
+			final Set<Version> versions = m.getAllAvailableVersionsForUser();
+			for (final Version version : versions) {
+				if (!FilenameUtils.wildcardMatch(version.getVersion(),
+						this.version,
 						IOCase.INSENSITIVE)) {
 					continue;
 				}
-				final Set<String> sublocs = m
+				final Set<Queue> sublocs = m
 						.getAvailableSubmissionLocationsForVersionAndFqan(
-								version, env.group.get());
+								version.getVersion(), env.group.get());
 
 				final List<String> row = new LinkedList<String>();
-				row.add(app);
-				row.add(version);
+				row.add(app.getName());
+				row.add(version.getVersion());
 				row.add("");
 				table.add(row);
-				for (final String subloc : sublocs) {
+				for (final Queue subloc : sublocs) {
 					final List<String> queueRow = new LinkedList<String>();
 					queueRow.add("");
 					queueRow.add("");
-					queueRow.add(subloc);
+					queueRow.add(subloc.toString());
 					table.add(queueRow);
 				}
 

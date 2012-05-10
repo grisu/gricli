@@ -8,6 +8,8 @@ import grisu.jcommons.constants.Constants;
 import grisu.model.GrisuRegistry;
 import grisu.model.dto.DtoJob;
 import grisu.model.dto.GridFile;
+import grisu.model.info.dto.Application;
+import grisu.model.info.dto.Queue;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -79,15 +81,18 @@ public class CompletionCacheImpl implements CompletionCache {
 		Thread t3 = new Thread() {
 			@Override
 			public void run() {
-				final ArrayList<String> results = new ArrayList<String>();
+				final ArrayList<Application> results = new ArrayList<Application>();
 				Collections.addAll(results, CompletionCacheImpl.this.reg
 						.getUserEnvironmentManager()
 						.getAllAvailableApplications());
-				results.add(0, Constants.GENERIC_APPLICATION_NAME);
+				results.add(0, Application.GENERIC_APPLICATION);
 
-				final String[] apps = results.toArray(new String[] {});
-
-				CompletionCacheImpl.this.applications = apps;
+				final Application[] apps = results.toArray(new Application[] {});
+				CompletionCacheImpl.this.applications = new String[apps.length];
+				for (int i = 0; i < apps.length; i++) {
+					CompletionCacheImpl.this.applications[i] = apps[i]
+							.getName();
+				}
 				myLogger.debug("All applications loaded for completion");
 			}
 		};
@@ -146,12 +151,12 @@ public class CompletionCacheImpl implements CompletionCache {
 	 * 
 	 * @see grisu.gricli.completors.CompletionCache#getAllQueues()
 	 */
-	public Set<String> getAllQueues() {
+	public Set<Queue> getAllQueues() {
 		return this.reg.getUserEnvironmentManager()
 				.getAllAvailableSubmissionLocations();
 	}
 
-	public String[] getAllQueuesForFqan(String fqan) {
+	public Queue[] getAllQueuesForFqan(String fqan) {
 		return this.reg.getResourceInformation()
 				.getAllAvailableSubmissionLocations(fqan);
 	}

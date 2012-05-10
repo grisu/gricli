@@ -5,17 +5,21 @@ import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.command.PrintQueuesCommand;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
+import grisu.model.info.dto.Queue;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import jline.Completor;
 import jline.SimpleCompletor;
 
+import org.python.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Functions;
+import com.google.common.collect.Collections2;
 
 public class QueueCompletor implements Completor {
 
@@ -26,7 +30,7 @@ public class QueueCompletor implements Completor {
 
 		final GricliEnvironment env = Gricli.completionCache.getEnvironment();
 
-		Set<String> queues;
+		List<Queue> queues;
 		try {
 			queues = PrintQueuesCommand.calculateAllAvailableQueues(env);
 		} catch (GricliRuntimeException e) {
@@ -35,11 +39,15 @@ public class QueueCompletor implements Completor {
 			return -1;
 		}
 		// .getAvailableSubmissionLocationsForFqan(fqan);
-		final List<String> q = new LinkedList<String>(queues);
-		Collections.sort(q);
-		q.add(0, Constants.NO_SUBMISSION_LOCATION_INDICATOR_STRING);
-		return new SimpleCompletor(q.toArray(new String[] {})).complete(s,
-				i, l);
+		LinkedList<String> sublocs = null;
+		sublocs = Lists.newLinkedList(Collections2.transform(queues,
+				Functions.toStringFunction()));
+
+		// final List<String> q = new LinkedList<String>(queues);
+		Collections.sort(sublocs);
+		sublocs.add(0, Constants.NO_SUBMISSION_LOCATION_INDICATOR_STRING);
+		return new SimpleCompletor(sublocs.toArray(new String[] {})).complete(
+				s, i, l);
 
 		// }
 
