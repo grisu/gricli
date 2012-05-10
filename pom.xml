@@ -468,6 +468,6 @@
 		<version>0.9</version>
 	</parent>
 	<properties>
-		<grisu.version>0.4.6</grisu.version>
+		<grisu.version>0.4.7-SNAPSHOT</grisu.version>
 	</properties>
 </project>
