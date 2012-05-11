@@ -28,24 +28,30 @@
 
 	<dependencies>
 
+
+		<!-- the main grisu dependency. -->
 		<dependency>
 			<groupId>ma.glasnost.orika</groupId>
 			<artifactId>orika-core</artifactId>
-			<version>1.1.0</version>
+			<version>1.1.2</version>
 			<exclusions>
-			<exclusion>
-			    <groupId>org.slf4j</groupId>
-          		<artifactId>slf4j-simple</artifactId>
-			</exclusion>
+				<exclusion>
+					<artifactId>slf4j-simple</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
-		
-		<!-- the main grisu dependency. -->
-		
+
 		<dependency>
 			<groupId>grisu</groupId>
 			<artifactId>grisu-commons</artifactId>
 			<version>${grisu.version}</version>
+<!-- 			<exclusions> -->
+<!-- 				<exclusion> -->
+<!-- 					<artifactId>orika-core</artifactId> -->
+<!-- 					<groupId>ma.glasnost.orika</groupId> -->
+<!-- 				</exclusion> -->
+<!-- 			</exclusions> -->
 		</dependency>
 		<dependency>
 			<groupId>grisu.frontend</groupId>
@@ -58,6 +64,7 @@
 			<artifactId>grisu-core</artifactId>
 			<version>${grisu.version}</version>
 			<scope>provided</scope>
+
 		</dependency>
 
 		<dependency>
@@ -188,7 +195,7 @@
 				</configuration>
 			</plugin>
 
-			<!-- you can disable the assembly plugin if you want, your builds will 
+			<!-- you can disable the assembly plugin if you want, your builds will
 				be faster I find it quite handy to have maven build an executable jar, though -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -375,7 +382,7 @@
 												<group>root</group>
 												<filemode>755</filemode>
 											</mapper>
-										</data>															
+										</data>
 
 										<data>
 											<src>${project.basedir}/target/gricli.1</src>
@@ -467,9 +474,9 @@
 							<preinstallScriptlet>
 								<script>echo "Installing Gricli..."</script>
 							</preinstallScriptlet>
-							<!-- <postinstallScriptlet> <scriptFile>src/main/scripts/postinstall</scriptFile> 
-								<fileEncoding>utf-8</fileEncoding> </postinstallScriptlet> <preremoveScriptlet> 
-								<scriptFile>src/main/scripts/preremove</scriptFile> <fileEncoding>utf-8</fileEncoding> 
+							<!-- <postinstallScriptlet> <scriptFile>src/main/scripts/postinstall</scriptFile>
+								<fileEncoding>utf-8</fileEncoding> </postinstallScriptlet> <preremoveScriptlet>
+								<scriptFile>src/main/scripts/preremove</scriptFile> <fileEncoding>utf-8</fileEncoding>
 								</preremoveScriptlet> -->
 						</configuration>
 					</plugin>

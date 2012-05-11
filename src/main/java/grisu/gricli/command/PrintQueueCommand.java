@@ -1,7 +1,7 @@
 package grisu.gricli.command;
 
 import grisu.gricli.GricliRuntimeException;
-import grisu.gricli.completors.QueueCompletor;
+import grisu.gricli.completors.QueueCompletorNoAuto;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.utils.MemoryUtils;
 import grisu.jcommons.utils.OutputHelpers;
@@ -27,7 +27,7 @@ public class PrintQueueCommand implements GricliCommand {
 	private final String queue;
 
 	@SyntaxDescription(command = { "print", "queue" }, arguments = { "queue" })
-	@AutoComplete(completors = { QueueCompletor.class })
+	@AutoComplete(completors = { QueueCompletorNoAuto.class })
 	public PrintQueueCommand(String queue) {
 		this.queue = queue;
 	}
