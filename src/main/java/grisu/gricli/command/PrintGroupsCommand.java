@@ -11,10 +11,12 @@ public class PrintGroupsCommand implements GricliCommand {
 
 	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
-		for (final String fqan : env.getServiceInterface().getFqans()
-				.asSortedSet()) {
+
+		for (final String fqan : env.getGrisuRegistry()
+				.getUserEnvironmentManager().getAllAvailableFqans(true)) {
 			env.printMessage(fqan);
 		}
+
 	}
 
 }
