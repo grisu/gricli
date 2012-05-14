@@ -84,7 +84,6 @@ public class PrintQueueCommand implements GricliCommand {
 		details.put("Max. walltime", wtString);
 
 		details.put("CPUs", Integer.toString(q.getCpus()));
-		System.out.println("CLOCK: " + q.getClockspeedInHz());
 		details.put("Clockspeed (MHz)",
 				Double.toString(q.getClockspeedInHz() / 1000000));
 		details.put("CPUs per host", Integer.toString(q.getCpusPerHost()));
