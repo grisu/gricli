@@ -4,7 +4,7 @@ import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.command.PrintQueuesCommand;
 import grisu.gricli.environment.GricliEnvironment;
-import grisu.model.info.dto.Queue;
+import grisu.model.info.dto.JobQueueMatch;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -29,7 +29,7 @@ public class QueueCompletorNoAuto implements Completor {
 
 		final GricliEnvironment env = Gricli.completionCache.getEnvironment();
 
-		List<Queue> queues;
+		List<JobQueueMatch> queues;
 		try {
 			queues = PrintQueuesCommand.calculateAllAvailableQueues(env);
 		} catch (GricliRuntimeException e) {

@@ -6,7 +6,7 @@ import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.view.cli.CliHelpers;
-import grisu.model.dto.DtoStringList;
+import grisu.model.info.dto.DtoStringList;
 import grisu.model.status.ActionStatusEvent;
 import grisu.model.status.StatusObject;
 

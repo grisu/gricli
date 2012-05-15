@@ -3,7 +3,8 @@ package grisu.gricli.command;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.model.info.ApplicationInformation;
-import grisu.model.info.dto.Queue;
+import grisu.model.info.dto.DtoProperty;
+import grisu.model.info.dto.JobQueueMatch;
 import grisu.model.job.JobSubmissionObjectImpl;
 
 import java.util.List;
@@ -33,8 +34,9 @@ public class PrintQueuesCommand implements GricliCommand {
 
 	// private static String[] PROPERTY_NAMES = null;
 
-	public static List<Queue> calculateAllAvailableQueues(GricliEnvironment env)
-			throws GricliRuntimeException {
+	public static List<JobQueueMatch> calculateAllAvailableQueues(
+			GricliEnvironment env)
+					throws GricliRuntimeException {
 
 
 		final String fqan = (String) env.getVariable("group").get();
@@ -43,7 +45,8 @@ public class PrintQueuesCommand implements GricliCommand {
 
 		final ApplicationInformation ai = env.getGrisuRegistry()
 				.getApplicationInformation(job.getApplication());
-		final List<Queue> grs = ai.getQueues(job.getJobSubmissionPropertyMap(),
+		final List<JobQueueMatch> grs = ai.getMatches(
+				job.getJobSubmissionPropertyMap(),
 				fqan);
 
 		return grs;
@@ -77,18 +80,39 @@ public class PrintQueuesCommand implements GricliCommand {
 
 	public void execute(GricliEnvironment env) throws GricliRuntimeException {
 
-		final List<Queue> grs = calculateAllAvailableQueues(env);
+		final List<JobQueueMatch> grs = calculateAllAvailableQueues(env);
 
 		if ((grs == null) || (grs.size() == 0)) {
 			env.printMessage("No queues available for your currently setup environment. Maybe try to set another group/application?");
 			return;
 		}
 
-		for (Queue q : grs) {
-			env.printMessage(q.toString() + " ("
-					+ q.getGateway().getSite().getName()
-					+ ")");
+		env.printMessage("");
+		env.printMessage("Valid queues: ");
+		env.printMessage("");
+		for (JobQueueMatch match : grs) {
+			if (match.isValid()) {
+				env.printMessage("\t" + match.getQueue().toString() + " ("
+						+ match.getQueue().getGateway().getSite().getName()
+						+ ")");
+			}
 		}
+		env.printMessage("");
+
+		env.printMessage("Invalid queues: ");
+		env.printMessage("");
+		for (JobQueueMatch match : grs) {
+			if (!match.isValid()) {
+				env.printMessage("\t" + match.getQueue().toString() + " ("
+						+ match.getQueue().getGateway().getSite().getName()
+						+ ")");
+				for (DtoProperty prop : match.getPropertiesDetails().getProperties()) {
+					env.printMessage("\t\t" + prop.getKey() + ":\t"
+							+ prop.getValue());
+				}
+			}
+		}
+		env.printMessage("");
 
 	}
 
