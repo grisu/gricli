@@ -86,14 +86,16 @@ Globals define the properties of a job.
 .PP
 Globals are the properties for a job.
 They let you determine how and where your job will be executed.
-To see the list of globals use the command `print globals'.
-You may use the `set' command to set any of the global properties.
-To view an individual property use the command `print global '.
+To see the list of globals use the command \[aq]print globals\[aq].
+You may use the \[aq]set\[aq] command to set any of the global
+properties.
+To view an individual property use the command \[aq]print global \[aq].
 .PP
-To view information and examples on each global use the command `help '.
+To view information and examples on each global use the command
+\[aq]help \[aq].
 Note that you may use a plain text script to automate the task of
 setting globals.
-For more information see use the command `help run'.
+For more information see use the command \[aq]help run\[aq].
 .PP
 Example usage:
 .PP
@@ -104,11 +106,11 @@ memory
 .PP
 The number of CPUs to be used by a job.
 .PP
-To set the number of CPUs use the `set' command.
-To view the number of CPUs used in a job use the command `print global
-cpus'.
+To set the number of CPUs use the \[aq]set\[aq] command.
+To view the number of CPUs used in a job use the command \[aq]print
+global cpus\[aq].
 After a job has been submitted you can check the CPUs used with the
-command `print job cpus'
+command \[aq]print job cpus\[aq]
 .PP
 Example usage:
 .IP
@@ -123,7 +125,7 @@ print\ job\ myjob\ cpus
 .PP
 Boolean to show debug output from exceptions.
 .PP
-This value can be set using the `set' command.
+This value can be set using the \[aq]set\[aq] command.
 .PP
 Example usage:
 .IP
@@ -137,11 +139,11 @@ set\ debug\ false
 .PP
 The description of a job.
 .PP
-To set the job description use the `set' command.
+To set the job description use the \[aq]set\[aq] command.
 To view the description before the job has been submitted use the
-command `print global description'.
-To view the description of a submitted job use the command `print job
-description'.
+command \[aq]print global description\[aq].
+To view the description of a submitted job use the command \[aq]print
+job description\[aq].
 .PP
 Example usage:
 .IP
@@ -156,8 +158,9 @@ print\ job\ myjob\ description
 .PP
 The job directory.
 .PP
-This is the directory the job will be downloaded to after a `download'
-or `downloadclean' command if a target directory is not specified.
+This is the directory the job will be downloaded to after a
+\[aq]download\[aq] or \[aq]downloadclean\[aq] command if a target
+directory is not specified.
 .PP
 It is also used as the starting point where relative paths are
 applicable.
@@ -165,11 +168,12 @@ For example if a file is located at /home/myfolder/myfile and the dir
 variable is /home then myfile can be attached with using the relative
 path: attach myfolder/myfile
 .PP
-To set the dir use the `set' command or the `cd' command.
-To view the dir before a job has been submitted use the command `print
-global dir'.
-To view the dir after a job as been submitted use the command `print job
-jobDirectory'.
+To set the dir use the \[aq]set\[aq] command or the \[aq]cd\[aq]
+command.
+To view the dir before a job has been submitted use the command
+\[aq]print global dir\[aq].
+To view the dir after a job as been submitted use the command \[aq]print
+job jobDirectory\[aq].
 .PP
 Grid locations (starting with prefix grid://) are currently not
 supported for this command.
@@ -190,11 +194,11 @@ The email address to send notifications to.
 Email notifications can be sent when a job has started and when it has
 finished.
 .PP
-The email address can be set using the `set' command.
+The email address can be set using the \[aq]set\[aq] command.
 To view the email address of a job before submission use the command
-`print global email'.
+\[aq]print global email\[aq].
 To view the email address of a job after submission use the command
-`print job email_address'.
+\[aq]print job email_address\[aq].
 .PP
 Example usage:
 .IP
@@ -208,11 +212,11 @@ print\ global\ email
 .PP
 Boolean to send an email notification when a job has finished.
 .PP
-To set the variable use the `set' command.
-To view the setting before submission use the command `print global
-email_on_finish'.
-To view setting after submission use the command `print job
-email_on_finish'.
+To set the variable use the \[aq]set\[aq] command.
+To view the setting before submission use the command \[aq]print global
+email_on_finish\[aq].
+To view setting after submission use the command \[aq]print job
+email_on_finish\[aq].
 .PP
 Example usage:
 .IP
@@ -226,11 +230,11 @@ set\ email_on_finish\ false
 .PP
 Boolean to send an email notification when a job has started executing.
 .PP
-To set the variable use the `set' command.
-To view the setting before submission use the command `print global
-email_on_start'.
-To view setting after submission use the command `print job
-email_on_start'.
+To set the variable use the \[aq]set\[aq] command.
+To view the setting before submission use the command \[aq]print global
+email_on_start\[aq].
+To view setting after submission use the command \[aq]print job
+email_on_start\[aq].
 .PP
 Example usage:
 .IP
@@ -244,14 +248,15 @@ set\ email_on_start\ false
 .PP
 The execution environment variables of a job.
 .PP
-To add an environment variable and value use the `add env ' command.
+To add an environment variable and value use the \[aq]add env \[aq]
+command.
 .PP
-Note that you do not need `$' as part of the variable name.
+Note that you do not need \[aq]$\[aq] as part of the variable name.
 .PP
 To view the environment variables and their values before submission use
-the command `print global env'.
+the command \[aq]print global env\[aq].
 To view the environment variables after submission use the command
-`print job env'.
+\[aq]print job env\[aq].
 .PP
 Example usage:
 .IP
@@ -284,12 +289,12 @@ The group used to send jobs.
 The group determines which queues you will have access to and
 consequently which application package you can use.
 .PP
-To set the group use the `set' command.
+To set the group use the \[aq]set\[aq] command.
 Note that the group must be set before a job can be submitted.
-To view the group before a job has been submitted use the command `print
-global group'.
-To view the group after a job has been submitted use the command `print
-job group'.
+To view the group before a job has been submitted use the command
+\[aq]print global group\[aq].
+To view the group after a job has been submitted use the command
+\[aq]print job group\[aq].
 .PP
 Example usage:
 .IP
@@ -305,7 +310,8 @@ print\ job\ myjob\ group
 The number of compute hosts to be used
 .PP
 The hostcount is important for jobs where processes communicate across a
-number of physical machines or hosts e.g.\ MPI jobs.
+number of physical machines or hosts e.g.
+MPI jobs.
 Setting the hostcount will force the job to use the set number of hosts.
 This can improve efficiency as the communications overhead is less
 between processes running on the same host.
@@ -316,7 +322,8 @@ The hostcount is unset by default and will not show in the list of
 globals.
 Once set, it will be visible in the list of globals.
 Note that when setting the hostcount, you must use a positive integer.
-To disable the hostcount restriction use the command `unset hostcount'.
+To disable the hostcount restriction use the command \[aq]unset
+hostcount\[aq].
 .PP
 Example usage:
 .IP
@@ -336,11 +343,11 @@ This will be the name of the submitted job.
 If a job with this name already exists, an integer will be appended to
 make sure it is unique.
 .PP
-To set the job name use the `set' command.
-To view the job name before submission use the command `print global
-jobname'.
+To set the job name use the \[aq]set\[aq] command.
+To view the job name before submission use the command \[aq]print global
+jobname\[aq].
 To view the job name after a job has been submitted use the command
-`print jobs'.
+\[aq]print jobs\[aq].
 .PP
 Example usage:
 .IP
@@ -366,7 +373,7 @@ mpi\ \ \ \ :\ A\ job\ that\ will\ use\ one\ or\ more\ CPUs\ across\ one\ or\ mor
 \f[]
 .fi
 .PP
-Please note that a `host' is a compute node within a queue.
+Please note that a \[aq]host\[aq] is a compute node within a queue.
 Since the hardware specifications may vary between hosts in a queue, you
 are advised to check the properties of the queue to ensure you jobs run
 correctly.
@@ -386,8 +393,8 @@ unset\ hostcount
 .fi
 .PP
 If you have set the hostcount, you can check the value using the command
-`print global hostcount' and after submission using the command `print
-job hostcount'.
+\[aq]print global hostcount\[aq] and after submission using the command
+\[aq]print job hostcount\[aq].
 .PP
 Example usage:
 .IP
@@ -424,7 +431,7 @@ mpi\ \ \ \ :\ The\ memory\ is\ divided\ between\ the\ CPUs\ which\ may\ be\ on\ 
 \f[]
 .fi
 .PP
-To set the memory for the job, use the `set' command.
+To set the memory for the job, use the \[aq]set\[aq] command.
 The command accepts values in the following formats:
 .IP
 .nf
@@ -436,10 +443,10 @@ set\ memory\ 1g200m\ :\ sets\ memory\ to\ 1224\ MB
 \f[]
 .fi
 .PP
-To view the memory of a job before submission use the command `print
-global memory'.
-To view the memory of a job after submission use the command 'print job
-memory.
+To view the memory of a job before submission use the command \[aq]print
+global memory\[aq].
+To view the memory of a job after submission use the command \[aq]print
+job memory.
 .PP
 Please note that if you request more memory than is available for your
 jobtype on a given queue, the job may stay on the queue because the
@@ -458,7 +465,8 @@ This output can be redirected to a file for processing.
 .PP
 Note that this option does not redirect job output.
 They will use the standard output files stdout.txt and stderr.txt You
-can see the contents of these files using the `view' command e.g:
+can see the contents of these files using the \[aq]view\[aq] command
+e.g:
 .IP
 .nf
 \f[C]
@@ -478,21 +486,22 @@ set\ outputfile\ /home/myfolder/output.txt
 .PP
 This is the application package used by the job.
 .PP
-To set the package use the `set' command.
-To see a list of available packages use the `print packages' command.
+To set the package use the \[aq]set\[aq] command.
+To see a list of available packages use the \[aq]print packages\[aq]
+command.
 .PP
 To see which package is set for a job before it is submitted, use the
-command `print global package'.
-After a job has been submitted you can check the package with `print job
-package'
+command \[aq]print global package\[aq].
+After a job has been submitted you can check the package with \[aq]print
+job package\[aq]
 .PP
 Note that the package is set to generic by default.
 If you want the queue to be determined automatically, then it is best to
 set the package to ensure that the selected queue can support your job.
 Otherwise you would need to set the queue manually and check that it
 supports the application run by your job.
-If you would like to set the queue manually, use the command `print
-package ' to see the available queues for your application.
+If you would like to set the queue manually, use the command \[aq]print
+package \[aq] to see the available queues for your application.
 .PP
 Example usage:
 .IP
@@ -508,14 +517,13 @@ print\ job\ myjob\ package
 .PP
 The prompt message.
 .PP
-This is can changed using the `set' command.
+This is can changed using the \[aq]set\[aq] command.
 The command can accept macros, substituting the values of other globals
 into the prompt.
 .PP
 Example usage:
 .PP
-set prompt \[lq]myprompt>\[rq] set prompt
-\[lq]${dir}> " set prompt "${jobname}>\[rq]
+set prompt "myprompt> " set prompt "${dir}> " set prompt "${jobname}> "
 .SS queue
 .PP
 The job queue.
@@ -523,26 +531,27 @@ The job queue.
 The job queue will determine which resources and application packages
 are available for your job.
 .PP
-To set the queue use the `set' command.
-To see a list of queues use the `print queues command'.
+To set the queue use the \[aq]set\[aq] command.
+To see a list of queues use the \[aq]print queues command\[aq].
 .PP
 You can only submit jobs to queues assigned to your group.
-To view the available groups use the `print groups' command.
+To view the available groups use the \[aq]print groups\[aq] command.
 To view the queues available for a specific groups use the command
-`print queues '
+\[aq]print queues \[aq]
 .PP
 To see which queues support a particular application package use the
-command `print package '.
-To see a list of application packages use the command `print packages'.
+command \[aq]print package \[aq].
+To see a list of application packages use the command \[aq]print
+packages\[aq].
 .PP
 If you have set the application package, then the queue location can be
 determined automatically.
-Use the command `set queue auto' to enable this option.
+Use the command \[aq]set queue auto\[aq] to enable this option.
 .PP
-To see the queue before a job is submitted use the command `print global
-queue'.
-To see the queue after a job has been submitted use the command `print
-job submissionLocation'.
+To see the queue before a job is submitted use the command \[aq]print
+global queue\[aq].
+To see the queue after a job has been submitted use the command
+\[aq]print job submissionLocation\[aq].
 .PP
 Example usage:
 .IP
@@ -559,20 +568,20 @@ print\ job\ myjob\ submissionLocation
 The application package version.
 .PP
 This is the application package version to be used.
-By default the value is `any'.
+By default the value is \[aq]any\[aq].
 .PP
-Note that this global is not visible under `print globals' unless it has
-been set.
-To unset the variable use the `unset' command
+Note that this global is not visible under \[aq]print globals\[aq]
+unless it has been set.
+To unset the variable use the \[aq]unset\[aq] command
 .PP
 If a package is specified and the queue is set to auto, the job will be
 submitted to a queue location that supports a version of the chosen
 application package.
 .PP
-To ensure a specific version of the package is used, use the `set'
-command to choose the version.
+To ensure a specific version of the package is used, use the
+\[aq]set\[aq] command to choose the version.
 To see the list of versions available for an application package use the
-command `print package '.
+command \[aq]print package \[aq].
 .PP
 Example usage:
 .IP
@@ -602,9 +611,9 @@ set walltime 120 : Sets the walltime for 2 hours set walltime 1d2h3m :
 Sets the walltime for 1 day 2 hours and 3 minutes.
 .PP
 To view the walltime before a job has been submitted, use the command
-`print global walltime'.
+\[aq]print global walltime\[aq].
 To view the walltime after a job has been submitted, use the command
-`print job walltime'.
+\[aq]print job walltime\[aq].
 .PP
 Example usage:
 .IP
@@ -679,8 +688,8 @@ Lists help entries that are associated with a keyword.
 .PP
 The command displays the entry type (command, global or topic) and the
 entry name.
-To find out more use the `help' command on the command, global or topic
-of interest.
+To find out more use the \[aq]help\[aq] command on the command, global
+or topic of interest.
 .PP
 Parameters:
 .IP
@@ -707,11 +716,11 @@ Note that if a job is still running it will be stopped.
 The archive process may take a while depending on how large the files
 are.
 .PP
-Jobs can also be archived asynchronously using `&' and the end of the
-command.
+Jobs can also be archived asynchronously using \[aq]&\[aq] and the end
+of the command.
 This will complete the operation in the background and report back in
-the prompt with a `*'.
-To view pending messages, use the `print messages' command.
+the prompt with a \[aq]*\[aq].
+To view pending messages, use the \[aq]print messages\[aq] command.
 .PP
 Parameters:
 .IP
@@ -721,8 +730,8 @@ jobname\ :\ The\ name\ of\ the\ job\ to\ archive.\
 \f[]
 .fi
 .PP
-The default archive location is in the user's home directory on the Data
-Fabric:
+The default archive location is in the user\[aq]s home directory on the
+Data Fabric:
 .IP
 .nf
 \f[C]
@@ -846,7 +855,7 @@ batch\ create\ mybatch
 .PP
 Submits a batch job for execution.
 .PP
-The batch job should created beforehand using the `batch create'
+The batch job should created beforehand using the \[aq]batch create\[aq]
 command.
 .PP
 Parameters:
@@ -868,10 +877,10 @@ batch\ submit\ mybatch
 .PP
 Changes the current job directory.
 .PP
-Can be used in conjunction with the `pwd' and `ls' commands to explore
-the file system.
-The command also sets the job global `dir' which determines where
-relative paths start from.
+Can be used in conjunction with the \[aq]pwd\[aq] and \[aq]ls\[aq]
+commands to explore the file system.
+The command also sets the job global \[aq]dir\[aq] which determines
+where relative paths start from.
 .PP
 Grid locations (starting with prefix grid://) are currently not
 supported.
@@ -900,13 +909,13 @@ attach\ myfile_1\ myfile_2
 Kills a job if it still running and then removes it from the job
 database and deletes the job directory.
 .PP
-To clean all jobs use `clean job *'.
+To clean all jobs use \[aq]clean job *\[aq].
 .PP
-Jobs can also be cleaned asynchronously using `&' and the end of the
-command.
+Jobs can also be cleaned asynchronously using \[aq]&\[aq] and the end of
+the command.
 This will complete the operation in the background and report back in
-the prompt with a `*'.
-To view pending messages, use the `print messages' command.
+the prompt with a \[aq]*\[aq].
+To view pending messages, use the \[aq]print messages\[aq] command.
 .PP
 Parameters:
 .IP
@@ -954,9 +963,10 @@ target_dir\ :\ The\ target\ dir\ to\ download\ the\ job\ directory\ to.
 .fi
 .PP
 The job directory includes all the job input and output files and will
-be downloaded to the location specified in the global `dir' or
-optionally, the `target_dir' which can be specified after the `jobname'.
-The `target_dir' will be created if it does not exist.
+be downloaded to the location specified in the global \[aq]dir\[aq] or
+optionally, the \[aq]target_dir\[aq] which can be specified after the
+\[aq]jobname\[aq].
+The \[aq]target_dir\[aq] will be created if it does not exist.
 .PP
 If the download is not successful the job will not be cleaned.
 .PP
@@ -975,10 +985,11 @@ downloadclean\ myjob
 Downloads the whole job directory to the specified locaiton.
 .PP
 The job directory which includes all the job input and output files will
-be downloaded to the location specified in the global `dir' or
-optionally, the `target_dir' which can be specified after the `jobname'.
+be downloaded to the location specified in the global \[aq]dir\[aq] or
+optionally, the \[aq]target_dir\[aq] which can be specified after the
+\[aq]jobname\[aq].
 .PP
-If the `target_dir' does not exist, it will be created.
+If the \[aq]target_dir\[aq] does not exist, it will be created.
 .PP
 Parameters:
 .IP
@@ -1018,6 +1029,28 @@ Example usage:
 exec\ ls\ -lah
 exec\ javac\ -version
 exec\ cat\ myscript.gs
+\f[]
+.fi
+.SS exit
+.PP
+Logs out of the current session.
+Alias for "quit" command.
+.PP
+If you use the Institutional Login option, your login information will
+be vaild for 10 days.
+You don\[aq]t need to provide your credentials again if you login before
+then.
+.PP
+If you want to extend the time on your session use the \[aq]renew
+session\[aq] command.
+You will be asked for your credentials again and they will be vaild for
+10 days.
+.PP
+Example usage:
+.IP
+.nf
+\f[C]
+exit
 \f[]
 .fi
 .SS filemanager
@@ -1161,13 +1194,13 @@ database and also leaves the job directory intact.
 To delete the job directory you need to clean the job.
 .PP
 Note that a job cannot be resumed once it has been killed.
-To kill all jobs use `kill job *'.
+To kill all jobs use \[aq]kill job *\[aq].
 .PP
-Jobs can also be killed asynchronously using `&' and the end of the
-command.
+Jobs can also be killed asynchronously using \[aq]&\[aq] and the end of
+the command.
 This will complete the operation in the background and report back in
-the prompt with a `*'.
-To view pending messages, use the `print messages' command.
+the prompt with a \[aq]*\[aq].
+To view pending messages, use the \[aq]print messages\[aq] command.
 .PP
 Parameters:
 .IP
@@ -1220,14 +1253,26 @@ login\ DEV\
 .fi
 .SS ls
 .PP
-Lists the current directory or the directory that is specified by the
-path.
+Lists a jobdirectory, the current directory or the directory/file that
+is specified by the path.
+.PP
+If executed without parameters, this lists the current (local)
+directory.
+.PP
+If executed with one parameter gricli checks whether the parameter is
+the name of a currently active job.
+If that\[aq]s the case, the jobdirectory of this job is listed,
+otherwise the parameter is treated as url or path.
+.PP
+If executed with two parameters, the first parameter needs to be a
+jobname of a currently active job and the 2nd parameter needs to be a
+file in the jobdirectory of this job.
 .PP
 Parameters:
 .IP
 .nf
 \f[C]
-path\ :\ The\ directory\ to\ list.\ (Optional)
+jobname_or_path\ :\ a\ jobname\ or\ a\ directory/file\ to\ list.\ (Optional)
 \f[]
 .fi
 .PP
@@ -1235,9 +1280,13 @@ Example usage:
 .IP
 .nf
 \f[C]
+ls
 ls\ ~
+ls\ job_name
+ls\ jobname\ stdout.txt
 ls\ /home/whoami
 ls\ grid://groups/nz/nesi
+ls\ grid://sites/Auckland/gram5.ceres.auckland.ac.nz/home/mbin029
 \f[]
 .fi
 .SS print global
@@ -1250,7 +1299,7 @@ varname\ :\ The\ name\ of\ the\ global\ variable.
 \f[]
 .fi
 .PP
-Use `print globals' to see the list of global variables.
+Use \[aq]print globals\[aq] to see the list of global variables.
 .PP
 Example usage:
 .IP
@@ -1338,8 +1387,8 @@ print\ jobs
 .PP
 Prints pending messages from asynchronous operations
 .PP
-Commands can be issued to run in the background using the ampersand `&'
-e.g:
+Commands can be issued to run in the background using the ampersand
+\[aq]&\[aq] e.g:
 .IP
 .nf
 \f[C]
@@ -1351,7 +1400,7 @@ archive\ job\ myjob\ &
 .fi
 .PP
 The commands will then be executed asynchronously and when they have
-completed an asterisk `*' will be shown in the shell prompt e.g:
+completed an asterisk \[aq]*\[aq] will be shown in the shell prompt e.g:
 .IP
 .nf
 \f[C]
@@ -1396,7 +1445,7 @@ print\ packages
 Note that application packages are bound to queues so you must ensure
 the queue you submit to can support the application you would like to
 use.
-This will be taken care of when you set the queue to `auto'.
+This will be taken care of when you set the queue to \[aq]auto\[aq].
 .PP
 If you set the queue manually, use the this command to check that the
 application and the version you would like to use is supported by the
@@ -1419,11 +1468,11 @@ List all application packages available to you.
 .PP
 Note that application packages are bound to queues so you must ensure
 the queue you submit to can support the package you would like to use.
-This will be taken care of when you set the queue to `auto'.
+This will be taken care of when you set the queue to \[aq]auto\[aq].
 .PP
-If you set the queue manually, use the `print package ' command to check
-that the application and the version you would like to use are supported
-by the queue.
+If you set the queue manually, use the \[aq]print package \[aq] command
+to check that the application and the version you would like to use are
+supported by the queue.
 .PP
 Example usage:
 .IP
@@ -1539,7 +1588,8 @@ print\ queues\ site\ job_manager
 .PP
 Prints the current working directory.
 .PP
-Used in conjunction with `ls' and `cd' to navigate the file system.
+Used in conjunction with \[aq]ls\[aq] and \[aq]cd\[aq] to navigate the
+file system.
 .PP
 Example usage:
 .IP
@@ -1554,11 +1604,11 @@ Logs out of the current session.
 .PP
 If you use the Institutional Login option, your login information will
 be vaild for 10 days.
-You don't need to provide your credentials again if you login before
+You don\[aq]t need to provide your credentials again if you login before
 then.
 .PP
-If you want to extend the time on your session use the `renew session'
-command.
+If you want to extend the time on your session use the \[aq]renew
+session\[aq] command.
 You will be asked for your credentials again and they will be vaild for
 10 days.
 .PP
@@ -1578,8 +1628,8 @@ to avoid subsequent login steps.
 Once the command has been issued, auto-renew will be enabled your
 session will not expire while the submission shell is running.
 .PP
-You can check the status of the auto-renew option by using the `about'
-command.
+You can check the status of the auto-renew option by using the
+\[aq]about\[aq] command.
 .PP
 Example usage:
 .IP
@@ -1605,7 +1655,8 @@ script\ :\ The\ plain\ text\ file\ containing\ commands.
 .fi
 .PP
 A specific file extension (.txt, .xyz) is not required for the filename.
-You may also use the `#' character to ignore lines in the script.
+You may also use the \[aq]#\[aq] character to ignore lines in the
+script.
 .PP
 Example script:
 .SH Name: myscript
@@ -1613,7 +1664,7 @@ Example script:
 .PP
 set group /my/group set package UnixCommands set jobname myjob set
 jobtype single set memory 1g set cpus 1 set walltime 10m set description
-\[lq]a test job\[rq] submit echo Hello World
+"a test job" submit echo Hello World
 .PP
 Example usage:
 .IP
@@ -1640,10 +1691,10 @@ value\ :\ The\ value.
 Currently only the global variables for a job (such as the amount of
 memory to be used) can be set.
 .PP
-To the set the value of list-type variables such as `files' and `env'
-use the `add' command.
-See the help file for the `add' command for examples of setting and
-unsetting lists.
+To the set the value of list-type variables such as \[aq]files\[aq] and
+\[aq]env\[aq] use the \[aq]add\[aq] command.
+See the help file for the \[aq]add\[aq] command for examples of setting
+and unsetting lists.
 .PP
 Example usage:
 .IP
@@ -1694,16 +1745,16 @@ Submits a new job to execute a command
 The job will be created and will wait on a queue until it is executed.
 .PP
 The job properties (such as associated files and memory) are set using
-`global variables'.
-For more information on global varaibles type `help globals'.
+\[aq]global variables\[aq].
+For more information on global varaibles type \[aq]help globals\[aq].
 To learn more about jobs in general, see the help topic entry for Jobs:
-`help topic Jobs'.
+\[aq]help topic Jobs\[aq].
 .PP
-Jobs can also be submitted asynchronously using `&' and the end of the
-command.
+Jobs can also be submitted asynchronously using \[aq]&\[aq] and the end
+of the command.
 This will complete the operation in the background and report back in
-the prompt with a `*'.
-To view pending messages, use the `print messages' command.
+the prompt with a \[aq]*\[aq].
+To view pending messages, use the \[aq]print messages\[aq] command.
 .PP
 Parameters:
 .IP
@@ -1731,7 +1782,7 @@ var\ :\ The\ name\ of\ the\ list\ variable.
 \f[]
 .fi
 .PP
-To add an item to a list use the `add ' command.
+To add an item to a list use the \[aq]add \[aq] command.
 .PP
 Example usage:
 .IP
@@ -1763,7 +1814,7 @@ reference to a jobname.
 In this case, a full path name is required.
 .PP
 Note: Local file paths (e.g ~/myfile) are not currently supported.
-To view a local file use the `exec' command e.g:
+To view a local file use the \[aq]exec\[aq] command e.g:
 .IP
 .nf
 \f[C]
@@ -1829,13 +1880,13 @@ The local and remote file resources used by jobs
 A job may request access to files, either as input or output parameters
 or as executable binaries.
 To reference a file, you may specify the full path or URL in your
-application or you may simply `attach' the file to the job.
+application or you may simply \[aq]attach\[aq] the file to the job.
 .SS Attaching Files
 .PP
-To attach a file use the `attach ' command.
-This will add the file to the global property `files'.
-The global `files' is a list of all additional files to be used by the
-job.
+To attach a file use the \[aq]attach \[aq] command.
+This will add the file to the global property \[aq]files\[aq].
+The global \[aq]files\[aq] is a list of all additional files to be used
+by the job.
 An example of attaching a local file is shown below:
 .IP
 .nf
@@ -1844,9 +1895,9 @@ attach\ /path/to/my/local/file.txt
 \f[]
 .fi
 .PP
-The attached file will be uploaded to the job's working directory.
+The attached file will be uploaded to the job\[aq]s working directory.
 This is a temporary directory that exists until the job is removed with
-the `clean' command.
+the \[aq]clean\[aq] command.
 The advantage of attaching files to the job is that the application you
 invoke may use a relative path to reference these files.
 For example, if your program requires input files then you may reference
@@ -1862,10 +1913,10 @@ Notice that now the file is in the working directory of the program and
 we do not need to specify the full path to the original file.
 .SS Removing Files
 .PP
-After a job has been submitted, the `files' global will remain
+After a job has been submitted, the \[aq]files\[aq] global will remain
 unchanged.
 If you would like to clear the list of attached files use the command
-`unset files'.
+\[aq]unset files\[aq].
 This will set the list to empty.
 .SS Shared Filesytems
 .PP
@@ -1885,8 +1936,8 @@ transfers.
 This becomes significant if you are dealing with large files.
 .SS Remote Files
 .PP
-You may attach files from your cluster's GridFTP server by using
-`grid://' prefix:
+You may attach files from your cluster\[aq]s GridFTP server by using
+\[aq]grid://\[aq] prefix:
 .IP
 .nf
 \f[C]
@@ -1906,12 +1957,12 @@ submit\ myprogram\ --input\ file.txt
 .fi
 .SS Listing Files
 .PP
-To see files in a directory use the `ls' command.
-You can also navigate through a filesystem using the `cd' (change
-directory) command.
-If you need to know the directory you are currently in, use the `pwd'
-(print working directory) command.
-The `ls' command will show you files in either local or remote
+To see files in a directory use the \[aq]ls\[aq] command.
+You can also navigate through a filesystem using the \[aq]cd\[aq]
+(change directory) command.
+If you need to know the directory you are currently in, use the
+\[aq]pwd\[aq] (print working directory) command.
+The \[aq]ls\[aq] command will show you files in either local or remote
 locations:
 .IP
 .nf
@@ -1926,8 +1977,8 @@ level in the file path.
 This makes typing long paths much more convenient
 .SS Viewing Files
 .PP
-Currently you may view local files using the command `exec cat
-/path/to/local/file' .
+Currently you may view local files using the command \[aq]exec cat
+/path/to/local/file\[aq] .
 To view remote files use the following command:
 .IP
 .nf
@@ -1937,8 +1988,8 @@ view\ gsiftp://path/to/my/remote/file.txt
 \f[]
 .fi
 .PP
-The `view' command also allows you view the contents of files in the job
-directory:
+The \[aq]view\[aq] command also allows you view the contents of files in
+the job directory:
 .IP
 .nf
 \f[C]
@@ -1950,7 +2001,7 @@ Note that this command will not work with jobs that have been cleaned.
 .SS Further Information
 .PP
 For more information on any of the commands, globals or concepts
-presented here, please make use of the `help' command.
+presented here, please make use of the \[aq]help\[aq] command.
 .SH Jobs
 .PP
 An executable command and the environment properties.
@@ -1958,135 +2009,146 @@ An executable command and the environment properties.
 .PP
 A job is the configuration for the program you would like to execute on
 the cluster.
-Job properties are set through `globals'.
+Job properties are set through \[aq]globals\[aq].
 These allow you to set the application package and version to run as
 well as the resources that the application needs such as the memory
 (RAM) and the number of CPUs.
 .PP
-To see a list of available job properties use the command `print
-globals'.
-To set a job property use the command `set '.
-To see the value for a specific job property use the command `print
-global '.
+To see a list of available job properties use the command \[aq]print
+globals\[aq].
+To set a job property use the command \[aq]set \[aq].
+To see the value for a specific job property use the command \[aq]print
+global \[aq].
 .SS Job Requirements
 .PP
 A typical job requires that that an application package be set and that
-the version be specific or `any'.
-To view the available packages, use the command `print packages'.
+the version be specific or \[aq]any\[aq].
+To view the available packages, use the command \[aq]print
+packages\[aq].
 .PP
 Note that application packages are bound to specific queues and to use
 applications in the package you must have access to the appropriate
 queue.
 To see the versions and queues for an application package use the
-command `print package '.
+command \[aq]print package \[aq].
 .PP
-To set the queue, use the `set' command.
-You can view all available queues with the `print queues' command or you
-can filter by package using the command `print package '.
-You may also filter by group using the command `print queues '.
+To set the queue, use the \[aq]set\[aq] command.
+You can view all available queues with the \[aq]print queues\[aq]
+command or you can filter by package using the command \[aq]print
+package \[aq].
+You may also filter by group using the command \[aq]print queues \[aq].
 .PP
 If you do not mind which queue your job is submitted to, you can use
-`set queue auto' to let the system determine the appropriate queue.
+\[aq]set queue auto\[aq] to let the system determine the appropriate
+queue.
 .PP
 Note that regardless of your queue choice, you must choose a group.
-You can view the available groups using the command `print groups'.
-To set the group use the command `set group '.
+You can view the available groups using the command \[aq]print
+groups\[aq].
+To set the group use the command \[aq]set group \[aq].
 .PP
 Job memory and CPU count will depend on your application.
 By default a job has 2 GB of memory and 1 CPU.
-This is the default configuration for a `single' jobtype.
-To use multiple CPUs you will need to set the jobtype to `smp' or `mpi'
-and increase the number of cpus.
-For more information on these job types use the command `help jobtype'.
+This is the default configuration for a \[aq]single\[aq] jobtype.
+To use multiple CPUs you will need to set the jobtype to \[aq]smp\[aq]
+or \[aq]mpi\[aq] and increase the number of cpus.
+For more information on these job types use the command \[aq]help
+jobtype\[aq].
 .PP
-If your job requires any files to run you can use the `attach' command
-to set them.
+If your job requires any files to run you can use the \[aq]attach\[aq]
+command to set them.
 The files can include input files and compiled binaries.
-They are stored as a list called `files'.
-Use `help attach' for more information on attaching files.
-To view the files attached for a job, use the command `print global
-files'.
+They are stored as a list called \[aq]files\[aq].
+Use \[aq]help attach\[aq] for more information on attaching files.
+To view the files attached for a job, use the command \[aq]print global
+files\[aq].
 .PP
 A job also requires that the walltime be set.
 This is length of time in minutes that the job will run for.
-For more information on walltimes use the command `help walltime'.
+For more information on walltimes use the command \[aq]help
+walltime\[aq].
 .PP
 Finally a job must have a job name.
 If you do not specify the job name, one is created for you.
 Job names must be unique with respect to existing jobs.
 If you submit two or more jobs with the same name, they will have a
 number appended to distinguish them.
-To set the job name use the command `set' command.
-To view the job name use the command `print global jobname'.
+To set the job name use the command \[aq]set\[aq] command.
+To view the job name use the command \[aq]print global jobname\[aq].
 .SS Optional Properties
 .PP
 Jobs may have optional properties to inform you of changes or to help
 manage your jobs.
 You may request email notification when a job has started and when it
 has finished.
-Use the command `set email ' to set the email address.
-To receive emails you must set the globals `email_on_start' and
-`email_on_finish'.
-These take the values `true' or `false'.
+Use the command \[aq]set email \[aq] to set the email address.
+To receive emails you must set the globals \[aq]email_on_start\[aq] and
+\[aq]email_on_finish\[aq].
+These take the values \[aq]true\[aq] or \[aq]false\[aq].
 .PP
 Jobs may also have a description.
 This helps identify the job after it has been submitted.
-For more information, use the command `help description'.
+For more information, use the command \[aq]help description\[aq].
 .PP
 An output file may also be specified to redirect messages from the
 submission shell to a file.
-For more information see the help entry on `outputfile'.
+For more information see the help entry on \[aq]outputfile\[aq].
 .PP
-The `debug' property accepts a boolean (true or false) and will display
-errors in full.
+The \[aq]debug\[aq] property accepts a boolean (true or false) and will
+display errors in full.
 This is useful if you are having problems and you need to report an
 error.
-The contact details in this case can be found using the `about' command.
+The contact details in this case can be found using the \[aq]about\[aq]
+command.
 .SS Job Submission
 .PP
 Once you have set the properties for a job you can submit using the
-`submit' command.
+\[aq]submit\[aq] command.
 The command takes a string in which is the command to be executed by the
 remote hosts.
-See `help submit' for more information.
+See \[aq]help submit\[aq] for more information.
 .PP
 While a job is running, a directory with the job name is created in your
-home directory, under the directory `active-jobs' (~/active-jobs).
+home directory, under the directory \[aq]active-jobs\[aq]
+(~/active-jobs).
 The job directory is temporary and is removed when the job is cleaned.
 .SS Checking Job Progress
 .PP
-You can check the details of your job using the `print job ' command.
-To see the job status use the command `print job status'.
+You can check the details of your job using the \[aq]print job \[aq]
+command.
+To see the job status use the command \[aq]print job status\[aq].
 If you do not know the name of your job, you can check all current jobs
-using the command `print jobs'.
+using the command \[aq]print jobs\[aq].
 See the associated help for each of these commands for more information.
 .PP
-To see the output of a job at any time, use the `view' command.
+To see the output of a job at any time, use the \[aq]view\[aq] command.
 This will let you monitor your job progression if it is writing to
 output files.
-For examples, type `help view'.
+For examples, type \[aq]help view\[aq].
 .SS Downloading Job Results
 .PP
 When a job is complete you can download the job directory using the
-`download job [target_dir]' command.
+\[aq]download job [target_dir]\[aq] command.
 The target dir is where the job will be downloaded to.
 It is optional and by default with be downloaded to the current working
-diretory as set in the global `dir'.
-To see the current working directory use the commands `pwd' or `print
-global dir'.
+diretory as set in the global \[aq]dir\[aq].
+To see the current working directory use the commands \[aq]pwd\[aq] or
+\[aq]print global dir\[aq].
 .PP
 The job files can also be archived to your home directory on the Data
 Fabric.
-This will be grid://groups/nz/nesi You can do this using the `archive
-job' command.
+This will be grid://groups/nz/nesi You can do this using the
+\[aq]archive job\[aq] command.
 Note that this command cleans the job upon success.
 .PP
-When you are finished with a job you can use the `clean job' command.
+When you are finished with a job you can use the \[aq]clean job\[aq]
+command.
 This will remove the job directory in ~/active-jobs and remove the job
 entry from the job database.
 .SS Stopping a Job
 .PP
-If you need to stop a job for any reason, use the `kill job' command.
+If you need to stop a job for any reason, use the \[aq]kill job\[aq]
+command.
 Note that once a job has been stopped it cannot be resumed.
 .SS Example
 .PP
@@ -2112,8 +2174,8 @@ Here is an example of how you can setup, submit and download a job:
 .fi
 .SS Further Information
 .PP
-For more information use the `help' command to learn more about the
-commands, globals and topics mentioned here.
+For more information use the \[aq]help\[aq] command to learn more about
+the commands, globals and topics mentioned here.
 .PP
 The Gricli source code and all documentation may be downloaded from
 <http://github.com/grisu/gricli>.
