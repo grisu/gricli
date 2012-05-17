@@ -8,6 +8,9 @@ import grisu.model.info.dto.JobQueueMatch;
 import grisu.model.job.JobSubmissionObjectImpl;
 
 import java.util.List;
+import java.util.Set;
+
+import org.python.google.common.collect.Sets;
 
 public class PrintQueuesCommand implements GricliCommand {
 
@@ -87,32 +90,45 @@ public class PrintQueuesCommand implements GricliCommand {
 			return;
 		}
 
-		env.printMessage("");
-		env.printMessage("Valid queues: ");
-		env.printMessage("");
+		Set<JobQueueMatch> validQueues = Sets.newTreeSet();
+		Set<JobQueueMatch> inValidQueues = Sets.newTreeSet();
+
 		for (JobQueueMatch match : grs) {
 			if (match.isValid()) {
-				env.printMessage("\t" + match.getQueue().toString() + " ("
-						+ match.getQueue().getGateway().getSite().getName()
-						+ ")");
+				validQueues.add(match);
+			} else {
+				inValidQueues.add(match);
 			}
 		}
+
 		env.printMessage("");
 
-		env.printMessage("Invalid queues: ");
-		env.printMessage("");
-		for (JobQueueMatch match : grs) {
-			if (!match.isValid()) {
-				env.printMessage("\t" + match.getQueue().toString() + " ("
-						+ match.getQueue().getGateway().getSite().getName()
+		if (validQueues.size() > 0) {
+			env.printMessage("Valid queues: ");
+			env.printMessage("");
+			for (JobQueueMatch q : validQueues) {
+				env.printMessage("\t" + q.getQueue().toString() + " ("
+						+ q.getQueue().getGateway().getSite().getName()
 						+ ")");
-				for (DtoProperty prop : match.getPropertiesDetails().getProperties()) {
-					env.printMessage("\t\t" + prop.getKey() + ":\t"
-							+ prop.getValue());
+			}
+			env.printMessage("");
+		}
+		if (inValidQueues.size() > 0) {
+			env.printMessage("Invalid queues: ");
+			env.printMessage("");
+			for (JobQueueMatch match : inValidQueues) {
+				if (!match.isValid()) {
+					env.printMessage("\t" + match.getQueue().toString() + " ("
+							+ match.getQueue().getGateway().getSite().getName()
+							+ ")");
+					for (DtoProperty prop : match.getPropertiesDetails().getProperties()) {
+						env.printMessage("\t\t" + prop.getKey() + ":\t"
+								+ prop.getValue());
+					}
 				}
 			}
+			env.printMessage("");
 		}
-		env.printMessage("");
 
 	}
 
