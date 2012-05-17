@@ -8,9 +8,8 @@ import grisu.model.info.dto.JobQueueMatch;
 import grisu.model.job.JobSubmissionObjectImpl;
 
 import java.util.List;
-import java.util.Set;
 
-import org.python.google.common.collect.Sets;
+import org.python.google.common.collect.Lists;
 
 public class PrintQueuesCommand implements GricliCommand {
 
@@ -90,8 +89,8 @@ public class PrintQueuesCommand implements GricliCommand {
 			return;
 		}
 
-		Set<JobQueueMatch> validQueues = Sets.newTreeSet();
-		Set<JobQueueMatch> inValidQueues = Sets.newTreeSet();
+		List<JobQueueMatch> validQueues = Lists.newLinkedList();
+		List<JobQueueMatch> inValidQueues = Lists.newLinkedList();
 
 		for (JobQueueMatch match : grs) {
 			if (match.isValid()) {
