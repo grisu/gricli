@@ -5,7 +5,7 @@ import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 import grisu.jcommons.utils.OutputHelpers;
 import grisu.jcommons.utils.WalltimeUtils;
-import grith.jgrith.credential.Credential;
+import grith.jgrith.cred.Cred;
 
 import java.util.Map;
 
@@ -20,7 +20,7 @@ public class AboutCommand implements GricliCommand {
 	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
-		Credential c = env.getGrisuRegistry().getCredential();
+		Cred c = env.getGrisuRegistry().getCredential();
 
 		Map<String, String> temp = Maps.newLinkedHashMap();
 
@@ -38,16 +38,6 @@ public class AboutCommand implements GricliCommand {
 					"can't determine (" + e.getLocalizedMessage() + ")");
 			// env.printMessage("Remaining session lifetime: can't determine ("
 			// + e.getLocalizedMessage() + ")");
-		}
-
-		if (c.isAutoRenewable()) {
-			// env.printMessage("Session auto-renew: yes");
-			temp.put("Session auto-renew", "yes");
-		} else {
-			temp.put(
-					"Session auto-renew",
-					"no (to enable, you need to issue the 'renew session' command or delete your proxy and log in again.)");
-			// env.printMessage("Session auto-renew: no (to enable, you need to issue the 'renew session' command or delete your proxy and log in again.)");
 		}
 
 		temp.put("User ID", env.getServiceInterface().getDN());

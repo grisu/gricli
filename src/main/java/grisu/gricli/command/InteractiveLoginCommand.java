@@ -2,7 +2,8 @@ package grisu.gricli.command;
 
 import grisu.control.ServiceInterface;
 import grisu.frontend.control.login.LoginException;
-import grisu.frontend.control.login.LoginManager;
+import grisu.frontend.control.login.LoginManagerNew;
+import grisu.frontend.view.cli.GridLoginParameters;
 import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.BackendCompletor;
@@ -12,13 +13,21 @@ import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 import grisu.jcommons.view.cli.CliHelpers;
 import grisu.model.GrisuRegistryManager;
-import grith.jgrith.credential.refreshers.CliCredentialRefresher;
+import grith.gridsession.GridSessionCred;
+import grith.jgrith.cred.Cred;
+import grith.jgrith.cred.callbacks.CliCallback;
 
 import java.io.File;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InteractiveLoginCommand implements GricliCommand {
+
+	static final Logger myLogger = LoggerFactory
+			.getLogger(InteractiveLoginCommand.class.getName());
+
 	public static GricliEnvironment login(GricliEnvironment env,
 			ServiceInterface si) throws GricliRuntimeException {
 
@@ -29,12 +38,12 @@ public class InteractiveLoginCommand implements GricliCommand {
 		String[] fqans = null;
 		try {
 			// adding cli credential refresher
-			env.getGrisuRegistry().getCredential()
-			.addCredentialRefreshIUI(new CliCredentialRefresher());
-			env.getGrisuRegistry().getCredential().saveCredential();
-
-			env.getGrisuRegistry().getCredential()
-			.addPropertyChangeListener(env);
+			// env.getGrisuRegistry().getCredential()
+			// .addCredentialRefreshIUI(new CliCredentialRefresher());
+			// env.getGrisuRegistry().getCredential().saveCredential();
+			//
+			// env.getGrisuRegistry().getCredential()
+			// .addPropertyChangeListener(env);
 
 			env.getGrisuRegistry()
 			.getCredential()
@@ -89,56 +98,79 @@ public class InteractiveLoginCommand implements GricliCommand {
 		return env;
 	}
 
-	private final String backend;
-	private final String username;
-	private final String idp;
-	private final boolean x509;
+	private String backend;
+	private GridLoginParameters params;
+
+	public InteractiveLoginCommand(GridLoginParameters params) {
+		this.params = params;
+
+	}
 
 	@SyntaxDescription(command = { "ilogin" }, arguments = { "backend" })
 	@AutoComplete(completors = { BackendCompletor.class })
 	public InteractiveLoginCommand(String backend) {
-		this(backend, false, null, null);
+		this.backend = backend;
 	}
 
-	public InteractiveLoginCommand(String backend, boolean x509,
-			String username, String idp) {
-		this.backend = backend;
-		this.username = username;
-		this.idp = idp;
-		this.x509 = x509;
-	}
 
 	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
-		ServiceInterface si;
+		ServiceInterface si = null;
+
 		try {
-			if (StringUtils.isBlank(username) && !x509) {
-				si = LoginManager.loginCommandline(backend, true,
-						LoginManager.DEFAULT_PROXY_LIFETIME_IN_HOURS,
-						Gricli.MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST);
 
-			} else {
-				if (x509) {
-					si = LoginManager.loginCommandlineX509cert(backend,
-							LoginManager.DEFAULT_PROXY_LIFETIME_IN_HOURS, true);
-				} else if (StringUtils.isBlank(idp)
-						&& StringUtils.isNotBlank(username)) {
-					si = LoginManager.loginCommandlineMyProxy(backend,
-							username,
-							LoginManager.DEFAULT_PROXY_LIFETIME_IN_HOURS, true);
+			Cred cred = null;
+			try {
+				cred = new GridSessionCred();
+			} catch (Exception e) {
 
-				} else if (StringUtils.isNotBlank(username)) {
-					si = LoginManager.loginCommandlineShibboleth(backend,
-							username, idp, true);
-				} else {
-					throw new GricliRuntimeException(
-							"Could not determine which login method to use.");
-				}
 			}
-		} catch (final LoginException ex) {
-			throw new GricliRuntimeException(ex);
+			if (cred.isValid()) {
+				si = LoginManagerNew.login(params.getBackend(), cred, true);
+			} else {
+
+				if (!params.validConfig()) {
+					myLogger.debug("Trying to retieve remaining login details.");
+					params.setCallback(new CliCallback());
+					params.populate();
+				}
+				si = LoginManagerNew.login(params.getBackend(),
+						params.createCredential(), true);
+			}
+
+		} catch (LoginException le) {
+			throw new GricliRuntimeException(le);
 		}
+		// try {
+		// if (StringUtils.isBlank(username) && !x509) {
+		// si = LoginManagerNew.loginCommandline(backend, true,
+		// LoginManagerNew.DEFAULT_PROXY_LIFETIME_IN_HOURS,
+		// Gricli.MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST);
+		//
+		// } else {
+		// if (x509) {
+		// si = LoginManagerNew.loginCommandlineX509cert(backend,
+		// LoginManagerNew.DEFAULT_PROXY_LIFETIME_IN_HOURS,
+		// true);
+		// } else if (StringUtils.isBlank(idp)
+		// && StringUtils.isNotBlank(username)) {
+		// si = LoginManagerNew.loginCommandlineMyProxy(backend,
+		// username,
+		// LoginManagerNew.DEFAULT_PROXY_LIFETIME_IN_HOURS,
+		// true);
+		//
+		// } else if (StringUtils.isNotBlank(username)) {
+		// si = LoginManagerNew.loginCommandlineShibboleth(backend,
+		// username, idp, true);
+		// } else {
+		// throw new GricliRuntimeException(
+		// "Could not determine which login method to use.");
+		// }
+		// }
+		// } catch (final LoginException ex) {
+		// throw new GricliRuntimeException(ex);
+		// }
 
 		login(env, si);
 

@@ -1,17 +1,9 @@
 package grisu.gricli.command;
 
-import grisu.control.ServiceInterface;
-import grisu.frontend.control.login.LoginException;
-import grisu.frontend.control.login.LoginManager;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.BackendCompletor;
 import grisu.gricli.environment.GricliEnvironment;
-import grith.jgrith.credential.Credential;
-import grith.jgrith.credential.CredentialLoader;
 
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,62 +37,64 @@ public class LocalLoginCommand implements GricliCommand {
 
 	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
-		try {
-			if (siUrl == null) {
-				siUrl = env.getServiceInterfaceUrl();
-			}
-
-			if (StringUtils.isBlank(credentialConfigFile)) {
-
-				// try {
-				// Credential c = Credential.load();
-				//
-				// if (!c.isValid()) {
-				// throw new CredentialException(
-				// "No valid session found and interactive login not available for scripted execution. Please login manually and try again.");
-				// }
-				// } catch (CredentialException ce) {
-				// throw new GricliRuntimeException(ce.getLocalizedMessage());
-				// }
-
-				final ServiceInterface serviceInterface = LoginManager
-						.loginCommandlineLocalProxy(siUrl);
-
-				InteractiveLoginCommand.login(env, serviceInterface);
-			} else {
-
-				Map<String, Credential> creds = CredentialLoader
-						.loadCredentials(credentialConfigFile);
-
-				if ((creds == null) || (creds.size() == 0)) {
-					throw new GricliRuntimeException(
-							"Could not create credential from specified credential config file.");
-				}
-
-				Credential cred = null;
-				if (StringUtils.isBlank(nameOfCredential)) {
-					myLogger.debug("No credential specified, using first one.");
-					cred = creds.values().iterator().next();
-				} else {
-					cred = creds.get(nameOfCredential);
-					if (creds == null) {
-						throw new GricliRuntimeException(
-								"No credential with name "
-										+ nameOfCredential
-										+ " was created using credential config file "
-										+ credentialConfigFile);
-					}
-				}
-
-				final ServiceInterface serviceInterface = LoginManager.login(
-						cred, siUrl, true);
-				InteractiveLoginCommand.login(env, serviceInterface);
-
-			}
-
-		} catch (final LoginException ex) {
-			throw new GricliRuntimeException(ex);
-		}
+		// try {
+		// if (siUrl == null) {
+		// siUrl = env.getServiceInterfaceUrl();
+		// }
+		//
+		// if (StringUtils.isBlank(credentialConfigFile)) {
+		//
+		// // try {
+		// // Credential c = Credential.load();
+		// //
+		// // if (!c.isValid()) {
+		// // throw new CredentialException(
+		// //
+		// "No valid session found and interactive login not available for scripted execution. Please login manually and try again.");
+		// // }
+		// // } catch (CredentialException ce) {
+		// // throw new GricliRuntimeException(ce.getLocalizedMessage());
+		// // }
+		//
+		// final ServiceInterface serviceInterface = LoginManagerNew
+		// .loginCommandlineLocalProxy(siUrl);
+		//
+		// InteractiveLoginCommand.login(env, serviceInterface);
+		// } else {
+		//
+		// Map<String, Credential> creds = CredentialLoader
+		// .loadCredentials(credentialConfigFile);
+		//
+		// if ((creds == null) || (creds.size() == 0)) {
+		// throw new GricliRuntimeException(
+		// "Could not create credential from specified credential config file.");
+		// }
+		//
+		// Credential cred = null;
+		// if (StringUtils.isBlank(nameOfCredential)) {
+		// myLogger.debug("No credential specified, using first one.");
+		// cred = creds.values().iterator().next();
+		// } else {
+		// cred = creds.get(nameOfCredential);
+		// if (creds == null) {
+		// throw new GricliRuntimeException(
+		// "No credential with name "
+		// + nameOfCredential
+		// + " was created using credential config file "
+		// + credentialConfigFile);
+		// }
+		// }
+		//
+		// final ServiceInterface serviceInterface = LoginManagerNew
+		// .login(
+		// cred, siUrl, true);
+		// InteractiveLoginCommand.login(env, serviceInterface);
+		//
+		// }
+		//
+		// } catch (final LoginException ex) {
+		// throw new GricliRuntimeException(ex);
+		// }
 	}
 
 }
