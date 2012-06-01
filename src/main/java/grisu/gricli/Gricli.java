@@ -5,7 +5,7 @@ import static grisu.gricli.GricliExitStatus.RUNTIME;
 import static grisu.gricli.GricliExitStatus.SUCCESS;
 import static grisu.gricli.GricliExitStatus.SYNTAX;
 import grisu.frontend.control.login.LoginManagerNew;
-import grisu.frontend.view.cli.GridLoginParameters;
+import grisu.frontend.view.cli.GrisuCliClient;
 import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.GricliCommandFactory;
 import grisu.gricli.command.InteractiveLoginCommand;
@@ -20,8 +20,8 @@ import grisu.jcommons.utils.VariousStringHelpers;
 import grisu.jcommons.view.cli.CliHelpers;
 import grisu.jcommons.view.cli.LineByLineProgressDisplay;
 import grisu.settings.Environment;
-import grith.gridsession.GridClient;
 import grith.jgrith.control.SlcsLoginWrapper;
+import grith.jgrith.cred.GridLoginParameters;
 import grith.jgrith.plainProxy.LocalProxy;
 
 import java.io.File;
@@ -49,10 +49,9 @@ import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 
-import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 
-public class Gricli extends GridClient {
+public class Gricli extends GrisuCliClient<GricliCliParameters> {
 
 	static final Logger myLogger = LoggerFactory.getLogger(Gricli.class
 			.getName());
@@ -214,14 +213,15 @@ public class Gricli extends GridClient {
 		return reader;
 	}
 
-	private static boolean login(GricliEnvironment env, GridLoginParameters glp) {
+	private static boolean login(GricliEnvironment env, GrisuCliClient client) {
 
 		try {
 			GricliCommand login = null;
 			if (System.console() != null) {
-				login = new InteractiveLoginCommand(glp);
+				login = new InteractiveLoginCommand(client);
 			} else {
-				login = new LocalLoginCommand(glp.getBackend());
+				login = new LocalLoginCommand(client.getLoginParameters()
+						.getBackend());
 			}
 			login.execute(env);
 
@@ -267,9 +267,18 @@ public class Gricli extends GridClient {
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
 
-		Gricli g = new Gricli(args);
+		Gricli g = null;
+		try {
+			g = new Gricli(args);
+		} catch (Exception e) {
+			System.err.println("Could not start gricli: "
+					+
+					e.getLocalizedMessage());
+			System.exit(1);
 
-		execute(g);
+		}
+
+		g.run();
 
 	}
 
@@ -423,10 +432,11 @@ public class Gricli extends GridClient {
 		System.exit(exitStatus.getStatus());
 	}
 
-	private final String[] args;
+	// private final String[] args;
 
-	public Gricli(String[] args) {
-		this.args = args;
+	public Gricli(String[] args) throws Exception {
+		super(new GricliCliParameters(), args);
+		// this.args = args;
 	}
 
 	@Override
@@ -473,8 +483,7 @@ public class Gricli extends GridClient {
 		t.start();
 
 		try {
-			GricliCliParameters gcp = new GricliCliParameters();
-			new JCommander(gcp, args);
+			GricliCliParameters gcp = getCliParameters();
 
 			env = new GricliEnvironment();
 			SigintHandler.install(env);
@@ -488,7 +497,7 @@ public class Gricli extends GridClient {
 			}
 
 
-			if (!login(env, glp)) {
+			if (!login(env, this)) {
 				System.exit(LOGIN.getStatus());
 			}
 

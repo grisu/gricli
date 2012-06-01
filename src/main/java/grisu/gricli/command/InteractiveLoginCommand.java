@@ -2,9 +2,9 @@ package grisu.gricli.command;
 
 import grisu.control.ServiceInterface;
 import grisu.frontend.control.login.LoginException;
-import grisu.frontend.control.login.LoginManagerNew;
-import grisu.frontend.view.cli.GridLoginParameters;
+import grisu.frontend.view.cli.GrisuCliClient;
 import grisu.gricli.Gricli;
+import grisu.gricli.GricliCliParameters;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.BackendCompletor;
 import grisu.gricli.completors.CompletionCache;
@@ -13,9 +13,6 @@ import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 import grisu.jcommons.view.cli.CliHelpers;
 import grisu.model.GrisuRegistryManager;
-import grith.gridsession.GridSessionCred;
-import grith.jgrith.cred.Cred;
-import grith.jgrith.cred.callbacks.CliCallback;
 
 import java.io.File;
 
@@ -99,10 +96,10 @@ public class InteractiveLoginCommand implements GricliCommand {
 	}
 
 	private String backend;
-	private GridLoginParameters params;
+	private GrisuCliClient<GricliCliParameters> client;
 
-	public InteractiveLoginCommand(GridLoginParameters params) {
-		this.params = params;
+	public InteractiveLoginCommand(GrisuCliClient<GricliCliParameters> client) {
+		this.client = client;
 
 	}
 
@@ -116,32 +113,46 @@ public class InteractiveLoginCommand implements GricliCommand {
 	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
-		ServiceInterface si = null;
 
-		try {
+		if (client != null) {
 
-			Cred cred = null;
+			ServiceInterface si;
 			try {
-				cred = new GridSessionCred();
-			} catch (Exception e) {
-
+				si = client.getServiceInterface();
+			} catch (LoginException e) {
+				throw new GricliRuntimeException(e);
 			}
-			if (cred.isValid()) {
-				si = LoginManagerNew.login(params.getBackend(), cred, true);
-			} else {
+			login(env, si);
 
-				if (!params.validConfig()) {
-					myLogger.debug("Trying to retieve remaining login details.");
-					params.setCallback(new CliCallback());
-					params.populate();
-				}
-				si = LoginManagerNew.login(params.getBackend(),
-						params.createCredential(), true);
-			}
-
-		} catch (LoginException le) {
-			throw new GricliRuntimeException(le);
+		} else {
+			throw new GricliRuntimeException("This command is not implemented.");
 		}
+
+		//
+		// try {
+		//
+		// Cred cred = null;
+		// try {
+		// cred = new GridSessionCred();
+		// } catch (Exception e) {
+		//
+		// }
+		// if (cred.isValid()) {
+		// si = LoginManagerNew.login(params.getBackend(), cred, true);
+		// } else {
+		//
+		// if (!params.validConfig()) {
+		// myLogger.debug("Trying to retieve remaining login details.");
+		// params.setCallback(new CliCallback());
+		// params.populate();
+		// }
+		// si = LoginManagerNew.login(params.getBackend(),
+		// params.createCredential(), true);
+		// }
+		//
+		// } catch (LoginException le) {
+		// throw new GricliRuntimeException(le);
+		// }
 		// try {
 		// if (StringUtils.isBlank(username) && !x509) {
 		// si = LoginManagerNew.loginCommandline(backend, true,
@@ -172,7 +183,6 @@ public class InteractiveLoginCommand implements GricliCommand {
 		// throw new GricliRuntimeException(ex);
 		// }
 
-		login(env, si);
 
 	}
 
