@@ -35,6 +35,12 @@
 			<groupId>grisu</groupId>
 			<artifactId>grisu-commons</artifactId>
 			<version>${grisu.version}</version>
+<!-- 			<exclusions> -->
+<!-- 				<exclusion> -->
+<!-- 					<artifactId>logback-classic</artifactId> -->
+<!-- 					<groupId>ch.qos.logback</groupId> -->
+<!-- 				</exclusion> -->
+<!-- 			</exclusions> -->
 		</dependency>
 		<dependency>
 			<groupId>grisu.frontend</groupId>
@@ -48,6 +54,12 @@
 			<version>${grisu.version}</version>
 			<scope>provided</scope>
 
+			<exclusions>
+				<exclusion>
+					<artifactId>logback-classic</artifactId>
+					<groupId>ch.qos.logback</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -101,6 +113,12 @@
 			<groupId>me.moocar</groupId>
 			<artifactId>logback-gelf</artifactId>
 			<version>nz.0.9.7</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>logback-classic</artifactId>
+					<groupId>ch.qos.logback</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
