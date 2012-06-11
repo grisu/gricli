@@ -213,14 +213,15 @@ public class Gricli extends GrisuCliClient<GricliCliParameters> {
 		return reader;
 	}
 
-	private static boolean login(GricliEnvironment env, GrisuCliClient client) {
+	private static boolean login(GricliEnvironment env,
+			GrisuCliClient<GricliCliParameters> client) {
 
 		try {
 			GricliCommand login = null;
 			if (System.console() != null) {
 				login = new InteractiveLoginCommand(client);
 			} else {
-				login = new LocalLoginCommand(client.getLoginParameters()
+				login = new LocalLoginCommand(client.getCliParameters()
 						.getBackend());
 			}
 			login.execute(env);
