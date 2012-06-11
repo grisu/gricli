@@ -90,7 +90,7 @@ public class Gricli extends GrisuCliClient<GricliCliParameters> {
 	private static void configLogging() {
 		LoggerContext lc2 = (LoggerContext) LoggerFactory.getILoggerFactory();
 		// print logback's internal status
-		StatusPrinter.print(lc2);
+		// StatusPrinter.print(lc2);
 
 		// stop javaxws logging
 		java.util.logging.LogManager.getLogManager().reset();
