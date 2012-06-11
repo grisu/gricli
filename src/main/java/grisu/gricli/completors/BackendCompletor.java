@@ -1,6 +1,6 @@
 package grisu.gricli.completors;
 
-import grisu.frontend.control.login.LoginManagerNew;
+import grisu.frontend.control.login.LoginManager;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ public class BackendCompletor implements Completor {
 	SimpleCompletor sc;
 
 	public BackendCompletor() {
-		sc = new SimpleCompletor(LoginManagerNew.SERVICEALIASES.keySet()
+		sc = new SimpleCompletor(LoginManager.SERVICEALIASES.keySet()
 				.toArray(
 				new String[] {}));
 	}

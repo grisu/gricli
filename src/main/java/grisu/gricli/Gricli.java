@@ -4,7 +4,7 @@ import static grisu.gricli.GricliExitStatus.LOGIN;
 import static grisu.gricli.GricliExitStatus.RUNTIME;
 import static grisu.gricli.GricliExitStatus.SUCCESS;
 import static grisu.gricli.GricliExitStatus.SYNTAX;
-import grisu.frontend.control.login.LoginManagerNew;
+import grisu.frontend.control.login.LoginManager;
 import grisu.frontend.view.cli.GrisuCliClient;
 import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.GricliCommandFactory;
@@ -447,7 +447,7 @@ public class Gricli extends GrisuCliClient<GricliCliParameters> {
 		configLogging();
 
 		try {
-			LoginManagerNew.initGrisuClient("gricli");
+			LoginManager.initGrisuClient("gricli");
 		} catch (Exception e) {
 			System.err.println("Can't initialize environment: "
 					+ e.getLocalizedMessage());
