@@ -9,7 +9,7 @@ import grith.jgrith.cred.Cred;
 
 import java.util.Map;
 
-import org.python.google.common.collect.Maps;
+import com.google.common.collect.Maps;
 
 public class AboutCommand implements GricliCommand {
 

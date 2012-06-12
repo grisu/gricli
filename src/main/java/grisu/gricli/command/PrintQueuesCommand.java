@@ -9,7 +9,7 @@ import grisu.model.job.JobSubmissionObjectImpl;
 
 import java.util.List;
 
-import org.python.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 public class PrintQueuesCommand implements GricliCommand {
 

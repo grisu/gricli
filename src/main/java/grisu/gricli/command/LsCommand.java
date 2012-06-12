@@ -22,8 +22,8 @@ import java.util.Set;
 import jline.NullCompletor;
 
 import org.apache.commons.lang.StringUtils;
-import org.python.google.common.collect.Lists;
-import org.python.google.common.collect.Sets;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class LsCommand implements GricliCommand {
 

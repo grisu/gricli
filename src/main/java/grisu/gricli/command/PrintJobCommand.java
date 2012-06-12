@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.python.google.common.collect.Maps;
+import com.google.common.collect.Maps;
 
 public class PrintJobCommand implements GricliCommand {
 	private final String jobname;

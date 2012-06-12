@@ -10,7 +10,7 @@ import grisu.model.status.StatusObject;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.python.google.common.collect.Maps;
+import com.google.common.collect.Maps;
 
 public class PrintTaskCommand implements GricliCommand {
 

@@ -10,7 +10,7 @@ import grisu.model.dto.DtoJob;
 import java.util.Map;
 import java.util.SortedSet;
 
-import org.python.google.common.collect.Maps;
+import com.google.common.collect.Maps;
 
 public class StatusCommand implements GricliCommand {
 

@@ -14,7 +14,7 @@ import java.util.List;
 import jline.Completor;
 import jline.SimpleCompletor;
 
-import org.python.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

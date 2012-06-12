@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.python.google.common.base.Strings;
+import com.google.common.base.Strings;
 
 @SuppressWarnings("restriction")
 public class DownloadJobCommand implements GricliCommand {

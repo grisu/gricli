@@ -13,7 +13,7 @@ import java.util.Set;
 
 import jline.Completor;
 
-import org.python.google.common.collect.Sets;
+import com.google.common.collect.Sets;
 
 import com.google.common.base.Strings;
 

@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.python.google.common.collect.Maps;
+import com.google.common.collect.Maps;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.Collections2;
