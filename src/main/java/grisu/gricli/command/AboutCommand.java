@@ -40,6 +40,12 @@ public class AboutCommand implements GricliCommand {
 			// + e.getLocalizedMessage() + ")");
 		}
 
+		if (c.isRenewable()) {
+			temp.put("Session autorenews", "Yes");
+		} else {
+			temp.put("Session autorenews", "No");
+		}
+
 		temp.put("User ID", env.getServiceInterface().getDN());
 		// env.printMessage("User ID: " + env.getServiceInterface().getDN());
 
