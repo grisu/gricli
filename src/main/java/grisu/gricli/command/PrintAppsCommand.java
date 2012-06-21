@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOCase;
+import org.python.google.common.collect.Sets;
 
 public class PrintAppsCommand implements GricliCommand {
 
@@ -61,8 +62,14 @@ public class PrintAppsCommand implements GricliCommand {
 		final List<Application> apps = ServiceInterfaceUtils
 				.filterApplicationNames(
 						si, "*");
+		Set<String> names = Sets.newTreeSet(String.CASE_INSENSITIVE_ORDER);
 		for (final Application app : apps) {
-			env.printMessage(app.getName());
+			if (!app.equals(Application.GENERIC_APPLICATION)) {
+				names.add(app.getName());
+			}
+		}
+		for (String name : names) {
+			env.printMessage(name);
 		}
 	}
 
