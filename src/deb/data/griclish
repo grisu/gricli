@@ -2,6 +2,6 @@
 
 unset DISPLAY
 export JAVA_OPTS="-Djava.awt.headless=true -Xms64m -Xmx64m"
-export X509_USER_PROXY=~/.grisu/grisu.proxy
+export X509_USER_PROXY=~/.grid/grid.proxy
 java ${JAVA_OPTS} -cp /usr/local/lib/grisu/gricli-binary.jar grisu.gricli.Gricli $@
 

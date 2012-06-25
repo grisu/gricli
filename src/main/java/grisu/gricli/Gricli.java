@@ -9,7 +9,6 @@ import grisu.frontend.view.cli.GrisuCliClient;
 import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.GricliCommandFactory;
 import grisu.gricli.command.InteractiveLoginCommand;
-import grisu.gricli.command.LocalLoginCommand;
 import grisu.gricli.command.RunCommand;
 import grisu.gricli.completors.CompletionCache;
 import grisu.gricli.completors.DummyCompletionCache;
@@ -39,7 +38,6 @@ import jline.History;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -50,6 +48,7 @@ import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 
 import com.beust.jcommander.ParameterException;
+import com.google.common.base.Strings;
 
 public class Gricli extends GrisuCliClient<GricliCliParameters> {
 
@@ -218,12 +217,12 @@ public class Gricli extends GrisuCliClient<GricliCliParameters> {
 
 		try {
 			GricliCommand login = null;
-			if (System.console() != null) {
-				login = new InteractiveLoginCommand(client);
-			} else {
-				login = new LocalLoginCommand(client.getCliParameters()
-						.getBackend());
-			}
+			// if (System.console() != null) {
+			login = new InteractiveLoginCommand(client);
+			// } else {
+			// login = new LocalLoginCommand(client.getCliParameters()
+			// .getBackend());
+			// }
 			login.execute(env);
 
 			prepareLogging(env);
@@ -267,6 +266,10 @@ public class Gricli extends GrisuCliClient<GricliCliParameters> {
 
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
+
+		// System.setProperty(
+		// CommonGridProperties.Property.DAEMONIZE_GRID_SESSION.toString(),
+		// "false");
 
 		Gricli g = null;
 		try {
