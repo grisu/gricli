@@ -1,0 +1,11 @@
+# The URL from which the client is downloaded
+appbase = http://code.ceres.auckland.ac.nz/snapshot-downloads/gricli
+
+# UI Configuration
+ui.name = Gricli
+
+# Application jar files
+code = gricli-binary.jar
+
+# The main entry point for the application
+class = grisu.gricli.Gricli

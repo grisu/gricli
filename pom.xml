@@ -474,6 +474,57 @@
 
 
 		</profile>
+		
+		<profile>
+			<id>getdown</id>
+			<build>
+				<plugins>
+
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>2.5</version>
+						<executions>
+							<execution>
+								<id>copy-getdown-control</id>
+								<!-- here the phase you need -->
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${basedir}/target/</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${basedir}</directory>
+											<includes>
+												<include>getdown.txt</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.bitbucket.joxley</groupId>
+						<artifactId>getdown-maven-plugin</artifactId>
+						<version>nesi-0.0.1</version>
+						<configuration>
+							<appdir>target</appdir> <!-- Defaults to target -->
+						</configuration>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>digest</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>		
 
 	</profiles>
 
