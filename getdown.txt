@@ -9,3 +9,7 @@ code = gricli-binary.jar
 
 # The main entry point for the application
 class = grisu.gricli.Gricli
+
+jvmarg = [linux] -DX509_USER_PROXY=~/.grid/grid.proxy
+jvmarg = [mac os x] -DX509_USER_PROXY=~/.grid/grid.proxy
+jvmarg = [windows] -DX509_USER_PROXY=%APPDIR%\..\..\..\..\.grid\grid.proxy
