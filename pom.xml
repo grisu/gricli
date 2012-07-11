@@ -584,6 +584,6 @@
 		<version>0.10</version>
 	</parent>
 	<properties>
-		<grisu.version>0.5-SNAPSHOT</grisu.version>
+		<grisu.version>0.5-rc2-SNAPSHOT</grisu.version>
 	</properties>
 </project>
