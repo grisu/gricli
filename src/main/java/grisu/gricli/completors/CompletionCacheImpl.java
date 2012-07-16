@@ -5,6 +5,7 @@ import grisu.gricli.LoginRequiredException;
 import grisu.gricli.completors.file.StillLoadingException;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
+import grisu.model.FileCache;
 import grisu.model.GrisuRegistry;
 import grisu.model.dto.DtoJob;
 import grisu.model.dto.GridFile;
@@ -18,7 +19,6 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 import org.slf4j.Logger;
@@ -42,7 +42,7 @@ public class CompletionCacheImpl implements CompletionCache {
 	private String[] applications = new String[] { "*** Loading...",
 	"...try again***" };
 
-	private static Cache cache = CacheManager.getInstance().getCache("short");
+	private static Cache cache = FileCache.shortCache;
 
 	public CompletionCacheImpl(GricliEnvironment env)
 			throws LoginRequiredException {
