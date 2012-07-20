@@ -19,6 +19,7 @@ import grisu.jcommons.utils.EnvironmentVariableHelpers;
 import grisu.jcommons.utils.VariousStringHelpers;
 import grisu.jcommons.view.cli.CliHelpers;
 import grisu.jcommons.view.cli.LineByLineProgressDisplay;
+import grisu.settings.ClientPropertiesManager;
 import grisu.settings.Environment;
 import grith.jgrith.control.SlcsLoginWrapper;
 import grith.jgrith.plainProxy.LocalProxy;
@@ -245,6 +246,11 @@ public class Gricli {
 
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
+
+		ClientPropertiesManager
+				.setProperty(
+						"shibbolethUrl",
+						"https://slcs1.arcs.org.au/Shibboleth.sso/DS?discoveryURL=https://directory.tuakiri.ac.nz/TuakiriAAF-discovery/DS&target=https://slcs1.arcs.org.au/SLCS/login");
 
 		configLogging();
 

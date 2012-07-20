@@ -109,6 +109,11 @@
 			<artifactId>junit</artifactId>
 			<version>4.10</version>
 		</dependency>
+		<dependency>
+			<groupId>grith</groupId>
+			<artifactId>jgrith</artifactId>
+			<version>0.6.2-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<issueManagement>

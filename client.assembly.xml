@@ -25,6 +25,7 @@
 					<exclude>**/MANIFEST.MF</exclude>
 					<exclude>**/LICENSE.txt</exclude>
 					<exclude>**/NOTICE.txt</exclude>
+					<exclude>**/logback.xml</exclude>
 				</excludes>
 			</unpackOptions>
 		</dependencySet>
