@@ -112,7 +112,7 @@
 		<dependency>
 			<groupId>grith</groupId>
 			<artifactId>jgrith</artifactId>
-			<version>0.6.2</version>
+			<version>0.6.3</version>
 		</dependency>
 	</dependencies>
 
