@@ -168,7 +168,7 @@
 					<!-- the name of the token to replace -->
 					<token>VERSION_TOKEN</token>
 					<!-- replace it with the maven project version -->
-					<value>${project.version}</value>
+					<value>${project.version} (${maven.build.timestamp})</value>
 				</configuration>
 			</plugin>
 
@@ -330,7 +330,7 @@
 							<replacements>
 								<replacement>
 									<token>VERSION_TOKEN</token>
-									<value>${project.version}</value>
+									<value>${project.version} (${maven.build.timestamp})</value>
 								</replacement>
 							</replacements>
 						</configuration>
