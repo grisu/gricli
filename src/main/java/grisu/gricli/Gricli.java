@@ -15,6 +15,7 @@ import grisu.gricli.completors.DummyCompletionCache;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.environment.GricliVar;
 import grisu.gricli.parser.GricliTokenizer;
+import grisu.jcommons.configuration.CommonGridProperties;
 import grisu.jcommons.utils.EnvironmentVariableHelpers;
 import grisu.jcommons.utils.VariousStringHelpers;
 import grisu.jcommons.view.cli.CliHelpers;
@@ -247,10 +248,14 @@ public class Gricli {
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
 
+		CommonGridProperties.getDefault().setGridProperty(
+				CommonGridProperties.Property.MYPROXY_HOST,
+				"myproxy.nesi.org.nz");
+
 		ClientPropertiesManager
-				.setProperty(
-						"shibbolethUrl",
-						"https://slcs1.arcs.org.au/Shibboleth.sso/DS?discoveryURL=https://directory.tuakiri.ac.nz/TuakiriAAF-discovery/DS&target=https://slcs1.arcs.org.au/SLCS/login");
+		.setProperty(
+				"shibbolethUrl",
+				"https://slcs1.arcs.org.au/Shibboleth.sso/DS?discoveryURL=https://directory.tuakiri.ac.nz/TuakiriAAF-discovery/DS&target=https://slcs1.arcs.org.au/SLCS/login");
 
 		configLogging();
 
