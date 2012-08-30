@@ -53,6 +53,7 @@ public class GricliTokenizer {
 		st.wordChars('&', '&');
 		st.wordChars('~', '~');
 		st.wordChars('!', '!');
+		st.wordChars('+', '+');
 		st.whitespaceChars(' ', ' ');
 
 		final ArrayList<String> argumentList = new ArrayList<String>();
