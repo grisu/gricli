@@ -581,9 +581,9 @@
 	<parent>
 		<groupId>nz.org.nesi</groupId>
 		<artifactId>nesi</artifactId>
-		<version>0.10</version>
+		<version>0.19</version>
 	</parent>
 	<properties>
-		<grisu.version>0.5-rc2-SNAPSHOT</grisu.version>
+		<grisu.version>0.5-rc2</grisu.version>
 	</properties>
 </project>
