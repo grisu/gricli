@@ -8,6 +8,8 @@ import grisu.gricli.environment.GricliVar;
 import grisu.jcommons.constants.Constants;
 import grisu.jcommons.constants.JobSubmissionProperty;
 import grisu.model.info.ApplicationInformation;
+import grisu.model.info.dto.DtoProperty;
+import grisu.model.info.dto.JobQueueMatch;
 import grisu.model.info.dto.Queue;
 import grisu.model.job.JobSubmissionObjectImpl;
 
@@ -15,9 +17,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Maps;
 
 public class SetCommand implements GricliCommand {
 
@@ -66,12 +69,27 @@ public class SetCommand implements GricliCommand {
 			final String app = env.application.get();
 			final ApplicationInformation ai = env.getGrisuRegistry()
 					.getApplicationInformation(app);
-			final List<Queue> allQueues = ai.getQueues(props, fqan);
+			final List<JobQueueMatch> allQueues = ai.getMatches(props, fqan);
 
-			if (Queue.getQueue(allQueues, values[0]) == null) {
+			JobQueueMatch match = JobQueueMatch.getMatch(allQueues, values[0]);
+
+			if (match == null) {
 				throw new GricliRuntimeException("Queue '" + values[0]
-						+ "' not a valid queuename or queue not available for the currently specified job parameters.");
+						+ "' not a valid queuename.");
 			}
+
+			if (!match.isValid()) {
+				String message = "\nQueue '" + values[0]
+						+ "' not valid for current job setup:\n\n";
+				for (DtoProperty prop : match.getPropertiesDetails()
+						.getProperties()) {
+					message = message
+							+ ("\t" + prop.getKey() + ":\t" + prop.getValue() + "\n");
+				}
+				throw new GricliRuntimeException(message);
+
+			}
+
 		} else {
 
 			GricliVar<String> queueVar = (GricliVar<String>) env

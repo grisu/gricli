@@ -7,73 +7,43 @@ import grisu.jcommons.utils.MemoryUtils;
 import grisu.jcommons.utils.OutputHelpers;
 import grisu.jcommons.utils.QueueHelpers;
 import grisu.model.info.ApplicationInformation;
+import grisu.model.info.dto.DtoProperty;
 import grisu.model.info.dto.DynamicInfo;
+import grisu.model.info.dto.JobQueueMatch;
 import grisu.model.info.dto.Package;
 import grisu.model.info.dto.Queue;
 import grisu.model.info.dto.Version;
 import grisu.model.job.JobSubmissionObjectImpl;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import com.google.common.base.Functions;
-import com.google.common.collect.Collections2;
-
 public class PrintQueueCommand implements GricliCommand {
 
-	private final String queue;
+	public static Map<String, String> constructAvailableApplicationsDetails(
+			Queue q) {
+		Map<String, String> details = Maps.newLinkedHashMap();
 
-	@SyntaxDescription(command = { "print", "queue" }, arguments = { "queue" })
-	@AutoComplete(completors = { QueueCompletorNoAuto.class })
-	public PrintQueueCommand(String queue) {
-		this.queue = queue;
-	}
+		details.put("Name", "Version");
 
-	public void execute(GricliEnvironment env)
-			throws GricliRuntimeException {
+		if (q.getPackages().size() > 0) {
 
-		final String fqan = (String) env.getVariable("group").get();
-
-		final JobSubmissionObjectImpl job = env.getJob();
-
-		// UserEnvironmentManager uem =
-		// env.getGrisuRegistry().getUserEnvironmentManager();
-		final ApplicationInformation ai = env.getGrisuRegistry()
-				.getApplicationInformation(job.getApplication());
-		final List<Queue> grs = ai.getQueues(job.getJobSubmissionPropertyMap(),
-				fqan);
-
-		Queue q = null;
-		if ((grs == null)) {
-			env.printError("Queue not available for current job setup.");
-			return;
-		} else {
-
-			Collection<String> subLocs = Collections2.transform(grs,
-					Functions.toStringFunction());
-
-			for (Queue qu : grs) {
-				if (qu.toString().equals(queue)) {
-					q = qu;
-					break;
+			for (Package p : q.getPackages()) {
+				if (!p.getVersion().getVersion()
+						.equals(Version.ANY_VERSION.getVersion())) {
+					details.put(p.getApplication().getName(), p.getVersion()
+							.getVersion());
 				}
 			}
-
-			if (q == null) {
-				env.printError("Queue not available for current job setup.");
-				return;
-			}
-
 		}
 
-		env.printMessage("");
-		env.printMessage("Queue is valid for current job setup.");
-		env.printMessage("");
-		env.printMessage("Queue details");
-		env.printMessage("");
+		return details;
+
+	}
+
+	public static Map<String, String> constructQueueDetails(Queue q) {
 
 		Map<String, String> details = Maps.newLinkedHashMap();
 
@@ -102,68 +72,86 @@ public class PrintQueueCommand implements GricliCommand {
 			}
 		}
 
-		String output = OutputHelpers.getTable(details);
-
-		details = Maps.newLinkedHashMap();
-
-		if (q.getPackages().size() > 0) {
-			output = output + "\nPackages installed:\n\n";
-
-			details.put("Name", "Version");
-			for ( Package p : q.getPackages() ) {
-				if (!p.getVersion().getVersion()
-						.equals(Version.ANY_VERSION.getVersion())) {
-					details.put(p.getApplication().getName(), p.getVersion()
-							.getVersion());
-				}
-			}
-		}
-
-		output = output + OutputHelpers.getTable(details);
-		env.printMessage(output);
-
+		return details;
 
 	}
 
-	// private String formatOutput(GridResource gr) {
-	//
-	// final StringBuffer result = new StringBuffer("\n");
-	// final Formatter formatter = new Formatter(result, Locale.US);
-	//
-	// final String subLoc = SubmissionLocationHelpers
-	// .createSubmissionLocationString(gr);
-	//
-	// result.append("Queue: " + subLoc + "\n\n");
-	//
-	// final int freeJobSlots = gr.getFreeJobSlots();
-	// final String gramVersion = gr.getGRAMVersion();
-	// final int mainMemoryRAMSize = gr.getMainMemoryRAMSize();
-	// final String jobManager = gr.getJobManager();
-	// final int mainMemoryVirtualSize = gr.getMainMemoryVirtualSize();
-	// final int rank = gr.getRank();
-	// final int runningJobs = gr.getRunningJobs();
-	// final String siteName = gr.getSiteName();
-	// final String queueName = gr.getQueueName();
-	// final int smpSize = gr.getSmpSize();
-	// final int totalJobs = gr.getTotalJobs();
-	// final int waitingJobs = gr.getWaitingJobs();
-	//
-	// formatter.format("%-25s%s%n", "Site", siteName);
-	// formatter.format("%-25s%s%n", "Queue name", queueName);
-	// formatter.format("%-25s%s%n", "Job manager", jobManager);
-	// formatter.format("%-25s%s%n%n", "GRAM version", gramVersion);
-	// // formatter
-	// // .format("%-25s%s%n", "Main memory RAM size", mainMemoryRAMSize);
-	// // formatter.format("%-25s%s%n%n", "Main memory virtual size",
-	// // mainMemoryVirtualSize);
-	// // formatter.format("%-25s%s%n%n", "SMP size", smpSize);
-	// formatter.format("%-25s%s%n", "Total jobs", totalJobs);
-	// formatter.format("%-25s%s%n", "Running jobs", runningJobs);
-	// formatter.format("%-25s%s%n%n", "Waiting jobs", waitingJobs);
-	// formatter.format("%-25s%s%n%n", "Free job slots", freeJobSlots);
-	// formatter.format("%-25s%s%n", "Rank", rank);
-	//
-	// return result.toString();
-	// }
+	private final String queue;
+
+	@SyntaxDescription(command = { "print", "queue" }, arguments = { "queue" })
+	@AutoComplete(completors = { QueueCompletorNoAuto.class })
+	public PrintQueueCommand(String queue) {
+		this.queue = queue;
+	}
+
+	public void execute(GricliEnvironment env)
+			throws GricliRuntimeException {
+
+		final String fqan = (String) env.getVariable("group").get();
+
+		final JobSubmissionObjectImpl job = env.getJob();
+
+		// UserEnvironmentManager uem =
+		// env.getGrisuRegistry().getUserEnvironmentManager();
+		final ApplicationInformation ai = env.getGrisuRegistry()
+				.getApplicationInformation(job.getApplication());
+		// final List<Queue> grs =
+		// ai.getQueues(job.getJobSubmissionPropertyMap(),
+		// fqan);
+
+		final List<JobQueueMatch> grs = ai.getMatches(
+				job.getJobSubmissionPropertyMap(),
+				fqan);
+
+
+		Queue q = null;
+
+		JobQueueMatch match = null;
+		for (JobQueueMatch m : grs) {
+			if (m.getQueue().toString().equals(this.queue)) {
+				match = m;
+				break;
+			}
+		}
+
+		if (match == null) {
+			env.printError("Can't find queue: " + this.queue);
+			return;
+		}
+
+		Map<String, String> details = constructQueueDetails(match.getQueue());
+
+		env.printMessage("");
+		env.printMessage("Queue details");
+		env.printMessage("");
+		env.printMessage(OutputHelpers.getTable(details));
+
+		Map<String, String> apps = constructAvailableApplicationsDetails(match
+				.getQueue());
+		// env.printMessage("");
+		// env.printMessage("");
+		env.printMessage("\nPackages installed:");
+		env.printMessage("");
+		env.printMessage(OutputHelpers.getTable(apps));
+		// env.printMessage("");
+		env.printMessage("");
+
+
+		if (match.isValid()) {
+			env.printMessage("Queue is valid for current job setup.");
+			env.printMessage("");
+		} else {
+			env.printMessage("Queue is not valid for current job setup:");
+			env.printMessage("");
+			for (DtoProperty prop : match.getPropertiesDetails()
+					.getProperties()) {
+				env.printMessage("\t" + prop.getKey() + ":\t"
+						+ prop.getValue());
+			}
+			env.printMessage("");
+		}
+
+
+	}
 
 }
