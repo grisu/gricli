@@ -267,6 +267,13 @@ public class Gricli extends GrisuCliClient<GricliCliParameters> {
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
 
+		// try {
+		// Thread.sleep(3000);
+		// } catch (InterruptedException e1) {
+		// // TODO Auto-generated catch block
+		// e1.printStackTrace();
+		// }
+		// System.out.println("STARTING...");
 		// System.setProperty(
 		// CommonGridProperties.Property.DAEMONIZE_GRID_SESSION.toString(),
 		// "false");
