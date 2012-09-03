@@ -1,6 +1,18 @@
 Changelog
 =========
 
+0.8
+---
+
+* added way to start session daemon in background for Linux (-s option) which keeps credential up-to-date
+* 'exit' alias for 'quit' -- both commands can be used to logout now
+* improved checks of job properties against valid values -- if a queue is set that doesn't support currently setup job a detailed error message is displayed
+* improved information for queues when issuing 'print queue xxxx' command
+* 'print queues' now displays queues sorted by whether a queue supports the currently setup job or not
+* improved ls command to list jobs easier. format: ls <jobname> <filename_in_jobdirectory>
+* changes in speed and stability because of update of underlying Grisu client library
+
+
 0.7
 ---
 
