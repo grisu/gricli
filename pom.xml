@@ -124,6 +124,11 @@
 			<artifactId>slf4j-simple</artifactId>
 			<version>1.6.4</version>
 		</dependency>
+		<dependency>
+			<groupId>grisu</groupId>
+			<artifactId>grid-jcommons</artifactId>
+			<version>2.0.3-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<issueManagement>
