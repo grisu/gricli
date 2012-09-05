@@ -1,206 +1,185 @@
 package grisu.gricli.command;
 
 import grisu.gricli.GricliRuntimeException;
-import grisu.gricli.completors.GridResourcePropertyCompletor;
 import grisu.gricli.environment.GricliEnvironment;
-import grisu.gricli.util.OutputHelpers;
-import grisu.jcommons.interfaces.GridResource;
-import grisu.jcommons.utils.SubmissionLocationHelpers;
 import grisu.model.info.ApplicationInformation;
+import grisu.model.info.dto.DtoProperty;
+import grisu.model.info.dto.JobQueueMatch;
 import grisu.model.job.JobSubmissionObjectImpl;
 
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.SortedSet;
 
-import org.apache.commons.lang.StringUtils;
+import com.google.common.collect.Sets;
 
 public class PrintQueuesCommand implements GricliCommand {
 
-	enum PROPERTY {
-		rank("Rank"),
-		site("Site"),
-		queue_name("Queue name"),
-		job_manager("Job manager"),
-		gram_version("Gram version"),
-		// ramsize("Main memory RAM size"),
-		// virtualramsize("Main memory virtual size"),
-		// smp_size("SMP size"),
-		total_jobs("Total jobs"),
-		running_jobs("Running jobs"),
-		waiting_jobs("Waiting jobs"),
-		free_job_slots("Free job slots");
-
-		String prettyName;
-
-		private PROPERTY(String prettyName) {
-			this.prettyName = prettyName;
-		}
-	}
-
-	private static String[] PROPERTY_NAMES = null;
-
-	public static String[] getGridResourcePropertyNames() {
-		if (PROPERTY_NAMES == null) {
-			PROPERTY_NAMES = new String[PROPERTY.values().length];
-			for (int i = 0; i < PROPERTY.values().length; i++) {
-				PROPERTY_NAMES[i] = PROPERTY.values()[i].toString();
-			}
-			Arrays.sort(PROPERTY_NAMES);
-		}
-		return PROPERTY_NAMES;
-	}
-
-	private static String getGridResourceValue(GridResource gr, String property)
-			throws GricliRuntimeException {
-
-		try {
-			final PROPERTY p = PROPERTY.valueOf(property);
-
-			switch (p) {
-			case rank:
-				return new Integer(gr.getRank()).toString();
-			case site:
-				return gr.getSiteName();
-			case queue_name:
-				return gr.getQueueName();
-			case job_manager:
-				return gr.getJobManager();
-			case gram_version:
-				return gr.getGRAMVersion();
-				// case ramsize:
-				// return new Integer(gr.getMainMemoryRAMSize()).toString();
-				// case virtualramsize:
-				// return new Integer(gr.getMainMemoryVirtualSize()).toString();
-				// case smp_size:
-				// return new Integer(gr.getSmpSize()).toString();
-			case total_jobs:
-				return new Integer(gr.getTotalJobs()).toString();
-			case running_jobs:
-				return new Integer(gr.getRunningJobs()).toString();
-			case waiting_jobs:
-				return new Integer(gr.getWaitingJobs()).toString();
-			case free_job_slots:
-				return new Integer(gr.getFreeJobSlots()).toString();
-			}
-
-			return p.prettyName;
-		} catch (final IllegalArgumentException e) {
-			throw new GricliRuntimeException("Property \"" + property
-					+ "\" not valid. Allowed values: "
-					+ StringUtils.join(getGridResourcePropertyNames(), ", "));
-		}
-
-	}
-
-	private final String[] propertiesToDisplay;
-
-	// @SyntaxDescription(command={"print","queues"})
-	// public PrintQueuesCommand(){
-	// this(new String[] { "rank" });
+	// enum PROPERTY {
+	// rank("Rank"),
+	// site("Site"),
+	// queue_name("Queue name"),
+	// job_manager("Job manager"),
+	// gram_version("Gram version"),
+	// // ramsize("Main memory RAM size"),
+	// // virtualramsize("Main memory virtual size"),
+	// // smp_size("SMP size"),
+	// total_jobs("Total jobs"),
+	// running_jobs("Running jobs"),
+	// waiting_jobs("Waiting jobs"),
+	// free_job_slots("Free job slots");
+	//
+	// String prettyName;
+	//
+	// private PROPERTY(String prettyName) {
+	// this.prettyName = prettyName;
+	// }
 	// }
 
-	@SyntaxDescription(command = { "print", "queues" }, arguments = { "properties" })
-	@AutoComplete(completors = { GridResourcePropertyCompletor.class })
-	public PrintQueuesCommand(String... properties) {
-		if (properties.length == 0) {
-			this.propertiesToDisplay = new String[] { "rank" };
-		} else {
-			this.propertiesToDisplay = properties;
-		}
-	}
+	// private static String[] PROPERTY_NAMES = null;
 
-	public void execute(GricliEnvironment env)
-			throws GricliRuntimeException {
+	public static List<JobQueueMatch> calculateAllAvailableQueues(
+			GricliEnvironment env)
+					throws GricliRuntimeException {
+
 
 		final String fqan = (String) env.getVariable("group").get();
 
 		final JobSubmissionObjectImpl job = env.getJob();
 
-		// UserEnvironmentManager uem =
-		// env.getGrisuRegistry().getUserEnvironmentManager();
 		final ApplicationInformation ai = env.getGrisuRegistry()
 				.getApplicationInformation(job.getApplication());
-		final Set<GridResource> grs = ai
-				.getAllSubmissionLocationsAsGridResources(
-						job.getJobSubmissionPropertyMap(), fqan);
+		final List<JobQueueMatch> grs = ai.getMatches(
+				job.getJobSubmissionPropertyMap(),
+				fqan);
 
-		if (grs.size() == 0) {
+		return grs;
+	}
+
+
+
+	// public static String[] getGridResourcePropertyNames() {
+	// if (PROPERTY_NAMES == null) {
+	// PROPERTY_NAMES = new String[PROPERTY.values().length];
+	// for (int i = 0; i < PROPERTY.values().length; i++) {
+	// PROPERTY_NAMES[i] = PROPERTY.values()[i].toString();
+	// }
+	// Arrays.sort(PROPERTY_NAMES);
+	// }
+	// return PROPERTY_NAMES;
+	// }
+
+
+	// private final String[] propertiesToDisplay;
+
+	@SyntaxDescription(command = { "print", "queues" })
+	// @AutoComplete(completors = { GridResourcePropertyCompletor.class })
+	public PrintQueuesCommand(String... properties) {
+		// if (properties.length == 0) {
+		// this.propertiesToDisplay = new String[] { "site" };
+		// } else {
+		// this.propertiesToDisplay = properties;
+		// }
+	}
+
+	public void execute(GricliEnvironment env) throws GricliRuntimeException {
+
+		final List<JobQueueMatch> grs = calculateAllAvailableQueues(env);
+
+		if ((grs == null) || (grs.size() == 0)) {
 			env.printMessage("No queues available for your currently setup environment. Maybe try to set another group/application?");
 			return;
 		}
 
-		final String output = formatOutput(grs);
-		env.printMessage("\n" + output);
+		// Collections.sort(grs);
 
-	}
+		SortedSet<JobQueueMatch> validQueues = Sets.newTreeSet();
+		SortedSet<JobQueueMatch> inValidQueues = Sets.newTreeSet();
 
-	private String formatOutput(Set<GridResource> grs)
-			throws GricliRuntimeException {
-
-		final List<List<String>> grListList = new LinkedList<List<String>>();
-
-		final List<String> titleList = new LinkedList<String>();
-		grListList.add(titleList);
-
-		titleList.add("Queue");
-
-		for (final String property : propertiesToDisplay) {
-			try {
-				titleList.add(PROPERTY.valueOf(property).prettyName);
-			} catch (final IllegalArgumentException e) {
-				throw new GricliRuntimeException(
-						"Property \""
-								+ property
-								+ "\" not valid. Allowed values: "
-								+ StringUtils.join(
-										getGridResourcePropertyNames(), ", "));
+		for (JobQueueMatch match : grs) {
+			if (match.isValid()) {
+				validQueues.add(match);
+			} else {
+				inValidQueues.add(match);
 			}
 		}
 
-		for (final GridResource gr : grs) {
-			final List<String> grList = new LinkedList<String>();
-			grListList.add(grList);
+		// Collections.sort(validQueues);
+		// Collections.sort(inValidQueues);
 
-			final String subLoc = SubmissionLocationHelpers
-					.createSubmissionLocationString(gr);
-			grList.add(subLoc);
+		env.printMessage("");
 
-			for (final String property : propertiesToDisplay) {
-				final String value = getGridResourceValue(gr, property);
-				grList.add(value);
+		if (validQueues.size() > 0) {
+			env.printMessage("Valid queues: ");
+			env.printMessage("");
+			for (JobQueueMatch q : validQueues) {
+				env.printMessage("\t" + q.getQueue().toString() + " ("
+						+ q.getQueue().getGateway().getSite().getName()
+						+ ")");
 			}
-
+			env.printMessage("");
+		}
+		if (inValidQueues.size() > 0) {
+			env.printMessage("Invalid queues: ");
+			env.printMessage("");
+			for (JobQueueMatch match : inValidQueues) {
+				if (!match.isValid()) {
+					env.printMessage("\t" + match.getQueue().toString() + " ("
+							+ match.getQueue().getGateway().getSite().getName()
+							+ ")");
+					for (DtoProperty prop : match.getPropertiesDetails().getProperties()) {
+						env.printMessage("\t\t" + prop.getKey() + ":\t"
+								+ prop.getValue());
+					}
+				}
+			}
+			env.printMessage("");
 		}
 
-		final String output = OutputHelpers.getTable(grListList, true, 0,
-				new Integer[] {});
-
-		return output;
-
-		// StringBuffer result = new StringBuffer("\n");
-		// Formatter formatter = new Formatter(result, Locale.US);
-		//
-		// int maxSubLoc = 0;
-		// for (GridResource gr : grs) {
-		// String subLoc = SubmissionLocationHelpers
-		// .createSubmissionLocationString(gr);
-		// if (subLoc.length() > maxSubLoc) {
-		// maxSubLoc = subLoc.length();
-		// }
-		// }
-		// formatter.format("%" + -(maxSubLoc + 8) + "s%s%n", "Queue", "Rank");
-		// for (GridResource gr : grs) {
-		// String subLoc = SubmissionLocationHelpers
-		// .createSubmissionLocationString(gr);
-		// formatter.format("%4s%" + -(maxSubLoc + 4) + "s%" + "s%n",
-		// "    ",
-		// subLoc, gr.getRank());
-		// }
-		// result.append("\n");
-		//
-		// return result.toString();
 	}
+
+	// private String formatOutput(Set<GridResource> grs)
+	// throws GricliRuntimeException {
+	//
+	// final List<List<String>> grListList = new LinkedList<List<String>>();
+	//
+	// final List<String> titleList = new LinkedList<String>();
+	// grListList.add(titleList);
+	//
+	// titleList.add("Queue");
+	//
+	// for (final String property : propertiesToDisplay) {
+	// try {
+	// titleList.add(PROPERTY.valueOf(property).prettyName);
+	// } catch (final IllegalArgumentException e) {
+	// throw new GricliRuntimeException(
+	// "Property \""
+	// + property
+	// + "\" not valid. Allowed values: "
+	// + StringUtils.join(
+	// getGridResourcePropertyNames(), ", "));
+	// }
+	// }
+	//
+	// for (final GridResource gr : grs) {
+	// final List<String> grList = new LinkedList<String>();
+	// grListList.add(grList);
+	//
+	// final String subLoc = SubmissionLocationHelpers
+	// .createSubmissionLocationString(gr);
+	// grList.add(subLoc);
+	//
+	// for (final String property : propertiesToDisplay) {
+	// final String value = getGridResourceValue(gr, property);
+	// grList.add(value);
+	// }
+	//
+	// }
+	//
+	// final String output = OutputHelpers.getTable(grListList, true, 0,
+	// new Integer[] {});
+	//
+	// return output;
+	//
+	// }
 
 }

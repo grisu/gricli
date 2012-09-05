@@ -23,11 +23,11 @@ public abstract class ScalarVar<T> extends GricliVar<T> {
 	protected abstract T fromString(String arg) throws GricliSetValueException;
 
 	@Override
-	protected T fromStrings(String[] args) throws GricliSetValueException {
-		if (args == null || args.length != 1) {
+	public T fromStrings(String[] args) throws GricliSetValueException {
+		if ((args == null) || (args.length != 1)) {
 			throw new GricliSetValueException(getName(), "",
 					"accepts only single argument");
-		} else if (args[0] == null && !this.nullable) {
+		} else if ((args[0] == null) && !this.nullable) {
 			throw new GricliSetValueException(getName(), "", "cannot be unset");
 		} else {
 			return fromString(args[0]);

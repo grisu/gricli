@@ -11,7 +11,8 @@ public class BackendCompletor implements Completor {
 	SimpleCompletor sc;
 
 	public BackendCompletor() {
-		sc = new SimpleCompletor(LoginManager.SERVICEALIASES.keySet().toArray(
+		sc = new SimpleCompletor(LoginManager.SERVICEALIASES.keySet()
+				.toArray(
 				new String[] {}));
 	}
 

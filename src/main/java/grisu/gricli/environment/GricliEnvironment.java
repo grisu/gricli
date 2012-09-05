@@ -86,7 +86,7 @@ public class GricliEnvironment implements PropertyChangeListener {
 		});
 
 		this.description = new StringVar("description", "gricli job");
-		this.group = new StringVar("group", "/nz/nesi") {
+		this.group = new StringVar("group", "/nz/nesi", true) {
 
 			private boolean validate = false;
 

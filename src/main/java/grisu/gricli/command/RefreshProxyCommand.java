@@ -2,8 +2,8 @@ package grisu.gricli.command;
 
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.environment.GricliEnvironment;
-import grisu.utils.WalltimeUtils;
-import grith.jgrith.credential.Credential;
+import grisu.jcommons.utils.WalltimeUtils;
+import grith.jgrith.cred.Cred;
 
 public class RefreshProxyCommand implements GricliCommand {
 
@@ -15,7 +15,7 @@ public class RefreshProxyCommand implements GricliCommand {
 	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
-		Credential cred = env.getGrisuRegistry().getCredential();
+		Cred cred = env.getGrisuRegistry().getCredential();
 
 		String[] remaining = WalltimeUtils
 				.convertSecondsInHumanReadableString(cred

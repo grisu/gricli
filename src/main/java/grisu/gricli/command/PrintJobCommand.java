@@ -9,9 +9,9 @@ import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 import grisu.jcommons.constants.JobSubmissionProperty;
+import grisu.jcommons.utils.WalltimeUtils;
 import grisu.model.dto.DtoJob;
 import grisu.utils.ServiceInterfaceUtils;
-import grisu.utils.WalltimeUtils;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.python.google.common.collect.Maps;
+import com.google.common.collect.Maps;
 
 public class PrintJobCommand implements GricliCommand {
 	private final String jobname;
@@ -89,6 +89,7 @@ public class PrintJobCommand implements GricliCommand {
 
 	private void printJob(GricliEnvironment env, ServiceInterface si, String j)
 			throws NoSuchJobException {
+		si.getJobStatus(j);
 		final DtoJob job = si.getJob(j);
 		env.printMessage("Printing details for job " + jobname + "\n");
 		// env.printMessage("status: "

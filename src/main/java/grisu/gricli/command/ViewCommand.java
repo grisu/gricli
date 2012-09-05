@@ -14,6 +14,8 @@ import grisu.model.dto.DtoJob;
 import java.io.File;
 import java.io.IOException;
 
+import jline.NullCompletor;
+
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -24,7 +26,8 @@ public class ViewCommand implements GricliCommand {
 	// private final String jobname;
 
 	@SyntaxDescription(command = { "view" }, arguments = { "args" })
-	@AutoComplete(completors = { ViewCompletor.class, JobDirFileCompletor.class })
+	@AutoComplete(completors = { ViewCompletor.class,
+			JobDirFileCompletor.class, NullCompletor.class })
 	public ViewCommand(String... job_or_filenames) {
 		this.job_or_filenames = job_or_filenames;
 		// this.jobname = null;

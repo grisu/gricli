@@ -16,8 +16,8 @@ import grisu.utils.ServiceInterfaceUtils;
 import java.util.List;
 import java.util.Map;
 
-import org.python.google.common.collect.Lists;
-import org.python.google.common.collect.Maps;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class ArchiveJobCommand implements GricliCommand {
 	private final String[] jobFilters;

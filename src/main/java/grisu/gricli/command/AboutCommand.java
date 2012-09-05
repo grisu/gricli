@@ -2,14 +2,14 @@ package grisu.gricli.command;
 
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.environment.GricliEnvironment;
-import grisu.gricli.util.OutputHelpers;
 import grisu.jcommons.constants.Constants;
-import grisu.utils.WalltimeUtils;
-import grith.jgrith.credential.Credential;
+import grisu.jcommons.utils.OutputHelpers;
+import grisu.jcommons.utils.WalltimeUtils;
+import grith.jgrith.cred.Cred;
 
 import java.util.Map;
 
-import org.python.google.common.collect.Maps;
+import com.google.common.collect.Maps;
 
 public class AboutCommand implements GricliCommand {
 
@@ -20,7 +20,7 @@ public class AboutCommand implements GricliCommand {
 	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 
-		Credential c = env.getGrisuRegistry().getCredential();
+		Cred c = env.getGrisuRegistry().getCredential();
 
 		Map<String, String> temp = Maps.newLinkedHashMap();
 
@@ -40,14 +40,10 @@ public class AboutCommand implements GricliCommand {
 			// + e.getLocalizedMessage() + ")");
 		}
 
-		if (c.isAutoRenewable()) {
-			// env.printMessage("Session auto-renew: yes");
-			temp.put("Session auto-renew", "yes");
+		if (c.isRenewable()) {
+			temp.put("Session autorenews", "Yes");
 		} else {
-			temp.put(
-					"Session auto-renew",
-					"no (to enable, you need to issue the 'renew session' command or delete your proxy and log in again.)");
-			// env.printMessage("Session auto-renew: no (to enable, you need to issue the 'renew session' command or delete your proxy and log in again.)");
+			temp.put("Session autorenews", "No");
 		}
 
 		temp.put("User ID", env.getServiceInterface().getDN());

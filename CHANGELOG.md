@@ -1,9 +1,22 @@
 Changelog
 =========
 
+0.8
+---
+
+* added way to start session daemon in background for Linux (-s option) which keeps credential up-to-date
+* 'exit' alias for 'quit' -- both commands can be used to logout now
+* improved checks of job properties against valid values -- if a queue is set that doesn't support currently setup job a detailed error message is displayed
+* improved information for queues when issuing 'print queue xxxx' command
+* 'print queues' now displays queues sorted by whether a queue supports the currently setup job or not
+* improved ls command to list jobs easier. format: ls <jobname> <filename_in_jobdirectory>
+* changes in speed and stability because of update of underlying Grisu client library
+
+
 0.7
 ---
 
+* All gricli properties are now exported as job environment variables, like walltime -> GRISU_WALLTIME
 * "kill/clean jobs" commands now deprecated. "kill/clean job [list of jobnames/globs]" is used insted. Supports globs completion.
 * "download" and "downloadclean" commands now support optional target directory.
 * "view" command can now list jobdirectories directly ("view job <jobname> <file_relative_to_jobdir>").

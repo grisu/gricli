@@ -22,11 +22,34 @@
 	</repositories>
 
 
-	<version>0.8-SNAPSHOT</version>
+	<version>0.8</version>
 	<description>Grisu commandline client</description>
 
 
 	<dependencies>
+
+
+		<!-- the main grisu dependency. -->
+
+		<dependency>
+			<groupId>grisu.frontend</groupId>
+			<artifactId>grisu-client</artifactId>
+			<version>${grisu.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>grisu.backend</groupId>
+			<artifactId>grisu-core</artifactId>
+			<version>${grisu.version}</version>
+			<scope>provided</scope>
+
+			<exclusions>
+				<exclusion>
+					<artifactId>logback-classic</artifactId>
+					<groupId>ch.qos.logback</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 		<dependency>
 			<groupId>external.jline</groupId>
@@ -41,19 +64,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- the main grisu dependency. -->
-		<dependency>
-			<groupId>grisu.frontend</groupId>
-			<artifactId>grisu-client</artifactId>
-			<version>${grisu.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-cli</groupId>
-			<artifactId>commons-cli</artifactId>
-			<version>1.1</version>
-			<scope>compile</scope>
-		</dependency>
 		<dependency>
 			<groupId>commons-configuration</groupId>
 			<artifactId>commons-configuration</artifactId>
@@ -69,9 +79,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>bouncycastle</groupId>
+			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15</artifactId>
-			<version>145</version>
+			<version>${bcprov.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -85,19 +95,19 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
-			<version>1.6.3</version>
+			<version>1.6.4</version>
 		</dependency>
 
 		<dependency>
 			<groupId>me.moocar</groupId>
 			<artifactId>logback-gelf</artifactId>
 			<version>nz.0.9.7</version>
-		</dependency>
-		<dependency>
-			<groupId>grisu.backend</groupId>
-			<artifactId>grisu-core</artifactId>
-			<version>${grisu.version}</version>
-			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>logback-classic</artifactId>
+					<groupId>ch.qos.logback</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
@@ -108,6 +118,16 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.10</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.6.4</version>
+		</dependency>
+		<dependency>
+			<groupId>grisu</groupId>
+			<artifactId>grid-jcommons</artifactId>
+			<version>${grid-jcommons.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -153,7 +173,7 @@
 					<!-- the name of the token to replace -->
 					<token>VERSION_TOKEN</token>
 					<!-- replace it with the maven project version -->
-					<value>${project.version}</value>
+					<value>${project.version} (${maven.build.timestamp})</value>
 				</configuration>
 			</plugin>
 
@@ -169,7 +189,7 @@
 				</configuration>
 			</plugin>
 
-			<!-- you can disable the assembly plugin if you want, your builds will 
+			<!-- you can disable the assembly plugin if you want, your builds will
 				be faster I find it quite handy to have maven build an executable jar, though -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -201,6 +221,20 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.2.2</version>
+				<inherited>false</inherited>
+				<configuration>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<pushChanges>true</pushChanges>
+					<localCheckout>true</localCheckout>
+					<tagNameFormat>@{project.version}</tagNameFormat>
+					<releaseProfiles>man,deb,rpm</releaseProfiles>
+				</configuration>
+			</plugin>					
 
 		</plugins>
 	</build>
@@ -315,7 +349,7 @@
 							<replacements>
 								<replacement>
 									<token>VERSION_TOKEN</token>
-									<value>${project.version}</value>
+									<value>${project.version} (${maven.build.timestamp})</value>
 								</replacement>
 							</replacements>
 						</configuration>
@@ -356,7 +390,7 @@
 												<group>root</group>
 												<filemode>755</filemode>
 											</mapper>
-										</data>															
+										</data>
 
 										<data>
 											<src>${project.basedir}/target/gricli.1</src>
@@ -368,6 +402,31 @@
 												<group>root</group>
 											</mapper>
 										</data>
+
+										<data>
+											<src>${project.basedir}/src/deb/data/gricli.desktop</src>
+											<type>file</type>
+											<mapper>
+												<type>perm</type>
+												<prefix>/usr/share/applications/</prefix>
+												<user>root</user>
+												<group>root</group>
+												<filemode>755</filemode>
+											</mapper>
+										</data>
+										<data>
+											<src>${project.basedir}/src/deb/data/gricli.png</src>
+											<type>file</type>
+											<mapper>
+												<type>perm</type>
+												<prefix>/usr/local/lib/grisu/icons/</prefix>
+												<user>root</user>
+												<group>root</group>
+												<filemode>755</filemode>
+											</mapper>
+										</data>
+										
+										
 									</dataSet>
 
 								</configuration>
@@ -440,6 +499,31 @@
 										</source>
 									</sources>
 								</mapping>
+								
+								<mapping>
+									<directory>/usr/share/applications/</directory>
+									<documentation>false</documentation>
+									<filemode>755</filemode>
+									<username>root</username>
+									<groupname>root</groupname>
+									<sources>
+										<source>
+											<location>src/deb/data/gricli.desktop</location>
+										</source>
+									</sources>
+								</mapping>
+								<mapping>
+									<directory>/usr/local/lib/grisu/icons/</directory>
+									<documentation>false</documentation>
+									<filemode>755</filemode>
+									<username>root</username>
+									<groupname>root</groupname>
+									<sources>
+										<source>
+											<location>src/deb/data/gricli.png</location>
+										</source>
+									</sources>
+								</mapping>
 							</mappings>
 							<requires>
 								<require>nesi</require>
@@ -448,9 +532,9 @@
 							<preinstallScriptlet>
 								<script>echo "Installing Gricli..."</script>
 							</preinstallScriptlet>
-							<!-- <postinstallScriptlet> <scriptFile>src/main/scripts/postinstall</scriptFile> 
-								<fileEncoding>utf-8</fileEncoding> </postinstallScriptlet> <preremoveScriptlet> 
-								<scriptFile>src/main/scripts/preremove</scriptFile> <fileEncoding>utf-8</fileEncoding> 
+							<!-- <postinstallScriptlet> <scriptFile>src/main/scripts/postinstall</scriptFile>
+								<fileEncoding>utf-8</fileEncoding> </postinstallScriptlet> <preremoveScriptlet>
+								<scriptFile>src/main/scripts/preremove</scriptFile> <fileEncoding>utf-8</fileEncoding>
 								</preremoveScriptlet> -->
 						</configuration>
 					</plugin>
@@ -459,12 +543,63 @@
 
 
 		</profile>
+		
+		<profile>
+			<id>getdown</id>
+			<build>
+				<plugins>
+
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>2.5</version>
+						<executions>
+							<execution>
+								<id>copy-getdown-control</id>
+								<!-- here the phase you need -->
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${basedir}/target/</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${basedir}</directory>
+											<includes>
+												<include>getdown.txt</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.bitbucket.joxley</groupId>
+						<artifactId>getdown-maven-plugin</artifactId>
+						<version>nesi-0.0.1</version>
+						<configuration>
+							<appdir>target</appdir> <!-- Defaults to target -->
+						</configuration>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>digest</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>		
 
 	</profiles>
 
 	<parent>
 		<groupId>nz.org.nesi</groupId>
 		<artifactId>nesi</artifactId>
-		<version>0.9</version>
+		<version>0.20</version>
 	</parent>
 </project>

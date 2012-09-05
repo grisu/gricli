@@ -5,22 +5,22 @@ import static grisu.gricli.GricliExitStatus.RUNTIME;
 import static grisu.gricli.GricliExitStatus.SUCCESS;
 import static grisu.gricli.GricliExitStatus.SYNTAX;
 import grisu.frontend.control.login.LoginManager;
+import grisu.frontend.view.cli.GrisuCliClient;
 import grisu.gricli.command.GricliCommand;
 import grisu.gricli.command.GricliCommandFactory;
 import grisu.gricli.command.InteractiveLoginCommand;
-import grisu.gricli.command.LocalLoginCommand;
 import grisu.gricli.command.RunCommand;
 import grisu.gricli.completors.CompletionCache;
 import grisu.gricli.completors.DummyCompletionCache;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.gricli.environment.GricliVar;
 import grisu.gricli.parser.GricliTokenizer;
-import grisu.jcommons.utils.EnvironmentVariableHelpers;
 import grisu.jcommons.utils.VariousStringHelpers;
 import grisu.jcommons.view.cli.CliHelpers;
 import grisu.jcommons.view.cli.LineByLineProgressDisplay;
 import grisu.settings.Environment;
 import grith.jgrith.control.SlcsLoginWrapper;
+import grith.jgrith.cred.GridLoginParameters;
 import grith.jgrith.plainProxy.LocalProxy;
 
 import java.io.File;
@@ -35,17 +35,9 @@ import jline.ArgumentCompletor;
 import jline.ConsoleReader;
 import jline.History;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import org.python.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -55,7 +47,10 @@ import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 
-public class Gricli {
+import com.beust.jcommander.ParameterException;
+import com.google.common.base.Strings;
+
+public class Gricli extends GrisuCliClient<GricliCliParameters> {
 
 	static final Logger myLogger = LoggerFactory.getLogger(Gricli.class
 			.getName());
@@ -92,6 +87,10 @@ public class Gricli {
 	public static final int MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST = 259200;
 
 	private static void configLogging() {
+		LoggerContext lc2 = (LoggerContext) LoggerFactory.getILoggerFactory();
+		// print logback's internal status
+		// StatusPrinter.print(lc2);
+
 		// stop javaxws logging
 		java.util.logging.LogManager.getLogManager().reset();
 		java.util.logging.Logger.getLogger("root").setLevel(Level.ALL);
@@ -123,6 +122,8 @@ public class Gricli {
 			StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
 
 		}
+
+
 	}
 
 	private static void executionLoop() throws IOException {
@@ -211,25 +212,20 @@ public class Gricli {
 		return reader;
 	}
 
-	private static boolean login(GricliEnvironment env, String backend,
-			boolean x509, String username, String idp) {
+	private static boolean login(GricliEnvironment env,
+			GrisuCliClient<GricliCliParameters> client) {
 
 		try {
 			GricliCommand login = null;
-			if (System.console() != null){
-				login =  new InteractiveLoginCommand(backend, x509, username, idp);
-			} else {
-				login = new LocalLoginCommand(backend);
-			}
+			// if (System.console() != null) {
+			login = new InteractiveLoginCommand(client);
+			// } else {
+			// login = new LocalLoginCommand(client.getCliParameters()
+			// .getBackend());
+			// }
 			login.execute(env);
-			try {
-				final String dn = env.getServiceInterface().getDN();
-				MDC.put("dn", dn);
-				String un = VariousStringHelpers.getCN(dn);
-				MDC.put("user", un);
-			} catch (final Exception e) {
-				myLogger.error(e.getLocalizedMessage(), e);
-			}
+
+			prepareLogging(env);
 
 			return true;
 		} catch (final Exception ex) {
@@ -243,141 +239,68 @@ public class Gricli {
 		}
 	}
 
+
+	// private static boolean login(GricliEnvironment env, String backend,
+	// String credConfig) {
+	//
+	// try {
+	// GricliCommand login = null;
+	// login = new LocalLoginCommand(backend, credConfig, null);
+	//
+	// login.execute(env);
+	//
+	// prepareLogging(env);
+	//
+	// return true;
+	// } catch (final Exception ex) {
+	// myLogger.error("Login exception", ex);
+	// Throwable t = ex;
+	// while (t.getCause() != null) {
+	// t = t.getCause();
+	// }
+	// System.err.println(t.getLocalizedMessage());
+	// return false;
+	// }
+	//
+	// }
+
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
 
-		configLogging();
+		// try {
+		// Thread.sleep(3000);
+		// } catch (InterruptedException e1) {
+		// // TODO Auto-generated catch block
+		// e1.printStackTrace();
+		// }
+		// System.out.println("STARTING...");
+		// System.setProperty(
+		// CommonGridProperties.Property.DAEMONIZE_GRID_SESSION.toString(),
+		// "false");
 
-		Thread.currentThread().setName("main");
-
-		LoginManager.setClientName("gricli");
-
-		LoginManager.setClientVersion(grisu.jcommons.utils.Version
-				.get("gricli"));
-
-		EnvironmentVariableHelpers.loadEnvironmentVariablesToSystemProperties();
-
-		Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
-
-		CliHelpers.setProgressDisplay(new LineByLineProgressDisplay());
-
-
-		// MDC.put("local_user", System.getProperty("user.name"));
-		// MDC.put("gricli-version", Version.get("gricli"));
-
-		LoginManager.initEnvironment();
-
-		final Thread t = new Thread() {
-			@Override
-			public void run() {
-				try {
-					myLogger.debug("Preloading idps...");
-					SlcsLoginWrapper.getAllIdps();
-				} catch (final Throwable e) {
-					myLogger.error(e.getLocalizedMessage(), e);
-				}
-			}
-		};
-		t.setDaemon(true);
-		t.setName("preloadIdpsThread");
-
-		if (LocalProxy
-				.validGridProxyExists(MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST / 60)) {
-			// not that important, still, we want it to load in case of renew
-			// session
-			t.setPriority(Thread.MIN_PRIORITY);
-		}
-		t.start();
-
+		Gricli g = null;
 		try {
+			g = new Gricli(args);
+		} catch (Exception e) {
+			System.err.println("Could not start gricli: "
+					+
+					e.getLocalizedMessage());
+			System.exit(1);
 
-			env = new GricliEnvironment();
-			SigintHandler.install(env);
+		}
 
-			final CommandLineParser parser = new PosixParser();
-			CommandLine cl = null;
-			final Options options = new Options();
-			options.addOption(OptionBuilder.withLongOpt("nologin")
-					.withDescription("disables login at the start").create('n'));
-			options.addOption(OptionBuilder.withLongOpt("backend").hasArg()
-					.withArgName("backend").withDescription("change backend")
-					.create('b'));
-			options.addOption(OptionBuilder.withLongOpt("script").hasArg()
-					.withArgName("file").withDescription("execute script")
-					.create('f'));
-			options.addOption(OptionBuilder.withLongOpt("username").hasArg()
-					.withArgName("username")
-					.withDescription("institution or myproxy username")
-					.create("u"));
-			options.addOption(OptionBuilder.withLongOpt("institution").hasArg()
-					.withArgName("institution_name")
-					.withDescription("institution name").create("i"));
-			options.addOption(OptionBuilder.withLongOpt("x509")
-					.withDescription("x509 certificate login").create("x"));
-			try {
-				cl = parser.parse(options, args);
-				if (!cl.hasOption('n')) {
+		g.run();
 
-					// checking whether login parameters make sense...
-					if (cl.hasOption("u")) {
-						// means myproxy or shib login
-						if (cl.hasOption("x")) {
-							throw new ParseException(
-									"X509 login and other login method specified. Please use only one.");
-						}
-					}
-					if (cl.hasOption("x")) {
-						if (cl.hasOption("i")) {
-							throw new ParseException(
-									"X509 login and idp login methods specified. Please use only one.");
-						}
-					}
+	}
 
-					final String username = cl.getOptionValue("u");
-
-					final String idp = cl.getOptionValue("i");
-
-					final boolean x509 = cl.hasOption("x");
-
-					String backend = cl.getOptionValue('b');
-					backend = (backend != null) ? backend : "BeSTGRID";
-					if (!login(env, backend, x509, username, idp)) {
-						System.exit(LOGIN.getStatus());
-					}
-				}
-
-				if (cl.hasOption('f')) {
-					scriptName = cl.getOptionValue('f');
-				}
-
-			} catch (final ParseException e) {
-				myLogger.error(e.getLocalizedMessage(), e);
-				new HelpFormatter().printHelp("griclish ", options);
-				System.exit(SYNTAX.getStatus());
-			}
-
-			try {
-				if (new File(SESSION_SETTINGS_PATH).exists()) {
-					new RunCommand(SESSION_SETTINGS_PATH).execute(env);
-				}
-				if (new File(CONFIG_FILE_PATH).exists()) {
-					new RunCommand(CONFIG_FILE_PATH).execute(env);
-				}
-			} catch (final GricliRuntimeException ex) {
-				// config does not exist
-				env.printError(ex.getMessage());
-			}
-			executionLoop();
-			shutdown(env);
-			System.exit(exitStatus.getStatus());
-		} catch (final Throwable th) {
-			th.printStackTrace();
-			System.err
-			.println("Something went terribly wrong.  Please check if you have internet connection, and your firewall settings."
-					+ " If you think there is nothing wrong with your connection, send "
-					+ DEBUG_FILE_PATH
-					+ " to eresearch-admin@auckland.ac.nz together with description of what you are trying to do.");
-			myLogger.error("something went terribly wrong ", th);
+	private static void prepareLogging(GricliEnvironment env) {
+		try {
+			final String dn = env.getServiceInterface().getDN();
+			MDC.put("dn", dn);
+			String un = VariousStringHelpers.getCN(dn);
+			MDC.put("user", un);
+		} catch (final Exception e) {
+			myLogger.error(e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -500,6 +423,110 @@ public class Gricli {
 		} catch (final IOException ex) {
 			myLogger.error(ex.getLocalizedMessage(), ex);
 			env.printError("warning: could not save session");
+		}
+	}
+
+	private static void startSession() throws IOException {
+		try {
+			if (new File(SESSION_SETTINGS_PATH).exists()) {
+				new RunCommand(SESSION_SETTINGS_PATH).execute(env);
+			}
+			if (new File(CONFIG_FILE_PATH).exists()) {
+				new RunCommand(CONFIG_FILE_PATH).execute(env);
+			}
+		} catch (final GricliRuntimeException ex) {
+			// config does not exist
+			env.printError(ex.getMessage());
+		}
+		executionLoop();
+		shutdown(env);
+		System.exit(exitStatus.getStatus());
+	}
+
+	// private final String[] args;
+
+	public Gricli(String[] args) throws Exception {
+		super(new GricliCliParameters(), args);
+		// this.args = args;
+	}
+
+	@Override
+	public void run() {
+
+
+		configLogging();
+
+		try {
+			LoginManager.initGrisuClient("gricli");
+		} catch (Exception e) {
+			System.err.println("Can't initialize environment: "
+					+ e.getLocalizedMessage());
+			System.exit(1);
+		}
+
+
+		Thread.setDefaultUncaughtExceptionHandler(new DefaultExceptionHandler());
+
+		CliHelpers.setProgressDisplay(new LineByLineProgressDisplay());
+
+
+
+		final Thread t = new Thread() {
+			@Override
+			public void run() {
+				try {
+					myLogger.debug("Preloading idps...");
+					SlcsLoginWrapper.getAllIdps();
+				} catch (final Throwable e) {
+					myLogger.error(e.getLocalizedMessage(), e);
+				}
+			}
+		};
+		t.setDaemon(true);
+		t.setName("preloadIdpsThread");
+
+		if (LocalProxy
+				.validGridProxyExists(MINIMUM_PROXY_LIFETIME_BEFORE_RENEW_REQUEST / 60)) {
+			// not that important, still, we want it to load in case of renew
+			// session
+			t.setPriority(Thread.MIN_PRIORITY);
+		}
+		t.start();
+
+		try {
+			GricliCliParameters gcp = getCliParameters();
+
+			env = new GricliEnvironment();
+			SigintHandler.install(env);
+
+			GridLoginParameters glp;
+			glp = GridLoginParameters.createFromGridCliParameters(gcp);
+
+
+			if (glp.isNologin()) {
+				startSession();
+			}
+
+
+			if (!login(env, this)) {
+				System.exit(LOGIN.getStatus());
+			}
+
+			scriptName = gcp.getScript();
+
+			startSession();
+		} catch (ParameterException pe) {
+			// throw new ParseException(pe.getLocalizedMessage());
+			pe.printStackTrace();
+
+		} catch (final Throwable th) {
+			th.printStackTrace();
+			System.err
+			.println("Something went terribly wrong.  Please check if you have internet connection, and your firewall settings."
+					+ " If you think there is nothing wrong with your connection, send "
+					+ DEBUG_FILE_PATH
+					+ " to eresearch-admin@auckland.ac.nz together with description of what you are trying to do.");
+			myLogger.error("something went terribly wrong ", th);
 		}
 	}
 

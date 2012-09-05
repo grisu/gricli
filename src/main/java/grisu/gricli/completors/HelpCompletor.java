@@ -8,7 +8,7 @@ import java.util.Set;
 import jline.Completor;
 import jline.SimpleCompletor;
 
-import org.python.google.common.collect.Sets;
+import com.google.common.collect.Sets;
 
 import com.google.common.collect.ImmutableSet;
 

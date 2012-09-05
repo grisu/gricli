@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.python.google.common.base.Strings;
+import com.google.common.base.Strings;
 
 @SuppressWarnings("restriction")
 public class DownloadJobCommand implements GricliCommand {
@@ -31,6 +31,8 @@ public class DownloadJobCommand implements GricliCommand {
 			if (dir.startsWith("~")) {
 				normalDirName = StringUtils.replaceOnce(dir, "~",
 						System.getProperty("user.home"));
+			} else {
+				normalDirName = dir;
 			}
 			File targetDir = new File(normalDirName);
 			if (targetDir.exists()) {

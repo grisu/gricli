@@ -3,6 +3,6 @@ Version: VERSION_TOKEN
 Section: misc
 Priority: optional
 Architecture: all
-Depends: java-runtime,libbcprov-java
+Depends: java-runtime,nesi-meta
 Maintainer: Markus Binsteiner <m.binsteiner@auckland.ac.nz>
 Description: Grisu commandline frontend

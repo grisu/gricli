@@ -4,7 +4,6 @@ import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.command.PrintQueuesCommand;
 import grisu.gricli.environment.GricliEnvironment;
-import grisu.jcommons.constants.Constants;
 import grisu.model.info.dto.JobQueueMatch;
 
 import java.util.Collections;
@@ -21,10 +20,10 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Functions;
 import com.google.common.collect.Collections2;
 
-public class QueueCompletor implements Completor {
+public class QueueCompletorNoAuto implements Completor {
 
 	private final Logger myLogger = LoggerFactory
-			.getLogger(QueueCompletor.class);
+			.getLogger(QueueCompletorNoAuto.class);
 
 	public int complete(String s, int i, List l) {
 
@@ -45,7 +44,6 @@ public class QueueCompletor implements Completor {
 
 		// final List<String> q = new LinkedList<String>(queues);
 		Collections.sort(sublocs);
-		sublocs.add(0, Constants.NO_SUBMISSION_LOCATION_INDICATOR_STRING);
 		return new SimpleCompletor(sublocs.toArray(new String[] {})).complete(
 				s, i, l);
 

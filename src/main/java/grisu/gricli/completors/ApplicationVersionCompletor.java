@@ -4,6 +4,7 @@ import grisu.gricli.Gricli;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 import grisu.model.info.ApplicationInformation;
+import grisu.model.info.dto.Version;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -14,6 +15,9 @@ import jline.Completor;
 import jline.SimpleCompletor;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.google.common.base.Functions;
+import com.google.common.collect.Collections2;
 
 public class ApplicationVersionCompletor implements Completor {
 
@@ -43,9 +47,11 @@ public class ApplicationVersionCompletor implements Completor {
 			final ApplicationInformation ai = env.getGrisuRegistry()
 					.getApplicationInformation(app);
 
-			final Set<String> versions = ai
+			final Set<Version> versions = ai
 					.getAllAvailableVersionsForFqan(fqan);
-			final List<String> v = new LinkedList<String>(versions);
+			final List<String> v = new LinkedList<String>(
+					Collections2.transform(versions,
+							Functions.toStringFunction()));
 			Collections.sort(v);
 			v.add(0, Constants.NO_VERSION_INDICATOR_STRING);
 			return new SimpleCompletor(v.toArray(new String[] {})).complete(

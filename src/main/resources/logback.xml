@@ -59,7 +59,7 @@
     </sift>
   </appender> -->
   
-  
+  <consolePlugin />
 
   <root>
     <level value="warn" />
