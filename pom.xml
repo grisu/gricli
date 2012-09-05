@@ -127,7 +127,7 @@
 		<dependency>
 			<groupId>grisu</groupId>
 			<artifactId>grid-jcommons</artifactId>
-			<version>2.0.3-SNAPSHOT</version>
+			<version>${grid-jcommons.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -600,9 +600,6 @@
 	<parent>
 		<groupId>nz.org.nesi</groupId>
 		<artifactId>nesi</artifactId>
-		<version>0.19</version>
+		<version>0.20</version>
 	</parent>
-	<properties>
-		<grisu.version>0.5-rc3-SNAPSHOT</grisu.version>
-	</properties>
 </project>
