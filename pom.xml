@@ -602,4 +602,7 @@
 		<artifactId>nesi</artifactId>
 		<version>0.20</version>
 	</parent>
+	<properties>
+		<grisu.version>0.5.2</grisu.version>
+	</properties>
 </project>
