@@ -22,7 +22,7 @@
 	</repositories>
 
 
-	<version>0.8.3-SNAPSHOT</version>
+	<version>0.8.3</version>
 	<description>Grisu commandline client</description>
 
 
