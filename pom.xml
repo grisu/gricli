@@ -600,9 +600,9 @@
 	<parent>
 		<groupId>nz.org.nesi</groupId>
 		<artifactId>nesi</artifactId>
-		<version>0.20</version>
+		<version>0.21</version>
 	</parent>
 	<properties>
-		<grisu.version>0.5.4</grisu.version>
+		<grisu.version>0.5.5-SNAPSHOT</grisu.version>
 	</properties>
 </project>
