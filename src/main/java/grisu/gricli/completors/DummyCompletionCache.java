@@ -65,4 +65,15 @@ public class DummyCompletionCache implements CompletionCache {
 	public void removeFileListingFromCache(String url) {
 	}
 
+	@Override
+	public SortedSet<String> getAllUsers() {
+		return dummySet;
+	}
+
+	@Override
+	public void setAllUsers(SortedSet<String> allUsers) {
+		return;
+		
+	}
+
 }

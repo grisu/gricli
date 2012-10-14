@@ -34,5 +34,10 @@ public interface CompletionCache {
 	public abstract void refreshJobnames();
 
 	public abstract void removeFileListingFromCache(String url);
+	
+	public abstract SortedSet<String> getAllUsers();
+
+	public abstract void setAllUsers(SortedSet<String> allUsers);
+	
 
 }

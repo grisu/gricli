@@ -24,6 +24,8 @@ import net.sf.ehcache.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Sets;
+
 public class CompletionCacheImpl implements CompletionCache {
 
 	static final Logger myLogger = LoggerFactory
@@ -39,6 +41,7 @@ public class CompletionCacheImpl implements CompletionCache {
 	// "*** Loading...", "...try again***" };
 
 	private String[] fqans = null;
+	private SortedSet<String> allUsers = null;
 	private String[] applications = new String[] { "*** Loading...",
 	"...try again***" };
 
@@ -261,6 +264,26 @@ public class CompletionCacheImpl implements CompletionCache {
 
 	public void removeFileListingFromCache(String url) {
 		cache.remove(url);
+	}
+
+	@Override
+	public SortedSet<String> getAllUsers() {
+		
+		if ((allUsers == null)) {
+			try {
+			allUsers = CompletionCacheImpl.this.env.getServiceInterface().admin(Constants.LIST_USERS, null).asSortedSet();
+			} catch (Exception e) {
+				allUsers = Sets.newTreeSet();
+			}
+
+		}
+		return allUsers;
+		
+	}
+
+	public void setAllUsers(SortedSet<String> allUsers) {
+		this.allUsers = allUsers;
+		
 	}
 
 }
