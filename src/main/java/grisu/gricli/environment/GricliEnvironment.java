@@ -12,7 +12,8 @@ import grisu.model.GrisuRegistry;
 import grisu.model.GrisuRegistryManager;
 import grisu.model.dto.GridFile;
 import grisu.model.status.StatusObject;
-import grith.jgrith.credential.Credential;
+import grith.jgrith.cred.AbstractCred;
+
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -466,17 +467,17 @@ public class GricliEnvironment implements PropertyChangeListener {
 
 	public void propertyChange(PropertyChangeEvent evt) {
 
-		Object o = evt.getSource();
-
-		if ( o instanceof Credential) {
-			Credential c = (Credential)o;
-
-			String propName = evt.getPropertyName();
-			if ("belowMinLifetime".equals(propName)) {
-				addNotification("The credential used is below the recomended minimum lifetime and can't be auto-refreshed. Please issue 'renew session' to refresh it.");
-			}
-
-		}
+//		Object o = evt.getSource();
+//
+//		if ( o instanceof AbstractCred) {
+//			AbstractCred c = (AbstractCred)o;
+//
+//			String propName = evt.getPropertyName();
+//			if ("belowMinLifetime".equals(propName)) {
+//				addNotification("The credential used is below the recomended minimum lifetime and can't be auto-refreshed. Please issue 'renew session' to refresh it.");
+//			}
+//
+//		}
 
 	}
 
