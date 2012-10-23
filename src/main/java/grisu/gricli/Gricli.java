@@ -75,7 +75,7 @@ public class Gricli extends GrisuCliClient<GricliCliParameters> {
 
 	static private GricliEnvironment env;
 	public static final GricliCommandFactory SINGLETON_COMMANDFACTORY = GricliCommandFactory
-			.getStandardFactory();
+			.getCommandFactory();
 
 	static private GricliExitStatus exitStatus = SUCCESS;
 

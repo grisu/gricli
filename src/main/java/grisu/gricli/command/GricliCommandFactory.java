@@ -1,6 +1,7 @@
 package grisu.gricli.command;
 
 import grisu.gricli.SyntaxException;
+import grisu.settings.ClientPropertiesManager;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -29,8 +30,8 @@ public class GricliCommandFactory {
 		f.init();
 		return f;
 	}
-
-	public static GricliCommandFactory getStandardFactory() {
+	
+	public static GricliCommandFactory getCommonFactory() {
 		final GricliCommandFactory f = new GricliCommandFactory();
 		f.add(AddCommand.class);
 		f.add(AttachCommand.class);
@@ -68,7 +69,7 @@ public class GricliCommandFactory {
 
 		// filesystem commands
 		// f.add(GridLsCommand.class);
-		f.add(ClearCacheCommand.class);
+		//f.add(ClearCacheCommand.class);
 		f.add(PwdCommand.class);
 		f.add(ChdirCommand.class);
 		f.add(LsCommand.class);
@@ -87,6 +88,36 @@ public class GricliCommandFactory {
 		f.add(PrintTasksCommand.class);
 		f.add(PrintTaskCommand.class);
 
+		return f;
+	}
+	
+	public static GricliCommandFactory getAdminFactory() {
+		
+		GricliCommandFactory f = getCommonFactory();
+		
+		f.add(ListUsersCommand.class);
+		f.add(ClearUserCacheCommand.class);
+		f.add(UpdateInfoCommand.class);
+		f.add(UpdateConfigCommand.class);
+		
+		try {
+			f.init();
+		} catch (final CompileException e) {
+			// shouldn't happen
+			myLogger.error(e.getLocalizedMessage(), e);
+		}
+
+		return f;
+		
+	}
+	
+
+	public static GricliCommandFactory getStandardFactory() {
+		
+		GricliCommandFactory f = getCommonFactory();
+
+		f.add(ClearCacheCommand.class);
+		
 		try {
 			f.init();
 		} catch (final CompileException e) {
@@ -203,5 +234,13 @@ public class GricliCommandFactory {
 
 		this.tabCompletor = new MultiCompletor(
 				commandCompletors.toArray(new Completor[] {}));
+	}
+
+	public static GricliCommandFactory getCommandFactory() {
+		if (ClientPropertiesManager.isAdmin()) {
+			return getAdminFactory();
+		} else {
+			return getStandardFactory();
+		}
 	}
 }

@@ -22,7 +22,7 @@
 	</repositories>
 
 
-	<version>0.9-SNAPSHOT</version>
+	<version>0.8.6-SNAPSHOT</version>
 	<description>Grisu commandline client</description>
 
 
@@ -119,11 +119,11 @@
 			<artifactId>junit</artifactId>
 			<version>4.10</version>
 		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<version>1.6.4</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.slf4j</groupId> -->
+<!-- 			<artifactId>slf4j-simple</artifactId> -->
+<!-- 			<version>1.6.4</version> -->
+<!-- 		</dependency> -->
 		<dependency>
 			<groupId>grisu</groupId>
 			<artifactId>grid-jcommons</artifactId>
@@ -235,6 +235,32 @@
 					<releaseProfiles>man,deb,rpm</releaseProfiles>
 				</configuration>
 			</plugin>					
+
+     <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>java</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <mainClass>grisu.gricli.Gricli</mainClass>
+          <arguments>
+            <argument>-b</argument>
+            <argument>bestgrid</argument>
+          </arguments>
+<!--           <systemProperties> -->
+<!--             <systemProperty> -->
+<!--               <key>myproperty</key> -->
+<!--               <value>myvalue</value> -->
+<!--             </systemProperty> -->
+<!--           </systemProperties> -->
+        </configuration>
+      </plugin>
 
 		</plugins>
 	</build>
@@ -600,9 +626,6 @@
 	<parent>
 		<groupId>nz.org.nesi</groupId>
 		<artifactId>nesi</artifactId>
-		<version>0.20</version>
+		<version>0.23</version>
 	</parent>
-	<properties>
-		<grisu.version>0.5.4</grisu.version>
-	</properties>
 </project>
