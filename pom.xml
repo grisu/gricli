@@ -129,6 +129,11 @@
 			<artifactId>grid-jcommons</artifactId>
 			<version>${grid-jcommons.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>grith</groupId>
+			<artifactId>grid-session</artifactId>
+			<version>0.1.7</version>
+		</dependency>
 	</dependencies>
 
 	<issueManagement>
