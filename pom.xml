@@ -124,16 +124,6 @@
 <!-- 			<artifactId>slf4j-simple</artifactId> -->
 <!-- 			<version>1.6.4</version> -->
 <!-- 		</dependency> -->
-		<dependency>
-			<groupId>grisu</groupId>
-			<artifactId>grid-jcommons</artifactId>
-			<version>${grid-jcommons.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>grith</groupId>
-			<artifactId>grid-session</artifactId>
-			<version>0.1.7</version>
-		</dependency>
 	</dependencies>
 
 	<issueManagement>
@@ -633,4 +623,7 @@
 		<artifactId>nesi</artifactId>
 		<version>0.23</version>
 	</parent>
+	<properties>
+		<grisu.version>0.5.10-SNAPSHOT</grisu.version>
+	</properties>
 </project>

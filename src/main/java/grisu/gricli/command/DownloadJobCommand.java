@@ -52,6 +52,7 @@ public class DownloadJobCommand implements GricliCommand {
 	protected final String async;
 
 	protected boolean clean;
+	
 
 	@SyntaxDescription(command = { "download", "job" }, arguments = { "jobname" })
 	@AutoComplete(completors = { JobnameCompletor.class })
