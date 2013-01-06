@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>grisu.frontend</groupId>
 	<artifactId>gricli</artifactId>
@@ -119,11 +120,11 @@
 			<artifactId>junit</artifactId>
 			<version>4.10</version>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.slf4j</groupId> -->
-<!-- 			<artifactId>slf4j-simple</artifactId> -->
-<!-- 			<version>1.6.4</version> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.slf4j</groupId> -->
+		<!-- <artifactId>slf4j-simple</artifactId> -->
+		<!-- <version>1.6.4</version> -->
+		<!-- </dependency> -->
 	</dependencies>
 
 	<issueManagement>
@@ -138,8 +139,8 @@
 		<connection>scm:git:git://github.com/grisu/gricli.git</connection>
 		<developerConnection>scm:git:git@github.com:grisu/gricli.git</developerConnection>
 		<url>https://github.com/grisu/gricli</url>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 	<organization>
 		<name>Grisu open source project</name>
 	</organization>
@@ -185,7 +186,7 @@
 				</configuration>
 			</plugin>
 
-			<!-- you can disable the assembly plugin if you want, your builds will
+			<!-- you can disable the assembly plugin if you want, your builds will 
 				be faster I find it quite handy to have maven build an executable jar, though -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -217,12 +218,12 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.3.2</version>
-<!-- 				<inherited>false</inherited> -->
+				<version>2.4</version>
+				<!-- <inherited>false</inherited> -->
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<pushChanges>true</pushChanges>
@@ -230,33 +231,33 @@
 					<tagNameFormat>@{project.version}</tagNameFormat>
 					<releaseProfiles>man,deb,rpm</releaseProfiles>
 				</configuration>
-			</plugin>					
+			</plugin>
 
-     <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.2.1</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>java</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <mainClass>grisu.gricli.Gricli</mainClass>
-          <arguments>
-            <argument>-b</argument>
-            <argument>bestgrid</argument>
-          </arguments>
-<!--           <systemProperties> -->
-<!--             <systemProperty> -->
-<!--               <key>myproperty</key> -->
-<!--               <value>myvalue</value> -->
-<!--             </systemProperty> -->
-<!--           </systemProperties> -->
-        </configuration>
-      </plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>grisu.gricli.Gricli</mainClass>
+					<arguments>
+						<argument>-b</argument>
+						<argument>bestgrid</argument>
+					</arguments>
+					<!-- <systemProperties> -->
+					<!-- <systemProperty> -->
+					<!-- <key>myproperty</key> -->
+					<!-- <value>myvalue</value> -->
+					<!-- </systemProperty> -->
+					<!-- </systemProperties> -->
+				</configuration>
+			</plugin>
 
 		</plugins>
 	</build>
@@ -371,7 +372,7 @@
 							<replacements>
 								<replacement>
 									<token>VERSION_TOKEN</token>
-									<value>${project.version} (${maven.build.timestamp})</value>
+									<value>${project.version}</value>
 								</replacement>
 							</replacements>
 						</configuration>
@@ -447,8 +448,8 @@
 												<filemode>755</filemode>
 											</mapper>
 										</data>
-										
-										
+
+
 									</dataSet>
 
 								</configuration>
@@ -480,7 +481,7 @@
 							<group>Application/Other</group>
 							<!-- <icon>src/main/resources/icon.gif</icon> -->
 							<packager>Markus Binsteiner</packager>
-<!-- 							<prefix>/usr/local</prefix> -->
+							<!-- <prefix>/usr/local</prefix> -->
 							<version>${project.version}</version>
 							<!-- <changelogFile>src/changelog</changelogFile> -->
 							<!-- <defineStatements> -->
@@ -521,7 +522,7 @@
 										</source>
 									</sources>
 								</mapping>
-								
+
 								<mapping>
 									<directory>/usr/share/applications/</directory>
 									<documentation>false</documentation>
@@ -554,9 +555,9 @@
 							<preinstallScriptlet>
 								<script>echo "Installing Gricli..."</script>
 							</preinstallScriptlet>
-							<!-- <postinstallScriptlet> <scriptFile>src/main/scripts/postinstall</scriptFile>
-								<fileEncoding>utf-8</fileEncoding> </postinstallScriptlet> <preremoveScriptlet>
-								<scriptFile>src/main/scripts/preremove</scriptFile> <fileEncoding>utf-8</fileEncoding>
+							<!-- <postinstallScriptlet> <scriptFile>src/main/scripts/postinstall</scriptFile> 
+								<fileEncoding>utf-8</fileEncoding> </postinstallScriptlet> <preremoveScriptlet> 
+								<scriptFile>src/main/scripts/preremove</scriptFile> <fileEncoding>utf-8</fileEncoding> 
 								</preremoveScriptlet> -->
 						</configuration>
 					</plugin>
@@ -565,7 +566,34 @@
 
 
 		</profile>
-		
+
+		<profile>
+			<id>mac</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>osxappbundle-maven-plugin</artifactId>
+						<version>1.0-alpha-2</version>
+						<configuration>
+							<javaApplicationStub>/home/markus/JavaApplicationStub</javaApplicationStub>
+							<mainClass>grisu.gricli.Gricli</mainClass>
+							<jvmVersion>1.6+</jvmVersion>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>bundle</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+
+		</profile>
+
 		<profile>
 			<id>getdown</id>
 			<build>
@@ -615,7 +643,7 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>		
+		</profile>
 
 	</profiles>
 
@@ -625,6 +653,6 @@
 		<version>0.23</version>
 	</parent>
 	<properties>
-		<grisu.version>0.5.12</grisu.version>
+		<grisu.version>0.5.13</grisu.version>
 	</properties>
 </project>
