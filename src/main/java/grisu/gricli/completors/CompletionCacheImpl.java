@@ -192,6 +192,7 @@ public class CompletionCacheImpl implements CompletionCache {
 
 		return jobs;
 	}
+	
 
 	public GricliEnvironment getEnvironment() {
 		return env;
@@ -203,7 +204,7 @@ public class CompletionCacheImpl implements CompletionCache {
 	 * @see grisu.gricli.completors.CompletionCache#getJobnames()
 	 */
 	public SortedSet<String> getJobnames() {
-		return this.reg.getUserEnvironmentManager().getReallyAllJobnames(false);
+		return this.reg.getUserEnvironmentManager().getCurrentJobnames(false);
 	}
 
 	public GridFile ls(final String url) throws StillLoadingException {

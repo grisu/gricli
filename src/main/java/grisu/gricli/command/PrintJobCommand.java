@@ -3,13 +3,16 @@ package grisu.gricli.command;
 import grisu.control.JobConstants;
 import grisu.control.ServiceInterface;
 import grisu.control.exceptions.NoSuchJobException;
+import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
+import grisu.gricli.completors.CompletionCache;
 import grisu.gricli.completors.JobPropertiesCompletor;
 import grisu.gricli.completors.JobnameCompletor;
 import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 import grisu.jcommons.constants.JobSubmissionProperty;
 import grisu.jcommons.utils.WalltimeUtils;
+import grisu.model.UserEnvironmentManager;
 import grisu.model.dto.DtoJob;
 import grisu.utils.ServiceInterfaceUtils;
 
@@ -19,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.beust.jcommander.internal.Lists;
 import com.google.common.collect.Maps;
 
 public class PrintJobCommand implements GricliCommand {
@@ -48,8 +53,14 @@ public class PrintJobCommand implements GricliCommand {
 	public void execute(GricliEnvironment env)
 			throws GricliRuntimeException {
 		final ServiceInterface si = env.getServiceInterface();
-		final List<String> jobNames = ServiceInterfaceUtils.filterJobNames(si,
+		
+		final List<String> jobNames;
+		if ( "*".equals(jobname) ) {
+			jobNames = Lists.newLinkedList(env.getGrisuRegistry().getUserEnvironmentManager().getCurrentJobnames(true));
+		} else {
+			jobNames = ServiceInterfaceUtils.filterJobNames(si,
 				jobname);
+		}
 		for (final String j : jobNames) {
 			try {
 				if (attribute != null) {
