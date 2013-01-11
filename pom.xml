@@ -427,7 +427,7 @@
 										</data>
 
 										<data>
-											<src>${project.basedir}/src/deb/data/gricli.desktop</src>
+											<src>${project.basedir}/src/deb/data/griclish.desktop</src>
 											<type>file</type>
 											<mapper>
 												<type>perm</type>
@@ -531,7 +531,7 @@
 									<groupname>root</groupname>
 									<sources>
 										<source>
-											<location>src/deb/data/gricli.desktop</location>
+											<location>src/deb/data/griclish.desktop</location>
 										</source>
 									</sources>
 								</mapping>
