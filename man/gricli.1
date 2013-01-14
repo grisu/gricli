@@ -1813,6 +1813,9 @@ The command can also print the contents of a remote file without
 reference to a jobname.
 In this case, a full path name is required.
 .PP
+Also, if the only argument you specify is a name of a current job, both
+stdout & stderr are displayed.
+.PP
 Note: Local file paths (e.g ~/myfile) are not currently supported.
 To view a local file use the \[aq]exec\[aq] command e.g:
 .IP
@@ -1827,7 +1830,7 @@ Parameters:
 .nf
 \f[C]
 jobname\ \ :\ The\ name\ of\ the\ job\ which\ the\ file\ is\ associated\ with.\ (Optional)
-filename\ :\ The\ relative\ or\ full\ path\ of\ the\ file.
+filename\ :\ The\ relative\ or\ full\ path\ of\ the\ file.\ (Optional)
 \f[]
 .fi
 .PP
@@ -1835,6 +1838,7 @@ Example usage:
 .IP
 .nf
 \f[C]
+view\ myjob
 view\ myjob\ stdout.txt
 view\ myjob\ input/first.txt
 view\ grid://groups/nz/nesi/myfile.xyz
