@@ -1,4 +1,4 @@
-Command: view [jobname] <filename> 
+Command: view [jobname] [<filename>] 
 
 Prints the contents of a file.
 
@@ -8,6 +8,8 @@ The view command will print the contents of a specified text file in that job di
 The command can also print the contents of a remote file without reference to a jobname.
 In this case, a full path name is required.
 
+Also, if the only argument you specify is a name of a current job, both stdout & stderr are displayed.
+
 Note: Local file paths (e.g ~/myfile) are not currently supported. To view a local file use the 'exec' command e.g:
 
     exec cat /my/local/file 
@@ -15,10 +17,11 @@ Note: Local file paths (e.g ~/myfile) are not currently supported. To view a loc
 Parameters:
 
     jobname  : The name of the job which the file is associated with. (Optional)
-    filename : The relative or full path of the file.
+    filename : The relative or full path of the file. (Optional)
     
 Example usage:
 
+    view myjob
     view myjob stdout.txt
     view myjob input/first.txt
     view grid://groups/nz/nesi/myfile.xyz

@@ -150,7 +150,7 @@
 			<plugin>
 				<groupId>com.google.code.maven-replacer-plugin</groupId>
 				<artifactId>maven-replacer-plugin</artifactId>
-				<version>1.3.2</version>
+				<version>1.4.0</version>
 				<executions>
 					<execution>
 						<!-- the replace should happen before the app is packaged -->
@@ -355,29 +355,47 @@
 						<version>1.4.0</version>
 						<executions>
 							<execution>
+								<id>fix_in_app_version</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>target/classes/gricli.version</include>
+									</includes>
+									<ignoreMissingFile>false</ignoreMissingFile>
+
+									<replacements>
+										<replacement>
+											<token>VERSION_TOKEN</token>
+											<value>${project.version} (${maven.build.timestamp})</value>
+										</replacement>
+									</replacements>
+								</configuration>
+							</execution>
+							<execution>
 								<id>fix_deb_version</id>
 								<phase>prepare-package</phase>
 								<goals>
 									<goal>replace</goal>
 								</goals>
-							</execution>
+								<configuration>
+									<includes>
+										<include>target/deb/control/control</include>
+									</includes>
+									<ignoreMissingFile>false</ignoreMissingFile>
+
+									<replacements>
+										<replacement>
+											<token>VERSION_TOKEN</token>
+											<value>${project.version}</value>
+										</replacement>
+									</replacements>
+								</configuration>
+							</execution>							
 						</executions>
-						<configuration>
-							<includes>
-								<include>target/classes/gricli.version</include>
-								<include>target/deb/control/control</include>
-							</includes>
-							<ignoreMissingFile>false</ignoreMissingFile>
-
-							<replacements>
-								<replacement>
-									<token>VERSION_TOKEN</token>
-									<value>${project.version}</value>
-								</replacement>
-							</replacements>
-						</configuration>
 					</plugin>
-
 					<plugin>
 						<artifactId>jdeb</artifactId>
 						<groupId>org.vafer</groupId>
@@ -653,6 +671,6 @@
 		<version>0.23</version>
 	</parent>
 	<properties>
-		<grisu.version>0.5.14-SNAPSHOT</grisu.version>
+		<grisu.version>0.5.14</grisu.version>
 	</properties>
 </project>
