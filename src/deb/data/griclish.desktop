@@ -1,0 +1,23 @@
+[Desktop Entry]
+Categories=
+Comment=This starts an instance of the Gricli commandline shell
+Comment[en]=This starts an instance of the Gricli commandline shell
+Encoding=UTF-8
+Exec=/usr/bin/griclish 
+GenericName=
+GenericName[en]=
+Icon=/usr/local/lib/grisu/icons/gricli.png
+MimeType=
+Name=Griclish
+Name[en]=Griclish
+Path=
+ServiceTypes=
+SwallowExec=
+SwallowTitle=
+Terminal=true
+TerminalOptions=
+Type=Application
+URL=
+X-KDE-SubstituteUID=false
+X-KDE-Username=root
+
