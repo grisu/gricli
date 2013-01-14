@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>grisu.frontend</groupId>
 	<artifactId>gricli</artifactId>
@@ -23,7 +22,7 @@
 	</repositories>
 
 
-	<version>0.8.9-SNAPSHOT</version>
+	<version>0.8.9</version>
 	<description>Grisu commandline client</description>
 
 
@@ -139,7 +138,7 @@
 		<connection>scm:git:git://github.com/grisu/gricli.git</connection>
 		<developerConnection>scm:git:git@github.com:grisu/gricli.git</developerConnection>
 		<url>https://github.com/grisu/gricli</url>
-		<tag>HEAD</tag>
+		<tag>0.8.9</tag>
 	</scm>
 	<organization>
 		<name>Grisu open source project</name>
