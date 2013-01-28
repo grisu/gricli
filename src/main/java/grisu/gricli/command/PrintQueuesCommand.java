@@ -5,7 +5,7 @@ import grisu.gricli.environment.GricliEnvironment;
 import grisu.model.info.ApplicationInformation;
 import grisu.model.info.dto.DtoProperty;
 import grisu.model.info.dto.JobQueueMatch;
-import grisu.model.job.JobSubmissionObjectImpl;
+import grisu.model.job.JobDescription;
 
 import java.util.List;
 import java.util.SortedSet;
@@ -44,7 +44,7 @@ public class PrintQueuesCommand implements GricliCommand {
 
 		final String fqan = (String) env.getVariable("group").get();
 
-		final JobSubmissionObjectImpl job = env.getJob();
+		final JobDescription job = env.getJob();
 
 		final ApplicationInformation ai = env.getGrisuRegistry()
 				.getApplicationInformation(job.getApplication());

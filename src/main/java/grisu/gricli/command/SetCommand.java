@@ -11,7 +11,7 @@ import grisu.model.info.ApplicationInformation;
 import grisu.model.info.dto.DtoProperty;
 import grisu.model.info.dto.JobQueueMatch;
 import grisu.model.info.dto.Queue;
-import grisu.model.job.JobSubmissionObjectImpl;
+import grisu.model.job.JobDescription;
 
 import java.util.List;
 import java.util.Map;
@@ -61,7 +61,7 @@ public class SetCommand implements GricliCommand {
 				return;
 			}
 
-			JobSubmissionObjectImpl j = env.getJob();
+			JobDescription j = env.getJob();
 			Map<JobSubmissionProperty, String> props = Maps.newHashMap(j
 					.getJobSubmissionPropertyMap());
 
@@ -107,7 +107,7 @@ public class SetCommand implements GricliCommand {
 			env.getVariable(global).set(values);
 
 
-			JobSubmissionObjectImpl j = env.getJob();
+			JobDescription j = env.getJob();
 			Map<JobSubmissionProperty, String> props = Maps.newHashMap(j
 					.getJobSubmissionPropertyMap());
 
