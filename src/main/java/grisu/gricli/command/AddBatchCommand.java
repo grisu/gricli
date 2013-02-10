@@ -3,7 +3,7 @@ package grisu.gricli.command;
 import grisu.control.exceptions.BatchJobException;
 import grisu.control.exceptions.NoSuchJobException;
 import grisu.frontend.model.job.BatchJobObject;
-import grisu.frontend.model.job.JobObject;
+import grisu.frontend.model.job.GrisuJob;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.environment.GricliEnvironment;
 
@@ -38,7 +38,7 @@ public class AddBatchCommand implements GricliCommand {
 							+ " does not exist. Use 'create batch [containername]' command");
 		}
 
-		final JobObject job = env.getJob();
+		final GrisuJob job = env.getJob();
 
 		/* ${i:filename} */
 

@@ -2,7 +2,7 @@ package grisu.gricli.command;
 
 import grisu.control.exceptions.NoSuchJobException;
 import grisu.frontend.control.clientexceptions.FileTransactionException;
-import grisu.frontend.model.job.JobObject;
+import grisu.frontend.model.job.GrisuJob;
 import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.JobDirFileCompletor;
@@ -52,7 +52,7 @@ public class ViewCommand implements GricliCommand {
 		}
 
 		String fileToView = null;
-		JobObject jobToView = null;
+		GrisuJob jobToView = null;
 
 		if (jobname != null) {
 
@@ -89,7 +89,7 @@ public class ViewCommand implements GricliCommand {
 
 			if (job != null) {
 				try {
-					jobToView = new JobObject(env.getServiceInterface(), job);
+					jobToView = new GrisuJob(env.getServiceInterface(), job);
 				} catch (NoSuchJobException e) {
 					throw new GricliRuntimeException("No job with name \""
 							+ jobname + "\"");

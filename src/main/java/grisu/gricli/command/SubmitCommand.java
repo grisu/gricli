@@ -2,7 +2,7 @@ package grisu.gricli.command;
 
 import grisu.control.exceptions.JobPropertiesException;
 import grisu.control.exceptions.JobSubmissionException;
-import grisu.frontend.model.job.JobObject;
+import grisu.frontend.model.job.GrisuJob;
 import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.ExecutablesCompletor;
@@ -37,7 +37,7 @@ public class SubmitCommand implements GricliCommand, PropertyChangeListener {
 		this.args = args;
 	}
 
-	protected JobObject createJob(GricliEnvironment env)
+	protected GrisuJob createJob(GricliEnvironment env)
 			throws GricliRuntimeException {
 
 		if (args.length == 0) {
@@ -51,7 +51,7 @@ public class SubmitCommand implements GricliCommand, PropertyChangeListener {
 		}
 		try {
 
-			final JobObject job = env.getJob();
+			final GrisuJob job = env.getJob();
 
 			job.setCommandline(getCommandline());
 
@@ -68,7 +68,7 @@ public class SubmitCommand implements GricliCommand, PropertyChangeListener {
 	public void execute(final GricliEnvironment env)
 			throws GricliRuntimeException {
 
-		final JobObject job = createJob(env);
+		final GrisuJob job = createJob(env);
 
 		final String jobname = job.getJobname();
 		Gricli.completionCache.refreshJobnames();
@@ -182,7 +182,7 @@ public class SubmitCommand implements GricliCommand, PropertyChangeListener {
 
 	}
 
-	private void submit(JobObject job, boolean wait)
+	private void submit(GrisuJob job, boolean wait)
 			throws GricliRuntimeException {
 
 		if (wait) {

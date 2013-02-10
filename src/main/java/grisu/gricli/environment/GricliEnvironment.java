@@ -2,7 +2,7 @@ package grisu.gricli.environment;
 
 import grisu.control.ServiceInterface;
 import grisu.control.exceptions.StatusException;
-import grisu.frontend.model.job.JobObject;
+import grisu.frontend.model.job.GrisuJob;
 import grisu.gricli.Gricli;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.GricliSetValueException;
@@ -304,10 +304,10 @@ public class GricliEnvironment implements PropertyChangeListener {
 		return this.reg;
 	}
 
-	public JobObject getJob() throws LoginRequiredException {
+	public GrisuJob getJob() throws LoginRequiredException {
 
 		final ServiceInterface si = getServiceInterface();
-		final JobObject job = new JobObject(si);
+		final GrisuJob job = new GrisuJob(si);
 		job.setJobname(jobname.get());
 		final String app = application.get();
 		if (app == null) {
