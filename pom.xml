@@ -22,7 +22,7 @@
 	</repositories>
 
 
-	<version>0.8.11</version>
+	<version>0.8.12-SNAPSHOT</version>
 	<description>Grisu commandline client</description>
 
 
@@ -34,13 +34,13 @@
 		<dependency>
 			<groupId>grisu.frontend</groupId>
 			<artifactId>grisu-client</artifactId>
-			<version>0.5.18</version>
+			<version>0.5.19-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>grisu.backend</groupId>
 			<artifactId>grisu-core</artifactId>
-			<version>0.5.18</version>
+			<version>0.5.19-SNAPSHOT</version>
 			<scope>provided</scope>
 
 			<exclusions>
@@ -138,7 +138,7 @@
 		<connection>scm:git:git://github.com/grisu/gricli.git</connection>
 		<developerConnection>scm:git:git@github.com:grisu/gricli.git</developerConnection>
 		<url>https://github.com/grisu/gricli</url>
-		<tag>0.8.11</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<organization>
 		<name>Grisu open source project</name>
