@@ -22,7 +22,7 @@
 	</repositories>
 
 
-	<version>0.8.12-SNAPSHOT</version>
+	<version>0.8.19-SNAPSHOT</version>
 	<description>Grisu commandline client</description>
 
 
@@ -670,6 +670,6 @@
 		<version>0.23</version>
 	</parent>
 	<properties>
-		<grisu.version>0.5.28-SNAPSHOT</grisu.version>
+		<grisu.version>0.5.33</grisu.version>
 	</properties>
 </project>
