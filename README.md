@@ -4,14 +4,13 @@ Download
 ========
 
 * as part of the "NeSI Tools" package (recommended)
- * as OS-specific installers:
   * Windows: [nesi-tools.msi](http://code.ceres.auckland.ac.nz/stable-downloads/nesi-tools/nesi-tools.msi)
   * Mac OS X: [nesi-tools.pkg](http://code.ceres.auckland.ac.nz/stable-downloads/nesi-tools/nesi-tools.pkg)
- * or, cross-OS package (requires Java): [nesi-tools.jar](http://code.ceres.auckland.ac.nz/stable-downloads/nesi-tools/nesi-tools.jar)
+  * or, cross-OS package (requires Java): [nesi-tools.jar](http://code.ceres.auckland.ac.nz/stable-downloads/nesi-tools/nesi-tools.jar)
 * 'gricli' executable Java binary: [gricli-binary.jar](http://code.ceres.auckland.ac.nz/stable-downloads/gricli/gricli-binary.jar)
 * 'gricli' Linux packages:
- * Debian-based: [gricli.deb](http://code.ceres.auckland.ac.nz/stable-downloads/gricli/gricli.deb)
- * RedHat-based: [gricli.rpm](http://code.ceres.auckland.ac.nz/stable-downloads/gricli/gricli.rpm)
+  * Debian-based: [gricli.deb](http://code.ceres.auckland.ac.nz/stable-downloads/gricli/gricli.deb)
+  * RedHat-based: [gricli.rpm](http://code.ceres.auckland.ac.nz/stable-downloads/gricli/gricli.rpm)
 
 Usage
 ======
