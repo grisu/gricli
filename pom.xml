@@ -124,6 +124,11 @@
 		<!-- <artifactId>slf4j-simple</artifactId> -->
 		<!-- <version>1.6.4</version> -->
 		<!-- </dependency> -->
+		<dependency>
+			<groupId>grith</groupId>
+			<artifactId>jgrith</artifactId>
+			<version>0.13</version>
+		</dependency>
 	</dependencies>
 
 	<issueManagement>
@@ -670,6 +675,6 @@
 		<version>0.23</version>
 	</parent>
 	<properties>
-		<grisu.version>0.6-SNAPSHOT</grisu.version>
+		<grisu.version>0.6</grisu.version>
 	</properties>
 </project>
