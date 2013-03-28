@@ -96,8 +96,32 @@ public class SetCommand implements GricliCommand {
 					.getVariable(Constants.QUEUE_KEY);
 			String queue = queueVar.get();
 			if (queue == null) {
+				if ("package".equals(global)) {
+					
+					String[] newValue = values;
+					
+					GricliVar<String> packageName = (GricliVar<String>) env.getVariable("package");
+					Object oldPackage = null;
+					if ( packageName != null ) {
+						oldPackage = packageName.get();
+					}
+					
+					if ( values.length == 1 && ! values[0].equals(oldPackage) ) {
+						GricliVar<String> version = (GricliVar<String>)env.getVariable("version");
+						version.set((String)null);
+					}
+				}
 				myLogger.debug("Queue not set, not checking whether global is valid in this context.");
 				return;
+			}
+			
+			GricliVar<String> version = (GricliVar<String>) env.getVariable("version");
+			Object oldVersion = null;
+			if ( version != null ) {
+				oldVersion = version.get();
+			}
+			if ("package".equals(global)) {
+				version.set((String)null);
 			}
 
 			GricliVar<?> var = env.getVariable(global);
@@ -121,6 +145,9 @@ public class SetCommand implements GricliCommand {
 			if (q == null) {
 
 				env.getVariable(global).setValue(oldValue);
+				if ( oldVersion != null ) {
+					version.setValue(oldVersion);
+				}
 
 				throw new GricliRuntimeException(
 						"Can't set global "
