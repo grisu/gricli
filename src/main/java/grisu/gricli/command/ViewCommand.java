@@ -15,6 +15,8 @@ import grisu.model.dto.DtoJob;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
+
 import jline.NullCompletor;
 
 import com.google.common.base.Charsets;
@@ -35,6 +37,8 @@ public class ViewCommand implements GricliCommand {
 	}
 
 	public void execute(GricliEnvironment env) throws GricliRuntimeException {
+		
+		System.out.println("JOBNAME: "+StringUtils.join(this.job_or_filenames));
 
 		if ((job_or_filenames == null) || (job_or_filenames.length == 0)) {
 			throw new GricliRuntimeException("No jobname and/or file provided.");
