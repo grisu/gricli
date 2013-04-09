@@ -98,7 +98,7 @@ public class SetCommand implements GricliCommand {
 			if (queue == null) {
 				if ("package".equals(global)) {
 					
-					String[] newValue = values;
+//					String[] newValue = values;
 					
 					GricliVar<String> packageName = (GricliVar<String>) env.getVariable("package");
 					Object oldPackage = null;
@@ -106,7 +106,7 @@ public class SetCommand implements GricliCommand {
 						oldPackage = packageName.get();
 					}
 					
-					if ( values.length == 1 && ! values[0].equals(oldPackage) ) {
+					if ( values != null && values.length == 1 && ! values[0].equals(oldPackage) ) {
 						GricliVar<String> version = (GricliVar<String>)env.getVariable("version");
 						version.set((String)null);
 					}
