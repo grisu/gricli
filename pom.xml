@@ -664,6 +664,6 @@
 		<version>0.23</version>
 	</parent>
 	<properties>
-		<grisu.version>0.6.2-SNAPSHOT</grisu.version>
+		<grisu.version>0.6.2</grisu.version>
 	</properties>
 </project>
