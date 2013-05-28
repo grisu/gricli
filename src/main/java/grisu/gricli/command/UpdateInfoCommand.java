@@ -21,7 +21,7 @@ public class UpdateInfoCommand extends AbstractAdminCommand implements GricliCom
 	@Override
 	public void execute(GricliEnvironment env) throws GricliRuntimeException {
 
-		DtoStringList result = execute(env, Constants.REFERSH_GRID_INFO);
+		DtoStringList result = execute(env, Constants.REFRESH_GRID_INFO);
 		for (String line : result.asArray()) {
 			env.printMessage(line);
 		}
