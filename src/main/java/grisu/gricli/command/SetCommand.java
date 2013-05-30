@@ -1,5 +1,6 @@
 package grisu.gricli.command;
 
+import com.google.common.collect.Maps;
 import grisu.gricli.GricliRuntimeException;
 import grisu.gricli.completors.VarCompletor;
 import grisu.gricli.completors.VarValueCompletor;
@@ -12,15 +13,12 @@ import grisu.model.info.dto.DtoProperty;
 import grisu.model.info.dto.JobQueueMatch;
 import grisu.model.info.dto.Queue;
 import grisu.model.job.JobDescription;
-
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Maps;
+import java.util.List;
+import java.util.Map;
 
 public class SetCommand implements GricliCommand {
 
@@ -89,6 +87,9 @@ public class SetCommand implements GricliCommand {
 				throw new GricliRuntimeException(message);
 
 			}
+
+            String fullName = match.getQueue().toString();
+            values[0] = fullName;
 
 		} else {
 
