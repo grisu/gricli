@@ -13,7 +13,7 @@ public class PrintGroupsCommand implements GricliCommand {
 			throws GricliRuntimeException {
 
 		for (final String fqan : env.getGrisuRegistry()
-				.getUserEnvironmentManager().getAllAvailableFqans(true)) {
+				.getUserEnvironmentManager().getAllAvailableJobFqans()) {
 			env.printMessage(fqan);
 		}
 
