@@ -22,7 +22,7 @@
 	</repositories>
 
 
-	<version>0.21-SNAPSHOT</version>
+	<version>0.21</version>
 	<description>Grisu commandline client</description>
 
 
@@ -137,7 +137,7 @@
 		<connection>scm:git:git://github.com/grisu/gricli.git</connection>
 		<developerConnection>scm:git:git@github.com:grisu/gricli.git</developerConnection>
 		<url>https://github.com/grisu/gricli</url>
-		<tag>HEAD</tag>
+		<tag>0.21</tag>
 	</scm>
 	<organization>
 		<name>Grisu open source project</name>
