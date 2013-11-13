@@ -98,6 +98,7 @@ public class GricliCommandFactory {
 		f.add(ListUsersCommand.class);
 		f.add(ClearUserCacheCommand.class);
 		f.add(UpdateInfoCommand.class);
+		f.add(UpdateTemplatesCommand.class);
 		f.add(UpdateConfigCommand.class);
 		
 		try {

@@ -1,22 +1,34 @@
 Gricli shell allows commandline interaction with the grid.  
 
+Download
+========
 
-Latest version can be downloaded from http://code.ceres.auckland.ac.nz/downloads/gricli.jar
-
-Latest development version can be downloaded from http://code.ceres.auckland.ac.nz/snapshot-downloads/gricli-dev.jar
-
-Javadoc: http://grisu.github.com/gricli/javadoc/
+* as part of the "NeSI Tools" package (recommended)
+  * Windows: [nesi-tools.msi](http://code.ceres.auckland.ac.nz/stable-downloads/nesi-tools/nesi-tools.msi)
+  * Mac OS X: [nesi-tools.pkg](http://code.ceres.auckland.ac.nz/stable-downloads/nesi-tools/nesi-tools.pkg)
+  * or, cross-OS package (requires Java): [nesi-tools.jar](http://code.ceres.auckland.ac.nz/stable-downloads/nesi-tools/nesi-tools.jar)
+* 'gricli' executable Java binary: [gricli-binary.jar](http://code.ceres.auckland.ac.nz/stable-downloads/gricli/gricli-binary.jar)
+* 'gricli' Linux packages:
+  * Debian-based: [gricli.deb](http://code.ceres.auckland.ac.nz/stable-downloads/gricli/gricli.deb)
+  * RedHat-based: [gricli.rpm](http://code.ceres.auckland.ac.nz/stable-downloads/gricli/gricli.rpm)
 
 Usage
 ======
 
 Detailed information about the usage of *gricli* can be found here: [Usage](https://github.com/grisu/gricli/blob/develop/USAGE.md)
+
 Tutorial / Examples
 ===================
 
 Let's get going. Start gricli:
 
- java -jar gricli-binary.jar
+If using the NeSI-Tools package or one of the Linux packages:
+
+    griclish
+ 
+Or, if using the executable binary:
+
+    java -jar gricli-binary.jar
 
 If you are not logged in, select institutions login and use your
 institutions credentials:

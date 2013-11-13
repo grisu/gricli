@@ -1,9 +1,11 @@
 package grisu.gricli;
 
-import static grisu.gricli.GricliExitStatus.LOGIN;
-import static grisu.gricli.GricliExitStatus.RUNTIME;
-import static grisu.gricli.GricliExitStatus.SUCCESS;
-import static grisu.gricli.GricliExitStatus.SYNTAX;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
+import com.beust.jcommander.ParameterException;
+import com.google.common.base.Strings;
 import grisu.frontend.control.login.LoginManager;
 import grisu.frontend.view.cli.GrisuCliClient;
 import grisu.gricli.command.GricliCommand;
@@ -22,6 +24,15 @@ import grisu.settings.Environment;
 import grith.jgrith.control.SlcsLoginWrapper;
 import grith.jgrith.cred.GridLoginParameters;
 import grith.jgrith.plainProxy.LocalProxy;
+import jline.ArgumentCompletor;
+import jline.ConsoleReader;
+import jline.History;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,24 +42,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
-import jline.ArgumentCompletor;
-import jline.ConsoleReader;
-import jline.History;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
-
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.joran.JoranConfigurator;
-import ch.qos.logback.core.joran.spi.JoranException;
-import ch.qos.logback.core.util.StatusPrinter;
-
-import com.beust.jcommander.ParameterException;
-import com.google.common.base.Strings;
+import static grisu.gricli.GricliExitStatus.*;
 
 public class Gricli extends GrisuCliClient<GricliCliParameters> {
 
@@ -193,7 +187,7 @@ public class Gricli extends GrisuCliClient<GricliCliParameters> {
 		 * will have to restore this function later for (String var :
 		 * env.getGlobalNames()) { prompt = StringUtils.replace(prompt, "${" +
 		 * var + "}", env.get(var));
-		 * 
+		 *
 		 * }
 		 */
 		return prompt;
@@ -455,6 +449,7 @@ public class Gricli extends GrisuCliClient<GricliCliParameters> {
 
 
 		configLogging();
+
 
 		try {
 			LoginManager.initGrisuClient("gricli");

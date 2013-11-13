@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.python.antlr.PythonParser.continue_stmt_return;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,6 +111,9 @@ public class SubmitCommand implements GricliCommand, PropertyChangeListener {
 		for (int i = 0; i < length; i++) {
 			String escaped = StringEscapeUtils.escapeJava(this.args[i]);
 			// unscape forward slashes - bug in escapeJava
+			if ( escaped == null ) {
+				continue;
+			}
 			escaped = escaped.replaceAll("\\\\\\/", "\\/");
 			if (!this.args[i].equals(escaped) || escaped.contains(" ")) {
 				escaped = "\"" + escaped + "\"";

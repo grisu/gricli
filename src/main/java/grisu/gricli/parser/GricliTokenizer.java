@@ -101,6 +101,6 @@ public class GricliTokenizer {
 			c = in.read();
 		}
 
-		return tokenize(command.toString());
+		return tokenize(command.toString().trim());
 	}
 }

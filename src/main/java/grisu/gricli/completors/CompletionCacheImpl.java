@@ -256,7 +256,7 @@ public class CompletionCacheImpl implements CompletionCache {
 		Thread t = new Thread() {
 			@Override
 			public void run() {
-				reg.getUserEnvironmentManager().getReallyAllJobnames(true);
+				reg.getUserEnvironmentManager().getCurrentJobnames(true);
 			}
 		};
 		t.setName("refresh jobnames thread");

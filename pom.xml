@@ -22,11 +22,16 @@
 	</repositories>
 
 
-	<version>0.8.19-SNAPSHOT</version>
+	<version>0.22</version>
 	<description>Grisu commandline client</description>
 
 
 	<dependencies>
+                <dependency>
+                        <groupId>grith</groupId>
+                        <artifactId>jgrith</artifactId>
+                        <version>1.0.2</version>
+                </dependency>
 
 
 		<!-- the main grisu dependency. -->
@@ -64,12 +69,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>commons-configuration</groupId>
-			<artifactId>commons-configuration</artifactId>
-			<version>1.6</version>
-			<scope>compile</scope>
-		</dependency>
 
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
@@ -138,7 +137,7 @@
 		<connection>scm:git:git://github.com/grisu/gricli.git</connection>
 		<developerConnection>scm:git:git@github.com:grisu/gricli.git</developerConnection>
 		<url>https://github.com/grisu/gricli</url>
-		<tag>HEAD</tag>
+		<tag>0.22</tag>
 	</scm>
 	<organization>
 		<name>Grisu open source project</name>
@@ -185,7 +184,7 @@
 				</configuration>
 			</plugin>
 
-			<!-- you can disable the assembly plugin if you want, your builds will 
+			<!-- you can disable the assembly plugin if you want, your builds will
 				be faster I find it quite handy to have maven build an executable jar, though -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -392,7 +391,7 @@
 										</replacement>
 									</replacements>
 								</configuration>
-							</execution>							
+							</execution>
 						</executions>
 					</plugin>
 					<plugin>
@@ -484,7 +483,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>rpm-maven-plugin</artifactId>
-						<version>2.1-alpha-1</version>
+						<version>2.1-alpha-3</version>
 						<executions>
 							<execution>
 								<goals>
@@ -530,7 +529,7 @@
 								</mapping>
 								<mapping>
 									<directory>/usr/share/man/man1</directory>
-									<filemode>744</filemode>
+									<!--<filemode>744</filemode>-->
 									<username>root</username>
 									<groupname>root</groupname>
 									<sources>
@@ -572,9 +571,9 @@
 							<preinstallScriptlet>
 								<script>echo "Installing Gricli..."</script>
 							</preinstallScriptlet>
-							<!-- <postinstallScriptlet> <scriptFile>src/main/scripts/postinstall</scriptFile> 
-								<fileEncoding>utf-8</fileEncoding> </postinstallScriptlet> <preremoveScriptlet> 
-								<scriptFile>src/main/scripts/preremove</scriptFile> <fileEncoding>utf-8</fileEncoding> 
+							<!-- <postinstallScriptlet> <scriptFile>src/main/scripts/postinstall</scriptFile>
+								<fileEncoding>utf-8</fileEncoding> </postinstallScriptlet> <preremoveScriptlet>
+								<scriptFile>src/main/scripts/preremove</scriptFile> <fileEncoding>utf-8</fileEncoding>
 								</preremoveScriptlet> -->
 						</configuration>
 					</plugin>
@@ -667,9 +666,9 @@
 	<parent>
 		<groupId>nz.org.nesi</groupId>
 		<artifactId>nesi</artifactId>
-		<version>0.23</version>
+		<version>1.0</version>
 	</parent>
 	<properties>
-		<grisu.version>0.5.33</grisu.version>
+		<grisu.version>0.8.2</grisu.version>
 	</properties>
 </project>

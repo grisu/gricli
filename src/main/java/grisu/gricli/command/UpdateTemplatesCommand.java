@@ -10,18 +10,18 @@ import grisu.gricli.environment.GricliEnvironment;
 import grisu.jcommons.constants.Constants;
 import grisu.model.info.dto.DtoStringList;
 
-public class UpdateInfoCommand extends AbstractAdminCommand implements GricliCommand {
+public class UpdateTemplatesCommand extends AbstractAdminCommand implements GricliCommand {
 	
 
-	@SyntaxDescription(command = { "reload", "info" })
-	public UpdateInfoCommand() {
+	@SyntaxDescription(command = { "reload", "templates" })
+	public UpdateTemplatesCommand() {
 		super();
 	}
 
 	@Override
 	public void execute(GricliEnvironment env) throws GricliRuntimeException {
 
-		DtoStringList result = execute(env, Constants.REFRESH_GRID_INFO);
+		DtoStringList result = execute(env, Constants.REFRESH_TEMPLATES);
 		for (String line : result.asArray()) {
 			env.printMessage(line);
 		}

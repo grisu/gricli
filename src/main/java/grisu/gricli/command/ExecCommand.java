@@ -62,9 +62,9 @@ public class ExecCommand implements GricliCommand {
 		// throw new GricliRuntimeException(
 		// "Can't access remote file: " + arg, e);
 		// }
-		// args.set(i, tmp.getPath());
+		// args.set(i, tmp.getPaths());
 		// myLogger.debug("Downloaded file and exchanging remote url for exec command: "
-		// + tmp.getPath());
+		// + tmp.getPaths());
 		// }
 		// }
 
