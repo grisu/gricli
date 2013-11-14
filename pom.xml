@@ -27,11 +27,7 @@
 
 
 	<dependencies>
-                <dependency>
-                        <groupId>grith</groupId>
-                        <artifactId>jgrith</artifactId>
-                        <version>1.0.2</version>
-                </dependency>
+
 
 
 		<!-- the main grisu dependency. -->
@@ -47,6 +43,9 @@
 			<artifactId>grisu-core</artifactId>
 			<version>${grisu.version}</version>
 			<scope>provided</scope>
+
+            
+
 
 			<exclusions>
 				<exclusion>
