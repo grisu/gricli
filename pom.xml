@@ -44,9 +44,6 @@
 			<version>${grisu.version}</version>
 			<scope>provided</scope>
 
-            
-
-
 			<exclusions>
 				<exclusion>
 					<artifactId>logback-classic</artifactId>
